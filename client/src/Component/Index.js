@@ -13,10 +13,12 @@ function Index() {
 
     useEffect(
         ()=>{
+            /*
             jaxios.get('/api/member/jaxiostest', {params:{userid:loginUser.userid}} )
             .then((result)=>{
 
             }).catch((err)=>{ console.error(err) })
+            */
         },[]
     )
 
@@ -31,13 +33,13 @@ function Index() {
             {
                 (loginUser.userid)?(
                     <div className='logininfo'>
-                        {loginUser.userid}({loginUser.name})&nbsp;&nbsp;&nbsp;
-                        <span onClick={()=>{ onLogout() }}>LOGOUT</span>
+                        <div>{loginUser.userid}({loginUser.name})</div>
+                        <div onClick={()=>{ onLogout() }}>LOGOUT</div>
                     </div>
                 ):(
                     <>
-                        <Link to='/login'>LOGIN</Link>
-                        <Link to='/join'>JOIN</Link>
+                        <div><Link to='/login'>LOGIN</Link></div>
+                        <div><Link to='/join'>JOIN</Link></div>
                     </>
                 )
             }

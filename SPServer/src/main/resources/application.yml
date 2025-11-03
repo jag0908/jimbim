@@ -6,7 +6,7 @@ spring:
     name: SPServer
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/projectprac
+    url: jdbc:mysql://localhost:3306/jimbim
     username: root
     password: adminuser
   jpa:

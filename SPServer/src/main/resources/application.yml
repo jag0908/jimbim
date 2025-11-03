@@ -16,3 +16,19 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: #
+    password: #
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          timeout: 5000
+
+kakao:
+  client_id: #
+  redirect_uri: http://localhost:8070/member/kakaoLogin

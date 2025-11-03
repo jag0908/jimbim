@@ -13,10 +13,7 @@ function Index() {
 
     useEffect(
         ()=>{
-            jaxios.get('/api/member/jaxiostest', {params:{userid:loginUser.userid}} )
-            .then((result)=>{
-
-            }).catch((err)=>{ console.error(err) })
+            
         },[]
     )
 

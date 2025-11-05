@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -27,20 +28,23 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             Map<String, Object> claims = JWTUtil.validateToken(accessToken);
             System.out.println("JWT claims: " + claims);
 
+            Integer member_id = (Integer) claims.get("member_id");
             String userid=(String)claims.get("userid");
-            String pwd = (String) claims.get("pwd");/*
+            String pwd = (String) claims.get("pwd");
             String name = (String) claims.get("name");
             String phone = (String) claims.get("phone");
             String email = (String) claims.get("email");
-            String zip_num = (String) claims.get("zip_num");
-            String address1 = (String) claims.get("address1");
-            String address2 = (String) claims.get("address2");
-            String address3 = (String) claims.get("address3");
             String provider = (String) claims.get("provider");
-            String snsid = (String) claims.get("snsid");*/
+            String profileImg = (String) claims.get("profileImg");
+            String profileMsg = (String) claims.get("profileMsg");
+            String rrn = (String) claims.get("rrn");
+            String terms_agree = (String) claims.get("terms_agree");
+            String personal_agree = (String) claims.get("personal_agree");
+            Timestamp indate = (Timestamp) claims.get("indate");
+            Integer blacklist = (Integer) claims.get("blacklist");
             List<String> roleNames = (List<String>) claims.get("roleNames");
 
-            MemberDTO memberDTO = new MemberDTO( userid, pwd, /*name,  email,  phone, zip_num,  address1,  address2,   address3,   provider,  snsid,*/  roleNames  );
+            MemberDTO memberDTO = new MemberDTO( member_id, userid, pwd, name, phone, email, provider, profileImg, profileMsg, rrn, terms_agree, personal_agree, indate, blacklist, roleNames  );
 
             UsernamePasswordAuthenticationToken authenticationToken
             = new UsernamePasswordAuthenticationToken(memberDTO, pwd , memberDTO.getAuthorities());

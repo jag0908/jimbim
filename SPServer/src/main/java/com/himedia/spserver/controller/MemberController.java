@@ -116,9 +116,13 @@ public class MemberController {
         if( member == null ){
             member = new Member();
             member.setUserid( kakaoProfile.getId() );
-            //member.setName( pf.getNickname() );
+            member.setName( pf.getNickname() );
             member.setPwd( "KAKAO" );
-            //member.setProvider( "KAKAO" );
+            member.setEmail( kakaoProfile.getId() );
+            member.setPhone( "미설정" );
+            member.setName( pf.getNickname() );
+            member.setRrn( "미설정" );
+            member.setProvider( "KAKAO" );
             ms.insertMember(member);
         }
         response.sendRedirect("http://localhost:3000/kakaoIdLogin/"+member.getUserid());

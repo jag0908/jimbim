@@ -44,7 +44,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             Integer blacklist = (Integer) claims.get("blacklist");
             List<String> roleNames = (List<String>) claims.get("roleNames");
 
-            MemberDTO memberDTO = new MemberDTO( member_id, userid, pwd, name, phone, email, provider, profileImg, profileMsg, rrn, terms_agree, personal_agree, indate, blacklist, roleNames  );
+            MemberDTO memberDTO = new MemberDTO(userid, pwd, member_id, name, profileImg, profileMsg, phone,
+                    email, rrn, terms_agree, personal_agree, indate, blacklist, provider, roleNames
+            );
 
             UsernamePasswordAuthenticationToken authenticationToken
             = new UsernamePasswordAuthenticationToken(memberDTO, pwd , memberDTO.getAuthorities());

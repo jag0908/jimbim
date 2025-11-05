@@ -12,14 +12,20 @@ import java.util.stream.Collectors;
 
 public class MemberDTO extends User {
     public MemberDTO(  // 생성자
-                       String username, String password, List<String> roleNames
+                       String username, String password, Integer member_id, String name, String profileImg, String profileMsg, String phone,
+                       String email, String rrn, String terms_agree, String personal_agree, Timestamp indate, Integer blacklist, String provider,
+                       List<String> roleNames
     ) {
             super(   // 부모클래스 생성자 호출
                     username, password,  roleNames.stream().map(str -> new SimpleGrantedAuthority("ROLE_"+str)).collect(Collectors.toList())
                     // List의 내용들에  ROLE_ 를 앞에 붙여서 다시 리스트로 구성);
             );
             // 멤버변수들 값 대입
-            this.userid = username; this.pwd = password; this.roleNames = roleNames;
+            this.userid = username; this.pwd = password; this.member_id = member_id;
+            this.name = name; this.profileImg = profileImg; this.profileMsg = profileMsg;
+            this.phone = phone; this.email = email; this.rrn = rrn;
+            this.terms_agree = terms_agree; this.personal_agree = personal_agree; this.indate = indate;
+            this.blacklist = blacklist; this.provider = provider; this.roleNames = roleNames;
     }
 
     private Integer member_id;
@@ -38,25 +44,22 @@ public class MemberDTO extends User {
     private String provider;
     private List<String> roleNames = new ArrayList<String>();
 
-
-
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("pwd",pwd);
+        dataMap.put("member_id",member_id);
         dataMap.put("userid", userid);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
-        dataMap.put("pwd",pwd);
+        dataMap.put("pwd", pwd);
+        dataMap.put("name",name);
+        dataMap.put("profileImg",profileImg);
+        dataMap.put("profileMsg",profileMsg);
+        dataMap.put("phone",phone);
+        dataMap.put("email",email);
+        dataMap.put("rrn",rrn);
+        dataMap.put("terms_agree",terms_agree);
+        dataMap.put("personal_agree",personal_agree);
+        dataMap.put("indate",indate);
+        dataMap.put("blacklist",blacklist);
+        dataMap.put("provider",provider);
 
         dataMap.put("roleNames", roleNames);
         return dataMap;

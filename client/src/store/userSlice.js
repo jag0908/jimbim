@@ -6,16 +6,21 @@ const cookies = new Cookies()
 const initialState={
     userid:'',
     pwd:'',
-    nickname:'',
-    provider:'',
-    profileimg:'',
-    profilemsg:'',
+    /*
+    name:'',
+    email:'',
     phone:'',
+    zip_num:'',
+    address1:'',
+    address2:'',
+    address3:'',
+    indate:'',
+    provider:'',
     snsid:'',
-    followers:[],
-    followings:[], 
+    roleNames:[],
     accessToken:'',
     refreshToken:'',
+    */
 }
 
 // 쿠키에 저장된 로그인 유저 정보를 읽어와서 리턴해주는 함수

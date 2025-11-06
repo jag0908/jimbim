@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,16 +31,19 @@ public class CustomUserDetailService implements UserDetailsService {
         }
         MemberDTO memberDTO = new MemberDTO(
                 member.getUserid(),
-                member.getPwd(),/*
+                member.getPwd(),
+                member.getMember_id(),
                 member.getName(),
-                member.getEmail(),
+                member.getProfileImg(),
+                member.getProfileMsg(),
                 member.getPhone(),
-                member.getZip_num(),
-                member.getAddress1(),
-                member.getAddress2(),
-                member.getAddress3(),
+                member.getEmail(),
+                member.getRrn(),
+                member.getTerms_agree(),
+                member.getPersonal_agree(),
+                member.getIndate(),
+                member.getBlacklist(),
                 member.getProvider(),
-                member.getSnsid(),*/
                 member.getMemberRoleList().stream().map(memberRole -> memberRole.name()).collect(Collectors.toList())  // List<MemberRole> 형자료에서 List<String>형태로 변환
         );
         System.out.println("member : " + member);

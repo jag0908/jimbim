@@ -2,6 +2,16 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import jaxios from '../../util/jwtutil';
 import { Link, useParams } from 'react-router-dom';
+import Slider from 'react-slick';
+
+const settings = {
+    dot:false,
+    arrows:false,
+    infinite:false,
+    speed:500,
+    slidesToShow:1,
+    slidesToScroll:1
+}
 
 function ShMain() {
     const baseURL = process.env.REACT_APP_BASE_URL;
@@ -61,6 +71,10 @@ function ShMain() {
                 shPostArr.map((ShPost, i)=> {
                   return (
                     <Link key={i} to={`/sh-page/${ShPost.post_id}`}>
+                        <Slider {...settings}>
+
+                        </Slider>
+                        <h3 className='title'>{ShPost.title}</h3>
                         <h3 className='title'>{ShPost.title}</h3>
                     </Link>
                   )

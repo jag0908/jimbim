@@ -17,8 +17,12 @@ public class File {
     private String size;
     @Column(nullable = false, length = 500)
     private String path;
+    @Column(nullable = false)
+    private String contentType;
+    @Column(nullable = false)
+    private Integer post_id;
+
+
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
-
-
 }

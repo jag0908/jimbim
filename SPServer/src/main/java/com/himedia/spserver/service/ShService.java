@@ -17,7 +17,7 @@ public class ShService {
     ShRepository sr;
 
     public ArrayList<SH_post> getShList() {
-        ArrayList<SH_post> srList = sr.findAllByPost_id();
+        ArrayList<SH_post> srList = sr.findAll();
 
         return srList;
     }

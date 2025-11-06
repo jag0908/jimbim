@@ -29,7 +29,7 @@ function KakaoIdLogin() {
     )
 
     return (
-        <div>KakaoIdLogin</div>
+        <div></div>
     )
 }
 

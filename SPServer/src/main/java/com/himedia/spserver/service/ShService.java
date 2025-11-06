@@ -25,7 +25,6 @@ public class ShService {
         return shList;
     }
 
-
     public ArrayList<SH_Category> getShCategorys() {
         ArrayList<SH_Category> shCategorys = (ArrayList<SH_Category>) sc.findAll();
 

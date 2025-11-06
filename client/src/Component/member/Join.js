@@ -154,7 +154,7 @@ function Join() {
                 <input type="file" onChange={(e)=>{fileUpload(e)}}/>
             </div>
             <div className='field'>
-                <label>프로필사진 미리보기</label>
+                <label>미리보기</label>
                 <div><img src={profile_img} style={imgStyle}/></div>
             </div>
             <div className='field'>

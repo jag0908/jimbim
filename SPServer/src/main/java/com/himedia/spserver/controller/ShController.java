@@ -1,5 +1,6 @@
 package com.himedia.spserver.controller;
 
+import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class ShController {
     ShService ss;
 
     @GetMapping("/sh-list")
-    public HashMap<String, Object> shlist() {
+    public HashMap<String, Object> shList() {
         HashMap<String, Object> result = new HashMap<>();
         ArrayList<SH_post> shList = ss.getShList();
 
@@ -27,6 +28,21 @@ public class ShController {
         } else {
             result.put("msg", "ok");
             result.put("shList", shList);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/sh-category")
+    public HashMap<String, Object> shCategory() {
+        HashMap<String, Object> result = new HashMap<>();
+        ArrayList<SH_Category> shCategorys = ss.getShCategorys();
+
+        if (shCategorys == null || shCategorys.isEmpty()) {
+            result.put("msg", "메뉴");
+        } else {
+            result.put("msg", "ok");
+            result.put("shCategory", shCategorys);
         }
 
         return result;

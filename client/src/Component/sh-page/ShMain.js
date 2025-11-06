@@ -4,6 +4,8 @@ import jaxios from '../../util/jwtutil';
 import { Link, useParams } from 'react-router-dom';
 
 function ShMain() {
+    const baseURL = process.env.REACT_APP_BASE_URL;
+
     const { id } = useParams();
     const [shPostArr, setShPostArr] = useState([]);
     const [categoryArr, setCategoryArr] = useState([]);
@@ -44,7 +46,7 @@ function ShMain() {
                   categoryArr.map((category, i)=> {
                     return (
                       <Link key={i} to={`/sh-page/${category.category_id}`}>
-                        <img src="/" alt={category.category_name} />
+                        <img src={`${baseURL}/sh_img/${i}.png`} alt={category.category_name} />
                       </Link>
                     )
                   })

@@ -7,16 +7,19 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
 import com.himedia.spserver.service.MemberService;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,14 +52,30 @@ public class MemberController {
         return result;
     }
 
-    @PostMapping("/kakaoIdFirstEdit")
-    public HashMap<String, Object> kakaoIdFirstEdit( @RequestBody Member member ) {
-        HashMap<String, Object> result = new HashMap<>();
-        System.out.println("kakaoIdFirstEdit" + member);
-        ms.kakaoIdFirstEdit(member);
-        result.put("msg", "ok");
+    /// /////////////////// 파일업로드 /////////////////////////////
+
+    @Autowired
+    ServletContext sc;
+
+    @PostMapping("/fileupload")
+    public HashMap<String, Object> fileUpload(  @RequestParam("image") MultipartFile file ) {
+        HashMap<String , Object> result = new HashMap<>();
+        String path = sc.getRealPath("/profile_img");
+        Calendar today = Calendar.getInstance();
+        long dt = today.getTimeInMillis();
+        String filename = file.getOriginalFilename();
+        String f1 = filename.substring(0, filename.lastIndexOf("."));
+        String f2 = filename.substring(filename.lastIndexOf("."));
+        String uploadPath = path + "/" + f1 + dt + f2;
+        try {
+            file.transferTo( new File(uploadPath) );
+            result.put("filename", f1 + dt + f2);
+        } catch (IllegalStateException | IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
+    /// /////////////////// 파일업로드 끝  /////////////////////////////
 
     /*----------------카카오로그인----------------------------*/
 
@@ -147,6 +166,15 @@ public class MemberController {
         HashMap<String, Object> result = new HashMap<>();
         Member member = ms.getMember( userid );
         result.put("member", member);
+        return result;
+    }
+
+    @PostMapping("/kakaoIdFirstEdit")
+    public HashMap<String, Object> kakaoIdFirstEdit( @RequestBody Member member ) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("kakaoIdFirstEdit" + member);
+        ms.kakaoIdFirstEdit(member);
+        result.put("msg", "ok");
         return result;
     }
     /*----------------카카오로그인끝----------------------------*/

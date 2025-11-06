@@ -77,6 +77,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         // 로그인 없이 동작하게할 주소를 여기에 추가
 
+        if(path.startsWith("/profile_img/"))
+            return true;
+
         if(path.startsWith("/member/login"))
             return true;
 
@@ -96,6 +99,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
 
         if(path.startsWith("/member/kakaoIdFirstEdit"))
+            return true;
+
+        if(path.startsWith("/member/fileupload"))
             return true;
 
         if(path.startsWith("/member/refresh"))

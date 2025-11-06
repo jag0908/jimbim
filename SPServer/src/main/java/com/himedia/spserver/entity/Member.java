@@ -40,18 +40,18 @@ public class Member {
     @Column(nullable = false)
     private String rrn; //주민번호
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @ColumnDefault("'N'")
     private String terms_agree;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @ColumnDefault("'N'")
     private String personal_agree;
 
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @ColumnDefault("'0'")
     private Integer blacklist;
     // 4: red, 3: orange 2: yellow, 1: green, 0: gray

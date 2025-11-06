@@ -1,0 +1,73 @@
+.feed-container {
+  width: 90%;
+  margin: 0 auto;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.hashtag-bar {
+  text-align: center;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.feed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.feed-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.post-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.feed-info {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.profile-img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.nickname {
+  font-weight: 600;
+}
+
+.feed-actions {
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.post-content {
+  padding: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.feed-footer {
+  text-align: center;
+  margin-top: 40px;
+  color: #aaa;
+  font-size: 13px;
+}

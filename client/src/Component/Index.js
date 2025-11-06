@@ -10,13 +10,16 @@ function Index() {
     const dispatch = useDispatch()
     const cookies = new Cookies()
     const navigate = useNavigate()
-
+/*
     useEffect(
         ()=>{
-            
+            console.log(loginUser)
+            jaxios.post("/api/member/test")
+            .then()
+            .catch((err)=>{console.error(err)});
         },[]
     )
-
+*/
     function onLogout() {
         dispatch( logoutAction() )
         cookies.remove('user')

@@ -16,6 +16,7 @@ public class STYLE_post {
 
     private String title;
     private String content;
+    @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
     private String s_image;
     private String s_like;

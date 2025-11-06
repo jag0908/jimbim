@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../style/StyleFeed.css';
 
 function StyleFeed() {
+  // const baseURL = process.env.REACT_APP_BASE_URL;
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {

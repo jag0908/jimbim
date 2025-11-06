@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../../style/StyleDetail.css';
 
 function StyleDetail() {
+  // const baseURL = process.env.REACT_APP_BASE_URL;
   const { id } = useParams();
   const [post, setPost] = useState(null);
 

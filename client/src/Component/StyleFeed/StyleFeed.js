@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './style/StyleFeed.css';
+import '../../style/StyleFeed.css';
 
 function StyleFeed() {
   const [posts, setPosts] = useState([]);

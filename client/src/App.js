@@ -3,7 +3,6 @@ import Index from './Component/Index'
 import Login from './Component/member/Login'
 import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
-import ShMain from './Component/sh-page/ShMain'
 
 function App() {
     return (
@@ -19,9 +18,11 @@ function App() {
 
 
 				<Route path="/sh-page" element={<ShMain />} />
+				<Route path='/kakaoIdFirstEdit/:userid' element={<KakaoIdFirstEdit />} />
 			</Routes>
 		</div>
     );
 }
 
 export default App;
+

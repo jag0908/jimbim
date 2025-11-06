@@ -1,4 +1,4 @@
-import React ,{useState } from 'react'
+import React ,{useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +20,15 @@ function Join() {
     const [rrn1, setRrn1] = useState('');
     const [rrn2, setRrn2] = useState('');
 
+    const [profile_img, setProfile_img] = useState('')
+    const [imgStyle, setImgStyle] = useState({display:"none"});
+
+    const [profile_msg, setProfile_msg] = useState('')
+
+    const [terms_agree, setTerms_agree] = useState('N')
+    const [personal_agree, setPersonal_agree] = useState('N')
+
+    const baseURL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate()
 
     function idCheck(){
@@ -38,6 +47,28 @@ function Join() {
         }).catch((err)=>{console.error(err)})
     }
 
+    function fileUpload(e){
+        const formData = new FormData()
+        formData.append('image', e.target.files[0])
+        axios.post( '/api/member/fileupload', formData)
+        .then((result)=>{
+            console.log(result)
+            setProfile_img(`${baseURL}/profile_img/${result.data.filename}`);
+            setImgStyle({display:"block", width:"200px"});
+        }).catch((err)=>{console.error(err)})
+    }
+    
+    function agree(checked, box){
+        if(box=="terms"){
+            if(checked) setTerms_agree('Y')
+            else setTerms_agree('N')
+        }
+        if(box=="personal"){
+            if(checked) setPersonal_agree('Y')
+            else setPersonal_agree('N')
+        }
+    }
+
     function onSubmit(){
         if(!userid){ return alert('아이디를 입력하세요')}
         if( !pwd ){return alert('패스워드를 입력하세요')}
@@ -53,7 +84,7 @@ function Join() {
         const phone = phone1+"-"+phone2+"-"+phone3
         const rrn = rrn1+"-"+rrn2+"******"
 
-        axios.post('/api/member/join', {userid, pwd, name, email, phone, rrn})
+        axios.post('/api/member/join', {userid, pwd, name, email, phone, rrn, profile_img, profile_msg, terms_agree, personal_agree})
         .then(()=>{ 
             alert('회원가입이 완료되었습니다. 로그인하세요');
             navigate('/login')
@@ -118,9 +149,28 @@ function Join() {
                     setRrn2( e.currentTarget.value )
                 }}/>******
             </div>
+            <div className='field'>
+                <label>프로필사진</label>
+                <input type="file" onChange={(e)=>{fileUpload(e)}}/>
+            </div>
+            <div className='field'>
+                <label>프로필사진 미리보기</label>
+                <div><img src={profile_img} style={imgStyle}/></div>
+            </div>
+            <div className='field'>
+                <label>소개글</label>
+                <input type="text" style={{flex:'2'}} value={profile_msg} onChange={(e)=>{
+                    setProfile_msg( e.currentTarget.value )
+                }}/>
+            </div>
+            <div className='field'>
+                <label>동의사항(선택)</label>
+                <label>약관 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/>
+                <label>개인정보 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/>
+            </div>
             <div className="btns">
                 <button onClick={()=>{onSubmit()}}>JOIN</button>
-                <button >BACK</button>
+                <button onClick={()=>{navigate(-1)}}>BACK</button>
             </div>
         </article>
     )

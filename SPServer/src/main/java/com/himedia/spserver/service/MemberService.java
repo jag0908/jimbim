@@ -32,4 +32,17 @@ public class MemberService {
 
         mr.save( member );
     }
+
+    public void kakaoIdFirstEdit(Member member) {
+        Member updateMem = mr.findByUserid( member.getUserid());
+
+        updateMem.setPhone(member.getPhone());
+        updateMem.setProfileImg(member.getProfileImg());
+        updateMem.setProfileMsg(member.getProfileMsg());
+        updateMem.setTerms_agree(member.getTerms_agree());
+        updateMem.setPersonal_agree(member.getPersonal_agree());
+
+        if(updateMem.getRrn().equals("미설정"))
+            updateMem.setRrn(member.getRrn());  // 주민번호는 카카오로그인 초기설정 한정으로만 변경가능
+    }
 }

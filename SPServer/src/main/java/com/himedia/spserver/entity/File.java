@@ -20,5 +20,4 @@ public class File {
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
 
-
 }

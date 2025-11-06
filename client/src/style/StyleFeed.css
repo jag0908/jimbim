@@ -71,3 +71,31 @@
   color: #aaa;
   font-size: 13px;
 }
+
+.no-posts {
+  text-align: center;
+  padding: 50px;
+  color: #888;
+  font-size: 1.2rem;
+}
+
+.write-button-area {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px;
+}
+
+.write-btn {
+  background-color: #ff7e67;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.write-btn:hover {
+  background-color: #ff5a3c;
+}

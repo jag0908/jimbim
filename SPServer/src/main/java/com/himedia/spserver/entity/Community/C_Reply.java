@@ -1,4 +1,4 @@
-package com.himedia.spserver.entity.Comunity;
+package com.himedia.spserver.entity.Community;
 
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;

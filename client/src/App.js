@@ -7,6 +7,10 @@ import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
 
+import Community from './Component/community/Community'
+import CommunityView from './Component/community/CommunityView'
+import UpdateCommunity from './Component/community/UpdateCommunity'
+
 function App() {
     return (
 		<div className="container">
@@ -14,6 +18,11 @@ function App() {
                 <Route path='/' element={<Index />} />
 				<Route path='/login' element={<Login />} />
 				<Route path='/join' element={<Join />} />
+
+				<Route path='/community' element={<Community />} />
+				<Route path='/communityView' element={<CommunityView />} />
+				<Route path='/updateCommunity' element={<UpdateCommunity />} />
+          
 				<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
 				<Route path='/style' element={<StyleFeed />} />
         		<Route path='/style/:id' element={<StyleDetail />} />

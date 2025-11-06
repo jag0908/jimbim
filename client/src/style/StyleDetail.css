@@ -58,3 +58,16 @@
 .detail-content {
   margin-top: 15px;
 }
+
+.no-detail {
+  text-align: center;
+  padding: 80px;
+  color: #666;
+}
+
+.no-detail a {
+  display: inline-block;
+  margin-top: 15px;
+  color: #007bff;
+  text-decoration: none;
+}

@@ -26,19 +26,26 @@ function StyleFeed() {
       </div>
 
       <div className="feed-grid">
-        {posts.map(post => (
-          <div key={post.spost_id} className="feed-card">
-            <img src={post.s_image} alt="post" className="post-img" />
-            <div className="feed-info">
-              <img src={post.profileImg} alt="profile" className="profile-img" />
-              <span className="nickname">{post.userid}</span>
-            </div>
-            <div className="feed-actions">
-              ❤️ {post.likeCount}  💬 {post.replyCount}
-            </div>
-            <p className="post-content">{post.content}</p>
+        {posts.length === 0 ? (
+          <div className="no-posts">
+            😢 아직 등록된 스타일이 없습니다.<br />
+            첫 번째 스타일을 공유해보세요!
           </div>
-        ))}
+        ) : (
+          posts.map(post => (
+            <div key={post.spost_id} className="feed-card">
+              <img src={post.s_image} alt="post" className="post-img" />
+              <div className="feed-info">
+                <img src={post.profileImg} alt="profile" className="profile-img" />
+                <span className="nickname">{post.userid}</span>
+              </div>
+              <div className="feed-actions">
+                ❤️ {post.likeCount} 💬 {post.replyCount}
+              </div>
+              <p className="post-content">{post.content}</p>
+            </div>
+          ))
+        )}
       </div>
 
       <footer className="feed-footer">© Style Platform</footer>

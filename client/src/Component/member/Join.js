@@ -1,4 +1,4 @@
-import React ,{useState, useEffect } from 'react'
+import React ,{useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 
@@ -68,7 +68,46 @@ function Join() {
             else setPersonal_agree('N')
         }
     }
+    
+    const getNumberOnly = (e) => {
+        e.target.value = e.target.value.replaceAll(/\D/g, "");
+    };
 
+    function checkrrn(rrn1, rrn2){
+        // 주민번호 검사
+        const lastRrn= (Number)(rrn2);
+        let year = (Number)(rrn1.substr(0,2))
+        if(lastRrn==1 || lastRrn==2){
+            year += 1900;
+        }else if(lastRrn==3 || lastRrn==4){
+            year += 2000;
+        }
+
+        const month = (Number)(rrn1.substr(2,2))
+        const day = (Number)(rrn1.substr(4,2))
+
+        console.log(year, month, day, lastRrn)
+        if(lastRrn<1 || lastRrn>4) return false;    // 뒷자리가 1~4가 아니면 금지
+        if(month==0 || day==0) return false;    // 월이나 일이 0이면 금지
+        
+        switch(month){                          // 월에 따라 일이 초과하면 금지
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                if(day>31) return false;
+                break;
+            case 4: case 6: case 9: case 11:
+                if(day>30) return false;
+                break;
+            case 2:
+                if(year%4==0 && year%100!=0 || year%400==0){
+                    if(day>29) return false;
+                }else{
+                    if(day>28) return false;
+                }
+                break;
+            default: return false;              // 월이 13 이상이면 금지
+        }
+        return true
+    }
     function onSubmit(){
         if(!userid){ return alert('아이디를 입력하세요')}
         if( !pwd ){return alert('패스워드를 입력하세요')}
@@ -77,10 +116,17 @@ function Join() {
         if( reid !== userid){return alert('아이디 중복을 체크해주세요')}
 
         if( !name ){return alert('이름을 입력하세요')}
-        if( !email ){return alert('이메일을 입력하세요')}
-        if( !phone1 && !phone2 && !phone3 ){return alert('전화번호를 입력하세요')}
-        if( !rrn1 && !rrn2 ){return alert('주민번호를 입력하세요')}
 
+        if( !email ){return alert('이메일을 입력하세요')}
+        // 유효이메일 양식 체크
+        let regix = email.match( /\w+@(\w+[.])+\w+/g );
+        if( !regix ){  return alert('유효한 이메일을 입력하세요'); }
+
+        if( !phone1 && !phone2 && !phone3 ){return alert('전화번호를 입력하세요')}
+
+        if( !rrn1 && !rrn2 ){return alert('주민등록번호를 입력하세요')}
+        if(!checkrrn(rrn1, rrn2)){return alert('유효한 주민등록번호를 입력하세요')};
+        
         const phone = phone1+"-"+phone2+"-"+phone3
         const rrn = rrn1+"-"+rrn2+"******"
 
@@ -97,10 +143,10 @@ function Join() {
             <div><span>*</span>은 필수 입력사항입니다</div>
             <div className='field'>
                 <label><span>*</span>ID</label>
-                <input type="text" style={{flex:'2'}} value={userid} onChange={(e)=>{
+                <input type="text" value={userid} onChange={(e)=>{
                     setUserid( e.currentTarget.value )
                 }}/>
-                <button style={{flex:'1'}} onClick={ ()=>{idCheck()} }>ID CHECK</button>
+                <button onClick={ ()=>{idCheck()} }>ID CHECK</button>
                 <div style={idCheckMsgStyle}>{message}</div>
                 <input type='hidden' name='reid' value={reid} />
             </div>
@@ -112,40 +158,40 @@ function Join() {
             </div>
             <div className='field'>
                 <label><span>*</span>비밀번호 확인</label>
-                <input type="password"  value={pwdChk} onChange={
+                <input type="password" value={pwdChk} onChange={
                     (e)=>{ setPwdChk(e.currentTarget.value )}
                 }/>
             </div>
             <div className='field'>
                 <label><span>*</span>이름</label>
-                <input type="text" style={{flex:'2'}} value={name} onChange={(e)=>{
+                <input type="text" value={name} onChange={(e)=>{
                     setName( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
                 <label><span>*</span>E-mail</label>
-                <input type="text" style={{flex:'2'}} value={email} onChange={(e)=>{
+                <input type="text" value={email} onChange={(e)=>{
                     setEmail( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
                 <label><span>*</span>전화번호</label>
-                <input type="text" style={{flex:'2'}} value={phone1} onChange={(e)=>{
+                <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
                     setPhone1( e.currentTarget.value )
                 }}/>-
-                <input type="text" style={{flex:'2'}} value={phone2} onChange={(e)=>{
+                <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
                     setPhone2( e.currentTarget.value )
                 }}/>-
-                <input type="text" style={{flex:'2'}} value={phone3} onChange={(e)=>{
+                <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
                     setPhone3( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
-                <label><span>*</span>주민번호</label>
-                <input type="text" style={{flex:'2'}} value={rrn1} onChange={(e)=>{
+                <label><span>*</span>주민등록번호</label>
+                <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
                     setRrn1( e.currentTarget.value )
                 }}/>-
-                <input type="text" style={{flex:'2'}} value={rrn2} onChange={(e)=>{
+                <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
                     setRrn2( e.currentTarget.value )
                 }}/>******
             </div>
@@ -159,7 +205,7 @@ function Join() {
             </div>
             <div className='field'>
                 <label>소개글</label>
-                <input type="text" style={{flex:'2'}} value={profileMsg} onChange={(e)=>{
+                <input type="text" value={profileMsg} onChange={(e)=>{
                     setProfileMsg( e.currentTarget.value )
                 }}/>
             </div>

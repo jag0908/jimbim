@@ -29,6 +29,7 @@ public class MemberController {
 
     // /member/login 시 실행되는 코드는 CustomSecurityConfig -> securityFilterChain 에
     // 로그인 없이 동작하게할 주소는 JWTCheckFilter 의 shouldNotFilter 에 추가 필요함
+    String clientUrl = "http://localhost:3000";
 
     @Autowired
     MemberService ms;
@@ -155,7 +156,7 @@ public class MemberController {
             ms.insertMember(member);
         }
         String resulturl = (member.getPhone().equals("미설정")||member.getRrn().equals("미설정"))?
-                "http://localhost:3000/kakaoIdFirstEdit/":"http://localhost:3000/kakaoIdLogin/";
+                clientUrl+"/kakaoIdFirstEdit/":clientUrl+"/kakaoIdLogin/";
         // 전화번호 또는 주민번호가 미설정이면 초기 정보수정 페이지로 이동, 초기 정보수정 완료시 바로 로그인 페이지로 이동
         response.sendRedirect(resulturl+member.getUserid());
 

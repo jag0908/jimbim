@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommunityRepository extends JpaRepository<C_Category, Integer> {
 
-    C_post findByNum(int num);
+//    C_post findByNum(int num);
 }

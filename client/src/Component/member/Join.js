@@ -28,6 +28,7 @@ function Join() {
     const [terms_agree, setTerms_agree] = useState('N')
     const [personal_agree, setPersonal_agree] = useState('N')
 
+    const baseURL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate()
 
     function idCheck(){
@@ -52,7 +53,7 @@ function Join() {
         axios.post( '/api/member/fileupload', formData)
         .then((result)=>{
             console.log(result)
-            setProfile_img(`http://localhost:8070/profile_img/${result.data.filename}`);
+            setProfile_img(`${baseURL}/profile_img/${result.data.filename}`);
             setImgStyle({display:"block", width:"200px"});
         }).catch((err)=>{console.error(err)})
     }

@@ -40,7 +40,13 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String rrn = (String) claims.get("rrn");
             String terms_agree = (String) claims.get("terms_agree");
             String personal_agree = (String) claims.get("personal_agree");
-            Timestamp indate = (Timestamp) claims.get("indate");
+            Object indateObj = claims.get("indate");
+            Timestamp indate = null;
+            if (indateObj instanceof Long) {
+                indate = new Timestamp((Long) indateObj);
+            } else if (indateObj instanceof Integer) {
+                indate = new Timestamp(((Integer) indateObj).longValue());
+            }
             Integer blacklist = (Integer) claims.get("blacklist");
             List<String> roleNames = (List<String>) claims.get("roleNames");
 

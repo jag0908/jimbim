@@ -13,7 +13,10 @@ function Index() {
 
     useEffect(
         ()=>{
-            
+            console.log(loginUser)
+            jaxios.post("/api/member/test")
+            .then()
+            .catch((err)=>{console.error(err)});
         },[]
     )
 

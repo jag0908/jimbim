@@ -49,6 +49,15 @@ public class MemberController {
         return result;
     }
 
+    @PostMapping("/kakaoIdFirstEdit")
+    public HashMap<String, Object> kakaoIdFirstEdit( @RequestBody Member member ) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("kakaoIdFirstEdit" + member);
+        ms.kakaoIdFirstEdit(member);
+        result.put("msg", "ok");
+        return result;
+    }
+
     /*----------------카카오로그인----------------------------*/
 
     @Value("${kakao.client_id}")
@@ -113,20 +122,32 @@ public class MemberController {
         System.out.println("Profile-Nickname : " + pf.getNickname());
 
         Member member = ms.getMember( kakaoProfile.getId() );
-        if( member == null ){
+        if( member == null ) {
             member = new Member();
-            member.setUserid( kakaoProfile.getId() );
-            member.setName( pf.getNickname() );
-            member.setPwd( "KAKAO" );
-            member.setEmail( kakaoProfile.getId() );
-            member.setPhone( "미설정" );
-            member.setName( pf.getNickname() );
-            member.setRrn( "미설정" );
-            member.setProvider( "KAKAO" );
+            member.setUserid(kakaoProfile.getId());
+            member.setName(pf.getNickname());
+            member.setPwd("KAKAO");
+            member.setEmail(kakaoProfile.getId());
+            member.setPhone("미설정");
+            member.setName(pf.getNickname());
+            member.setRrn("미설정");
+            member.setProvider("KAKAO");
+            member.setProfileImg(pf.getProfile_image_url());
             ms.insertMember(member);
         }
-        response.sendRedirect("http://localhost:3000/kakaoIdLogin/"+member.getUserid());
+        String resulturl = (member.getPhone().equals("미설정")||member.getRrn().equals("미설정"))?
+                "http://localhost:3000/kakaoIdFirstEdit/":"http://localhost:3000/kakaoIdLogin/";
+        // 전화번호 또는 주민번호가 미설정이면 초기 정보수정 페이지로 이동, 초기 정보수정 완료시 바로 로그인 페이지로 이동
+        response.sendRedirect(resulturl+member.getUserid());
 
+    }
+
+    @PostMapping("/getKakaoMember")   // id 중복체크
+    public HashMap<String, Object> getKakaoMember(@RequestParam("userid") String userid ) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMember( userid );
+        result.put("member", member);
+        return result;
     }
     /*----------------카카오로그인끝----------------------------*/
 

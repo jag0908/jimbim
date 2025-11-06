@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +27,10 @@ public class StyleService {
         List<STYLE_post> posts = postRepository.findAllByOrderByIndateDesc();
 
         return posts.stream().map(post -> {
-            int likeCount = likeRepository.countBySpostId(post);
-            int replyCount = replyRepository.countBySpostId(post);
+            int likeCount = likeRepository.countBySpost(post);
+            int replyCount = replyRepository.countBySpost(post);
             List<String> hashtags = posthashRepository.findByPostId(post)
-                    .stream().map(ph -> ph.getTag_id().getWord())
+                    .stream().map(ph -> ph.getTagId().getWord())
                     .collect(Collectors.toList());
 
             return StylePostDTO.builder()
@@ -40,8 +41,8 @@ public class StyleService {
                     .indate(post.getIndate())
                     .likeCount(likeCount)
                     .replyCount(replyCount)
-                    .userid(post.getFile().getMember().getUserid()) // 파일이 Member와 연결돼있다고 가정
-                    .profileImg(post.getFile().getMember().getProfileImg())
+                    .userid(post.getMember().getUserid())
+                    .profileImg(post.getMember().getProfileImg())
                     .hashtags(hashtags)
                     .build();
         }).collect(Collectors.toList());
@@ -52,10 +53,10 @@ public class StyleService {
         STYLE_post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        int likeCount = likeRepository.countBySpostId(post);
-        int replyCount = replyRepository.countBySpostId(post);
+        int likeCount = likeRepository.countBySpost(post);
+        int replyCount = replyRepository.countBySpost(post);
         List<String> hashtags = posthashRepository.findByPostId(post)
-                .stream().map(ph -> ph.getTag_id().getWord())
+                .stream().map(ph -> ph.getTagId().getWord())
                 .collect(Collectors.toList());
 
         return StylePostDTO.builder()
@@ -66,8 +67,8 @@ public class StyleService {
                 .indate(post.getIndate())
                 .likeCount(likeCount)
                 .replyCount(replyCount)
-                .userid(post.getFile().getMember().getUserid())
-                .profileImg(post.getFile().getMember().getProfileImg())
+                .userid(post.getMember().getUserid())
+                .profileImg(post.getMember().getProfileImg())
                 .hashtags(hashtags)
                 .build();
     }

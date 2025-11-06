@@ -1,6 +1,7 @@
 package com.himedia.spserver.entity.STYLE;
 
 import com.himedia.spserver.entity.File;
+import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,6 +24,10 @@ public class STYLE_post {
     @ManyToOne
     @JoinColumn(name = "file_id")
     File file;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
 
 }

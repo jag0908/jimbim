@@ -21,7 +21,6 @@ public class StylePostDTO {
     private String s_image;
     private Integer likeCount;
     private Integer replyCount;
-
     private String userid;
     private String profileImg;
 

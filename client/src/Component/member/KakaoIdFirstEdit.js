@@ -13,15 +13,22 @@ function KakaoIdFirstEdit() {
     const cookies = new Cookies()
     const dispatch = useDispatch();
 
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [phone1, setPhone1] = useState('');
     const [phone2, setPhone2] = useState('');
     const [phone3, setPhone3] = useState('');
     const [rrn1, setRrn1] = useState('');
     const [rrn2, setRrn2] = useState('');
+    const [profile_img, setProfile_img] = useState('')
+    const [profile_msg, setProfile_msg] = useState('')
+    
     const [terms_agree, setTerms_agree] = useState('N')
     const [personal_agree, setPersonal_agree] = useState('N')
 
     const [kakaoMember, setKakaoMember] = useState({})
+
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     useEffect(
         ()=>{
@@ -33,6 +40,16 @@ function KakaoIdFirstEdit() {
 
         },[]
     )
+    function agree(checked, box){
+        if(box=="terms"){
+            if(checked) setTerms_agree('Y')
+            else setTerms_agree('N')
+        }
+        if(box=="personal"){
+            if(checked) setPersonal_agree('Y')
+            else setPersonal_agree('N')
+        }
+    }
 
     async function onSubmit(){
         if( !phone1 && !phone2 && !phone3 ){return alert('전화번호를 입력하세요')}
@@ -41,8 +58,8 @@ function KakaoIdFirstEdit() {
         const phone = phone1+"-"+phone2+"-"+phone3
         const rrn = rrn1+"-"+rrn2+"******"
 
-        await axios.post('/api/member/kakaoIdFirstEdit', {userid, phone, rrn, terms_agree, personal_agree })
-        .then((result)=>{ 
+        await axios.post('/api/member/kakaoIdFirstEdit', {userid, email, phone, rrn, profile_img, profile_msg, terms_agree, personal_agree })
+        .then((result)=>{
             alert('정보 입력이 완료되었습니다');
         } ).catch((err)=>{console.error(err)})
 
@@ -61,6 +78,16 @@ function KakaoIdFirstEdit() {
         <article>
             <div>서비스 이용을 위해 정보를 입력해주세요</div>
             <div><span>*</span>은 필수 입력사항입니다</div>
+            <div className='field'>
+                <label><span>*</span>이름</label>
+                <div>{kakaoMember.name}</div>
+            </div>
+            <div className='field'>
+                <label><span>*</span>E-mail</label>
+                <input type="text" style={{flex:'2'}} value={email} onChange={(e)=>{
+                    setEmail( e.currentTarget.value )
+                }}/>
+            </div>
             <div className='field'>
                 <label><span>*</span>전화번호</label>
                 <input type="text" style={{flex:'2'}} value={phone1} onChange={(e)=>{
@@ -82,9 +109,23 @@ function KakaoIdFirstEdit() {
                     setRrn2( e.currentTarget.value )
                 }}/>******
             </div>
-            <img src={kakaoMember.profileImg}/>
+            <div className='field'>
+                <label>프로필사진</label>
+                <div><img src={kakaoMember.profileImg}/></div>
+            </div>
+            <div className='field'>
+                <label>소개글</label>
+                <input type="text" style={{flex:'2'}} value={profile_msg} onChange={(e)=>{
+                    setProfile_msg( e.currentTarget.value )
+                }}/>
+            </div>
+            <div className='field'>
+                <label>동의사항(선택)</label>
+                <label>약관 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/>
+                <label>개인정보 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/>
+            </div>
             <div className="btns">
-                <button onClick={()=>{onSubmit()}}>submit</button>
+                <button onClick={()=>{onSubmit()}}>완료</button>
             </div>
         </article>
     )

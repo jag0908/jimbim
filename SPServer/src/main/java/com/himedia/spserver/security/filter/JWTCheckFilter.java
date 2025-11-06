@@ -110,6 +110,18 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/member/fileupload"))
             return true;
 
+        if(path.startsWith("/member/findid"))
+            return true;
+
+        if(path.startsWith("/member/confirmCode"))
+            return true;
+
+        if(path.startsWith("/member/sendMail"))
+            return true;
+
+        if(path.startsWith("/member/resetPwd"))
+            return true;
+
         if(path.startsWith("/member/refresh"))
             return true;
 

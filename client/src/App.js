@@ -4,6 +4,7 @@ import Login from './Component/member/Login'
 import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
 import KakaoIdFirstEdit from './Component/member/KakaoIdFirstEdit'
+import FindAccount from './Component/member/FindAccount'
 import ShMain from './Component/sh-page/ShMain'
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
 				<Route path='/join' element={<Join />} />
 				<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
 				<Route path='/kakaoIdFirstEdit/:userid' element={<KakaoIdFirstEdit />} />
-
+				<Route path='/findaccount/' element={<FindAccount />} />
 
 
 

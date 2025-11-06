@@ -179,6 +179,52 @@ public class MemberController {
     }
     /*----------------카카오로그인끝----------------------------*/
 
+    /// ///////////////// 아이디 비번 찾기 ///////////////////
+    @PostMapping("/findid")
+    public HashMap<String, Object> findid( @RequestParam("name") String name,  @RequestParam("phone") String phone ) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMemberByNamePhone( name, phone  );
+        System.out.println( name +  phone );
+        if( member == null ){
+            result.put("msg", "notok");
+        }else{
+            result.put("msg", "ok");
+            result.put("userid", member.getUserid());
+        }
+        return result;
+    }
+
+    private int number;
+
+    @PostMapping("/sendMail")
+    public HashMap<String, Object> sendMail(@RequestParam("email") String email){
+        HashMap<String, Object> result = new HashMap<>();
+        number = ms.sendMail(email);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/confirmCode")
+    public HashMap<String, Object> confirmCode(@RequestParam("usercode") String usercode){
+        HashMap<String, Object> result = new HashMap<>();
+        if( Integer.parseInt( usercode ) == number ){
+            result.put("msg", "ok");
+        }else{
+            result.put("msg", "notok");
+        }
+        return result;
+    }
+
+
+    @PostMapping("/resetPwd")
+    public HashMap<String, Object> resetPwd( @RequestParam("pwd") String pwd, @RequestParam("userid") String userid){
+        HashMap<String, Object> result = new HashMap<>();
+        ms.resetPw(userid, pwd);
+        result.put("msg", "ok");
+        return result;
+    }
+    /// ///////////////// 아이디 비번 찾기 끝 ///////////////////
+
 
 
     /*---------------- 토큰 만료시 재발급 --------------------------*/

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import jaxios from '../../util/jwtutil';
 import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
+import '../../style/sh_common.css'
 
 const settings = {
     dot:false,
@@ -51,18 +52,20 @@ function ShMain() {
  
 
         <div className='menuWrap'>
-            <div className='list'>
-                {
-                  categoryArr.map((category, i)=> {
-                    return (
+          {
+            categoryArr.map((category, i)=> {
+              return (
+                <div className='list'>
                       <Link key={i} to={`/sh-page/${category.category_id}`}>
                         <img src={`${baseURL}/sh_img/${i}.png`} alt={category.category_name} />
+                        <span className='tit'>{category.category_name}</span>
                       </Link>
-                    )
-                  })
-                }
+                </div>
+              )
+            })
+      
+          }
                 
-            </div>
         </div>
 
         <div className='shPostWrap'>

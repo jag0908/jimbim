@@ -36,6 +36,7 @@ public class MemberService {
     public void kakaoIdFirstEdit(Member member) {
         Member updateMem = mr.findByUserid( member.getUserid());
 
+        updateMem.setEmail(member.getEmail());
         updateMem.setPhone(member.getPhone());
         updateMem.setProfileImg(member.getProfileImg());
         updateMem.setProfileMsg(member.getProfileMsg());

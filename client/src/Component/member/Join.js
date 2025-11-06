@@ -20,10 +20,10 @@ function Join() {
     const [rrn1, setRrn1] = useState('');
     const [rrn2, setRrn2] = useState('');
 
-    const [profile_img, setProfile_img] = useState('')
+    const [profileImg, setProfileImg] = useState('')
     const [imgStyle, setImgStyle] = useState({display:"none"});
 
-    const [profile_msg, setProfile_msg] = useState('')
+    const [profileMsg, setProfileMsg] = useState('')
 
     const [terms_agree, setTerms_agree] = useState('N')
     const [personal_agree, setPersonal_agree] = useState('N')
@@ -53,7 +53,7 @@ function Join() {
         axios.post( '/api/member/fileupload', formData)
         .then((result)=>{
             console.log(result)
-            setProfile_img(`${baseURL}/profile_img/${result.data.filename}`);
+            setProfileImg(`${baseURL}/profile_img/${result.data.filename}`);
             setImgStyle({display:"block", width:"200px"});
         }).catch((err)=>{console.error(err)})
     }
@@ -84,7 +84,7 @@ function Join() {
         const phone = phone1+"-"+phone2+"-"+phone3
         const rrn = rrn1+"-"+rrn2+"******"
 
-        axios.post('/api/member/join', {userid, pwd, name, email, phone, rrn, profile_img, profile_msg, terms_agree, personal_agree})
+        axios.post('/api/member/join', {userid, pwd, name, email, phone, rrn, profileImg, profileMsg, terms_agree, personal_agree})
         .then(()=>{ 
             alert('회원가입이 완료되었습니다. 로그인하세요');
             navigate('/login')
@@ -155,12 +155,12 @@ function Join() {
             </div>
             <div className='field'>
                 <label>미리보기</label>
-                <div><img src={profile_img} style={imgStyle}/></div>
+                <div><img src={profileImg} style={imgStyle}/></div>
             </div>
             <div className='field'>
                 <label>소개글</label>
-                <input type="text" style={{flex:'2'}} value={profile_msg} onChange={(e)=>{
-                    setProfile_msg( e.currentTarget.value )
+                <input type="text" style={{flex:'2'}} value={profileMsg} onChange={(e)=>{
+                    setProfileMsg( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>

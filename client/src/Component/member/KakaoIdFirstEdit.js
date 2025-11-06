@@ -20,8 +20,8 @@ function KakaoIdFirstEdit() {
     const [phone3, setPhone3] = useState('');
     const [rrn1, setRrn1] = useState('');
     const [rrn2, setRrn2] = useState('');
-    const [profile_img, setProfile_img] = useState('')
-    const [profile_msg, setProfile_msg] = useState('')
+    const [profileImg, setProfileImg] = useState('')
+    const [profileMsg, setProfileMsg] = useState('')
     
     const [terms_agree, setTerms_agree] = useState('N')
     const [personal_agree, setPersonal_agree] = useState('N')
@@ -34,7 +34,10 @@ function KakaoIdFirstEdit() {
         ()=>{
             axios.post('/api/member/getKakaoMember', null, {params:{ userid}})
             .then((result)=>{
+                console.log(result.data)
                 setKakaoMember(result.data.member)
+                setName(result.data.member.name)
+                setProfileImg(result.data.member.profileImg)
             })
             .catch((err)=>{console.error(err)})
 
@@ -58,7 +61,7 @@ function KakaoIdFirstEdit() {
         const phone = phone1+"-"+phone2+"-"+phone3
         const rrn = rrn1+"-"+rrn2+"******"
 
-        await axios.post('/api/member/kakaoIdFirstEdit', {userid, email, phone, rrn, profile_img, profile_msg, terms_agree, personal_agree })
+        await axios.post('/api/member/kakaoIdFirstEdit', {userid, email, phone, rrn, profileImg, profileMsg, terms_agree, personal_agree })
         .then((result)=>{
             alert('정보 입력이 완료되었습니다');
         } ).catch((err)=>{console.error(err)})
@@ -111,12 +114,12 @@ function KakaoIdFirstEdit() {
             </div>
             <div className='field'>
                 <label>프로필사진</label>
-                <div><img src={kakaoMember.profileImg}/></div>
+                <div><img src={profileImg}/></div>
             </div>
             <div className='field'>
                 <label>소개글</label>
-                <input type="text" style={{flex:'2'}} value={profile_msg} onChange={(e)=>{
-                    setProfile_msg( e.currentTarget.value )
+                <input type="text" style={{flex:'2'}} value={profileMsg} onChange={(e)=>{
+                    setProfileMsg( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>

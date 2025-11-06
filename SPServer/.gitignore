@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 src/main/resources/application.yml
 src/main/webapp/
+!src/main/webapp/profile_img/dummy.png
 
 ### STS ###
 .apt_generated

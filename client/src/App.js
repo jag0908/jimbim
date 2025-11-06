@@ -3,6 +3,7 @@ import Index from './Component/Index'
 import Login from './Component/member/Login'
 import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
+import ShMain from './Component/sh-page/ShMain'
 
 function App() {
     return (
@@ -12,6 +13,12 @@ function App() {
 				<Route path='/login' element={<Login />} />
 				<Route path='/join' element={<Join />} />
 				<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
+
+
+
+
+
+				<Route path="/sh-page" element={<ShMain />} />
 			</Routes>
 		</div>
     );

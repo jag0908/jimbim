@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("sh-page")
+@RequestMapping("/sh-page")
 public class ShController {
 
     @Autowired

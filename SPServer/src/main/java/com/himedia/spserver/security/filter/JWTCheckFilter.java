@@ -40,7 +40,13 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String rrn = (String) claims.get("rrn");
             String terms_agree = (String) claims.get("terms_agree");
             String personal_agree = (String) claims.get("personal_agree");
-            Timestamp indate = (Timestamp) claims.get("indate");
+            Object indateObj = claims.get("indate");
+            Timestamp indate = null;
+            if (indateObj instanceof Long) {
+                indate = new Timestamp((Long) indateObj);
+            } else if (indateObj instanceof Integer) {
+                indate = new Timestamp(((Integer) indateObj).longValue());
+            }
             Integer blacklist = (Integer) claims.get("blacklist");
             List<String> roleNames = (List<String>) claims.get("roleNames");
 
@@ -77,6 +83,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         // 로그인 없이 동작하게할 주소를 여기에 추가
 
+        if(path.startsWith("/profile_img/"))
+            return true;
+
         if(path.startsWith("/member/login"))
             return true;
 
@@ -90,6 +99,15 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
 
         if(path.startsWith("/member/kakaoLogin"))
+            return true;
+
+        if(path.startsWith("/member/getKakaoMember"))
+            return true;
+
+        if(path.startsWith("/member/kakaoIdFirstEdit"))
+            return true;
+
+        if(path.startsWith("/member/fileupload"))
             return true;
 
         if(path.startsWith("/member/refresh"))

@@ -7,5 +7,5 @@ import java.util.ArrayList;
 
 public interface ShRepository extends JpaRepository<SH_post, Integer
         > {
-    ArrayList<SH_post> findAllByPost_id();
+    ArrayList<SH_post> findAll();
 }

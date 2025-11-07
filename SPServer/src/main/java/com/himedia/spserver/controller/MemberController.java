@@ -7,6 +7,7 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
 import com.himedia.spserver.service.MemberService;
+import com.himedia.spserver.service.S3UploadService;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,22 +56,37 @@ public class MemberController {
 
     /// /////////////////// 파일업로드 /////////////////////////////
 
+//    @Autowired
+//    ServletContext sc;
+//
+//    @PostMapping("/fileupload")
+//    public HashMap<String, Object> fileUpload(  @RequestParam("image") MultipartFile file ) {
+//        HashMap<String , Object> result = new HashMap<>();
+//        String path = sc.getRealPath("/profile_img");
+//        Calendar today = Calendar.getInstance();
+//        long dt = today.getTimeInMillis();
+//        String filename = file.getOriginalFilename();
+//        String f1 = filename.substring(0, filename.lastIndexOf("."));
+//        String f2 = filename.substring(filename.lastIndexOf("."));
+//        String uploadPath = path + "/" + f1 + dt + f2;
+//        try {
+//            file.transferTo( new File(uploadPath) );
+//            result.put("filename", f1 + dt + f2);
+//        } catch (IllegalStateException | IOException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
     @Autowired
-    ServletContext sc;
+    S3UploadService sus;
 
     @PostMapping("/fileupload")
     public HashMap<String, Object> fileUpload(  @RequestParam("image") MultipartFile file ) {
         HashMap<String , Object> result = new HashMap<>();
-        String path = sc.getRealPath("/profile_img");
-        Calendar today = Calendar.getInstance();
-        long dt = today.getTimeInMillis();
-        String filename = file.getOriginalFilename();
-        String f1 = filename.substring(0, filename.lastIndexOf("."));
-        String f2 = filename.substring(filename.lastIndexOf("."));
-        String uploadPath = path + "/" + f1 + dt + f2;
         try {
-            file.transferTo( new File(uploadPath) );
-            result.put("filename", f1 + dt + f2);
+            String uploadFilePathName = sus.saveFile( file );
+            result.put("image", file.getOriginalFilename() );
+            result.put("filename", uploadFilePathName);
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }

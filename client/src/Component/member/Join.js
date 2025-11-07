@@ -52,8 +52,7 @@ function Join() {
         formData.append('image', e.target.files[0])
         axios.post( '/api/member/fileupload', formData)
         .then((result)=>{
-            console.log(result)
-            setProfileImg(`${baseURL}/profile_img/${result.data.filename}`);
+            setProfileImg(result.data.filename);
             setImgStyle({display:"block", width:"200px"});
         }).catch((err)=>{console.error(err)})
     }

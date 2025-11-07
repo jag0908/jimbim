@@ -22,7 +22,7 @@ input, textarea, select {border: 1px solid #999; border-radius: 6px;}
 
 
 /* 글쓰기(내물건팔기) */
-.shWrite {display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin: 0 auto; width: 100%; max-width: 638px; height: 100vh;}
+.shWrite {display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin: 0 auto 0; width: 100%; max-width: 638px; height: 100vh;}
 .shWrite .writeWrap {display: flex; flex-direction: column; gap: 22px; margin: 0 auto; padding: 40px 34px; width: 100%; border: 1px solid #999; border-radius: 12px; box-sizing: border-box; overflow: auto;}
 .shWrite .mainTitle {font-size: 26px; font-weight: 500;}
 .shWrite .writeWrap .inputWrap {display: flex; flex-direction: column;}

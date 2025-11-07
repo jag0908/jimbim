@@ -11,14 +11,22 @@ import ShMain from './Component/sh-page/ShMain'
 import Community from './Component/community/Community'
 import CommunityView from './Component/community/CommunityView'
 import UpdateCommunity from './Component/community/UpdateCommunity'
+import ShWrite from './Component/sh-page/ShWrite'
+
+import Header from './Component/Header'
+import Footer from './Component/Footer'
 
 function App() {
     return (
 		<div className="container">
+			<Header />
 			<Routes>
                 <Route path='/' element={<Index />} />
 				<Route path='/login' element={<Login />} />
 				<Route path='/join' element={<Join />} />
+
+				<Route path='/sh-page' element={<ShMain />} />
+				<Route path='/sh-page/sh-write' element={<ShWrite />} />
 
 				<Route path='/community' element={<Community />} />
 				<Route path='/communityView' element={<CommunityView />} />
@@ -29,6 +37,7 @@ function App() {
         		<Route path='/style/:id' element={<StyleDetail />} />
         		<Route path='/sh-page' element={<ShMain />} />	 */}
 			</Routes>
+			<Footer />
 		</div>
     );
 }

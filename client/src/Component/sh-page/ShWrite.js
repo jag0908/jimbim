@@ -1,11 +1,21 @@
 import axios from 'axios';
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import jaxios from '../../util/jwtutil';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import '../../style/sh_common.css'
+import { useSelector } from 'react-redux';
 
 function ShWrite() {
+    const loginUser = useSelector(state=>state.user);
     const navigate = useNavigate();
+
+    const [title, setTitle] = useState('');
+    const [categoryId, setCategoryId] = useState('0');
+    const [content, setContent] = useState('');
+    const [price, setPrice] = useState('');
+    const [directYN, setDirectYN] = useState('N');
+    const [deliveryYN, setDeliveryYN] = useState('N');
+    const [deliveryPrice, setDeliveryPrice] = useState('');
 
     const [deliveryModal, setDeliveryModal] = useState(false);
     const [categoryArr, setCategoryArr] = useState([]);
@@ -59,14 +69,33 @@ function ShWrite() {
         setPreviewUrls(newUrls);
     };
 
-    // 파일 업로드시 formData 추가
-    function createFormData() {
+    // 파일 업로드시 formData 추가 및 ajax
+  
+    function writePost() {
         const formData = new FormData();
         fileArr.forEach((file, i)=> {
-            formData.append(`file_${i}`, file);
+            formData.append(`files`, file);
         })
+
+        formData.append("member_id", loginUser.member_id);
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("price", price);
+        formData.append("categoryId", categoryId);
+        formData.append("directYN", directYN);
+        formData.append("deliveryYN", deliveryYN);
+        if (deliveryYN === "Y") {
+            formData.append("deliveryPrice", deliveryPrice);
+        }
+
         const formDataObj = Object.fromEntries(formData.entries());
         console.log(formDataObj);
+
+        jaxios.post("/api/sh-page/sh-write", formData)
+            .then((result)=> {
+                alert("작성 완료되었습니다!");
+                console.log(result.data);
+            }).catch(err=>console.error(err));
     }
 
     useEffect(()=> {
@@ -98,7 +127,7 @@ function ShWrite() {
             </div>
             <div className='selectWrap'>
                 <h4 className='tit'>카테고리</h4>
-                <select id='dataCategory'>
+                <select id='dataCategory' value={categoryId} onChange={(e)=> {setCategoryId(e.currentTarget.value)}}>
                     {
                         categoryArr.map((category, i)=> {
                             return(
@@ -112,28 +141,28 @@ function ShWrite() {
             </div>
             <div className='inputWrap'>
                 <h4 className='tit'>제목</h4>
-                <input id='dataTitle' type='text' placeholder='아이폰17 512G 팝니다.' />
+                <input id='dataTitle' type='text' placeholder='아이폰17 512G 팝니다.' value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
             </div>
             <div className='inputWrap'>
                 <h4 className='tit'>자세한 설명</h4>
-                <textarea id='dataTTA' type='text' placeholder='아이폰17 512G 팝니다.'>
+                <textarea id='dataTTA' type='text' placeholder='아이폰17 512G 팝니다.' value={content} onChange={(e) => setContent(e.currentTarget.value)}>
 
                 </textarea>
             </div>
             <div className='inputWrap'>
                 <h4 className='tit'>가격</h4>
-                <input id='dataPrice' type='text' className='inpPrice' placeholder='3,000' />
+                <input id='dataPrice' type='text' className='inpPrice' placeholder='3,000' value={price} onChange={(e) => setPrice(e.currentTarget.value)} />
             </div>
             <div className='inputWrap radio'>
                 <h4 className='tit'>직거래 유무</h4>
                 <div className='radioBox'>
                     <label htmlFor="dataDirectY">가능</label>
-                    <input id='dataDirectY' name='directYN' type='radio' />
+                    <input id='dataDirectY' name='directYN' type='radio' value="Y" onChange={(e) => setDirectYN(e.currentTarget.value)} checked={directYN === 'Y'} />
                 </div>
 
                 <div className='radioBox'>
                     <label htmlFor="dataDirectN">불가능</label>
-                    <input id='dataDirectN' name='directYN' type='radio' defaultChecked  />
+                    <input id='dataDirectN' name='directYN' type='radio' value="N" onChange={(e) => setDirectYN(e.currentTarget.value)} checked={directYN === 'N'} />
                 </div>
             </div>
             <div className='inputWrap radio'>
@@ -141,21 +170,21 @@ function ShWrite() {
 
                 <div className='radioBox'>
                     <label htmlFor="dataDeliveryY">가능</label>
-                    <input id='dataDeliveryY' name='deliveryYN' type='radio' onChange={()=> {deliveryFnc(this);}} />
+                    <input id='dataDeliveryY' name='deliveryYN' type='radio' value="Y" onChange={(e)=> {deliveryFnc(); setDeliveryYN(e.currentTarget.value)}} checked={deliveryYN === "Y"} />
                 </div>
 
                 <div className='radioBox'>
                     <label htmlFor="dataDeliveryN">불가능</label>
-                    <input id='dataDeliveryN' name='deliveryYN' type='radio' onChange={()=> {deliveryFnc(this);}} defaultChecked  />
+                    <input id='dataDeliveryN' name='deliveryYN' type='radio' value="N" onChange={(e)=> {deliveryFnc(); setDeliveryYN(e.currentTarget.value);}} checked={deliveryYN === "N"}  />
                 </div>
             </div>
             <div className={`inputWrap deliveryModal ${deliveryModal? 'display-block':'display-none'}`}>
                 <h4 className='tit'>택배비</h4>
-                <input id='dataDlvPrice' type='text' className='inpPrice' placeholder='3,000' />
+                <input id='dataDlvPrice' type='text' className='inpPrice' placeholder='3,000' value={deliveryPrice} onChange={(e)=> {setDeliveryPrice(e.currentTarget.value)}} />
             </div>
         </div>
         <div className='btnWrap'>
-            <button className='navBtn pointBtn'>작성 완료</button>
+            <button className='navBtn pointBtn' onClick={()=> {writePost();}}>작성 완료</button>
             <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
         </div>
     </div>

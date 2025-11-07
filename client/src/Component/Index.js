@@ -19,6 +19,7 @@ function Index() {
                 <Link to={"/"}>커뮤니티</Link>
                 <Link to={"/"}>STYLE</Link>
             </div>
+           
         </article>
     )
 }

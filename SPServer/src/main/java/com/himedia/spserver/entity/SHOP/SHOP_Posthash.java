@@ -1,6 +1,5 @@
 package com.himedia.spserver.entity.SHOP;
 
-import com.himedia.spserver.entity.Comunity.C_post;
 import jakarta.persistence.*;
 import lombok.Data;
 

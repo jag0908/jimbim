@@ -263,7 +263,7 @@ public class MemberController {
 
             String newRefreshToken = "";
             int exp = (Integer)claims.get("exp");
-            java.util.Date expDate = new java.util.Date( (long)exp * (1000 ));//밀리초로 변환
+            java.util.Date expDate = new java.util.Date( (long)exp * (1000));//밀리초로 변환
             long gap = expDate.getTime() - System.currentTimeMillis();//현재 시간과의 차이 계산
             long leftMin = gap / (1000 * 60); //분단위 변환
             if(  leftMin < 60  )  // 한시간 미만으로 남았으면 토큰 교체

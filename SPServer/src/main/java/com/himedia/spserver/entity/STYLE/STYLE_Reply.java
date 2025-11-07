@@ -17,9 +17,9 @@ public class STYLE_Reply {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    Member memberid;
 
     @ManyToOne
     @JoinColumn(name = "spost_id")
-    STYLE_post spost_id;
+    STYLE_post spost;
 }

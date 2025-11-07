@@ -1,4 +1,4 @@
-package com.himedia.spserver.entity.Comunity;
+package com.himedia.spserver.entity.Community;
 
 import com.himedia.spserver.entity.File;
 import jakarta.persistence.*;
@@ -19,6 +19,7 @@ public class C_post {
     private String c_image;
     private String c_like;
     private String c_reply;
+    private Integer readcount;
 
     @ManyToOne
     @JoinColumn(name = "file_id")

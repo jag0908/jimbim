@@ -34,10 +34,10 @@ function App() {
 				<Route path='/mypage/' element={<Mypage />} />
 				<Route path='/mypage/addresslist' element={<AddressList />} />
 				
+				{/* <Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
 				<Route path='/style' element={<StyleFeed />} />
         		<Route path='/style/:id' element={<StyleDetail />} />
-        		<Route path='/sh-page' element={<ShMain />} />
-	
+        		<Route path='/sh-page' element={<ShMain />} />	 */}
 			</Routes>
 		</div>
     );

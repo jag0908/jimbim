@@ -1,0 +1,129 @@
+import React ,{useState, useEffect} from 'react'
+import { useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import jaxios from '../../util/jwtutil';
+
+const UpdateCommunity = () => {
+    const loginUser = useSelector( state=>state.user)
+
+    const [ userid, setUserid ] = useState('');
+    const [ email, setEmail ] = useState('');
+    const [ title, setTitle ] = useState('');
+    const [ content, setContent ] = useState('');
+    const [ pass, setPass ] = useState('');
+    const [ imgSrc, setImgSrc ] = useState('');
+    const [ image, setImage ] = useState('');
+    const [ savefilename, setSavefilename ] = useState('');
+    const navigate = useNavigate();
+    const {num} = useParams();
+    const [ newImgSrc, setNewImgSrc ] = useState('')
+    const [ newImgStyle, setNewImgStyle ] = useState({display:'none'})
+
+    useEffect(
+        ()=>{
+            if( !loginUser || !loginUser.userid ){
+                alert('로그인이 필요한 서비스 입니다');
+                navigate('/');
+            }
+            // 게시물 조회
+            jaxios.get(`/api/community/getCommunity/${num}`)
+            .then((result)=>{
+                setUserid(result.data.community.userid)
+                setEmail(result.data.community.email)
+                setTitle(result.data.community.title)
+                setContent(result.data.community.content)
+                setImgSrc(`http://localhost:8070/images/${result.data.community.savefilename}`)
+                setImage(result.data.community.image)
+                setSavefilename(result.data.community.savefilename)
+            }).catch((err)=>{console.error(err)})
+
+        }, []
+    );
+
+
+    function onFileUpload(e){
+        const formData = new FormData();
+        formData.append('image', e.target.files[0]);
+        jaxios.post('/api/community/fileupload', formData )
+        .then((result)=>{
+            setSavefilename(result.data.savefilename);
+            setImage(result.data.image);
+            setNewImgSrc( `http://localhost:8070/images/${result.data.savefilename}` );
+            setNewImgStyle({display:'block', width:'300px'})
+        })
+        .catch((err)=>{console.error(err);})
+    }
+
+
+    function onsubmit(){
+        // 게시글 수정
+        if( !email ){ return alert('이메일을 입력하세요') }
+        if( !pass ){ return alert('수정 비밀번호를 입력하세요') }
+        if( !title ){ return alert('제목을 입력하세요') }
+        if( !content ){ return alert('내용을 입력하세요') }
+
+        jaxios.post('/api/community/updateCommunity', {num, userid, email, pass, title, content, image, savefilename})
+        .then((result)=>{
+            if( result.data.msg != 'ok' ){
+                alert('비밀번호가 맞지 않습니다')
+            }else{
+                alert('게시물이 수정되었습니다')
+                navigate(`/communityView/${num}`)
+            }
+        }).catch((err)=>{console.error(err)})
+    }
+
+
+    return (
+        <div className='writeCommunity'>
+            <h2>COMMUNITY UPDATE FORM</h2>
+            <div className='field'>
+                <label>작성자</label><input type="text" value={userid} readOnly/>
+            </div>
+            <div className='field'>
+                <label>이메일</label><input type="text"  value={email} onChange={
+                    (e)=>{ setEmail(e.currentTarget.value) } } />
+            </div>
+            <div className='field'>
+                <label>PASS</label><input type="password"  value={pass} onChange={
+                    (e)=>{ setPass(e.currentTarget.value) }
+                }/>
+            </div>
+            <div className='field'>
+                <label>제목</label>
+                <input type="text" value={title} onChange={
+                    (e)=>{ setTitle( e.currentTarget.value ) }
+                }/>
+            </div>
+            <div className='field'>
+                <label>내용</label>
+                <textarea rows="10" value={content} onChange={
+                    (e)=>{ setContent( e.currentTarget.value ) }
+                }></textarea>
+            </div>
+
+            <div className='field'>
+                <label>기존 이미지</label>
+                <div>
+                    <img src={imgSrc} style={{width:"200px"}} alt=""/><br />
+                    <input type='file' onChange={(e)=>{ onFileUpload(e); }} />
+                </div>
+            </div>
+
+            <div className='field'>
+                <label>수정 이미지</label>
+                <div>
+                    <img src={newImgSrc} style={newImgStyle} alt=""/><br />
+                </div>
+            </div>
+
+            <div className='btns'>
+                <button onClick={()=>{ onsubmit(); }}>수정완료</button>
+                <button onClick={()=>{ navigate(`/communityView/${num}`); }}>돌아가기</button>
+            </div>
+        </div>
+    )
+}
+
+export default UpdateCommunity

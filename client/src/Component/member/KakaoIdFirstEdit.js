@@ -202,6 +202,7 @@ function KakaoIdFirstEdit() {
             </div>
             <div className="btns">
                 <button onClick={()=>{onSubmit()}}>완료</button>
+                <button onClick={()=>{navigate('/login')}}>취소</button>
             </div>
         </article>
     )

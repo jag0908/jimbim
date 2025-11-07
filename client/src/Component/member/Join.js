@@ -57,6 +57,10 @@ function Join() {
             setImgStyle({display:"block", width:"200px"});
         }).catch((err)=>{console.error(err)})
     }
+    function profileImgCancel(){
+        setImgStyle({display:"none"})
+        setProfileImg('')
+    }
     
     function agree(checked, box){
         if(box=="terms"){
@@ -199,9 +203,10 @@ function Join() {
                 <label>프로필사진</label>
                 <input type="file" onChange={(e)=>{fileUpload(e)}}/>
             </div>
-            <div className='field'>
+            <div className='field' style={imgStyle}>
                 <label>미리보기</label>
-                <div><img src={profileImg} style={imgStyle}/></div>
+                <div><img src={profileImg} /></div>
+                <button onClick={()=>{profileImgCancel()}}>취소</button>
             </div>
             <div className='field'>
                 <label>소개글</label>

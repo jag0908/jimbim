@@ -53,7 +53,7 @@ public class ShService {
         sr.save(post);
     }
 
-    public void insertFiles(List<MultipartFile> files) {
+//    public void insertFiles(List<MultipartFile> files) {
 
 //            for(MultipartFile file : files) {
 //
@@ -64,7 +64,7 @@ public class ShService {
 //                sfr.save(file);
 //            }
 
-        }
+//        }
 
-    }
+
 }

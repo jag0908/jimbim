@@ -1,0 +1,54 @@
+* {margin: 0; padding: 0;}
+p, span, label, h1, h2, h3, h4, h5, a {font-weight: 400; text-decoration: none; color: #000;}
+input, textarea, select, button {border: none; background: transparent; outline: none; resize: none;}
+
+input, textarea, select {border: 1px solid #999; border-radius: 6px;}
+
+.display-block {display: block !important;}
+.display-none {display: none !important;}
+
+
+
+
+/* 메인페이지(전체 물건리스트) */
+.shMain {display: flex; flex-direction: column;}
+.shMain .menuWrap {display: flex; flex-flow: wrap; gap: 15px 30px; margin: 0 auto; width: 1024px;}
+.shMain .list {width: calc(10% - 27px);}
+.shMain .list > a {display: flex; flex-direction: column; align-items: center;}
+.shMain .list > a > img {width: 100%; height: 100%; object-fit: cover;}
+
+.shMain .shPostWrap {display: flex; flex-flow: wrap; gap: 15px 30px; margin: 60px auto 0; width: 1024px;}
+
+
+
+/* 글쓰기(내물건팔기) */
+.shWrite {display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin: 0 auto 0; width: 100%; max-width: 638px; height: 100vh;}
+.shWrite .writeWrap {display: flex; flex-direction: column; gap: 22px; margin: 0 auto; padding: 40px 34px; width: 100%; border: 1px solid #999; border-radius: 12px; box-sizing: border-box; overflow: auto;}
+.shWrite .mainTitle {font-size: 26px; font-weight: 500;}
+.shWrite .writeWrap .inputWrap {display: flex; flex-direction: column;}
+.shWrite .inputWrap .tit {flex-shrink: 0; padding-bottom: 6px; width: 100%; font-size: 16px; font-weight: 600; color: #555;}
+.shWrite .writeWrap .inputWrap > label {font-size: 16px; color: #000;}
+.shWrite .writeWrap .inputWrap > input[type=text] {padding: 2px 10px; height: 36px; box-sizing: border-box;}
+.shWrite .writeWrap .inputWrap > .inpPrice {width: 82px;}
+.shWrite .writeWrap .inputWrap > textarea {padding: 10px 10px; height: 160px; box-sizing: border-box;}
+
+.shWrite .writeWrap .inputWrap.radio {flex-flow: wrap; gap: 0px 20px;}
+.shWrite .inputWrap .radioBox {display: flex; align-items: center; gap: 6px;}
+.shWrite .inputWrap .radioBox > label {cursor: pointer;}
+.shWrite .inputWrap .radioBox > input[type=radio] {cursor: pointer;}
+
+.shWrite .writeWrap .inputWrap.file {flex-direction: row; align-items: center; gap: 16px; border: none;}
+.shWrite .writeWrap .inputWrap.file > label {display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; width: 72px; height: 72px; border: 1px solid #555; border-radius: 12px; box-sizing: border-box; font-size: 30px; cursor: pointer; }
+.shWrite .writeWrap .inputWrap.file > input[type=file].inpFile {display: none;}
+.shWrite .writeWrap .inputWrap.file > label > span {font-size: 12px; color: #999;}
+.shWrite .writeWrap .inputWrap.file .previewContainer {display: flex; align-items: center; gap: 12px;}
+.shWrite .writeWrap .inputWrap.file .previewContainer .imgBox {position: relative; width: 72px; height: 72px;}
+.shWrite .writeWrap .inputWrap.file .previewContainer .imgBox > img {width:100%; height: 100%; border: 1px solid #999; object-fit: cover; border-radius: 12px; overflow: hidden;}
+.shWrite .writeWrap .inputWrap.file .previewContainer .removeBtn {display: flex; justify-content: center; align-items: center; position: absolute; bottom: -8px; right: -8px; width: 20px; height: 20px; background: #fff; border-radius: 50%; border: 1px solid #555; font-size: 12px; font-weight: 600; cursor: pointer;}
+
+.shWrite .writeWrap .selectWrap > .tit {padding-bottom: 6px;}
+.shWrite .writeWrap .selectWrap > select {padding: 0 6px; width: auto; height: 36px; box-sizing: border-box; font-weight: 600; color: #555;}
+
+.shWrite .btnWrap {display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 0 0px; width: 100%; box-sizing: border-box;}
+.shWrite .btnWrap .navBtn {padding: 0 12px; min-width: 64px; height: 36px; border: 1px solid #999; border-radius: 6px; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #555;}
+.shWrite .btnWrap .pointBtn {background-color: #555; color: #fff;}

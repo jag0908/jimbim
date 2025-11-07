@@ -1,6 +1,7 @@
 package com.himedia.spserver.security.handler;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.himedia.spserver.dto.MemberDTO;
 import com.himedia.spserver.security.util.JWTUtil;
 import jakarta.servlet.ServletException;
@@ -30,7 +31,9 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         claims.put("refreshToken", refreshToken);
 
         // 클라이언트로 전송합니다
-        Gson gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Gson gson = gsonBuilder.create();
         String jsonStr = gson.toJson(claims);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

@@ -3,9 +3,24 @@ import Index from './Component/Index'
 import Login from './Component/member/Login'
 import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
+import KakaoIdFirstEdit from './Component/member/KakaoIdFirstEdit'
+import FindAccount from './Component/member/FindAccount'
+import Mypage from './Component/mypage/Mypage'
+import AddressList from './Component/mypage/AddressList'
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
-import StyleWrite from './Component/StyleFeed/StyleWrite'
+import ShMain from './Component/sh-page/ShMain'
+import Header from './Component/Header'
+import Footer from './Component/Footer'
+import ShWrite from './Component/sh-page/ShWrite'
+
+/*
+import Community from './Component/community/Community'
+import CommunityView from './Component/community/CommunityView'
+import UpdateCommunity from './Component/community/UpdateCommunity'
+
+*/
+
 
 function App() {
     return (

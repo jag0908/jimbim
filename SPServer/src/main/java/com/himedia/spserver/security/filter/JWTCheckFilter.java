@@ -87,6 +87,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/profile_img/"))
             return true;
 
+        if(path.startsWith("/sh_img/"))
+            return true;
+
         if(path.startsWith("/member/login"))
             return true;
 
@@ -109,6 +112,18 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
 
         if(path.startsWith("/member/fileupload"))
+            return true;
+
+        if(path.startsWith("/member/findid"))
+            return true;
+
+        if(path.startsWith("/member/confirmCode"))
+            return true;
+
+        if(path.startsWith("/member/sendMail"))
+            return true;
+
+        if(path.startsWith("/member/resetPwd"))
             return true;
 
         if(path.startsWith("/member/refresh"))

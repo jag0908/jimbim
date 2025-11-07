@@ -1,6 +1,7 @@
 package com.himedia.spserver.entity.Community;
 
 import com.himedia.spserver.entity.File;
+import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ public class C_post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cpost_id;
 
-    private Integer cpost_num;
+    private Integer cpostNum;
     private String title;
     private String content;
     private Timestamp indate;
@@ -25,6 +26,10 @@ public class C_post {
     @ManyToOne
     @JoinColumn(name = "file_id")
     File file;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    Member member;
 
 
 }

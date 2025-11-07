@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
@@ -7,46 +6,35 @@ import '../../style/Community.css';
 
 function Community() {
   const [communityList, setCommunity] = useState([]);
+  const [activeMenu, setActiveMenu] = useState('자유게시판');
   const navigate = useNavigate();
   const loginUser = useSelector((state) => state.user);
   const [paging, setPaging] = useState({});
   const [pages, setPages] = useState([]);
 
+  const menuList = [
+    '자유게시판',
+    '질문게시판',
+    '살말',
+    '팔말',
+    '시세',
+    '정품 감정',
+    '핫딜',
+  ];
+
   useEffect(() => {
+    fetchCommunityList(1, activeMenu);
+  }, [activeMenu]);
+
+  function fetchCommunityList(page, menu) {
     jaxios
-      .get('/api/Community/getCommunity/1')
+      .get(`/api/Community/getCommunity/${page}`, { params: { category: menu } }) // 선택된 메뉴 기준 조회
       .then((result) => {
         setCommunity([...result.data.communityList]);
         setPaging(result.data.paging);
 
         const pageArr = [];
-        for (
-          let i = result.data.paging.beginPage;
-          i <= result.data.paging.endPage;
-          i++
-        ) {
-          pageArr.push(i);
-        }
-        setPages([...pageArr]);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
-  function onPageMove(p) {
-    jaxios
-      .get(`/api/Community/getCommunity/${p}`)
-      .then((result) => {
-        setCommunity([...result.data.communityList]);
-        setPaging(result.data.paging);
-        console.log('loginUser.accessToken : ' + loginUser.accessToken);
-        const pageArr = [];
-        for (
-          let i = result.data.paging.beginPage;
-          i <= result.data.paging.endPage;
-          i++
-        ) {
+        for (let i = result.data.paging.beginPage; i <= result.data.paging.endPage; i++) {
           pageArr.push(i);
         }
         setPages([...pageArr]);
@@ -56,10 +44,14 @@ function Community() {
       });
   }
 
+  function onPageMove(p) {
+    fetchCommunityList(p, activeMenu);
+  }
+
   function onCommunityView(num) {
     jaxios
-      .post('/api/Community/addReadCount', null, { params: { num } })
-      .then((result) => {
+      .post('/api/Community/addReadCount', null, { params: { cpost_num: num } })
+      .then(() => {
         navigate(`/communityView/${num}`);
       })
       .catch((err) => {
@@ -67,22 +59,28 @@ function Community() {
       });
   }
 
+  function handleMenuClick(menu) {
+    setActiveMenu(menu);
+  }
+
   return (
     <div className="community">
       {/* 사이드바 */}
       <div className="sidebar">
         <ul>
-          <li className="active">자유게시판</li>
-          <li>질문게시판</li>
-          <li>살말</li>
-          <li>팔말</li>
-          <li>시세</li>
-          <li>정품 감정</li>
-          <li>핫딜</li>
+          {menuList.map((menu, idx) => (
+            <li
+              key={idx}
+              className={activeMenu === menu ? 'active' : ''}
+              onClick={() => handleMenuClick(menu)}
+            >
+              {menu}
+            </li>
+          ))}
         </ul>
       </div>
 
-      {/* 게시글 목록 영역 */}
+      {/* 게시글 */}
       <div className="community-content">
         <div className="titlerow">
           <div className="titlecol">제목</div>
@@ -95,18 +93,11 @@ function Community() {
           return (
             <div className="row" key={idx}>
               <div className="col">{community.num}</div>
-              <div
-                className="col"
-                onClick={() => {
-                  onCommunityView(community.num);
-                }}
-              >
+              <div className="col" onClick={() => onCommunityView(community.num)}>
                 {community.title}
               </div>
               <div className="col">{community.userid}</div>
-              <div className="col">
-                {community.writedate.substring(0, 10)}
-              </div>
+              <div className="col">{community.writedate.substring(0, 10)}</div>
               <div className="col">{community.readcount}</div>
             </div>
           );
@@ -114,37 +105,23 @@ function Community() {
 
         <div id="paging" style={{ textAlign: 'center', padding: '10px' }}>
           {paging.prev ? (
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                onPageMove(paging.beginPage - 1);
-              }}
-            >
+            <span style={{ cursor: 'pointer' }} onClick={() => onPageMove(paging.beginPage - 1)}>
               ◀
             </span>
           ) : (
             <span></span>
           )}
-          {pages.map((page, idx) => {
-            return (
-              <span
-                style={{ cursor: 'pointer' }}
-                key={idx}
-                onClick={() => {
-                  onPageMove(page);
-                }}
-              >
-                &nbsp;{page}&nbsp;
-              </span>
-            );
-          })}
-          {paging.next ? (
+          {pages.map((page, idx) => (
             <span
               style={{ cursor: 'pointer' }}
-              onClick={() => {
-                onPageMove(paging.endPage + 1);
-              }}
+              key={idx}
+              onClick={() => onPageMove(page)}
             >
+              &nbsp;{page}&nbsp;
+            </span>
+          ))}
+          {paging.next ? (
+            <span style={{ cursor: 'pointer' }} onClick={() => onPageMove(paging.endPage + 1)}>
               ▶
             </span>
           ) : (

@@ -12,8 +12,8 @@ const initialState={
     phone:'',
     rrn:'',
     provider:'',
-    profile_img:'',
-    profile_msg:'',
+    profileImg:'',
+    profileMsg:'',
     terms_agree:'',
     personal_agree:'',
     blacklist:'',
@@ -35,8 +35,8 @@ const getLoginUser=()=>{
         member.email = decodeURIComponent( member.email );
         member.rrn = decodeURIComponent( member.rrn );
         member.provider = decodeURIComponent( member.provider );
-        member.profileImg = decodeURIComponent( member.profile_img );
-        member.profileMsg = decodeURIComponent( member.profile_msg );
+        member.profileImg = decodeURIComponent( member.profileImg );
+        member.profileMsg = decodeURIComponent( member.profileMsg );
         member.terms_agree = decodeURIComponent( member.terms_agree );
         member.personal_agree = decodeURIComponent( member.personal_agree );
         member.blacklist = decodeURIComponent( member.blacklist );
@@ -62,8 +62,8 @@ export const userSlice = createSlice(
                 state.phone = action.payload.phone;
                 state.rrn = action.payload.rrn;
                 state.provider = action.payload.provider;
-                state.profileImg = action.payload.profile_img;
-                state.profileMsg = action.payload.profile_msg;
+                state.profileImg = action.payload.profileImg;
+                state.profileMsg = action.payload.profileMsg;
                 state.terms_agree = action.payload.terms_agree;
                 state.personal_agree = action.payload.personal_agree;
                 state.blacklist = action.payload.blacklist;
@@ -81,8 +81,8 @@ export const userSlice = createSlice(
                 state.phone = '';
                 state.rrn = '';
                 state.provider = '';
-                state.profile_img = '';
-                state.profile_msg = '';
+                state.profileImg = '';
+                state.profileMsg = '';
                 state.terms_agree = '';
                 state.personal_agree = '';
                 state.blacklist = '';

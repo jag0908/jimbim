@@ -41,7 +41,7 @@ function Login() {
 
     return (
         <article>
-            <div>Login</div>
+            <div>로그인</div>
             <div className='subPage'>
                 <div className='memberform'>
                     <div className='field'>

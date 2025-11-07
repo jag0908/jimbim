@@ -143,7 +143,7 @@ function Join() {
     }
     return (
         <article>
-            <div>Join</div>
+            <div>회원가입</div>
             <div><span>*</span>은 필수 입력사항입니다</div>
             <div className='field'>
                 <label><span>*</span>ID</label>

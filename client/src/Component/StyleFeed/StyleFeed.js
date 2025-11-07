@@ -11,8 +11,9 @@ function StyleFeed() {
 
   useEffect(() => {
     axios.get('/api/style/posts').then(res => {
-      setPosts(res.data.posts);
-    });
+      setPosts(res.data);
+    })
+    .catch(err => console.error(err));
   }, []);
 
   const handleWriteClick = () => {
@@ -22,13 +23,6 @@ function StyleFeed() {
 
   return (
     <div className="feed-container">
-      <header className="feed-header">
-        <button>로그인</button>
-        <div>
-          <a href="/mypage">마이페이지</a> | <a href="/help">고객센터</a>
-        </div>
-      </header>
-
       <div className="hashtag-bar">
         #오늘뭐입지 #트렌드스타일 #봄코디 #컬러룩 #유행잇템
       </div>
@@ -60,8 +54,6 @@ function StyleFeed() {
           ))
         )}
       </div>
-
-      <footer className="feed-footer">© Style Platform</footer>
     </div>
   );
 }

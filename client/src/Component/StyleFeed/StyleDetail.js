@@ -23,7 +23,7 @@ if (post === null) {
     <div className="no-detail">
       ❌ 해당 게시글을 찾을 수 없습니다.
       <br />
-      <a href="/stylefeed">피드로 돌아가기</a>
+      <a href="/style">피드로 돌아가기</a>
     </div>
   );
 }

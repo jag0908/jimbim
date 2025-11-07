@@ -20,20 +20,26 @@
 
 .feed-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개 고정 */
   gap: 20px;
+  max-width: 1200px; /* 전체 가로 폭 제한 */
+  margin: 0 auto;
+  justify-items: center;
 }
 
 .feed-card {
-  border: 1px solid #eee;
-  border-radius: 12px;
+  width: 250px;  /* 카드 고정 너비 */
+  border: 1px solid #ddd;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
 }
 
 .post-img {
   width: 100%;
-  height: 220px;
+  height: 250px; /* 이미지 높이 고정 */
   object-fit: cover;
 }
 

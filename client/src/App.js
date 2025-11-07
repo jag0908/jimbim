@@ -17,7 +17,7 @@ function App() {
 				<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
 				<Route path='/style' element={<StyleFeed />} />
         		<Route path='/style/:id' element={<StyleDetail />} />
-				<Route path='/style/:writeid' element={<StyleWrite />} />
+				<Route path='/stylewrite' element={<StyleWrite />} />
 			</Routes>
 		</div>
     );

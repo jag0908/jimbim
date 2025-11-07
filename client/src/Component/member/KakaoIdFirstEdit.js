@@ -21,7 +21,8 @@ function KakaoIdFirstEdit() {
     const [rrn1, setRrn1] = useState('');
     const [rrn2, setRrn2] = useState('');
     const [profileImg, setProfileImg] = useState('')
-    const [imgStyle, setImgStyle] = useState({display:"none"});
+    const [preview, setPreview] = useState('')
+
     const [profileMsg, setProfileMsg] = useState('')
     
     const [terms_agree, setTerms_agree] = useState('N')
@@ -29,7 +30,7 @@ function KakaoIdFirstEdit() {
 
     const [kakaoMember, setKakaoMember] = useState({})
 
-    const baseURL = process.env.REACT_APP_BASE_URL;
+    const [file, setFile] = useState({});
 
     useEffect(
         ()=>{
@@ -44,18 +45,38 @@ function KakaoIdFirstEdit() {
 
         },[]
     )
-    function fileUpload(e){
-        const formData = new FormData()
-        formData.append('image', e.target.files[0])
-        axios.post( '/api/member/fileupload', formData)
+    function fileupload(e) {
+        /// 단일파일 업로드용으로 바꿨음 ///
+        if(!e.target) {return}
+
+        let newfile = e.target.files[0];
+        setFile(newfile)
+
+        // 브라우저에서 바로 미리보기 URL 생성
+        const url = URL.createObjectURL(newfile);
+
+        setPreview(url)
+    };
+    
+    // 파일 삭제
+    const handleRemoveFile = () => {
+        setFile({});
+        // 미리보기도 같이 갱신
+        setPreview('');
+    };
+
+    // 파일 업로드시 formData 추가
+    async function createFormData() {
+        if(!file.name) return;
+        const formData = new FormData();
+        formData.append('image', file);
+        let filename;
+        await axios.post( '/api/member/fileupload', formData)
         .then((result)=>{
             setProfileImg(result.data.filename);
-            setImgStyle({display:"block", width:"200px"});
+            filename=result.data.filename
         }).catch((err)=>{console.error(err)})
-    }
-    function profileImgCancel(){
-        setImgStyle({display:"none"})
-        setProfileImg(kakaoMember.profileImg)
+        return filename
     }
 
     function agree(checked, box){
@@ -122,7 +143,10 @@ function KakaoIdFirstEdit() {
         const phone = phone1+"-"+phone2+"-"+phone3
         const rrn = rrn1+"-"+rrn2+"******"
 
-        await axios.post('/api/member/kakaoIdFirstEdit', {userid, name, email, phone, rrn, profileImg, profileMsg, terms_agree, personal_agree })
+        let url = await createFormData()
+        if(!url) url = kakaoMember.profileImg
+
+        await axios.post('/api/member/kakaoIdFirstEdit', {userid, name, email, phone, rrn, profileImg:url, profileMsg, terms_agree, personal_agree })
         .then((result)=>{
             alert('정보 입력이 완료되었습니다');
         } ).catch((err)=>{console.error(err)})
@@ -180,13 +204,21 @@ function KakaoIdFirstEdit() {
                 <div><img src={kakaoMember.profileImg}/></div>
             </div>
             <div className='field'>
-                <label>프로필사진 변경</label>
-                <input type="file" onChange={(e)=>{fileUpload(e)}}/>
-            </div>
-            <div className='field' style={imgStyle}>
-                <label>미리보기</label>
-                <div><img src={profileImg}/></div>
-                <button onClick={()=>{profileImgCancel()}}>취소</button>
+                {/* 파일업로드 인풋 */}
+                <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} />
+                {/* 미리보기 이미지 */}
+                <div className="previewContainer">
+                    {
+                        (preview)?
+                        (<div className='imgBox'>
+                            <img src={preview}/>
+                            <div className='removeBtn'onClick={()=> {
+                                handleRemoveFile();
+                            }}>X</div>
+                        </div>):
+                        (<></>)
+                    }
+                </div>
             </div>
             <div className='field'>
                 <label>소개글</label>

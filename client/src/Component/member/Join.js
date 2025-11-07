@@ -163,7 +163,6 @@ function Join() {
     }
     return (
         <article>
-            <button onClick={()=>{createFormData()}}>aaa</button>
             <div>회원가입</div>
             <div><span>*</span>은 필수 입력사항입니다</div>
             <div className='field'>

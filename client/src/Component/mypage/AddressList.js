@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import DaumPostcode from "react-daum-postcode";
@@ -17,6 +17,12 @@ function AddressList() {
     const [address_detail, setAddress_detail]=useState('')
 
     const [isOpen, setIsOpen]=useState(false)
+
+    useEffect(
+        ()=>{
+            //jaxios.get('/api/mypage/getAddress', {params:loginUser.member_id})
+        },[]
+    )
 
     // 모달창을 위한 style
     const customStyles = {

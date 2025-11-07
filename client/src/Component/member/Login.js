@@ -14,6 +14,7 @@ function Login() {
     const cookies = new Cookies()
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     useEffect(
         ()=>{
@@ -41,7 +42,7 @@ function Login() {
 
     return (
         <article>
-            <div>Login</div>
+            <div>로그인</div>
             <div className='subPage'>
                 <div className='memberform'>
                     <div className='field'>
@@ -53,12 +54,13 @@ function Login() {
                         <input type='password'  value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}}/>
                     </div>
                     <div className='btns'>
-                        <button onClick={()=>{ onloginlocal() }}>LOGIN</button>
-                        <button onClick={()=>{ navigate('/join')}}>JOIN</button>
+                        <button onClick={()=>{ onloginlocal() }}>로그인</button>
+                        <button onClick={()=>{ navigate('/join')}}>회원가입</button>
+                        <button onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>
                     </div>
                     <div className="sns-btns">
                         <button style={{background:'yellow', margin:'2px'}} onClick={
-                            ()=>{window.location.href='http://localhost:8070/member/kakaostart'}
+                            ()=>{window.location.href=`${baseURL}/member/kakaostart`}
                         }>KAKAO</button>
                     </div>
                 </div>

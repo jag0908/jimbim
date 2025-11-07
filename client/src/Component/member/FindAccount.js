@@ -2,7 +2,7 @@ import React ,{useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 
-function FindAccout() {
+function FindAccount() {
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [userid, setUserid] = useState('')
@@ -69,9 +69,7 @@ function FindAccout() {
 
     return (
         <article>
-            <SubImg />
             <div className='subPage' >
-                <SubMenu />
                 <div className='memberform'>
                     <h2>FIND ACCOUNT</h2>
                     <div className='field'>
@@ -121,4 +119,4 @@ function FindAccout() {
     )
 }
 
-export default FindAccout
+export default FindAccount

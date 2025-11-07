@@ -29,6 +29,7 @@ public class MemberController {
 
     // /member/login 시 실행되는 코드는 CustomSecurityConfig -> securityFilterChain 에
     // 로그인 없이 동작하게할 주소는 JWTCheckFilter 의 shouldNotFilter 에 추가 필요함
+    String clientUrl = "http://localhost:3000";
 
     @Autowired
     MemberService ms;
@@ -155,7 +156,7 @@ public class MemberController {
             ms.insertMember(member);
         }
         String resulturl = (member.getPhone().equals("미설정")||member.getRrn().equals("미설정"))?
-                "http://localhost:3000/kakaoIdFirstEdit/":"http://localhost:3000/kakaoIdLogin/";
+                clientUrl+"/kakaoIdFirstEdit/":clientUrl+"/kakaoIdLogin/";
         // 전화번호 또는 주민번호가 미설정이면 초기 정보수정 페이지로 이동, 초기 정보수정 완료시 바로 로그인 페이지로 이동
         response.sendRedirect(resulturl+member.getUserid());
 
@@ -178,6 +179,52 @@ public class MemberController {
         return result;
     }
     /*----------------카카오로그인끝----------------------------*/
+
+    /// ///////////////// 아이디 비번 찾기 ///////////////////
+    @PostMapping("/findid")
+    public HashMap<String, Object> findid( @RequestParam("name") String name,  @RequestParam("phone") String phone ) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMemberByNamePhone( name, phone  );
+        System.out.println( name +  phone );
+        if( member == null ){
+            result.put("msg", "notok");
+        }else{
+            result.put("msg", "ok");
+            result.put("userid", member.getUserid());
+        }
+        return result;
+    }
+
+    private int number;
+
+    @PostMapping("/sendMail")
+    public HashMap<String, Object> sendMail(@RequestParam("email") String email){
+        HashMap<String, Object> result = new HashMap<>();
+        number = ms.sendMail(email);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/confirmCode")
+    public HashMap<String, Object> confirmCode(@RequestParam("usercode") String usercode){
+        HashMap<String, Object> result = new HashMap<>();
+        if( Integer.parseInt( usercode ) == number ){
+            result.put("msg", "ok");
+        }else{
+            result.put("msg", "notok");
+        }
+        return result;
+    }
+
+
+    @PostMapping("/resetPwd")
+    public HashMap<String, Object> resetPwd( @RequestParam("pwd") String pwd, @RequestParam("userid") String userid){
+        HashMap<String, Object> result = new HashMap<>();
+        ms.resetPw(userid, pwd);
+        result.put("msg", "ok");
+        return result;
+    }
+    /// ///////////////// 아이디 비번 찾기 끝 ///////////////////
 
 
 

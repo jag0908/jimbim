@@ -65,7 +65,7 @@ public class ShController {
         HashMap<String, Object> result = new HashMap<>();
 
         ss.insertShPost(member_id, title, content, price, categoryId, directYN, deliveryYN, deliveryPrice);
-        ss.insertFiles(files);
+//        ss.insertFiles(files);
 
         result.put("msg", "ok");
         return result;

@@ -173,7 +173,7 @@ function Join() {
                 }}/>
             </div>
             <div className='field'>
-                <label><span>*</span>E-mail</label>
+                <label><span>*</span>이메일</label>
                 <input type="text" value={email} onChange={(e)=>{
                     setEmail( e.currentTarget.value )
                 }}/>
@@ -221,7 +221,7 @@ function Join() {
             </div>
             <div className="btns">
                 <button onClick={()=>{onSubmit()}}>JOIN</button>
-                <button onClick={()=>{navigate(-1)}}>BACK</button>
+                <button onClick={()=>{navigate('/')}}>BACK</button>
             </div>
         </article>
     )

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../style/StyleWrite.css';
 import { FaArrowLeft, FaPlus } from 'react-icons/fa';
+import { Cookies } from 'react-cookie';
 
 
 function StyleWrite() {
@@ -14,15 +15,17 @@ function StyleWrite() {
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [hashtags, setHashtags] = useState('');
-  const token = localStorage.getItem('accessToken');
+  const cookies = new Cookies();
+  const user = cookies.get('user'); // 로그인 시 쿠키에 저장된 유저 정보
+  const token = user?.accessToken;  // accessToken 추출
 
-  // useEffect(() => {
+  useEffect(() => {
     
-  //   if (!token) {
-  //     alert('로그인이 필요한 기능입니다.');
-  //     navigate('/login'); // 로그인 페이지로 이동
-  //   }
-  // }, [navigate]);
+    if (!token) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login'); // 로그인 페이지로 이동
+    }
+  }, [token, navigate]);
 
   // 뒤로가기
   const handleBack = () => navigate(-1);
@@ -73,13 +76,12 @@ function StyleWrite() {
       if (tag.trim()) formData.append('hashtags', tag.replace('#', ''));
     });
 
-    const res = await axios.post('http://localhost:8070/style/write', formData, {
+    const res = await axios.post('/api/style/write', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
       },
     });
-    console.log('token:', token);
 
     alert('게시글이 등록되었습니다!');
     navigate('/style');

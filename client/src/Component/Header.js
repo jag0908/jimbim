@@ -56,7 +56,7 @@ function Header() {
                     <Link to={"/"}>커뮤니티</Link>
                 </div>
                 <div className='list'>
-                    <Link to={"/"}>STYLE</Link>
+                    <Link to={"/style"}>STYLE</Link>
                 </div>
             </div>
             

@@ -19,8 +19,10 @@ public class SH_post {  // second hand
     @Column(nullable = false, length = 2000)
     private String content;
     private String sh_image;
-    @Column( columnDefinition="DATETIME default now()" )
-    private Timestamp indate;
+//    @Column( columnDefinition="DATETIME default now()" )
+//    private Timestamp indate;
+    @Column(nullable = false, updatable = false)
+    private Timestamp indate = new Timestamp(System.currentTimeMillis());
     @Column(nullable = false)
     private Integer price;
     @Column(nullable = false)

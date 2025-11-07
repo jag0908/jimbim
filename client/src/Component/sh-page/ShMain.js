@@ -60,8 +60,8 @@ function ShMain() {
           {
             categoryArr.map((category, i)=> {
               return (
-                <div className='list'>
-                      <Link key={i} to={`/sh-page/${category.category_id}`}>
+                <div className='list' key={i}>
+                      <Link  to={`/sh-page/${category.category_id}`}>
                         <img src={`${baseURL}/sh_img/${i}.png`} alt={category.category_name} />
                         <span className='tit'>{category.category_name}</span>
                       </Link>

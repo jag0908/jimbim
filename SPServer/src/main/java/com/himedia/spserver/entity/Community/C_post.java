@@ -13,6 +13,7 @@ public class C_post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cpost_id;
 
+    private Integer cpost_num;
     private String title;
     private String content;
     private Timestamp indate;

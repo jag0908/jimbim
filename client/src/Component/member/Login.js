@@ -4,6 +4,7 @@ import {Cookies} from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../../store/userSlice';
+import '../../style/login.css';
 
 function Login() {
 

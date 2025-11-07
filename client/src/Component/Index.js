@@ -32,12 +32,13 @@ function Index() {
                 (loginUser.userid)?(
                     <div className='logininfo'>
                         <div>{loginUser.userid}({loginUser.name})</div>
+                        <div><Link to='/mypage'>마이페이지</Link></div>
                         <div onClick={()=>{ onLogout() }}>LOGOUT</div>
                     </div>
                 ):(
                     <>
-                        <div><Link to='/login'>LOGIN</Link></div>
-                        <div><Link to='/join'>JOIN</Link></div>
+                        <div><Link to='/login'>로그인</Link></div>
+                        <div><Link to='/join'>회원가입</Link></div>
                     </>
                 )
             }

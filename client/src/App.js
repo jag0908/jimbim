@@ -24,11 +24,10 @@ function App() {
 				<Route path='/communityView' element={<CommunityView />} />
 				<Route path='/updateCommunity' element={<UpdateCommunity />} />
           
-				<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
+				{/* <Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
 				<Route path='/style' element={<StyleFeed />} />
         		<Route path='/style/:id' element={<StyleDetail />} />
-        		<Route path='/sh-page' element={<ShMain />} />
-	
+        		<Route path='/sh-page' element={<ShMain />} />	 */}
 			</Routes>
 		</div>
     );

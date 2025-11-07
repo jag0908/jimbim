@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import jaxios from '../../util/jwtutil';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import '../../style/sh_common.css'
 
@@ -20,6 +20,7 @@ function ShMain() {
     const { id } = useParams();
     const [shPostArr, setShPostArr] = useState([]);
     const [categoryArr, setCategoryArr] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(()=> {
        
@@ -31,19 +32,23 @@ function ShMain() {
       await jaxios.get("/api/sh-page/sh-list")
         .then((result) => {
             console.log(result);
-            setShPostArr(result.data.shList);
+            setShPostArr([...result.data.shList]);
         }).catch((err) => {
             console.error(err);
         });
 
       await jaxios.get("/api/sh-page/sh-category")
         .then((result) => {
-            setCategoryArr(result.data.shCategory);
+            setCategoryArr([...result.data.shCategory]);
         }).catch((err) => {
             console.error(err);
         });
 
     }
+
+    function postWrite() {
+      navigate("./sh-write");
+    };
 
     
 
@@ -78,12 +83,16 @@ function ShMain() {
 
                         </Slider>
                         <h3 className='title'>{ShPost.title}</h3>
-                        <h3 className='title'>{ShPost.title}</h3>
+                        <h3 className='price'>{ShPost.price}원</h3>
                     </Link>
                   )
                 })
               }
             </div>
+        </div>
+
+        <div className='btnWrap'>
+          <button className='btn btnWrite' onClick={()=> {postWrite();}}>글 작성</button>
         </div>
     </div>
   )

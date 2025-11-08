@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
+
 public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -130,6 +131,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         if(path.startsWith("/favicon.ico"))
             return true;
+
+
+        if(path.startsWith("/style/StyleFeed"))
+            return true; // 공개 피드
+        if(path.startsWith("/style/posts"))
+            return true;   // 목록 보기 공개
+        if(path.startsWith("/style/detail"))
+            return true;   // 상세보기 공개
+
+        if (path.startsWith("/style/fileupload")) return true;
+
+        if (path.startsWith("/api/style/StyleFeed")) return true;
+        if (path.startsWith("/api/style/posts")) return true;
+        if (path.startsWith("/api/style/detail")) return true;
+        if (path.startsWith("/api/style/fileupload")) return true;
 
         return false;
     }

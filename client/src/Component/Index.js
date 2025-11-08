@@ -17,7 +17,7 @@ function Index() {
                 <Link to={"/sh-page"}>중고마을</Link>
                 <Link to={"/sh-shop"}>SHOP</Link>
                 <Link to={"/"}>커뮤니티</Link>
-                <Link to={"/"}>STYLE</Link>
+                <Link to={"/style"}>STYLE</Link>
             </div>
            
         </article>

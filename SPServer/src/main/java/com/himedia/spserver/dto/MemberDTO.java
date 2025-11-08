@@ -1,5 +1,6 @@
 package com.himedia.spserver.dto;
 
+import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Getter
 public class MemberDTO extends User {
     public MemberDTO(  // 생성자
                        String username, String password, Integer member_id, String name, String profileImg, String profileMsg, String phone,
@@ -43,6 +45,9 @@ public class MemberDTO extends User {
     private Integer blacklist;
     private String provider;
     private List<String> roleNames = new ArrayList<String>();
+
+
+
 
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();

@@ -34,7 +34,7 @@ function App() {
 			<Route path="/login" element={<Login />} />
 			<Route path="/join" element={<Join />} />
 			<Route path="/kakaoIdLogin/:userid" element={<KakaoIdLogin />} />
-			<Route path="/kakaoIdFirstEdit" element={<KakaoIdFirstEdit />} />
+			<Route path="/kakaoIdFirstEdit/:userid" element={<KakaoIdFirstEdit />} />
 			<Route path="/findAccount" element={<FindAccount />} />
 			<Route path="/updateform" element={<UpdateForm />} />
 			<Route path="/mypage" element={<Mypage />} />

@@ -33,7 +33,7 @@ public class MypageController {
         return result;
     }
 
-    @GetMapping("/getAddressList")   // id 중복체크
+    @GetMapping("/getAddressList")
     public HashMap<String, Object> getAddressList(@RequestParam("member_id") String member_id) {
         HashMap<String, Object> result = new HashMap<>();
         System.out.println("getAddress : "+ mys.getAddressList( member_id ));
@@ -41,7 +41,7 @@ public class MypageController {
         return result;
     }
 
-    @DeleteMapping("/deleteAddress")   // id 중복체크
+    @DeleteMapping("/deleteAddress")
     public HashMap<String, Object> deleteAddress(@RequestParam("address_id") Integer address_id) {
         HashMap<String, Object> result = new HashMap<>();
         System.out.println("deleteAddress : "+ address_id);

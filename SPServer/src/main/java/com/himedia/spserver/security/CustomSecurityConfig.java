@@ -42,7 +42,8 @@ public class CustomSecurityConfig {
                         "/api/member/**",
                         "/style/posts",
                         "/style/post/**",
-                        "/uploads/**"
+                        "/uploads/**",
+                        "/api/style/post/**"
                 ).permitAll()
                 .requestMatchers(
                         "/style/write",

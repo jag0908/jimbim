@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../style/StyleWrite.css';
 import { FaArrowLeft, FaPlus } from 'react-icons/fa';
 import { Cookies } from 'react-cookie';
+import jaxios from '../../util/jwtutil';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 function StyleWrite() {
 
-    // const baseURL = process.env.REACT_APP_BASE_URL;
+  // const baseURL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -76,10 +77,9 @@ function StyleWrite() {
       if (tag.trim()) formData.append('hashtags', tag.replace('#', ''));
     });
 
-    const res = await axios.post('/api/style/write', formData, {
+    await jaxios.post(`${baseURL}/style/write`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       },
     });
 

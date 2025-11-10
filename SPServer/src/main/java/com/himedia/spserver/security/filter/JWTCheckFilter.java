@@ -137,14 +137,16 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true; // 공개 피드
         if(path.startsWith("/style/posts"))
             return true;   // 목록 보기 공개
-        if(path.startsWith("/style/detail"))
-            return true;   // 상세보기 공개
+        if (path.startsWith("/style/post/"))
+            return true;
 
         if (path.startsWith("/style/fileupload")) return true;
 
+
+
         if (path.startsWith("/api/style/StyleFeed")) return true;
         if (path.startsWith("/api/style/posts")) return true;
-        if (path.startsWith("/api/style/detail")) return true;
+        if (path.startsWith("/api/style/post/")) return true;
         if (path.startsWith("/api/style/fileupload")) return true;
 
         return false;

@@ -14,6 +14,9 @@ import ShMain from './Component/sh-page/ShMain'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
 import ShWrite from './Component/sh-page/ShWrite'
+import ShView from './Component/sh-page/ShView'
+
+
 import Community from './Component/community/Community'
 import WriteCommunity from './Component/community/WriteCommunity'
 import CommunityView from './Component/community/CommunityView'
@@ -30,8 +33,8 @@ function App() {
 			<Route path="/" element={<Index />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/join" element={<Join />} />
-			<Route path="/kakaoIdLogin/:userid" element={<KakaoIdLogin />} />
-			<Route path="/kakaoIdFirstEdit" element={<KakaoIdFirstEdit />} />
+			<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
+			<Route path='/kakaoIdFirstEdit/:userid' element={<KakaoIdFirstEdit />} />
 			<Route path="/findAccount" element={<FindAccount />} />
 			<Route path="/mypage" element={<Mypage />} />
 			<Route path="/addresslist" element={<AddressList />} />
@@ -43,6 +46,10 @@ function App() {
 			<Route path="/community" element={<Community />} />
 			<Route path="/writeCommunity" element={<WriteCommunity />} />
 			<Route path="/communityView" element={<CommunityView />} />
+
+			<Route path='/sh-page/sh-write' element={<ShWrite />} />
+			<Route path='/sh-page/sh-view/:id' element={<ShView />} />
+
 			</Routes>
 		</div>
 		<Footer />

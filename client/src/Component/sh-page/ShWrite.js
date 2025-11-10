@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import jaxios from '../../util/jwtutil';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import '../../style/sh_common.css'
 import { useSelector } from 'react-redux';
 
 function ShWrite() {
@@ -72,6 +71,8 @@ function ShWrite() {
     // 파일 업로드시 formData 추가 및 ajax
   
     function writePost() {
+        if(Number(deliveryPrice) > 5000) {return alert("배달비는 5천원을 넘을 수 없습니다.")}
+
         const formData = new FormData();
         fileArr.forEach((file, i)=> {
             formData.append(`files`, file);
@@ -95,6 +96,7 @@ function ShWrite() {
             .then((result)=> {
                 alert("작성 완료되었습니다!");
                 console.log(result.data);
+                navigate("/sh-page");
             }).catch(err=>console.error(err));
     }
 

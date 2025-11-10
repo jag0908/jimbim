@@ -3,12 +3,14 @@ package com.himedia.spserver.controller;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +22,13 @@ public class ShController {
     @Autowired
     ShService ss;
 
+    @Autowired
+    S3UploadService sus;
+
     @GetMapping("/sh-list")
     public HashMap<String, Object> shList() {
         HashMap<String, Object> result = new HashMap<>();
-        ArrayList<SH_post> shList = ss.getShList();
+        List<ShService.SHPostWithFilesDTO> shList = ss.getShList();
 
         if (shList == null || shList.isEmpty()) {
             result.put("msg", "<h1>텅 비었습니다.</h1>");
@@ -64,10 +69,36 @@ public class ShController {
     ) {
         HashMap<String, Object> result = new HashMap<>();
 
-        ss.insertShPost(member_id, title, content, price, categoryId, directYN, deliveryYN, deliveryPrice);
-//        ss.insertFiles(files);
+        SH_post post = ss.insertShPost(member_id, title, content, price, categoryId, directYN, deliveryYN, deliveryPrice);
+
+        for(MultipartFile file : files) {
+            try {
+                String uploadFilePathName = sus.saveFile( file );
+                result.put("files", uploadFilePathName);
+
+
+                ss.insertFiles(post, file.getOriginalFilename(), uploadFilePathName, file.getSize(), file.getContentType());
+            } catch (IllegalStateException | IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         result.put("msg", "ok");
+        return result;
+    }
+
+
+    @GetMapping("/sh-view/{id}")
+    public HashMap<String, Object> getPostView(@PathVariable Integer id) {
+        HashMap<String, Object> result = new HashMap<>();
+        ShService.SHPostWithFilesDTO shPost = ss.getShPost(id);
+        ArrayList<SH_Category> shCategorys = ss.getShCategorys();
+
+
+            result.put("msg", "ok");
+            result.put("shPost", shPost);
+            result.put("category", shCategorys);
+
         return result;
     }
 

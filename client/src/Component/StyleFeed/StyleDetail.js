@@ -9,10 +9,24 @@ function StyleDetail() {
   const [post, setPost] = useState(null);
 
   useEffect(() => {
-    axios.get(`/api/style/post/${id}`).then(res => {
-      setPost(res.data);
-    });
+    axios.get(`/api/style/post/${id}`)
+      .then(res => {
+        setPost(res.data);
+      })
+      .catch(() => {
+        setPost(null);
+      });
   }, [id]);
+
+if (post === null) {
+  return (
+    <div className="no-detail">
+      ❌ 해당 게시글을 찾을 수 없습니다.
+      <br />
+      <a href="/style">피드로 돌아가기</a>
+    </div>
+  );
+}
 
   if (!post) return <div>Loading...</div>;
 

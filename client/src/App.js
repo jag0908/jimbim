@@ -5,6 +5,7 @@ import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
 import KakaoIdFirstEdit from './Component/member/KakaoIdFirstEdit'
 import FindAccount from './Component/member/FindAccount'
+import UpdateForm from './Component/member/UpdateForm'
 import Mypage from './Component/mypage/Mypage'
 import AddressList from './Component/mypage/AddressList'
 import StyleFeed from './Component/StyleFeed/StyleFeed'
@@ -30,25 +31,32 @@ function App() {
 		<Header /> {/* ✅ 항상 보이게 */}
 		<div className="container">
 			<Routes>
-			<Route path="/" element={<Index />} />
-			<Route path="/login" element={<Login />} />
-			<Route path="/join" element={<Join />} />
-			<Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
-			<Route path='/kakaoIdFirstEdit/:userid' element={<KakaoIdFirstEdit />} />
-			<Route path="/findAccount" element={<FindAccount />} />
-			<Route path="/mypage" element={<Mypage />} />
-			<Route path="/addresslist" element={<AddressList />} />
-			<Route path="/style" element={<StyleFeed />} />
-			<Route path="/style/:id" element={<StyleDetail />} />
-			<Route path="/stylewrite" element={<StyleWrite />} />
-			<Route path="/sh-page" element={<ShMain />} />
-			<Route path="/shwrite" element={<ShWrite />} />
-			<Route path="/community" element={<Community />} />
-			<Route path="/writeCommunity" element={<WriteCommunity />} />
-			<Route path="/communityView" element={<CommunityView />} />
+				<Route path="/" element={<Index />} />
+				{/* 기태 */}
+				<Route path="/login" element={<Login />} />
+				<Route path="/join" element={<Join />} />
+				<Route path="/kakaoIdLogin/:userid" element={<KakaoIdLogin />} />
+				<Route path="/kakaoIdFirstEdit/:userid" element={<KakaoIdFirstEdit />} />
+				<Route path="/findAccount" element={<FindAccount />} />
+				<Route path="/updateform" element={<UpdateForm />} />
+				<Route path="/mypage" element={<Mypage />} />
+				<Route path="/mypage/addresslist" element={<AddressList />} />
 
-			<Route path='/sh-page/sh-write' element={<ShWrite />} />
-			<Route path='/sh-page/sh-view/:id' element={<ShView />} />
+				{/* 이삭 */}
+				<Route path="/style" element={<StyleFeed />} />
+				<Route path="/style/:id" element={<StyleDetail />} />
+				<Route path="/stylewrite" element={<StyleWrite />} />
+
+				{/* 정진 */}
+				<Route path="/sh-page" element={<ShMain />} />
+				<Route path='/sh-page/sh-write' element={<ShWrite />} />
+				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
+
+				{/* 은지 */}
+				<Route path="/community" element={<Community />} />
+				<Route path="/writeCommunity" element={<WriteCommunity />} />
+				<Route path="/communityView" element={<CommunityView />} />
+
 
 			</Routes>
 		</div>

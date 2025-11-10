@@ -1,20 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import jaxios from '../../util/jwtutil';
 
 function Mypage() {
     const loginUser = useSelector( state=>state.user )
-    const loginUserIndate = new Intl.DateTimeFormat('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(new Date(loginUser.indate))
     const navigate = useNavigate();
 
     useEffect(
         ()=>{
-            console.log(loginUser)
-            
         },[]
     )
 
@@ -22,7 +16,7 @@ function Mypage() {
         <article>
             <div>Mypage</div>
             <div><button onClick={()=>{navigate('/')}}>메인이동</button></div>
-            <div><button onClick={()=>{navigate('/member/updateform')}}>회원정보수정</button></div>
+            <div><button onClick={()=>{navigate('/updateform')}}>회원정보수정</button></div>
             <div><button onClick={()=>{navigate('/mypage/addresslist')}}>주소록</button></div>
             <div>
                 {
@@ -51,7 +45,7 @@ function Mypage() {
             </div>
             <div>
                 <div>계정생성일</div>
-                <div>{loginUserIndate}</div>
+                <div>{(loginUser.indate.substring(0,10))}</div>
             </div>
         </article>
     )

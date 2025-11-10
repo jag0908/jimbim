@@ -7,7 +7,7 @@ module.exports = function(app) {
         createProxyMiddleware({
             target: 'http://localhost:8070',
             changeOrigin: true,
-            // pathRewrite: { '^/api': '' }, 
+            pathRewrite: { '^/api': '' }, 
             // 프론트는 '/api/member/...' -> 서버에는 '/member/...'
         })
     );

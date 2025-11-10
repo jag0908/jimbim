@@ -1,0 +1,6 @@
+article {display: flex; justify-content: center; align-items: center; height: calc(100vh - 122px);}
+
+article .menu {display: flex; justify-content: space-around; width: 768px;}
+
+article .menu > a {display: flex; justify-content: center; align-items: center; width: 120px; height: 120px; border: 1px solid #555; border-radius: 20px; font-size: 18px; font-weight: 500;}
+

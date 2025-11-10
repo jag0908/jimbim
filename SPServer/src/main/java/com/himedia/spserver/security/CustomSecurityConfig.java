@@ -35,6 +35,22 @@ public class CustomSecurityConfig {
         // csrf - 토큰사용 O  &  세션사용 X    ->  security csrf 기능은 사용하지 않음
         http.csrf(config -> config.disable());
 
+        //권한별 접근 제어
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/member/**",
+                        "/api/member/**",
+                        "/style/posts",
+                        "/style/post/**",
+                        "/uploads/**"
+                ).permitAll()
+                .requestMatchers(
+                        "/style/write",
+                        "/api/style/write"
+                ).authenticated()
+                .anyRequest().permitAll()
+        );
+
         http.formLogin(
                 config ->{
                     config.loginPage("/member/login");

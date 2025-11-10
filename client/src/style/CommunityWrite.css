@@ -1,0 +1,112 @@
+/* 전체 컨테이너 */
+.writeCommunity {
+  width: 90%;
+  max-width: 800px;
+  margin: 50px auto;
+  font-family: "Noto Sans KR", sans-serif;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* 제목 */
+.writeCommunity h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+/* 필드 그룹 */
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.field label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+.field input[type="text"],
+.field input[type="password"],
+.field textarea,
+.field input[type="file"] {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+/* textarea 스타일 */
+.field textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+/* 이미지 미리보기 */
+.field img {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* 버튼 그룹 */
+.btns {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btns button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btns button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* 이전 버튼 별도 스타일 */
+.btns button:nth-child(2) {
+  background-color: #6c757d;
+}
+
+.btns button:nth-child(2):hover {
+  background-color: #495057;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .writeCommunity {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .btns {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

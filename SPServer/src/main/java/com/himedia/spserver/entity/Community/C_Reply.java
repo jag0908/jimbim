@@ -17,9 +17,9 @@ public class C_Reply {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    Member memberid;
 
     @ManyToOne
     @JoinColumn(name = "cpost_id")
-    C_post cpost_id;
+    C_post cpostid;
 }

@@ -14,13 +14,11 @@ import ShMain from './Component/sh-page/ShMain'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
 import ShWrite from './Component/sh-page/ShWrite'
-
-/*
 import Community from './Component/community/Community'
+import WriteCommunity from './Component/community/WriteCommunity'
 import CommunityView from './Component/community/CommunityView'
-import UpdateCommunity from './Component/community/UpdateCommunity'
 
-*/
+
 
 
 function App() {
@@ -42,6 +40,9 @@ function App() {
 			<Route path="/stylewrite" element={<StyleWrite />} />
 			<Route path="/sh-page" element={<ShMain />} />
 			<Route path="/shwrite" element={<ShWrite />} />
+			<Route path="/community" element={<Community />} />
+			<Route path="/writeCommunity" element={<WriteCommunity />} />
+			<Route path="/communityView" element={<CommunityView />} />
 			</Routes>
 		</div>
 		<Footer />

@@ -14,16 +14,17 @@ public class CommunityReplyService {
 
     @Autowired
     CommunityReplyRepository crr;
-//    public List<C_Reply> getReplyList(int replyId) {
-//        return crr.findByPostIdOrderByReplyIdDesc(replyId);
+
+//    public List<C_Reply> getReplyList(int reply_id) {
+//        return crr.findByCpostidOrderByReplyIdDesc(reply_id);
 //    }
 //
 //    public void addReply(C_Reply creply) {
 //        crr.save(creply);
 //    }
 //
-//    public void deleteReply(int replyId) {
-//        C_Reply reply = crr.findByReplyId(replyId);
+//    public void deleteReply(int reply_id) {
+//        C_Reply reply = crr.findByReplyId(reply_id);
 //        crr.delete(reply);
 //    }
 }

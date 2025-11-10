@@ -18,11 +18,14 @@ public class StylePostDTO {
     private String title;
     private String content;
     private Timestamp indate;
-    private String s_image;
+    private List<String> s_images;
     private Integer likeCount;
     private Integer replyCount;
     private String userid;
     private String profileImg;
+
+    private Boolean liked;     // 로그인한 사용자의 좋아요 여부
+    private Boolean followed;  // 로그인한 사용자의 팔로우 여부
 
     private List<String> hashtags;
 }

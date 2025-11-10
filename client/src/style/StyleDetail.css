@@ -1,73 +1,183 @@
-.detail-container {
-  width: 600px;
-  margin: 30px auto;
-  font-family: 'Noto Sans KR', sans-serif;
+/* 전체 컨테이너 */
+.style-detail {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Pretendard', sans-serif;
 }
 
-.detail-header {
+/* 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.user-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
 }
 
-.detail-profile {
-  width: 45px;
-  height: 45px;
+.profile {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
-.nickname {
-  font-weight: bold;
+.user-text-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.userid {
+  font-weight: 600;
+  font-size: 15px;
 }
 
 .time {
   font-size: 12px;
-  color: gray;
+  color: #aaa;
 }
 
+/* 팔로우 버튼 */
 .follow-btn {
+  background: #f3f3f3;
   border: none;
-  background-color: #0095f6;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.follow-btn:hover {
+  background: #e9e9e9;
+}
+.follow-btn.following {
+  background: #000;
+  color: #fff;
 }
 
-.detail-photo {
+/* 이미지 */
+.image-slider {
   width: 100%;
-  margin-top: 15px;
-  border-radius: 10px;
+  height: auto; /* 고정 높이 제거 */
+  overflow: visible; /* 잘림 방지 */
 }
 
-.detail-actions {
-  margin: 10px 0;
+.image-slider img {
+  width: 100%;
+  height: auto; /* 세로 비율 유지 */
+  object-fit: contain; /* 원본 비율 유지 */
+  display: block;
+  background: white; /* 배경 검정 (빈 여백 생길 수 있음) */
 }
 
-.detail-products {
+/* 본문 내용 */
+.post-content {
+  padding: 16px;
+}
+
+.post-content h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.post-content p {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* 좋아요/댓글/공유 */
+.actions {
   display: flex;
-  gap: 10px;
-  margin: 10px 0;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #eee;
+  padding: 12px 0;
+  font-size: 15px;
+  color: #444;
 }
 
-.product-tag {
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.action-item:hover {
+  color: #000;
+}
+
+.action-item .liked {
+  color: #ff3d6b;
+}
+
+/* 댓글 섹션 */
+.comment-section {
+  border-top: 1px solid #f0f0f0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comment-section textarea {
+  width: 100%;
+  height: 60px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 5px 10px;
+  padding: 8px;
+  font-size: 14px;
+  resize: none;
 }
 
-.detail-content {
-  margin-top: 15px;
+.comment-section button {
+  align-self: flex-end;
+  padding: 6px 12px;
+  border: none;
+  background: #000;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.no-detail {
-  text-align: center;
-  padding: 80px;
-  color: #666;
+.comment-section button:hover {
+  background: #333;
 }
 
-.no-detail a {
-  display: inline-block;
-  margin-top: 15px;
-  color: #007bff;
-  text-decoration: none;
+/* 댓글 리스트 */
+.reply {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reply-date {
+  font-size: 0.8rem;
+  color: gray;
+  margin-left: 10px;
+}
+
+.delete-reply-btn {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
 }

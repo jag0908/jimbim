@@ -26,4 +26,16 @@ public class MypageService {
         Member member = mr.findById(memberId).get();
         return ar.findAllByMember(member);
     }
+
+    public void updateAddress(Address address) {
+        Address updateAddress = ar.findById(address.getAddress_id()).get();
+        updateAddress.setAddress_name(address.getAddress_name());
+        updateAddress.setAddress_zipnum(address.getAddress_zipnum());
+        updateAddress.setAddress_simple(address.getAddress_simple());
+        updateAddress.setAddress_detail(address.getAddress_detail());
+    }
+
+    public void deleteAddress(Integer addressId) {
+        ar.delete(ar.findById(addressId).get());
+    }
 }

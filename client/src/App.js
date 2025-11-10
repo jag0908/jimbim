@@ -13,6 +13,7 @@ import ShMain from './Component/sh-page/ShMain'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
 import ShWrite from './Component/sh-page/ShWrite'
+import ShView from './Component/sh-page/ShView'
 
 /*
 import Community from './Component/community/Community'
@@ -33,6 +34,7 @@ function App() {
 
 				<Route path='/sh-page' element={<ShMain />} />
 				<Route path='/sh-page/sh-write' element={<ShWrite />} />
+				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 
 				{/* <Route path='/community' element={<Community />} /> */}
 				{/* <Route path='/community' element={<Community />} />

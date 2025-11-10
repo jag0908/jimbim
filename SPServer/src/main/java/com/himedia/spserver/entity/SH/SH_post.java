@@ -13,7 +13,8 @@ import java.sql.Timestamp;
 public class SH_post {  // second hand
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer post_id;
+    @Column(name="post_id")
+    private Integer postId;
     @Column(nullable = false, length = 50)
     private String title;
     @Column(nullable = false, length = 2000)

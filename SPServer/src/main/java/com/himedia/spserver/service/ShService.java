@@ -5,10 +5,13 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 
+import com.himedia.spserver.repository.FileRepository;
 import com.himedia.spserver.repository.SH_file_repository;
 import com.himedia.spserver.repository.ShCategoryRepository;
 import com.himedia.spserver.repository.ShRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +27,30 @@ public class ShService {
     private final ShRepository sr;           // 자동으로 생성자 주입
     private final ShCategoryRepository sc;   // 두 개 Repository도 가능
     private final SH_file_repository sfr;
+    private final FileRepository fr;
 
-    public ArrayList<SH_post> getShList() {
-        ArrayList<SH_post> shList = sr.findAll();
+    public List<SHPostWithFilesDTO> getShList() {
+        List<SH_post> shList = sr.findAll();
+        List<SHPostWithFilesDTO> result = new ArrayList<>();
 
-        return shList;
+        for (SH_post post : shList) {
+            SHPostWithFilesDTO dto = new SHPostWithFilesDTO();
+            dto.setPost(post);
+            dto.setFiles(fr.findByShPost(post)); // 커스텀 메서드 사용
+            result.add(dto);
+        }
+
+        return result;
+    }
+
+    public SHPostWithFilesDTO getShPost(Integer id) {
+        SH_post shPost = sr.findByPostId(id);
+
+        SHPostWithFilesDTO dto = new SHPostWithFilesDTO();
+        dto.setPost(shPost);
+        dto.setFiles(fr.findByShPost(shPost));
+
+        return dto;
     }
 
     public ArrayList<SH_Category> getShCategorys() {
@@ -38,7 +60,7 @@ public class ShService {
     }
 
 
-    public void insertShPost(Member member_id, String title, String content, Integer price, String categoryId, String directYN, String deliveryYN, Integer deliveryPrice) {
+    public SH_post insertShPost(Member member_id, String title, String content, Integer price, String categoryId, String directYN, String deliveryYN, Integer deliveryPrice) {
 
         SH_post post = new SH_post();
         post.setMember(member_id);
@@ -51,20 +73,30 @@ public class ShService {
         post.setDelivery_price(deliveryPrice);
 
         sr.save(post);
+        return post;
     }
 
-//    public void insertFiles(List<MultipartFile> files) {
 
-//            for(MultipartFile file : files) {
-//
-//                // File 엔티티 저장
-//                File file = new File();
-//
-//
-//                sfr.save(file);
-//            }
-
-//        }
+    public void insertFiles(SH_post post, String originalFilename, String path, Long size, String type) {
+        File file = new File();
+        file.setShPost(post);
+        file.setOriginalname(originalFilename);
+        file.setPath(path);
+        file.setSize(size);
+        file.setContentType(type);
+        fr.save(file);
+    }
 
 
+
+    @Setter
+    @Getter
+    public class SHPostWithFilesDTO {
+        private SH_post post;
+        private List<File> files;
+
+        // getter, setter
+    }
 }
+
+

@@ -3,11 +3,13 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
+import '../../style/CommunityWrite.css'
 
-const WriteCommunity = () => {
+const baseURL = process.env.REACT_APP_BASE_URL;
 
-    const loginUser = useSelector( state=>state.user);
-    
+function WriteCommunity() {
+
+    const loginUser = useSelector(state=>state.user);
     const [userid, setUserid] = useState('');
     const [email, setEmail] = useState('');
     const [title, setTitle] = useState("");
@@ -28,39 +30,37 @@ const WriteCommunity = () => {
             setUserid(loginUser.userid);
             setEmail(loginUser.email);
         }, []
-    );
+    )
 
     function onFileUpload(e){
         const formData = new FormData();
         formData.append('image', e.target.files[0]);
-        jaxios.post('/api/community/fileupload', formData )
+        jaxios.post('/api/community/fileupload', formData)
         .then((result)=>{
             setSavefilename(result.data.savefilename);
             setImage(result.data.image);
-            setImgSrc( `http://localhost:8070/images/${result.data.savefilename}` );
+            setImgSrc(`baseURL/images/${result.data.savefilename}`);
             setImgStyle({width:'300px', display:'block'})
-        })
-        .catch((err)=>{console.error(err);})
+        }).catch((err)=>{console.error(err);})
     }
 
     function onSubmit(){
-        if( !pass ){ return alert('패스워드는 수정삭제시 필요합니다')}
-        if( !title ){ return alert('제목을 입력하세요');}
-        if( !content ){ return alert('내용을 입력하세요');}
-        jaxios.post('/api/community/insertCommunity', 
-            {userid, email, pass, title, content, image, savefilename}
-        )
+        if(!pass){return alert('패스워드는 수정 삭제시 필요합니다')}
+        if(!title){return alert('제목을 입력하세요')}
+        if(!content){return alert('내용을 입력하세요')}
+
+        jaxios.post('/api/community/insertCommunity',
+            {userid, email, pass, title, content, image, savefilename})
         .then((result)=>{
-            console.log(result.data); 
+            console.log(result.data);
             alert('게시물이 작성되었습니다');
-            navigate('/main'); 
-        })
-        .catch((err)=>{console.error(err); })
+            navigate('/main');
+        }).catch((err)=>{console.error(err);})
     }
 
     return (
         <div className='writeCommunity'>
-            <h2>COMMUNITY WRTIE</h2>
+            <h2>COMMUNITY WRITE</h2>
             <div className='field'>
                 <label>작성자</label>
                 <input type='text' value={userid} readOnly />
@@ -79,21 +79,19 @@ const WriteCommunity = () => {
             </div>
             <div className='field'>
                 <label>내용</label>
-                <textarea rows="10" value={content} onChange={(e)=>{ setContent(e.currentTarget.value); }} ></textarea>
+                <textarea rows="10" value={content} onChange={(e)=>{ setContent(e.currentTarget.value); }}></textarea>
             </div>
             <div className='field'>
                 <label>이미지</label>
-                <input type='file' onChange={ (e)=>{ onFileUpload(e); } } />
-                {/* e 를 전달인수로 전달해야 해당함수에서 방금 선택한 이미지를 사용할 수 있습니다. */}
-            </div>
-            <div className='field'>
+                <input type='file' onChange={(e)=>{ onFileUpload(e); }} />
+            </div><div className='field'>
                 <label>이미지 미리보기</label>
                 <div><img src={imgSrc} style={imgStyle} /></div>
             </div>
             <div className='btns'>
-                <button onClick={ ()=>{ onSubmit() } }>작성완료</button>
-                <button onClick={ ()=>{ navigate('/main') }}>돌아가기</button>
-            </div>        
+                <button onClick={()=>{onSubmit()}}>작성완료</button>
+                <button onClick={()=>{navigate('/community')}}>이전</button>
+            </div>
         </div>
     )
 }

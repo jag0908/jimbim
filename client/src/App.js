@@ -36,7 +36,7 @@ function App() {
 			<Route path="/kakaoIdFirstEdit" element={<KakaoIdFirstEdit />} />
 			<Route path="/findAccount" element={<FindAccount />} />
 			<Route path="/mypage" element={<Mypage />} />
-			<Route path="/addresslist" element={<AddressList />} />
+			<Route path="/mypage/addresslist" element={<AddressList />} />
 			<Route path="/style" element={<StyleFeed />} />
 			<Route path="/style/:id" element={<StyleDetail />} />
 			<Route path="/stylewrite" element={<StyleWrite />} />

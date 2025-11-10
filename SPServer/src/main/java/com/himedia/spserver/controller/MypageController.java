@@ -23,4 +23,12 @@ public class MypageController {
         result.put("msg", "ok");
         return result;
     }
+
+    @GetMapping("/getAddressList")   // id 중복체크
+    public HashMap<String, Object> getAddressList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("getAddress : "+ mys.getAddressList( member_id ));
+        result.put("addressList", mys.getAddressList( member_id ));
+        return result;
+    }
 }

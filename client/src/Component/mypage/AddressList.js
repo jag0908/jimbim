@@ -18,9 +18,16 @@ function AddressList() {
 
     const [isOpen, setIsOpen]=useState(false)
 
+    const [addressList, setAddressList]=useState([])
+
     useEffect(
         ()=>{
-            //jaxios.get('/api/mypage/getAddress', {params:loginUser.member_id})
+            jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id}})
+            .then((result)=>{
+                console.log(result.data.addressList)
+                setAddressList(result.data.addressList)
+            })
+            .catch((err)=>{console.error(err)})
         },[]
     )
 
@@ -48,17 +55,23 @@ function AddressList() {
         setAddress_simple(simple)
         setIsOpen(false);
     }
-    function onSubmit(){
+    async function onSubmit(){
         if( !address_name ){return alert('이름을 입력하세요')}
         if( !address_zipnum){ return alert('우편번호를 입력하세요')}
         if( !address_detail ){return alert('상세주소를 입력하세요')}
         console.log(loginUser)
 
-        jaxios.post('/api/mypage/insertAddress', {address_name, address_zipnum, address_simple, address_detail, member:loginUser})
+        await jaxios.post('/api/mypage/insertAddress', {address_name, address_zipnum, address_simple, address_detail, member:loginUser})
         .then((result)=>{ 
             alert('완료되었습니다.');
-            navigate('/login')
         } ).catch((err)=>{console.error(err)})
+
+        await jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id}})
+        .then((result)=>{
+            console.log(result.data.addressList)
+            setAddressList(result.data.addressList)
+        })
+        .catch((err)=>{console.error(err)})
 
     }
     return (
@@ -76,7 +89,22 @@ function AddressList() {
             </div>
             <div><button onClick={()=>{navigate('/')}}>메인이동</button></div>
             <div><button onClick={()=>{navigate('/mypage')}}>마이페이지</button></div>
-            <div>현재 주소가 없습니다</div>
+            {
+                (addressList)?
+                (
+                    addressList.map((address, idx)=>{
+                        return (
+                            <div className='row' key={idx}>
+                                <div className='col'>주소명 {address.name}</div>
+                                <div className='col'>우편번호 {address.address_zipnum}</div>
+                                <div className='col'>도로명주소 {address.address_simple}</div>
+                                <div className='col'>상세주소 {address.address_detail}</div>
+                            </div>
+                        )
+                    })
+                ):
+                (<div>현재 주소가 없습니다</div>)
+            }
             <button onClick={()=>{setAddressStyle({display:'block'})}}>주소 추가하기</button>
             <div style={addressStyle}>
                 <div>주소록</div>

@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @Data
 public class STYLE_Reply {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reply_id;
     private String content;
     @Column( columnDefinition="DATETIME default now()" )

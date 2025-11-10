@@ -6,25 +6,22 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Data
 public class STYLE_post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer spost_id;
+    private Integer spostId;
 
     private String title;
     private String content;
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
-    private String s_image;
-    private String s_like;
-    private String s_reply;
 
-    @ManyToOne
-    @JoinColumn(name = "file_id")
-    File file;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<File> files;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

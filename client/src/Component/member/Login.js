@@ -23,6 +23,11 @@ function Login() {
             }
         },[]
     )
+    const activeEnter = (e) => {
+        if(e.key === "Enter") {
+            onloginlocal();
+        }
+    }
 
     function onloginlocal(){
         if( !userid ){ return alert('아이디를 입력하세요')}
@@ -47,11 +52,11 @@ function Login() {
                 <div className='memberform'>
                     <div className='field'>
                         <label>USERID</label>
-                        <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}}/>
+                        <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='field'>
                         <label>PASSWORD</label>
-                        <input type='password'  value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}}/>
+                        <input type='password'  value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='btns'>
                         <button onClick={()=>{ onloginlocal() }}>로그인</button>

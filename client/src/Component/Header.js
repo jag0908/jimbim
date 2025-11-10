@@ -23,7 +23,11 @@ function Header() {
         <div className='util'>
             {
                 (loginUser.userid)?
-                (<Link onClick={()=>{ onLogout() }}>로그아웃</Link>):
+                (
+                    <>
+                        <Link onClick={()=>{ onLogout() }}>로그아웃</Link>
+                        <Link to={"/mypage"}>MyPage({loginUser.name})</Link>
+                    </>):
                 (
                     <>
                     <Link to={"/login"}>로그인</Link>
@@ -32,7 +36,6 @@ function Header() {
                 )
             }
             
-            <Link to={"/mypage"}>MyPage({loginUser.name})</Link>
             <Link to={"/"}>고객센터</Link>
             <Link to={"/"}>알림</Link>
         </div>

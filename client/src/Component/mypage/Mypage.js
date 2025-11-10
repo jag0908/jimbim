@@ -16,7 +16,7 @@ function Mypage() {
         <article>
             <div>Mypage</div>
             <div><button onClick={()=>{navigate('/')}}>메인이동</button></div>
-            <div><button onClick={()=>{navigate('/member/updateform')}}>회원정보수정</button></div>
+            <div><button onClick={()=>{navigate('/updateform')}}>회원정보수정</button></div>
             <div><button onClick={()=>{navigate('/mypage/addresslist')}}>주소록</button></div>
             <div>
                 {

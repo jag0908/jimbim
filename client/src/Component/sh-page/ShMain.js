@@ -45,31 +45,43 @@ function ShMain() {
     
 
     function formatDateTime(indate) {
-      const date = new Date(indate); // Axios로 받은 문자열을 Date 객체로 변환
+      const date = new Date(indate);
       const now = new Date();
 
-      const isToday = date.toDateString() === now.toDateString(); // 오늘인지 확인
+      // 시간 제외하고 날짜만 비교하기 위해 00:00 기준으로 변환
+      const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-      if (isToday) {
-          const diffMs = now - date; // 밀리초 단위 차이
-          const diffMinutes = Math.floor(diffMs / 1000 / 60);
-          const diffHours = Math.floor(diffMinutes / 60);
+      const diffMs = now - date;
+      const diffMinutes = Math.floor(diffMs / 1000 / 60);
+      const diffHours = Math.floor(diffMinutes / 60);
 
-          if (diffHours > 0) {
-              return `${diffHours}시간 전`;
-          } else if (diffMinutes > 0) {
-              return `${diffMinutes}분 전`;
-          } else {
-              return `방금 전`;
-          }
-      } else {
-          // 오늘이 아닌 경우: YYYY-MM-DD
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          return `${year}-${month}-${day}`;
-      }     
+      const diffDays = Math.floor((startOfNow - startOfDate) / (1000 * 60 * 60 * 24));
+
+      // 오늘일 경우
+      if (diffDays === 0) {
+        if (diffHours > 0) return `${diffHours}시간 전`;
+        if (diffMinutes > 0) return `${diffMinutes}분 전`;
+        return `방금 전`;
+      }
+
+      // 1달(30일) 미만
+      if (diffDays < 30) {
+        return `${diffDays}일 전`;
+      }
+
+      const diffMonths = Math.floor(diffDays / 30);
+      if (diffMonths < 12) {
+        return `${diffMonths}달 전`;
+      }
+
+      // 1년 이상은 날짜 출력
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
+
 
     function formatPrice(num) {
       return num.toLocaleString('ko-KR');

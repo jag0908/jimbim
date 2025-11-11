@@ -5,16 +5,13 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 
-import com.himedia.spserver.repository.FileRepository;
-import com.himedia.spserver.repository.SH_file_repository;
-import com.himedia.spserver.repository.ShCategoryRepository;
-import com.himedia.spserver.repository.ShRepository;
+import com.himedia.spserver.entity.SH.ShViewHistory;
+import com.himedia.spserver.repository.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +25,10 @@ public class ShService {
     private final ShCategoryRepository sc;   // 두 개 Repository도 가능
     private final SH_file_repository sfr;
     private final FileRepository fr;
+    private final ShViewRepository svr;
 
     public List<SHPostWithFilesDTO> getShList() {
-        List<SH_post> shList = sr.findAll();
+        List<SH_post> shList = sr.findAllByOrderByIndateDesc();
         List<SHPostWithFilesDTO> result = new ArrayList<>();
 
         for (SH_post post : shList) {
@@ -73,6 +71,7 @@ public class ShService {
         post.setDelivery_price(deliveryPrice);
 
         sr.save(post);
+
         return post;
     }
 
@@ -87,6 +86,21 @@ public class ShService {
         fr.save(file);
     }
 
+    public void addViewCount(Integer postId, Integer memberId) {
+        // 이미 조회했는지 체크
+        boolean alreadyViewed = svr.existsByPostIdAndMemberId(postId, memberId);
+        if (alreadyViewed) return;
+
+        // 조회수 증가
+        SH_post shPost = sr.findByPostId(postId);
+        shPost.setViewCount(shPost.getViewCount() + 1);
+
+        // 기록 저장
+        ShViewHistory vh = new ShViewHistory();
+        vh.setPostId(postId);
+        vh.setMemberId(memberId);
+        svr.save(vh);
+    }
 
 
     @Setter

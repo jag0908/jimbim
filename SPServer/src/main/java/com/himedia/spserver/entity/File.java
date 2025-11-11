@@ -22,11 +22,11 @@ public class File {
     private String contentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "spostId", nullable = false) // STYLE_post의 PK (spost_id)와 연결
+    @JoinColumn(name = "spostId") // STYLE_post의 PK (spost_id)와 연결
     private STYLE_post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shPostId", nullable = false)
+    @JoinColumn(name = "shPostId")
     private SH_post shPost;
 
     @Column( columnDefinition="DATETIME default now()" )

@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class StyleService {
 
     private final STYLE_PostRepository postRepository;
@@ -174,27 +173,55 @@ public class StyleService {
         return Map.of("liked", liked, "likeCount", likeCount);
     }
 
-    public boolean toggleFollow(String userid, String targetUserid) {
-
-        Member startMember = memberRepository.findByUserid(userid);
-        Member endMember = memberRepository.findByUserid(targetUserid);
-
-        if (startMember == null || endMember == null)
-            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
-
-        Optional<Follow> existingFollow = followRepository.findByStart_memberAndEnd_member(startMember, endMember);
-
-        if (existingFollow.isPresent()) {
-            followRepository.delete(existingFollow.get());
-            return false; // 언팔로우됨
-        } else {
-            Follow follow = new Follow();
-            follow.setStart_member(startMember);
-            follow.setEnd_member(endMember);
-            followRepository.save(follow);
-            return true; // 팔로우됨
-        }
-    }
+    // ✅ 팔로우 토글 (팔로우 중이면 취소, 아니면 등록)
+//    public boolean toggleFollow(String startUserid, String endUserid) {
+//        Member startMember = memberRepository.findByUserid(startUserid);
+//        Member endMember = memberRepository.findByUserid(endUserid);
+//
+//        if (startMember == null || endMember == null) {
+//            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+//        }
+//
+//        return followRepository.findByStart_memberAndEnd_member(startMember, endMember)
+//                .map(existing -> {
+//                    followRepository.delete(existing);
+//                    return false; // 언팔로우
+//                })
+//                .orElseGet(() -> {
+//                    Follow newFollow = new Follow();
+//                    newFollow.setStart_member(startMember);
+//                    newFollow.setEnd_member(endMember);
+//                    followRepository.save(newFollow);
+//                    return true; // 팔로우 성공
+//                });
+//    }
+//
+//    // ✅ 팔로워 목록
+//    public List<String> getFollowers(String userid) {
+//        Member member = memberRepository.findByUserid(userid);
+//        return followRepository.findByEnd_member(member).stream()
+//                .map(f -> f.getStart_member().getUserid())
+//                .collect(Collectors.toList());
+//    }
+//
+//    // ✅ 팔로잉 목록
+//    public List<String> getFollowing(String userid) {
+//        Member member = memberRepository.findByUserid(userid);
+//        return followRepository.findByStart_member(member).stream()
+//                .map(f -> f.getEnd_member().getUserid())
+//                .collect(Collectors.toList());
+//    }
+//
+//    // ✅ 팔로우 상태 확인
+//    public boolean isFollowing(String startUserid, String endUserid) {
+//        Member startMember = memberRepository.findByUserid(startUserid);
+//        Member endMember = memberRepository.findByUserid(endUserid);
+//
+//        if (startMember == null || endMember == null)
+//            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+//
+//        return followRepository.findByStart_memberAndEnd_member(startMember, endMember).isPresent();
+//    }
 
     public STYLE_post findBySpostId(Integer id) {
         return postRepository.findBySpostId(id)
@@ -262,4 +289,16 @@ public class StyleService {
         replyRepository.delete(reply);
     }
 
+    public void deletePost(Integer spostId, String userid) {
+        STYLE_post post = postRepository.findById(spostId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if (!post.getMember().getUserid().equals(userid)) {
+            throw new RuntimeException("본인 게시글만 삭제할 수 있습니다.");
+        }
+
+        // 파일 삭제 가능 (S3, DB)
+        fileRepository.deleteAll(fileRepository.findByPost(post));
+        postRepository.delete(post);
+    }
 }

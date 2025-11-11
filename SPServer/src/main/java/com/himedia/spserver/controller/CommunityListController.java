@@ -1,12 +1,10 @@
 package com.himedia.spserver.controller;
 
-import com.himedia.spserver.dto.Paging;
 import com.himedia.spserver.entity.Community.*;
-import com.himedia.spserver.service.CommunityService;
+import com.himedia.spserver.service.CommunityListService;
 import com.himedia.spserver.service.S3UploadService;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,28 +12,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
-@RequestMapping("/community")
-public class CommunityController {
+@RequestMapping("/communityList")
+public class CommunityListController {
 
     @Autowired
-    private CommunityService cs;
-
-    @Autowired
-    S3UploadService sus;
+    private CommunityListService cs;
 
     @GetMapping("/getCommunityList/{page}")
-    public HashMap<String, Object> getCommunityList(@PathVariable("page") int page){
-        HashMap<String, Object> result = cs.getCommunityList(page);
-        return result;
+    public HashMap<String, Object> getCommunityList(@PathVariable int page) {
+        return cs.getCommunityList(page);
     }
 
     @PostMapping("/addReadCount")
-    public HashMap<String, Object> addReadCount(@RequestParam ("num") int num) {
-        HashMap<String, Object> result = new HashMap<>();
+    public HashMap<String, Object> addReadCount(@RequestParam int num) {
         cs.addReadCount(num);
+        HashMap<String, Object> result = new HashMap<>();
         result.put("msg", "ok");
         return result;
     }

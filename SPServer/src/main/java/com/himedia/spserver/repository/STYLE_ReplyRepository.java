@@ -11,4 +11,6 @@ public interface STYLE_ReplyRepository extends JpaRepository<STYLE_Reply, Intege
     int countBySpost(STYLE_post post);
 
     List<STYLE_Reply> findBySpost(STYLE_post post);
+
+    void deleteAllBySpost(STYLE_post post);
 }

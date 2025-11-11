@@ -19,14 +19,23 @@ const StyleDetail = () => {
   const currentUser = useSelector((state) => state.user);
   const myUserid = currentUser?.userid;
 
-  
-
   const fetchPost = async () => {
-    try {
-      const res = await jaxios.get(`${baseURL}/style/post/${id}`);
-      setPost(res.data);
-      setLikeCount(res.data.likesCount || 0);
-      setReplies(Array.isArray(res.data.replies) ? res.data.replies : []);
+  try {
+    const res = await jaxios.get(`${baseURL}/style/post/${id}`);
+    const postData = res.data; // 데이터를 변수에 저장
+
+    setPost(postData);
+    setLikeCount(postData.likesCount || 0);
+    setReplies(Array.isArray(postData.replies) ? postData.replies : []);
+    // 서버에서 받아온 liked 상태 사용 (아래 서버 수정 필요)
+    setLiked(postData.liked || false);
+
+      // 팔로우 상태 확인 로직 추가
+      const isMyPostCheck = postData.userid === myUserid;
+      if (myUserid && !isMyPostCheck) { // 로그인 상태이고 내 게시글이 아닐 때만 팔로우 상태 확인
+          const followRes = await jaxios.get(`${baseURL}/style/follow/${postData.userid}`);
+          setIsFollowing(followRes.data.followed);
+      }
     } catch (err) {
       console.error("게시글 로드 오류", err);
       if (err.response?.data?.error === 'REQUIRE_LOGIN') {
@@ -37,7 +46,7 @@ const StyleDetail = () => {
 
   useEffect(() => {
     fetchPost();
-  }, [id]);
+  }, [id, myUserid]);
 
   if (!post) return <div>로딩 중...</div>;
 
@@ -105,8 +114,23 @@ const StyleDetail = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    if (!window.confirm("게시글을 삭제하시겠습니까?")) return;
+
+    try {
+      await jaxios.delete(`${baseURL}/style/post/${id}`);
+      alert("게시글이 삭제되었습니다.");
+      // 삭제 후 Feed 페이지 등으로 이동
+      window.location.href = "/style"; 
+    } catch (err) {
+      console.error("게시글 삭제 오류", err);
+      alert("게시글 삭제 중 오류가 발생했습니다.");
+    }
+  };
+
   const { title, content, profileImg, userid, s_images = [] } = post;
   const indate = post.indate ? new Date(post.indate.replace(' ', 'T').replace('.0', '')): null;
+  const isMyPost = post ? post.userid === myUserid : false;
 
   // ⭐ ImageSlider를 내부 컴포넌트로 정의
   const ImageSlider = ({ images }) => {
@@ -146,12 +170,19 @@ const StyleDetail = () => {
             <div className="time">{indate ? indate.toLocaleString() : "날짜 없음"}</div>
           </div>
         </div>
-        <button
-          className={`follow-btn ${isFollowing ? "following" : ""}`}
-          onClick={handleFollow}
-        >
-          {isFollowing ? "팔로잉" : "팔로우"}
-        </button>
+
+        {isMyPost ? (
+          <button className="delete-post-btn" onClick={handleDeletePost}>
+            게시글 삭제
+          </button>
+        ) : (
+          <button
+            className={`follow-btn ${isFollowing ? "following" : ""}`}
+            onClick={handleFollow}
+          >
+            {isFollowing ? "팔로잉" : "팔로우"}
+          </button>
+        )}
       </div>
 
       {/* 이미지 */}
@@ -170,7 +201,7 @@ const StyleDetail = () => {
       {/* 좋아요/댓글/공유 */}
       <div className="actions">
         <div className="action-item" onClick={handleLike}>
-          ❤️ 좋아요 {likeCount}
+          {liked ? "❤️" : "🤍"} 좋아요 {likeCount}
         </div>
         <div className="action-item">💬 댓글 {replies.length}</div>
         <div className="action-item" onClick={handleShare}>
@@ -193,8 +224,6 @@ const StyleDetail = () => {
         {replies.map((reply) => {
           const replyDate = reply.indate ? new Date(reply.indate).toLocaleString() : "시간 없음";
           const isMyComment = reply.userid === myUserid;   // 댓글 작성자와 비교
-
-          console.log("reply.userid:", reply.userid, "myUserid:", myUserid, "isMyComment:", isMyComment);
 
           return (
             <div key={reply.reply_id} className="reply">

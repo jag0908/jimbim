@@ -38,6 +38,10 @@ public class SH_post {  // second hand
     @Column(nullable = false)
     private String category;
 
+    @Column(nullable = false)
+    private Integer viewCount = 0;
+
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     Member member;

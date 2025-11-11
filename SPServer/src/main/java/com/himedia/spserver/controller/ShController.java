@@ -3,10 +3,10 @@ package com.himedia.spserver.controller;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.dto.ShViewCountDTO;
 import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,7 +70,6 @@ public class ShController {
         HashMap<String, Object> result = new HashMap<>();
 
         SH_post post = ss.insertShPost(member_id, title, content, price, categoryId, directYN, deliveryYN, deliveryPrice);
-
         for(MultipartFile file : files) {
             try {
                 String uploadFilePathName = sus.saveFile( file );
@@ -102,5 +101,13 @@ public class ShController {
         return result;
     }
 
+
+
+    @PostMapping("/sh-view-count")
+    public HashMap<String, Object> shViewCount(@RequestBody ShViewCountDTO dto) {
+        HashMap<String, Object> result = new HashMap<>();
+        ss.addViewCount(dto.getPostId(), dto.getMemberId());
+        return result;
+    }
 
 }

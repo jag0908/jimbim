@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import '../../style/StyleFeed.css';
 import { useNavigate } from 'react-router-dom';
+import jaxios from '../../util/jwtutil';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -10,35 +10,37 @@ function StyleFeed() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${baseURL}/style/posts`).then(res => {
-      // 좋아요 상태와 개수 분리
-      const postsWithLikeState = res.data.map(post => ({
-        ...post,
-        liked: false,  // 기본 좋아요 안한 상태
-      }));
-      setPosts(postsWithLikeState);
-    })
-    .catch(err => console.error(err));
-  }, []);
-
-  const handleWriteClick = () => {
-    navigate('/stylewrite');
-  };
+    const fetchPosts = async () => {
+      const res = await jaxios.get(`${baseURL}/style/posts`);
+      setPosts(res.data);
+    };
+    fetchPosts();
+  }, []); // ← []를 [location]으로 바꾸면 페이지 이동마다 새로 불러옴
 
   // 좋아요 토글 함수
-  const toggleLike = (postId) => {
-    setPosts(posts.map(post => {
-      if (post.spost_id === postId) {
-        const isLiked = !post.liked;
-        return {
-          ...post,
-          liked: isLiked,
-          likeCount: isLiked ? post.likeCount + 1 : post.likeCount - 1,
-        };
+  const toggleLike = async (postId) => {
+    try {
+      const res = await jaxios.post(`${baseURL}/style/like/${postId}`);
+      const { liked, likeCount } = res.data;
+
+      // 서버 응답값으로 UI 업데이트
+      setPosts(posts.map(post => 
+        post.spost_id === postId 
+          ? { ...post, liked, likeCount }
+          : post
+      ));
+    } catch (err) {
+      console.error("좋아요 오류", err);
+      if (err.response?.data?.error === 'REQUIRE_LOGIN') {
+        alert("로그인 후 이용 가능합니다");
       }
-      return post;
-    }));
+    }
   };
+
+  const handleWriteClick = () => {
+    navigate('/styleWrite');
+  };
+
 
   return (
     <div className="feed-container">

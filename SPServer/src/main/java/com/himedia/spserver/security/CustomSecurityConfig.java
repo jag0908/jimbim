@@ -50,7 +50,9 @@ public class CustomSecurityConfig {
                 ).permitAll()
                 .requestMatchers(
                         "/style/write",
-                        "/api/style/write"
+                        "/api/style/write",
+                        "/style/reply/**",
+                        "/api/style/reply/**"
                 ).authenticated()
                 .anyRequest().permitAll()
         );

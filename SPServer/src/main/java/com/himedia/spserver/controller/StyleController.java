@@ -5,6 +5,7 @@ import com.himedia.spserver.dto.MemberDTO;
 import com.himedia.spserver.dto.StylePostDTO;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
+import com.himedia.spserver.repository.FollowRepository;
 import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.StyleService;
 import lombok.RequiredArgsConstructor;
@@ -80,33 +81,6 @@ public class StyleController {
 
     }
 
-//    @Autowired
-//    ServletContext sc;
-//
-//    @PostMapping("/fileupload")
-//    public HashMap<String, Object> fileUpload(@RequestParam("image") MultipartFile file ) {
-//        HashMap<String , Object> result = new HashMap<>();
-//        String path = sc.getRealPath("/style_img");
-//
-//        File uploadDir = new File(path);
-//        if (!uploadDir.exists()) {
-//            uploadDir.mkdirs(); // 디렉토리 없으면 생성
-//        }
-//
-//        Calendar today = Calendar.getInstance();
-//        long dt = today.getTimeInMillis();
-//        String filename = file.getOriginalFilename();
-//        String f1 = filename.substring(0, filename.lastIndexOf("."));
-//        String f2 = filename.substring(filename.lastIndexOf("."));
-//        String uploadPath = path + "/" + f1 + dt + f2;
-//        try {
-//            file.transferTo( new File(uploadPath) );
-//            result.put("filename", f1 + dt + f2);
-//        } catch (IllegalStateException | IOException e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
 
 
     @PostMapping("/fileupload")
@@ -153,23 +127,36 @@ public class StyleController {
     }
 
 
-    @PostMapping("/follow")
-    public ResponseEntity<?> toggleFollow(@RequestParam String targetUserid, @AuthenticationPrincipal MemberDTO memberDTO) {
-        if (memberDTO == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
-        try {
-            boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
-            Map<String, Object> res = new HashMap<>();
-            res.put("followed", followed);
-            res.put("message", followed ? "팔로우 성공" : "팔로우 취소");
-            return ResponseEntity.ok(res);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("팔로우 처리 실패");
-        }
-    }
+    // ✅ 팔로우 / 언팔로우 토글
+//    @PostMapping("/follow")
+//    public ResponseEntity<?> toggleFollow(
+//            @RequestBody Map<String, String> body,
+//            @AuthenticationPrincipal MemberDTO memberDTO) {
+//
+//        if (memberDTO == null) {
+//            return ResponseEntity.status(401).body(Map.of("error", "REQUIRE_LOGIN"));
+//        }
+//
+//        String targetUserid = body.get("targetUserid");
+//        boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
+//
+//        return ResponseEntity.ok(Map.of(
+//                "followed", followed,
+//                "message", followed ? "팔로우 성공" : "언팔로우 됨"
+//        ));
+//    }
+//
+//    // ✅ 팔로우 상태 확인
+//    @GetMapping("/follow/{targetUserid}")
+//    public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
+//                                         @AuthenticationPrincipal MemberDTO memberDTO) {
+//        if (memberDTO == null) {
+//            return ResponseEntity.ok(Map.of("followed", false));
+//        }
+//
+//        boolean followed = styleService.isFollowing(memberDTO.getUserid(), targetUserid);
+//        return ResponseEntity.ok(Map.of("followed", followed));
+//    }
 
     @PostMapping("/reply/{spostId}")
     public ResponseEntity<?> addReply(
@@ -178,7 +165,11 @@ public class StyleController {
             @AuthenticationPrincipal MemberDTO memberDTO
     ) {
         if (memberDTO == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+            // Access Token 만료 시 응답
+            Map<String, Object> res = new HashMap<>();
+            res.put("error", "Access token expired");
+            res.put("code", "TOKEN_EXPIRED");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
         }
 
         try {
@@ -191,10 +182,31 @@ public class StyleController {
     }
 
     @DeleteMapping("/reply/{replyId}")
-    public ResponseEntity<?> deleteReply(@PathVariable Integer replyId, @AuthenticationPrincipal Member member) {
+    public ResponseEntity<?> deleteReply(@PathVariable Integer replyId,
+                                         @AuthenticationPrincipal MemberDTO memberDTO) {
         try {
-            styleService.deleteReply(replyId, member.getUserid());
+            if (memberDTO == null) {
+                throw new IllegalStateException("로그인이 필요합니다.");
+            }
+            styleService.deleteReply(replyId, memberDTO.getUserid());
             return ResponseEntity.ok(Map.of("message", "댓글이 삭제되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/post/{spostId}")
+    public ResponseEntity<?> deletePost(@PathVariable Integer spostId,
+                                        @AuthenticationPrincipal MemberDTO memberDTO) {
+        if (memberDTO == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "로그인이 필요합니다."));
+        }
+
+        try {
+            styleService.deletePost(spostId, memberDTO.getUserid());
+            return ResponseEntity.ok(Map.of("message", "게시글이 삭제되었습니다."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));

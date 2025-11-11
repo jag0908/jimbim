@@ -108,11 +108,13 @@ function MemberForm(props) {
         }
     }
 
+    // 숫자만 입력 가능하게
     const getNumberOnly = (e) => {
         e.target.value = e.target.value.replaceAll(/\D/g, "");
     };
+
+    // 주민번호 검사
     function checkrrn(rrn1, rrn2){
-        // 주민번호 검사
         const lastRrn= (Number)(rrn2);
         let year = (Number)(rrn1.substr(0,2))
         if(lastRrn==1 || lastRrn==2){
@@ -207,11 +209,10 @@ function MemberForm(props) {
                 (type=='join')?
                 (<>
                     <div className='field'>
-                        <label><span>*</span>ID</label>
+                        <label><span>*</span>ID <button onClick={ ()=>{idCheck()} }>ID CHECK</button></label>
                         <input type="text" value={userid} onChange={(e)=>{
                             setUserid( e.currentTarget.value )
                         }}/>
-                        <button onClick={ ()=>{idCheck()} }>ID CHECK</button>
                         <div style={idCheckMsgStyle}>{message}</div>
                         <input type='hidden' name='reid' value={reid} />
                     </div>
@@ -243,24 +244,28 @@ function MemberForm(props) {
             </div>
             <div className='field'>
                 <label><span>*</span>전화번호</label>
-                <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
-                    setPhone1( e.currentTarget.value )
-                }}/>-
-                <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                    setPhone2( e.currentTarget.value )
-                }}/>-
-                <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                    setPhone3( e.currentTarget.value )
-                }}/>
+                <div>
+                    <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
+                        setPhone1( e.currentTarget.value )
+                    }}/>&nbsp;-&nbsp;
+                    <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                        setPhone2( e.currentTarget.value )
+                    }}/>&nbsp;-&nbsp;
+                    <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                        setPhone3( e.currentTarget.value )
+                    }}/>
+                </div>
             </div>
             <div className='field'>
                 <label><span>*</span>주민등록번호</label>
-                <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
-                    setRrn1( e.currentTarget.value )
-                }}/>-
-                <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
-                    setRrn2( e.currentTarget.value )
-                }}/>******
+                <div>
+                    <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
+                        setRrn1( e.currentTarget.value )
+                    }}/>&nbsp;-&nbsp;
+                    <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
+                        setRrn2( e.currentTarget.value )
+                    }} style={{width:'10px'}}/> * * * * * * 
+                </div>
             </div>
             {
                 (type=='kakao')?
@@ -273,6 +278,7 @@ function MemberForm(props) {
             }
             <div className='field'>
                 {/* 파일업로드 인풋 */}
+                <label>프로필사진 변경</label>
                 <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} />
                 {/* 미리보기 이미지 */}
                 <div className="previewContainer">
@@ -296,8 +302,8 @@ function MemberForm(props) {
             </div>
             <div className='field'>
                 <label>동의사항(선택)</label>
-                <label>약관 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/>
-                <label>개인정보 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/>
+                <div><label>약관 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/></div>
+                <div><label>개인정보 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/></div>
             </div>
             <div className="btns">
                 <button onClick={()=>{onSubmit()}}>완료</button>

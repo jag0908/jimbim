@@ -37,6 +37,19 @@ public class MemberService {
         mr.save( member );
     }
 
+    public void updateMember(Member member) {
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        Member updateMem = mr.findByUserid( member.getUserid());
+
+        if(!member.getPwd().isEmpty()) updateMem.setPwd( pe.encode( member.getPwd()));
+        updateMem.setName(member.getName());
+        updateMem.setEmail(member.getEmail());
+        if(!member.getPhone().isEmpty()) updateMem.setPhone(member.getPhone());
+        if(!member.getRrn().isEmpty()) updateMem.setRrn(member.getRrn());
+        updateMem.setProfileImg(member.getProfileImg());
+        updateMem.setProfileMsg(member.getProfileMsg());
+    }
+
     public void kakaoIdFirstEdit(Member member) {
         Member updateMem = mr.findByUserid( member.getUserid());
 
@@ -87,4 +100,5 @@ public class MemberService {
         BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         member.setPwd( pe.encode( pwd));
     }
+
 }

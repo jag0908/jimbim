@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.himedia.spserver.dto.KakaoProfile;
 import com.himedia.spserver.dto.OAuthToken;
 import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.security.service.CustomUserDetailService;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
 import com.himedia.spserver.service.MemberService;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +36,8 @@ public class MemberController {
 
     @Autowired
     MemberService ms;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/idcheck")   // id 중복체크
     public HashMap<String, Object> idcheck(@RequestParam("userid") String userid ) {
@@ -53,6 +57,27 @@ public class MemberController {
         result.put("msg", "ok");
         return result;
     }
+
+    @PostMapping("/pwdcheck")   // 비밀번호 체크
+    public HashMap<String, Object> pwdcheck(@RequestParam("userid") String userid, @RequestParam("pwd") String pwd) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMember( userid );
+        if( passwordEncoder.matches(pwd, member.getPwd()) )
+            result.put("msg", "ok");
+        else
+            result.put("msg", "notok");
+        return result;
+    }
+
+
+    @PostMapping("/updateMember")      // 회원정보수정
+    public HashMap<String, Object> updateMember( @RequestBody Member member ) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.updateMember(member);
+        result.put("msg", "ok");
+        return result;
+    }
+
 
     /// /////////////////// 파일업로드 /////////////////////////////
 

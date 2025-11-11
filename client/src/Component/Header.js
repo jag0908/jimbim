@@ -56,7 +56,7 @@ function Header() {
                     <Link to={"/"}>SHOP</Link>
                 </div>
                 <div className='list'>
-                    <Link to={"/Community"}>커뮤니티</Link>
+                    <Link to={"/communityList"}>커뮤니티</Link>
                 </div>
                 <div className='list'>
                     <Link to={"/style"}>STYLE</Link>

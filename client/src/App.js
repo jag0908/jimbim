@@ -18,9 +18,10 @@ import ShWrite from './Component/sh-page/ShWrite'
 import ShView from './Component/sh-page/ShView'
 
 
-import Community from './Component/community/Community'
+import CommunityList from './Component/community/CommunityList'
 import WriteCommunity from './Component/community/WriteCommunity'
 import CommunityView from './Component/community/CommunityView'
+import UpdateCommunity from './Component/community/UpdateCommunity'
 
 
 
@@ -53,9 +54,10 @@ function App() {
 				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 
 				{/* 은지 */}
-				<Route path="/community" element={<Community />} />
+				<Route path="/communityList" element={<CommunityList />} />
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
 				<Route path="/communityView" element={<CommunityView />} />
+				<Route path="/updateCommunity" element={<UpdateCommunity />} />
 
 
 			</Routes>

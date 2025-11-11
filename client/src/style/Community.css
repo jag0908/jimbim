@@ -1,7 +1,7 @@
 /* ---------- 전체 레이아웃 컨테이너 ---------- */
 .community {
   display: flex;
-  width: 90%;
+  width: 1200px; /* 고정 너비로 변경 */
   margin: 50px auto;
   font-family: "Noto Sans KR", sans-serif;
   align-items: flex-start;

@@ -46,6 +46,9 @@ public class CustomSecurityConfig {
                         "/api/style/post/**"
                 ).permitAll()
                 .requestMatchers(
+                        "/community/getCommunityList/**"
+                ).permitAll()
+                .requestMatchers(
                         "/style/write",
                         "/api/style/write"
                 ).authenticated()

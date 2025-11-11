@@ -2,7 +2,7 @@ package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.Paging;
 import com.himedia.spserver.entity.Community.*;
-import com.himedia.spserver.repository.CommunityRepository;
+import com.himedia.spserver.repository.CommunityListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,22 +15,15 @@ import java.util.HashMap;
 
 @Service
 @Transactional
-public class CommunityService {
+public class CommunityListService {
 
     @Autowired
-    private CommunityRepository cr;
+    private CommunityListRepository cr;
 
     public void addReadCount(int cpostNum) {
         C_post post = cr.findByCpostNum(cpostNum);
         if (post != null) {
             post.setReadcount(post.getReadcount() + 1);
-        }
-    }
-
-    public void deleteCommunity(int cpostNum) {
-        C_post post = cr.findByCpostNum(cpostNum);
-        if (post != null) {
-            cr.delete(post);
         }
     }
 
@@ -51,28 +44,24 @@ public class CommunityService {
         return result;
     }
 
-    public void insertCommunity(C_post post) {
-        cr.save(post);
-    }
-
     public HashMap<String, Object> getCommunityList(int page) {
         HashMap<String, Object> result = new HashMap<>();
+
         Paging paging = new Paging();
         paging.setPage(page);
-        int count = cr.findAll().size();
-        paging.setTotalCount(count);
+
+        int totalCount = (int) cr.count();
+        paging.setTotalCount(totalCount);
         paging.calPaing();
 
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "readcount"));
         Page<C_post> list = cr.findAll(pageable);
+
+        System.out.println("DB에서 조회된 게시글 수: " + list.getContent().size());
+
         result.put("communityList", list.getContent());
         result.put("paging", paging);
 
         return result;
-    }
-
-    public Object getCommunity(int cpostNum) {
-        C_post post = cr.findByCpostNum(cpostNum);
-        return post;
     }
 }

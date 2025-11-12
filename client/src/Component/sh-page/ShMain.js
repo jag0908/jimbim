@@ -115,14 +115,14 @@ function ShMain() {
             shPostArr.map((ShPost, i)=> {
               return (
                 <div className='list' key={i}>
-                  <Link to={`/sh-page/sh-view/${ShPost.post.postId}`}>
+                  <Link to={`/sh-page/sh-view/${ShPost.postId}`}>
                       <div className='imgBox'>
-                        <img key={i} src={ShPost.files[0].path} />
+                        <img key={i} src={ShPost.representFile && ShPost.representFile.path} />
                       </div>
             
-                      <h3 className='data title'>{ShPost.post.title}</h3>
-                      <h3 className='data price'>{formatPrice(ShPost.post.price)}원</h3>
-                      <h3 className='data date'>{formatDateTime(ShPost.post.indate)}</h3>
+                      <h3 className='data title'>{ShPost.title}</h3>
+                      <h3 className='data price'>{formatPrice(ShPost.price)}원</h3>
+                      <h3 className='data date'>{formatDateTime(ShPost.indate)}</h3>
                   </Link>
                 </div>
               )

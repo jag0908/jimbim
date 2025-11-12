@@ -26,8 +26,8 @@ function ShView() {
     const {id} = useParams();
     const navigate = useNavigate();
 
-    const [postDetail, setPostDetail] = useState({});
-    const [category, setCategory] = useState([]);
+    const [postDetail, setPostDetail] = useState(null);
+    const [category, setCategory] = useState(null);
 
 
 
@@ -46,7 +46,8 @@ function ShView() {
         // 2. 데이터 가져오기 (조회수 증가 후)
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
-            setPostDetail(res.data.shPost);
+            console.log(res.data.post)
+            setPostDetail(res.data.post);
             setCategory(res.data.category);
         } catch (err) {
             console.error(err);
@@ -105,65 +106,98 @@ function ShView() {
     <div className='shView'>
         <div className='viewWrap'>
             <div className='top'>
-                <div className='catetory'>[{postDetail.post && category?category[postDetail.post.category].category_name:"데이터 불러오는중..."}]</div>
-                <h4 className='tit'>{postDetail.post?postDetail.post.title:"데이터 불러오는중..."}</h4>
+                <div className='catetory'>[{category?category[postDetail.category].category_name:null}]</div>
+                <h4 className='tit'>{postDetail?postDetail.title:<Lodding />}</h4>
             </div>
 
             <div className='rayoutWrap'>
                 <div className='leftBox'>
                     <Slider className='imgGroup' {...settings}>
                         {
-                            (postDetail.files || []) ? 
-                            (postDetail.files || []).map((file, i)=> {
+                            postDetail && postDetail.files.map((file, i)=> {
                                 return(
-                                    <div className='imgBox' key={i}>
-                                        <img src={file.path} />
-                                    </div>
+                                <div className='imgBox'>
+                                    <img src={file.path} />
+                                </div>  
                                 )
-                            }):
-                            "텅"
-                            
+                            })
                         }
                     </Slider>
                     <div className='userWrap'>
                         <div className='userProfile'>
                             <div className='profileImg'>
                             {
-                                postDetail.post?.member?.profileImg
-                                ? <img src={postDetail.post.member.profileImg} />
-                                : <img src={`${baseURL}/sh_img/1.png`} />
+                                (postDetail && postDetail.member_profileImg)
+                                ? 
+                                (<img src={postDetail.member_profileImg} />)
+                                : 
+                                (<img src={`${baseURL}/sh_img/1.png`} />)
                             }
                             </div>
 
                             <div className='profileInfo'>
                             <span className='nickname'>
-                                {postDetail.post?.member?.name ?? "데이터 불러오는 중..."}
+                                {
+                                    postDetail?
+                                    postDetail.member_name:
+                                    <Lodding/>
+                                }
                             </span>
                             <span className='etc'>
-                                {postDetail.post?.member?.profileMsg ?? "데이터 불러오는 중..."}
+                                {
+                                    postDetail?
+                                    postDetail.member_profileMsg:
+                                    <Lodding/>
+                                }
                             </span>
                             </div>
                         </div>
 
                         <div className='userState'>
-                            매너단계: <span>{postDetail.post?.member?.blacklist ?? "-"}</span>
+                            매너단계: 
+                            <span>
+                                {
+                                    postDetail?
+                                    postDetail.member_blacklist:
+                                    <Lodding/>
+                                }
+                            </span>
                         </div>
                     </div>
 
                 </div>
                 <div className='rightBox'>
                     <div className='dataBoxWrap'>
-                        <h2 className='mainTitle'>{postDetail.post?postDetail.post.title:"데이터 불러오는중..."}</h2>
+                        <h2 className='mainTitle'>
+                            {
+                                postDetail?
+                                postDetail.title:
+                                <Lodding/>
+                            }
+                        </h2>
                     </div>
                     <div className='dataBoxWrap dobule'>
-                        <div className='catetory'>[{postDetail.post && category?category[postDetail.post.category].category_name:"데이터 불러오는중..."}]</div>
-                        <div className='date'>{postDetail.post ? formatDateTime(postDetail.post.indate) : "데이터 불러오는중 ..."}</div>
+                        <div className='catetory'></div>
+                        <div className='date'>{}</div>
                     </div>
                     <div className='dataBoxWrap'>
-                        <span className='dataBox price'>{postDetail.post?formatPrice(postDetail.post.price):"데이터 불러오는중..."}원</span>
+                        <span className='dataBox price'>
+                            {
+                                postDetail?
+                                 formatPrice(postDetail.price):
+                                <Lodding/>
+                            }
+                            원
+                        </span>
                     </div>
                     <div className='dataBoxWrap'>
-                        <textarea id='dataTTA' className='tta' readOnly disabled value={postDetail.post?postDetail.post.content:"데이터 불러오는중..."}></textarea>
+                        <textarea id='dataTTA' className='tta' readOnly disabled 
+                        value={
+                                postDetail?
+                                postDetail.content:
+                                <Lodding/>
+                            }
+                        ></textarea>
                     </div>
 
                     <div className='dataBoxWrap'>
@@ -177,7 +211,13 @@ function ShView() {
                         </div>
                         <div className='util'>
                             <span className='tit'>조회수</span>
-                            <span className='dataBox srt'>{postDetail?.post?.viewCount ?? 0}</span>
+                            <span className='dataBox srt'>
+                                {
+                                    postDetail?
+                                    postDetail.viewCount:
+                                    <Lodding/>
+                                }
+                            </span>
                         </div>
 
                     </div>
@@ -187,17 +227,46 @@ function ShView() {
                     
                     <div className='dataBoxWrap'>
                         <h4 className='tit'>직거래</h4>
-                        <span className='dataBox srt'>{postDetail.post?(postDetail.post.direct_yn === "Y"?"가능":"불가능"):"데이터 불러오는중..."}</span>
+                        <span className='dataBox srt'>
+                            {
+                                postDetail?
+                                (
+                                    postDetail.directYN === "N" ? "불가능" :
+                                    "가능"
+                                ):
+                                <Lodding/>
+                            }
+                        </span>
 
                         <div></div><div></div><div></div>
 
                         <h4 className='tit'>택배거래</h4>
-                        <span className='dataBox srt'>{postDetail.post?(postDetail.post.delivery_yn === "Y"?"가능":"불가능"):"데이터 불러오는중..."}</span>
+                        <span className='dataBox srt'>
+                            {
+                                postDetail?
+                                (
+                                    postDetail.delivery_yn === "N" ? "불가능" :
+                                    "가능"
+                                ):
+                                <Lodding/>
+                            }
+                        </span>
                     </div>
 
-                    <div className={`dataBoxWrap ${postDetail.post?(postDetail.post.delivery_yn === "Y"? 'display-block':'display-none'):"데이터 불러오는중..."}`}>
+                    <div className={
+                            `dataBoxWrap ${postDetail && postDetail.delivery_yn=="N"?
+                                "display-none":
+                                "display-block"
+                            }`
+                        }>
                         <h4 className='tit'>택배비</h4>
-                        <span className='dataBox price srt'>{postDetail.post?(formatPrice(postDetail.post.delivery_price)):"데이터 불러오는중..."}원</span>
+                        <span className='dataBox price srt'>
+                            {
+                                postDetail?
+                                postDetail.delivery_price:
+                                <Lodding/>
+                            }
+                            원</span>
                     </div>
                 </div>
             </div>
@@ -209,18 +278,23 @@ function ShView() {
         </div>
         <div className='btnWrap'>
             {
-                postDetail?.post?.member &&
-                postDetail.post.member.member_id === loginUser.member_id && (
+                postDetail && postDetail.member_id == loginUser.member_id ? 
+                (
                     <button className='navBtn pointBtn' onClick={() => navigate(`/sh-page/sh-update/${id}`)}>
                     수정하기
                     </button>
-                )
+                ):
+                null
             }
             
             <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
         </div>
     </div>
   )
+}
+
+function Lodding() {
+    return <span style={{fontSize:"14px"}}>불러오는중...</span>
 }
 
 export default ShView

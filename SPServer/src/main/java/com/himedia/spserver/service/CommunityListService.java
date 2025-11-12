@@ -64,4 +64,12 @@ public class CommunityListService {
 
         return result;
     }
+
+    public void insertCommunity(C_post cpost) {
+        cr.save(cpost);
+    }
+
+    public C_post getCommunity(int num) {
+        return cr.findByCpostNum(num);
+    }
 }

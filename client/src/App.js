@@ -64,7 +64,7 @@ function App() {
 				{/* 은지 */}
 				<Route path="/communityList" element={<CommunityList />} />
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
-				<Route path="/communityView" element={<CommunityView />} />
+				<Route path="/communityView/:num" element={<CommunityView />} />
 				<Route path="/updateCommunity" element={<UpdateCommunity />} />
 
 

@@ -21,7 +21,7 @@ function Login() {
             if( loginUser && loginUser.userid ){
                 navigate('/')
             }
-        },[]
+        },[loginUser, navigate]
     )
     const activeEnter = (e) => {
         if(e.key === "Enter") {

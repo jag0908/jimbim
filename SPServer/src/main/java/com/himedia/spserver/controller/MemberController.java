@@ -84,6 +84,15 @@ public class MemberController {
         return result;
     }
 
+    @PostMapping("/updateAgree")
+    public HashMap<String, Object> updateAgree( @RequestParam("userid") String userid, @RequestParam("agree") String agree, @RequestParam("yn") String yn) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.updateAgree(userid, agree, yn);
+        result.put("msg", "ok");
+
+        return result;
+    }
+
     @GetMapping("/getMember")   // userslice 수정으로 이제 로그인 유저 값이 필요하면 /getMember를 써야함
     public HashMap<String, Object> getMember( @RequestParam("userid") String userid ) {
         HashMap<String, Object> result = new HashMap<>();

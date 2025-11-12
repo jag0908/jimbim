@@ -30,8 +30,8 @@ function Mypage() {
 
     const [profileMsg, setProfileMsg] = useState('')
 
-    // const [terms_agree, setTerms_agree] = useState('N')
-    // const [personal_agree, setPersonal_agree] = useState('N')
+    const [terms_agree, setTerms_agree] = useState('')
+    const [personal_agree, setPersonal_agree] = useState('')
 
     const [file, setFile] = useState({});
     const [type, setType] = useState('')
@@ -54,19 +54,24 @@ function Mypage() {
         setRrn2(member.rrn.substring(7,8))
         setProfileImg(member.profileImg)
         setProfileMsg(member.profileMsg)
+        setTerms_agree(member.terms_agree)
+        setPersonal_agree(member.personal_agree)
         setPreview('')
         setFile({})
     }
 
     useEffect(
         ()=>{
-            if(loginUser.userid){
+            if(!loginUser.userid){
+                alert("로그인이 필요한 서비스입니다")
+                navigate("/")
+            }else{
                 jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
                 .then((result)=>{
                     reset(result.data.member)
                 }).catch((err)=>{ console.error(err);  })
             }
-        },[]
+        },[loginUser, navigate]
     )
 
     function edit(typ){
@@ -111,9 +116,9 @@ function Mypage() {
     function checkrrn(rrn1, rrn2){
         const lastRrn= (Number)(rrn2);
         let year = (Number)(rrn1.substr(0,2))
-        if(lastRrn==1 || lastRrn==2){
+        if(lastRrn===1 || lastRrn===2){
             year += 1900;
-        }else if(lastRrn==3 || lastRrn==4){
+        }else if(lastRrn===3 || lastRrn===4){
             year += 2000;
         }
 
@@ -121,7 +126,7 @@ function Mypage() {
         const day = (Number)(rrn1.substr(4,2))
 
         if(lastRrn<1 || lastRrn>4) return false;    // 뒷자리가 1~4가 아니면 금지
-        if(month==0 || day==0) return false;    // 월이나 일이 0이면 금지
+        if(month===0 || day===0) return false;    // 월이나 일이 0이면 금지
         
         switch(month){                          // 월에 따라 일이 초과하면 금지
             case 1: case 3: case 5: case 7: case 8: case 10: case 12:
@@ -131,7 +136,7 @@ function Mypage() {
                 if(day>30) return false;
                 break;
             case 2:
-                if(year%4==0 && year%100!=0 || year%400==0){
+                if((year%4===0 && year%100!==0) || year%400===0){
                     if(day>29) return false;
                 }else{
                     if(day>28) return false;
@@ -141,13 +146,16 @@ function Mypage() {
         }
         return true
     }
+    function isCheck(yn){
+        return yn==='Y';
+    }
     async function onSubmit(){
         let rrn=''
         let phone=''
         
-        if( !name && type=='name'){return alert('이름을 입력하세요')}
+        if( !name && type==='name'){return alert('이름을 입력하세요')}
         
-        if( type=='email'){
+        if( type==='email'){
             if(!email) return alert('이메일을 입력하세요')
             
             // 유효이메일 양식 체크
@@ -155,19 +163,19 @@ function Mypage() {
             if( !regix ){  return alert('유효한 이메일을 입력하세요'); }
         }
 
-        if( type=='phone'){
+        if( type==='phone'){
             if(!phone1 && !phone2 && !phone3) return alert('전화번호를 입력하세요')
             phone = phone1+"-"+phone2+"-"+phone3
         }
 
-        if( type=='rrn'){
+        if( type==='rrn'){
             if(!rrn1 && !rrn2) return alert('주민등록번호를 입력하세요')
             if(!checkrrn(rrn1, rrn2)){return alert('유효한 주민등록번호를 입력하세요')};
             rrn = rrn1+"-"+rrn2+"******"
         }
         
         let url = await createFormData()
-        if(!url) url = member.profileImg
+        if(!url) url = profileImg
         
         await jaxios.post('/api/member/updateMember', {userid:loginUser.userid, name, email, phone, rrn, profileImg:url, profileMsg })
         .then((result)=>{
@@ -177,13 +185,13 @@ function Mypage() {
         } ).catch((err)=>{console.error(err);})
     }
     async function updatePwd(){
-        if(type=='pwd'){
+        if(type==='pwd'){
             if(!prePwd){ return alert('현재 비밀번호를 입력하세요')}
             if( !pwd ){return alert('새 비밀번호를 입력하세요')}
             if( pwd !== pwdChk){return alert('비밀번호 확인이 일치하지 않습니다')}
 
             let res = await jaxios.post('/api/member/pwdcheck', null, {params:{userid:loginUser.userid, pwd:prePwd}})
-            if(res.data.msg != 'ok'){
+            if(res.data.msg !== 'ok'){
                 return alert('현재 비밀번호가 일치하지 않습니다');
             }else{
 
@@ -211,16 +219,28 @@ function Mypage() {
         }
 
     }
+    async function updateAgree(agree, yn){
+        if(window.confirm('수정하시겠습니까?')){
+            await jaxios.post('/api/member/updateAgree', null, {params:{userid:loginUser.userid, agree, yn}})
+            .then((result)=>{
+                alert('정보 수정이 완료되었습니다');
+            } ).catch((err)=>{console.error(err);})
+
+            await jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
+            .then((result)=>{
+                reset(result.data.member)
+            }).catch((err)=>{ console.error(err);  })
+        }
+    }
     return (
         <article>
             <div>마이페이지</div>
-            {type}
             <div>
                 <Link to={"/mypage"}>로그인 정보</Link>
                 <Link to={"/mypage/addresslist"}>주소록</Link>
             </div>
             {
-                (loginUser.provider=='kakao')?
+                (loginUser.provider==='KAKAO')?
                 (null):
                 (<>
                     <div className='field'>
@@ -230,7 +250,7 @@ function Mypage() {
                     <div className='field'>
                         <label>비밀번호</label>
                         {
-                            (type=='pwd')?
+                            (type==='pwd')?
                             (<>
                                 <div className='field'>
                                     <label>현재 비밀번호</label>
@@ -264,7 +284,7 @@ function Mypage() {
             <div className='field'>
                 <label>이름</label>
                 {
-                    (type=='name')?
+                    (type==='name')?
                     (<>
                         <input type="text" value={name} onChange={(e)=>{
                             setName( e.currentTarget.value )
@@ -281,7 +301,7 @@ function Mypage() {
             <div className='field'>
                 <label>이메일</label>
                 {
-                    (type=='email')?
+                    (type==='email')?
                     (<>
                         <input type="text" value={email} onChange={(e)=>{
                             setEmail( e.currentTarget.value )
@@ -298,7 +318,7 @@ function Mypage() {
             <div className='field'>
                 <label>전화번호</label>
                 {
-                    (type=='phone')?
+                    (type==='phone')?
                     (<>
                         <div>
                             <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
@@ -323,7 +343,7 @@ function Mypage() {
             <div className='field'>
                 <label>주민등록번호</label>
                 {
-                    (type=='rrn')?
+                    (type==='rrn')?
                     (<>
                         <div>
                             <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
@@ -345,14 +365,14 @@ function Mypage() {
             <div className='field'>
                 <label>프로필사진</label>
                 {
-                    (type=='profileImg')?
+                    (type==='profileImg')?
                     (<>
                         <div className="previewContainer">
                             {
                                 (preview)?
                                 (
                                 <div className='imgBox'>
-                                    <img src={preview}/>
+                                    <img src={preview} alt=''/>
                                 </div>
                                 ):
                                 (<></>)
@@ -362,7 +382,7 @@ function Mypage() {
                     (<>
                         <div className="previewContainer">
                             <div className='imgBox'>
-                                <img src={member.profileImg}/>
+                                <img src={member.profileImg} alt=''/>
                             </div>
                         </div>
                     </>)
@@ -370,7 +390,7 @@ function Mypage() {
                 <label htmlFor="dataFile"><div>다른 이미지 업로드</div></label>
                 <input id='dataFile' name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
                 {
-                    (type=='profileImg')?
+                    (type==='profileImg')?
                     (<>
                         <button onClick={()=>{onSubmit()}}>수정</button>
                         <button onClick={()=>{edit('')}}>취소</button>
@@ -381,7 +401,7 @@ function Mypage() {
             <div className='field'>
                 <label>소개글</label>
                 {
-                    (type=='profileMsg')?
+                    (type==='profileMsg')?
                     (<>
                         <input type="text" value={profileMsg} onChange={(e)=>{
                             setProfileMsg( e.currentTarget.value )
@@ -397,8 +417,22 @@ function Mypage() {
             </div>
             <div className='field'>
                 <label>동의사항(선택)</label>
-                <div><label>약관 동의</label> {member.terms_agree}</div>
-                <div><label>개인정보 동의</label> {member.personal_agree}</div>
+                <div><label>약관 동의</label> {
+                    (terms_agree === 'N' || terms_agree === 'Y')?
+                    (
+                        (terms_agree === 'N')?  
+                        (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
+                        (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
+                    ):(null)
+                }</div>
+                <div><label>개인정보 동의</label> {
+                    (personal_agree === 'N' || personal_agree === 'Y')?
+                    (
+                        (personal_agree === 'N')?  
+                        (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
+                        (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
+                    ):(null)
+                }</div>
             </div>
             <div className='field'>
                 <label>가입일</label>

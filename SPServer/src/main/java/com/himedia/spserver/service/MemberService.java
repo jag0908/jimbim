@@ -107,4 +107,14 @@ public class MemberService {
         member.setPwd( pe.encode( pwd));
     }
 
+    public void updateAgree(String userid, String agree, String yn) {
+        Member member = mr.findByUserid(userid);
+        yn = yn.equals("Y")?"N":"Y";
+        if(agree.equals("terms")){
+            member.setTerms_agree(yn);
+        }
+        if(agree.equals("personal")){
+            member.setPersonal_agree(yn);
+        }
+    }
 }

@@ -25,7 +25,7 @@ function Header() {
                 (loginUser.userid)?
                 (
                     <>
-                        <Link onClick={()=>{ onLogout() }}>로그아웃</Link>
+                        <a href='#!' onClick={()=>{ onLogout() }}>로그아웃</a>
                         <Link to={"/mypage"}>마이페이지</Link>
                     </>):
                 (

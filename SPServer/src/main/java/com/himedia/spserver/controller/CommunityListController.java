@@ -1,8 +1,7 @@
 package com.himedia.spserver.controller;
 
-import com.himedia.spserver.entity.Community.*;
+import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.service.CommunityListService;
-import com.himedia.spserver.service.S3UploadService;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +19,9 @@ public class CommunityListController {
     @Autowired
     private CommunityListService cs;
 
+    @Autowired
+    ServletContext sc;
+
     @GetMapping("/getCommunityList/{page}")
     public HashMap<String, Object> getCommunityList(@PathVariable int page) {
         return cs.getCommunityList(page);
@@ -33,8 +35,6 @@ public class CommunityListController {
         return result;
     }
 
-    @Autowired
-    ServletContext sc;
     @PostMapping("/fileupload")
     public HashMap<String, Object> uploadFile(@RequestParam("image") MultipartFile file) {
         HashMap<String, Object> result = new HashMap<>();
@@ -45,7 +45,7 @@ public class CommunityListController {
         String fn1 = filename.substring(0, filename.indexOf("."));
         String fn2 = filename.substring(filename.indexOf("."));
         String uploadPath = path + "/" + fn1 + dt + fn2;
-        try{
+        try {
             file.transferTo(new File(uploadPath));
             result.put("image", filename);
             result.put("savefilename", fn1 + dt + fn2);
@@ -57,9 +57,26 @@ public class CommunityListController {
 
     @PostMapping("/updateCommunity")
     public HashMap<String, Object> updateCommunity(@RequestBody C_post cpost){
-        HashMap<String, Object> result = cs.updateCommunity(cpost);
+        return cs.updateCommunity(cpost);
+    }
+
+    @PostMapping("/insertCommunity")
+    public HashMap<String, Object> insertCommunity(@RequestBody C_post cpost){
+        HashMap<String, Object> result = new HashMap<>();
+        cs.insertCommunity(cpost);
+        result.put("msg", "ok");
         return result;
     }
+
+    @GetMapping("/getCommunity/{num}")
+    public HashMap<String, Object> getCommunity(@PathVariable("num") int num) {
+        HashMap<String, Object> result = new HashMap<>();
+        C_post community = cs.getCommunity(num); // 단일 게시글 조회
+        result.put("community", community);      // 프론트에서 사용되는 키
+        return result;
+    }
+}
+
 
 //    // 파일 업로드
 //    @PostMapping("/fileupload")
@@ -123,6 +140,3 @@ public class CommunityListController {
 //        result.put("post", cs.getCommunity(num));
 //        return result;
 //    }
-
-
-}

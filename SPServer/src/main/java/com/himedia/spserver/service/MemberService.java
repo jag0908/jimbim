@@ -37,17 +37,23 @@ public class MemberService {
         mr.save( member );
     }
 
-    public void updateMember(Member member) {
-        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+    public Member updateMember(Member member) {
         Member updateMem = mr.findByUserid( member.getUserid());
 
-        if(!member.getPwd().isEmpty()) updateMem.setPwd( pe.encode( member.getPwd()));
-        updateMem.setName(member.getName());
-        updateMem.setEmail(member.getEmail());
+        if(!member.getName().isEmpty()) updateMem.setName(member.getName());
+        if(!member.getEmail().isEmpty()) updateMem.setEmail(member.getEmail());
         if(!member.getPhone().isEmpty()) updateMem.setPhone(member.getPhone());
         if(!member.getRrn().isEmpty()) updateMem.setRrn(member.getRrn());
-        updateMem.setProfileImg(member.getProfileImg());
-        updateMem.setProfileMsg(member.getProfileMsg());
+        if(!member.getProfileImg().isEmpty()) updateMem.setProfileImg(member.getProfileImg());
+        if(!member.getProfileMsg().isEmpty()) updateMem.setProfileMsg(member.getProfileMsg());
+
+        return updateMem;
+    }
+
+    public void updatePwd(Member member) {
+        Member updateMem = mr.findByUserid( member.getUserid());
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        updateMem.setPwd( pe.encode( member.getPwd()));
     }
 
     public void kakaoIdFirstEdit(Member member) {

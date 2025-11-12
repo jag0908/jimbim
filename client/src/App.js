@@ -5,7 +5,6 @@ import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
 import KakaoIdFirstEdit from './Component/member/KakaoIdFirstEdit'
 import FindAccount from './Component/member/FindAccount'
-import UpdateForm from './Component/mypage/UpdateForm'
 import Mypage from './Component/mypage/Mypage'
 import AddressList from './Component/mypage/AddressList'
 import StyleFeed from './Component/StyleFeed/StyleFeed'
@@ -38,7 +37,6 @@ function App() {
 				<Route path="/kakaoIdLogin/:userid" element={<KakaoIdLogin />} />
 				<Route path="/kakaoIdFirstEdit/:userid" element={<KakaoIdFirstEdit />} />
 				<Route path="/findAccount" element={<FindAccount />} />
-				<Route path="/updateform" element={<UpdateForm />} />
 				<Route path="/mypage" element={<Mypage />} />
 				<Route path="/mypage/addresslist" element={<AddressList />} />
 

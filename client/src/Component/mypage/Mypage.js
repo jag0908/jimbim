@@ -36,45 +36,42 @@ function Mypage() {
     const [file, setFile] = useState({});
     const [type, setType] = useState('')
 
+    const [member, setMember] = useState({});
+
+    function reset(member){
+        console.log('reset', member)
+        setMember( member );
+        setType('')
+        setPrePwd('')
+        setPwd('')
+        setPwdChk('')
+        setName(member.name)
+        setEmail(member.email)
+        setPhone1(member.phone.substring(0,3))
+        setPhone2(member.phone.substring(4,8))
+        setPhone3(member.phone.substring(9,13))
+        setRrn1(member.rrn.substring(0,6))
+        setRrn2(member.rrn.substring(7,8))
+        setProfileImg(member.profileImg)
+        setProfileMsg(member.profileMsg)
+        setPreview('')
+        setFile({})
+    }
+
     useEffect(
         ()=>{
-            console.log(loginUser)
-            setType('')
-
-            setPrePwd('')
-            setPwd('')
-            setPwdChk('')
-            setName(loginUser.name)
-            setEmail(loginUser.email)
-            setPhone1(loginUser.phone.substring(0,3))
-            setPhone2(loginUser.phone.substring(4,8))
-            setPhone3(loginUser.phone.substring(9,13))
-            setRrn1(loginUser.rrn.substring(0,6))
-            setRrn2(loginUser.rrn.substring(7,8))
-            setProfileImg(loginUser.profileImg)
-            setProfileMsg(loginUser.profileMsg)
-            setPreview('')
-            setFile({})
+            if(loginUser.userid){
+                jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
+                .then((result)=>{
+                    reset(result.data.member)
+                }).catch((err)=>{ console.error(err);  })
+            }
         },[]
     )
 
     function edit(typ){
+        reset(member)
         setType(typ)
-
-        setPrePwd('')
-        setPwd('')
-        setPwdChk('')
-        setName(loginUser.name)
-        setEmail(loginUser.email)
-        setPhone1(loginUser.phone.substring(0,3))
-        setPhone2(loginUser.phone.substring(4,8))
-        setPhone3(loginUser.phone.substring(9,13))
-        setRrn1(loginUser.rrn.substring(0,6))
-        setRrn2(loginUser.rrn.substring(7,8))
-        setProfileImg(loginUser.profileImg)
-        setProfileMsg(loginUser.profileMsg)
-        setPreview('')
-        setFile({})
     }
 
     function fileupload(e) {
@@ -147,19 +144,7 @@ function Mypage() {
     async function onSubmit(){
         let rrn=''
         let phone=''
-        if(type=='pwd'){
-            //if(!prePwd){ return alert('현재 비밀번호를 입력하세요')}
-            if( !pwd ){return alert('새 비밀번호를 입력하세요')}
-
-            if( pwd !== pwdChk){return alert('비밀번호 확인이 일치하지 않습니다')}
-
-            /* 현재 비밀번호 체크하는 axios 필요 */
-
-            let res = await jaxios.post('/api/member/pwdcheck', null, {params:{userid:loginUser.userid, pwd:prePwd}})
-
-            if(res.data.msg != 'ok'){return alert('현재 비밀번호가 일치하지 않습니다');}
-        }
-
+        
         if( !name && type=='name'){return alert('이름을 입력하세요')}
         
         if( type=='email'){
@@ -182,14 +167,50 @@ function Mypage() {
         }
         
         let url = await createFormData()
-        if(!url) url = loginUser.profileImg
+        if(!url) url = member.profileImg
         
-        await jaxios.post('/api/member/updateMember', {userid:loginUser.userid, pwd, name, email, phone, rrn, profileImg:url, profileMsg })
+        await jaxios.post('/api/member/updateMember', {userid:loginUser.userid, name, email, phone, rrn, profileImg:url, profileMsg })
         .then((result)=>{
-            alert('정보 입력이 완료되었습니다');
+            alert('정보 수정이 완료되었습니다');
+            reset(result.data.member)
+            navigate("/mypage")
         } ).catch((err)=>{console.error(err);})
     }
-    
+    async function updatePwd(){
+        if(type=='pwd'){
+            if(!prePwd){ return alert('현재 비밀번호를 입력하세요')}
+            if( !pwd ){return alert('새 비밀번호를 입력하세요')}
+            if( pwd !== pwdChk){return alert('비밀번호 확인이 일치하지 않습니다')}
+
+            let res = await jaxios.post('/api/member/pwdcheck', null, {params:{userid:loginUser.userid, pwd:prePwd}})
+            if(res.data.msg != 'ok'){
+                return alert('현재 비밀번호가 일치하지 않습니다');
+            }else{
+
+                await jaxios.post('/api/member/updatePwd', {userid:loginUser.userid, pwd:pwd })
+                .then((result)=>{
+                    alert('정보 수정이 완료되었습니다');
+                } ).catch((err)=>{console.error(err);})
+
+                await axios.post('/api/member/login', null , {params:{ username:loginUser.userid, password:pwd }})
+                .then((result)=>{
+                    if( result.data.error === 'ERROR_LOGIN'){
+                        alert('아이디 비밀번호를 확인하세요')
+                    }else{
+                        console.log(result.data)
+                        dispatch( loginAction( result.data ) )
+                        cookies.set('user', JSON.stringify(result.data), {path:'/'})
+                    }
+                }).catch((err)=>{console.error(err)})
+
+                await jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
+                .then((result)=>{
+                    reset(result.data.member)
+                }).catch((err)=>{ console.error(err);  })
+            }
+        }
+
+    }
     return (
         <article>
             <div>마이페이지</div>
@@ -229,7 +250,7 @@ function Mypage() {
                                         (e)=>{ setPwdChk(e.currentTarget.value )}
                                     }/>
                                 </div>
-                                <button onClick={()=>{onSubmit()}}>수정</button>
+                                <button onClick={()=>{updatePwd()}}>수정</button>
                                 <button onClick={()=>{edit('')}}>취소</button>
                             </>):
                             (<>
@@ -252,7 +273,7 @@ function Mypage() {
                         <button onClick={()=>{edit('')}}>취소</button>
                     </>):
                     (<>
-                        <div>{loginUser.name}</div>
+                        <div>{member.name}</div>
                         <button onClick={()=>{edit('name')}}>변경</button>
                     </>)
                 }
@@ -269,7 +290,7 @@ function Mypage() {
                         <button onClick={()=>{edit('')}}>취소</button>
                     </>):
                     (<>
-                        <div>{loginUser.email}</div>
+                        <div>{member.email}</div>
                         <button onClick={()=>{edit('email')}}>변경</button>
                     </>)
                 }
@@ -294,7 +315,7 @@ function Mypage() {
                         <button onClick={()=>{edit('')}}>취소</button>
                     </>):
                     (<>
-                        <div>{loginUser.phone}</div>
+                        <div>{member.phone}</div>
                         <button onClick={()=>{edit('phone')}}>변경</button>
                     </>)
                 }
@@ -316,7 +337,7 @@ function Mypage() {
                         <button onClick={()=>{edit('')}}>취소</button>
                     </>):
                     (<>
-                        <div>{loginUser.rrn}</div>
+                        <div>{member.rrn}</div>
                         <button onClick={()=>{edit('rrn')}}>변경</button>
                     </>)
                 }
@@ -341,7 +362,7 @@ function Mypage() {
                     (<>
                         <div className="previewContainer">
                             <div className='imgBox'>
-                                <img src={loginUser.profileImg}/>
+                                <img src={member.profileImg}/>
                             </div>
                         </div>
                     </>)
@@ -369,19 +390,22 @@ function Mypage() {
                         <button onClick={()=>{edit('')}}>취소</button>
                     </>):
                     (<>
-                        <div>{loginUser.profileMsg}</div>
+                        <div>{member.profileMsg}</div>
                         <button onClick={()=>{edit('profileMsg')}}>변경</button>
                     </>)
                 }
             </div>
             <div className='field'>
                 <label>동의사항(선택)</label>
-                <div><label>약관 동의</label> {loginUser.terms_agree}</div>
-                <div><label>개인정보 동의</label> {loginUser.personal_agree}</div>
+                <div><label>약관 동의</label> {member.terms_agree}</div>
+                <div><label>개인정보 동의</label> {member.personal_agree}</div>
             </div>
             <div className='field'>
                 <label>가입일</label>
-                <div>{(loginUser.indate.substring(0,10))}</div>
+                <div>{
+                    (member.indate)?
+                    (member.indate.substring(0,10)):(null)
+                }</div>
             </div>
         </article>
     )

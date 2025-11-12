@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.himedia.spserver.dto.KakaoProfile;
 import com.himedia.spserver.dto.OAuthToken;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.security.service.CustomUserDetailService;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
 import com.himedia.spserver.service.MemberService;
@@ -22,7 +21,6 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,8 +71,24 @@ public class MemberController {
     @PostMapping("/updateMember")      // 회원정보수정
     public HashMap<String, Object> updateMember( @RequestBody Member member ) {
         HashMap<String, Object> result = new HashMap<>();
-        ms.updateMember(member);
+        result.put("member", ms.updateMember(member));
+        return result;
+    }
+
+    @PostMapping("/updatePwd")
+    public HashMap<String, Object> updatePwd( @RequestBody Member member ) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.updatePwd(member);
         result.put("msg", "ok");
+
+        return result;
+    }
+
+    @GetMapping("/getMember")   // userslice 수정으로 이제 로그인 유저 값이 필요하면 /getMember를 써야함
+    public HashMap<String, Object> getMember( @RequestParam("userid") String userid ) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMember( userid );
+        result.put("member", member);
         return result;
     }
 

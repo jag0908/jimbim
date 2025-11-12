@@ -43,50 +43,50 @@ function StyleFeed() {
 
 
   return (
-    <div className="feed-container">
-      <div className="hashtag-bar">
+    <div className="style-feed-container">
+      <div className="style-hashtag-bar">
         #오늘뭐입지 #트렌드스타일 #봄코디 #컬러룩 #유행잇템
       </div>
 
-      <div className="write-button-area">
-        <button className="write-btn" onClick={handleWriteClick}>
+      <div className="style-write-button-area">
+        <button className="style-write-btn" onClick={handleWriteClick}>
           글쓰기
         </button>
       </div>
 
-      <div className="feed-grid">
+      <div className="style-feed-grid">
         {!Array.isArray(posts) || posts.length === 0 ? (
-          <div className="no-posts">
+          <div className="style-no-posts">
             😢 아직 등록된 스타일이 없습니다. 첫 번째 스타일을 공유해보세요!
           </div>
         ) : (
           posts.map(post => (
-            <div key={post.spost_id} className="feed-card">
-              <div className="image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
+            <div key={post.spost_id} className="style-feed-card">
+              <div className="style-image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
                 {/* 이미지 여러 장 처리 */}
                 {Array.isArray(post.s_images) ? (
                   <>
-                    <img src={post.s_images[0]} alt="post" className="post-img" />
+                    <img src={post.s_images[0]} alt="post" className="style-post-img" />
                     {post.s_images.length > 1 && (
-                      <div className="multiple-count">+{post.s_images.length}</div>
+                      <div className="style-multiple-count">+{post.s_images.length}</div>
                     )}
                   </>
                 ) : (
-                  <img src={post.s_images} alt="post" className="post-img" />
+                  <img src={post.s_images} alt="post" className="style-post-img" />
                 )}
               </div>
 
-              <div className="feed-info">
+              <div className="style-feed-info">
                 <img 
                   src={post.profileImg || '/default_profile.png'} // post.profileImg가 null이면 기본 이미지 사용
                   alt="profile" 
-                  className="profile-img" 
+                  className="style-profile-img" onClick={() => navigate(`/styleUser/${post.userid}`)} 
                 />
-                <div className="user-info">
-                  <span className="nickname">{post.userid}</span>
+                <div className="style-user-info" onClick={() => navigate(`/styleUser/${post.userid}`)} style={{ cursor: "pointer" }}>
+                  <span className="style-nickname">{post.userid}</span>
                 </div>
                 <button
-                  className={`like-btn ${post.liked ? "liked" : ""}`}
+                  className={`style-like-btn ${post.liked ? "liked" : ""}`}
                   onClick={() => toggleLike(post.spost_id)}
                   aria-label="좋아요 버튼"
                 >
@@ -94,7 +94,7 @@ function StyleFeed() {
                 </button>
               </div>
 
-              <p className="post-content">{post.content}</p>
+              <p className="style-post-content">{post.content}</p>
             </div>
           ))
         )}

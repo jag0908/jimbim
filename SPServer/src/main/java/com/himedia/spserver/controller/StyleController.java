@@ -6,6 +6,7 @@ import com.himedia.spserver.dto.StylePostDTO;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
 import com.himedia.spserver.repository.FollowRepository;
+import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.StyleService;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +30,60 @@ public class StyleController {
 
     private final StyleService styleService;
     private final S3UploadService sus;
+    private final MemberRepository memberRepository;
+    private final FollowRepository followRepository;
 
     @GetMapping("/posts")
     public List<StylePostDTO> getAllPosts(){
         return styleService.getAllPosts();
     }
 
+    @GetMapping("/posts/{userid}")
+    public ResponseEntity<?> getUserPosts(@PathVariable String userid) {
+        List<StylePostDTO> posts = styleService.getPostsByUseridDTO(userid);
+        if (posts.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "작성한 게시물이 없습니다."));
+        }
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/userinfo/{userid}")
+    public ResponseEntity<?> getUserInfo(@PathVariable String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "사용자를 찾을 수 없습니다."));
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userid", member.getUserid());
+        result.put("nickname", member.getName());
+        result.put("profileImg", member.getProfileImg());
+        result.put("intro", member.getProfileMsg());
+
+        // 팔로워/팔로잉 수
+        result.put("followers", followRepository.findByEndMember(member).size());
+        result.put("following", followRepository.findByStartMember(member).size());
+
+        return ResponseEntity.ok(result);
+    }
+
+
     @GetMapping("/post/{id}")
     public ResponseEntity<?> getPost(@PathVariable Integer id) {
         STYLE_post post = styleService.findBySpostId(id);
+
+        // ✅ 조회수 증가 로직 추가
+        post.setViewCount(post.getViewCount() + 1);
+        styleService.save(post); // DB에 반영 (StyleService에 save 메서드 있어야 함)
+
 
         // File 엔티티 리스트 → 이미지 URL 리스트로 변환
         List<String> imageUrls = post.getFiles().stream()
                 .map(file -> file.getPath()) // ✅ 실제 접근 경로로 변경
                 .toList();
+
 
         Map<String, Object> result = new HashMap<>();
         result.put("title", post.getTitle());
@@ -54,6 +95,7 @@ public class StyleController {
         result.put("replies", styleService.findReplies(id));
         result.put("hashtags", styleService.findHashtags(id));
         result.put("indate", post.getIndate());
+        result.put("viewCount", post.getViewCount());
 
         return ResponseEntity.ok(result);
     }
@@ -128,35 +170,35 @@ public class StyleController {
 
 
     // ✅ 팔로우 / 언팔로우 토글
-//    @PostMapping("/follow")
-//    public ResponseEntity<?> toggleFollow(
-//            @RequestBody Map<String, String> body,
-//            @AuthenticationPrincipal MemberDTO memberDTO) {
-//
-//        if (memberDTO == null) {
-//            return ResponseEntity.status(401).body(Map.of("error", "REQUIRE_LOGIN"));
-//        }
-//
-//        String targetUserid = body.get("targetUserid");
-//        boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
-//
-//        return ResponseEntity.ok(Map.of(
-//                "followed", followed,
-//                "message", followed ? "팔로우 성공" : "언팔로우 됨"
-//        ));
-//    }
-//
-//    // ✅ 팔로우 상태 확인
-//    @GetMapping("/follow/{targetUserid}")
-//    public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
-//                                         @AuthenticationPrincipal MemberDTO memberDTO) {
-//        if (memberDTO == null) {
-//            return ResponseEntity.ok(Map.of("followed", false));
-//        }
-//
-//        boolean followed = styleService.isFollowing(memberDTO.getUserid(), targetUserid);
-//        return ResponseEntity.ok(Map.of("followed", followed));
-//    }
+    @PostMapping("/follow")
+    public ResponseEntity<?> toggleFollow(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal MemberDTO memberDTO) {
+
+        if (memberDTO == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "REQUIRE_LOGIN"));
+        }
+
+        String targetUserid = body.get("targetUserid");
+        boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
+
+        return ResponseEntity.ok(Map.of(
+                "followed", followed,
+                "message", followed ? "팔로우 성공" : "언팔로우 됨"
+        ));
+    }
+
+    // ✅ 팔로우 상태 확인
+    @GetMapping("/follow/{targetUserid}")
+    public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
+                                         @AuthenticationPrincipal MemberDTO memberDTO) {
+        if (memberDTO == null) {
+            return ResponseEntity.ok(Map.of("followed", false));
+        }
+
+        boolean followed = styleService.isFollowing(memberDTO.getUserid(), targetUserid);
+        return ResponseEntity.ok(Map.of("followed", followed));
+    }
 
     @PostMapping("/reply/{spostId}")
     public ResponseEntity<?> addReply(

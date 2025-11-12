@@ -37,6 +37,39 @@ public class StyleService {
                 .collect(Collectors.toList());
     }
 
+    public List<StylePostDTO> getPostsByUseridDTO(String userid) {
+        List<STYLE_post> posts = findPostsByUserid(userid);
+
+        return posts.stream().map(post -> {
+            List<String> imageUrls = getAllImageUrls(post);
+            List<String> hashtags = posthashRepository.findByPostId(post)
+                    .stream().map(ph -> ph.getTagId().getWord())
+                    .collect(Collectors.toList());
+
+            int likeCount = likeRepository.countBySpost(post);
+            int replyCount = replyRepository.countBySpost(post);
+
+            return StylePostDTO.builder()
+                    .spost_id(post.getSpostId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .s_images(imageUrls)
+                    .indate(post.getIndate())
+                    .likeCount(likeCount)
+                    .replyCount(replyCount)
+                    .userid(post.getMember().getUserid())
+                    .profileImg(post.getMember().getProfileImg())
+                    .viewCount(post.getViewCount())
+                    .hashtags(hashtags)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    private List<STYLE_post> findPostsByUserid(String userid) {
+        return postRepository.findAllByMember_UseridOrderByIndateDesc(userid);
+    }
+
+
     // 전체 피드 조회
     public List<StylePostDTO> getAllPosts() {
         List<STYLE_post> posts = postRepository.findAllByOrderByIndateDesc();
@@ -66,6 +99,10 @@ public class StyleService {
                     .hashtags(hashtags)
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    public void save(STYLE_post post) {
+        postRepository.save(post);
     }
 
     // 단일 게시물 조회
@@ -173,55 +210,55 @@ public class StyleService {
         return Map.of("liked", liked, "likeCount", likeCount);
     }
 
-    // ✅ 팔로우 토글 (팔로우 중이면 취소, 아니면 등록)
-//    public boolean toggleFollow(String startUserid, String endUserid) {
-//        Member startMember = memberRepository.findByUserid(startUserid);
-//        Member endMember = memberRepository.findByUserid(endUserid);
-//
-//        if (startMember == null || endMember == null) {
-//            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
-//        }
-//
-//        return followRepository.findByStart_memberAndEnd_member(startMember, endMember)
-//                .map(existing -> {
-//                    followRepository.delete(existing);
-//                    return false; // 언팔로우
-//                })
-//                .orElseGet(() -> {
-//                    Follow newFollow = new Follow();
-//                    newFollow.setStart_member(startMember);
-//                    newFollow.setEnd_member(endMember);
-//                    followRepository.save(newFollow);
-//                    return true; // 팔로우 성공
-//                });
-//    }
-//
-//    // ✅ 팔로워 목록
-//    public List<String> getFollowers(String userid) {
-//        Member member = memberRepository.findByUserid(userid);
-//        return followRepository.findByEnd_member(member).stream()
-//                .map(f -> f.getStart_member().getUserid())
-//                .collect(Collectors.toList());
-//    }
-//
-//    // ✅ 팔로잉 목록
-//    public List<String> getFollowing(String userid) {
-//        Member member = memberRepository.findByUserid(userid);
-//        return followRepository.findByStart_member(member).stream()
-//                .map(f -> f.getEnd_member().getUserid())
-//                .collect(Collectors.toList());
-//    }
-//
-//    // ✅ 팔로우 상태 확인
-//    public boolean isFollowing(String startUserid, String endUserid) {
-//        Member startMember = memberRepository.findByUserid(startUserid);
-//        Member endMember = memberRepository.findByUserid(endUserid);
-//
-//        if (startMember == null || endMember == null)
-//            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
-//
-//        return followRepository.findByStart_memberAndEnd_member(startMember, endMember).isPresent();
-//    }
+     //✅ 팔로우 토글 (팔로우 중이면 취소, 아니면 등록)
+    public boolean toggleFollow(String startUserid, String endUserid) {
+        Member startMember = memberRepository.findByUserid(startUserid);
+        Member endMember = memberRepository.findByUserid(endUserid);
+
+        if (startMember == null || endMember == null) {
+            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+        }
+
+        return followRepository.findByStartMemberAndEndMember(startMember, endMember)
+                .map(existing -> {
+                    followRepository.delete(existing);
+                    return false; // 언팔로우
+                })
+                .orElseGet(() -> {
+                    Follow newFollow = new Follow();
+                    newFollow.setStartMember(startMember);
+                    newFollow.setEndMember(endMember);
+                    followRepository.save(newFollow);
+                    return true; // 팔로우 성공
+                });
+    }
+
+    // ✅ 팔로워 목록
+    public List<String> getFollowers(String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        return followRepository.findByEndMember(member).stream()
+                .map(f -> f.getStartMember().getUserid())
+                .collect(Collectors.toList());
+    }
+
+    // ✅ 팔로잉 목록
+    public List<String> getFollowing(String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        return followRepository.findByStartMember(member).stream()
+                .map(f -> f.getEndMember().getUserid())
+                .collect(Collectors.toList());
+    }
+
+    // ✅ 팔로우 상태 확인
+    public boolean isFollowing(String startUserid, String endUserid) {
+        Member startMember = memberRepository.findByUserid(startUserid);
+        Member endMember = memberRepository.findByUserid(endUserid);
+
+        if (startMember == null || endMember == null)
+            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+
+        return followRepository.findByStartMemberAndEndMember(startMember, endMember).isPresent();
+    }
 
     public STYLE_post findBySpostId(Integer id) {
         return postRepository.findBySpostId(id)

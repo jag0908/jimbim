@@ -11,6 +11,7 @@ import AddressList from './Component/mypage/AddressList'
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
+import StyleUser from './Component/StyleFeed/StyleUser'
 import ShMain from './Component/sh-page/ShMain'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
@@ -51,6 +52,7 @@ function App() {
 				<Route path="/style" element={<StyleFeed />} />
 				<Route path="/style/:id" element={<StyleDetail />} />
 				<Route path="/stylewrite" element={<StyleWrite />} />
+				<Route path="/styleUser/:userid" element={<StyleUser />} />
 
 				{/* 정진 */}
 				<Route path="/sh-page" element={<ShMain />} />

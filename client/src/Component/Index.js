@@ -16,7 +16,7 @@ function Index() {
             <div className='menu'>
                 <Link to={"/sh-page"}>중고마을</Link>
                 <Link to={"/sh-shop"}>SHOP</Link>
-                <Link to={"/community"}>커뮤니티</Link>
+                <Link to={"/communityList"}>커뮤니티</Link>
                 <Link to={"/style"}>STYLE</Link>
             </div>
            

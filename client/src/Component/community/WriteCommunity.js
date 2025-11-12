@@ -45,7 +45,6 @@ function WriteCommunity() {
     }
 
     function onSubmit(){
-        if(!pass){return alert('패스워드는 수정 삭제시 필요합니다')}
         if(!title){return alert('제목을 입력하세요')}
         if(!content){return alert('내용을 입력하세요')}
 
@@ -61,18 +60,6 @@ function WriteCommunity() {
     return (
         <div className='writeCommunity'>
             <h2>COMMUNITY WRITE</h2>
-            <div className='field'>
-                <label>작성자</label>
-                <input type='text' value={userid} readOnly />
-            </div>
-            <div className='field'>
-                <label>이메일</label>
-                <input type='text' value={email} readOnly />
-            </div>
-            <div className='field'>
-                <label>PASS</label>
-                <input type='password' value={pass} onChange={(e)=>{ setPass(e.currentTarget.value); }} />
-            </div>
             <div className='field'>
                 <label>제목</label>
                 <input type='text' value={title} onChange={(e)=>{ setTitle(e.currentTarget.value); }} />
@@ -90,7 +77,7 @@ function WriteCommunity() {
             </div>
             <div className='btns'>
                 <button onClick={()=>{onSubmit()}}>작성완료</button>
-                <button onClick={()=>{navigate('/community')}}>이전</button>
+                <button onClick={()=>{navigate('/communityList')}}>이전</button>
             </div>
         </div>
     )

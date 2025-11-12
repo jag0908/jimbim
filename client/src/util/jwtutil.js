@@ -30,7 +30,14 @@ const beforeRes= async (res)=>{
     // jaxios로 보낸 요청에 대해 서버에서 응답을 보내면
     // 토큰에러에 대한 응답인지를 체크해서 , 토큰 에러라면 토큰을 갱신하고 현재요청을 재요청합니다
     
-    let loginUser = cookies.get('user')
+    let loginUser = cookies.get('user');
+        if (typeof loginUser === 'string') {
+            try {
+                loginUser = JSON.parse(loginUser);
+            } catch (e) {
+                console.error('쿠키 파싱 실패:', e);
+            }
+        }
     // 응답 내용을 꺼내서 data 변수에 저장    
     const data = res.data
     if(data && data.error ==='ERROR_ACCESS_TOKEN'){

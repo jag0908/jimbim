@@ -13,9 +13,9 @@ public class Follow {
 
     @ManyToOne
     @JoinColumn(name = "start_member")
-    Member start_member;
+    Member startMember;
 
     @ManyToOne
     @JoinColumn(name = "end_member")
-    Member end_member;
+    Member endMember;
 }

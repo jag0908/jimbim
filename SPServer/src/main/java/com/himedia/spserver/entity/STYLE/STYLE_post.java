@@ -19,6 +19,8 @@ public class STYLE_post {
     private String content;
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
+    @Column(nullable = false)
+    private int viewCount = 0;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files;
@@ -26,6 +28,7 @@ public class STYLE_post {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
 
 
 }

@@ -25,8 +25,9 @@ public class File {
     @JoinColumn(name = "spostId") // STYLE_post의 PK (spost_id)와 연결
     private STYLE_post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shPostId")
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sh_post_id")
     private SH_post shPost;
 
     @Column( columnDefinition="DATETIME default now()" )

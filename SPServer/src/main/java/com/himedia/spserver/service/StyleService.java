@@ -8,6 +8,7 @@ import com.himedia.spserver.entity.STYLE.*;
 import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class StyleService {
 
     private final STYLE_PostRepository postRepository;
@@ -335,7 +337,103 @@ public class StyleService {
         }
 
         // 파일 삭제 가능 (S3, DB)
-        fileRepository.deleteAll(fileRepository.findByPost(post));
+        // 댓글 삭제
+        replyRepository.deleteAll(replyRepository.findBySpost(post));
+
+        // 좋아요 삭제
+        likeRepository.deleteAllBySpost(post);
+
+        // 해시태그 매핑 삭제
+        posthashRepository.deleteAll(posthashRepository.findByPostId(post));
+
+        List<File> files = fileRepository.findByPost(post);
+        for (File f : files) {
+            sus.deleteFile(f.getPath()); // S3 실제 삭제
+        }
+        fileRepository.deleteAll(files);
+
         postRepository.delete(post);
+    }
+
+    // 게시글 수정
+    public void editPost(Integer spostId,
+                         String userid,
+                         String title,
+                         String content,
+                         List<MultipartFile> newImages,
+                         List<String> existingImages,
+                         List<String> hashtags) throws IOException {
+
+        STYLE_post post = postRepository.findById(spostId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        // 작성자 확인
+        if (!post.getMember().getUserid().equals(userid)) {
+            throw new RuntimeException("본인 게시글만 수정할 수 있습니다.");
+        }
+
+        // 게시글 내용 수정
+        post.setTitle(title);
+        post.setContent(content);
+        postRepository.save(post);
+
+        // 기존 이미지 유지/삭제
+        List<File> currentFiles = fileRepository.findByPost(post);
+        if (existingImages != null) {
+            // 삭제할 이미지 필터링
+            List<File> filesToDelete = currentFiles.stream()
+                    .filter(f -> !existingImages.contains(f.getPath()))
+                    .toList();
+            fileRepository.deleteAll(filesToDelete);
+        } else {
+            // 기존 이미지 전부 삭제
+            fileRepository.deleteAll(currentFiles);
+        }
+
+        // 새 이미지 업로드
+        if (newImages != null && !newImages.isEmpty()) {
+            for (MultipartFile image : newImages) {
+                String fileUrl = sus.saveFile(image); // S3 업로드
+
+                File postFile = new File();
+                postFile.setPost(post);
+                postFile.setPath(fileUrl);
+                postFile.setOriginalname(image.getOriginalFilename());
+                postFile.setSize(Long.valueOf(image.getSize()));
+                postFile.setContentType(image.getContentType());
+
+                fileRepository.save(postFile);
+            }
+        }
+
+        // 해시태그 처리
+        // 기존 매핑 삭제
+        List<STYLE_Posthash> existingTags = posthashRepository.findByPostId(post);
+        posthashRepository.deleteAll(existingTags);
+
+        if (hashtags != null && !hashtags.isEmpty()) {
+            for (String rawTag : hashtags) {
+                String word = rawTag.replaceAll("[#\\s]", "");
+                STYLE_Hashtag tag = hashtagRepository.findByWord(word)
+                        .orElseGet(() -> {
+                            STYLE_Hashtag newTag = new STYLE_Hashtag();
+                            newTag.setWord(word);
+                            return hashtagRepository.save(newTag);
+                        });
+
+                STYLE_Posthash mapping = new STYLE_Posthash();
+                mapping.setPostId(post);
+                mapping.setTagId(tag);
+                posthashRepository.save(mapping);
+            }
+        }
+    }
+
+    public List<STYLE_post> getAllPostsOrderByLikes() {
+        return postRepository.findAllOrderByLikeCountDesc();
+    }
+
+    public List<STYLE_post> getAllPostsOrderByViews() {
+        return postRepository.findAllOrderByViewCountDesc();
     }
 }

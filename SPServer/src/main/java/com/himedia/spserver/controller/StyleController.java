@@ -38,6 +38,18 @@ public class StyleController {
         return styleService.getAllPosts();
     }
 
+    // 🔥 요즘 트렌드 (좋아요 많은 순)
+    @GetMapping("/trending")
+    public ResponseEntity<List<STYLE_post>> getTrendingPosts() {
+        return ResponseEntity.ok(styleService.getAllPostsOrderByLikes());
+    }
+
+    @GetMapping("/views")
+    public ResponseEntity<List<STYLE_post>> getPopularPosts() {
+        return ResponseEntity.ok(styleService.getAllPostsOrderByViews());
+    }
+
+
     @GetMapping("/posts/{userid}")
     public ResponseEntity<?> getUserPosts(@PathVariable String userid) {
         List<StylePostDTO> posts = styleService.getPostsByUseridDTO(userid);
@@ -252,6 +264,29 @@ public class StyleController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
+        }
+    }
+    // 게시글 수정
+    @PutMapping("/post/{spostId}")
+    public ResponseEntity<?> editPost(
+            @PathVariable Integer spostId,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam(value = "image", required = false) List<MultipartFile> newImages,
+            @RequestParam(value = "existingImages", required = false) List<String> existingImages,
+            @RequestParam(value = "hashtags", required = false) List<String> hashtags,
+            @AuthenticationPrincipal MemberDTO memberDTO
+    ) {
+        if (memberDTO == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "로그인이 필요합니다."));
+        }
+
+        try {
+            styleService.editPost(spostId, memberDTO.getUserid(), title, content, newImages, existingImages, hashtags);
+            return ResponseEntity.ok(Map.of("message", "게시글이 수정되었습니다."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 

@@ -1,8 +1,8 @@
-/* 전체 컨테이너 */
+/* ---------------- 전체 컨테이너 ---------------- */
 .style-detail {
   width: 100%;
   max-width: 700px;
-  margin: 0 auto;
+  margin: 20px auto;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -10,7 +10,7 @@
   font-family: 'Pretendard', sans-serif;
 }
 
-/* 헤더 */
+/* ---------------- 헤더 ---------------- */
 .style-header {
   display: flex;
   justify-content: space-between;
@@ -26,7 +26,7 @@
 }
 
 .style-profile-large {
-  width: 60px;  /* 기존 42px → 60px */
+  width: 60px;
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
@@ -48,7 +48,7 @@
   color: #888;
 }
 
-/* 팔로우 버튼 */
+/* ---------------- 팔로우 버튼 ---------------- */
 .style-follow-btn {
   background: #f3f3f3;
   border: none;
@@ -58,30 +58,94 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .style-follow-btn:hover {
   background: #e9e9e9;
 }
+
 .style-follow-btn.following {
   background: #000;
   color: #fff;
 }
 
-/* 이미지 */
+/* ---------------- 본인 게시글 수정/삭제 버튼 ---------------- */
+.style-my-post-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.style-edit-post-btn,
+.style-delete-post-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+
+.style-edit-post-btn {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.style-edit-post-btn:hover {
+  background-color: #45a049;
+}
+
+.style-delete-post-btn {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.style-delete-post-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* ---------------- 이미지 슬라이더 ---------------- */
 .image-slider {
   width: 100%;
-  height: auto; /* 고정 높이 제거 */
-  overflow: visible; /* 잘림 방지 */
+  height: auto;
+  overflow: visible;
+  position: relative;
 }
 
 .image-slider img {
   width: 100%;
-  height: auto; /* 세로 비율 유지 */
-  object-fit: contain; /* 원본 비율 유지 */
+  height: auto;
+  object-fit: contain;
   display: block;
-  background: white; /* 배경 검정 (빈 여백 생길 수 있음) */
+  border-radius: 10px;
+  background: #fff;
 }
 
-/* 본문 내용 */
+.image-slider button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  padding: 6px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.image-slider button:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+.image-slider button:first-of-type { /* 이전 버튼 */
+  left: 10px;
+}
+
+.image-slider button:last-of-type { /* 다음 버튼 */
+  right: 10px;
+}
+
+/* ---------------- 본문 ---------------- */
 .style-post-content {
   padding: 16px;
 }
@@ -98,7 +162,7 @@
   line-height: 1.5;
 }
 
-/* 좋아요/댓글/공유 */
+/* ---------------- 좋아요 / 댓글 / 공유 ---------------- */
 .style-actions {
   display: flex;
   justify-content: space-around;
@@ -114,6 +178,7 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  user-select: none;
 }
 
 .style-action-item:hover {
@@ -124,7 +189,7 @@
   color: #ff3d6b;
 }
 
-/* 댓글 섹션 */
+/* ---------------- 댓글 입력 섹션 ---------------- */
 .style-comment-section {
   border-top: 1px solid #f0f0f0;
   padding: 14px;
@@ -152,22 +217,23 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  transition: 0.2s;
 }
 
 .style-comment-section button:hover {
   background: #333;
 }
 
-/* 댓글 리스트 */
+/* ---------------- 댓글 리스트 ---------------- */
 .style-reply {
   border-bottom: 1px solid #eee;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
 }
 
 .style-reply-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* 상단 기준 정렬 */
+  align-items: flex-start;
 }
 
 .style-reply-left {
@@ -176,16 +242,14 @@
 
 .style-reply-right {
   display: flex;
-  flex-direction: column; /* 날짜 → 삭제 버튼 수직 정렬 */
-  align-items: flex-end;  /* 오른쪽 정렬 */
-  gap: 4px; /* 날짜와 버튼 간격 */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
-
 
 .style-reply-date {
   font-size: 0.8rem;
   color: gray;
-  margin-left: 10px;
 }
 
 .style-delete-reply-btn {
@@ -195,4 +259,67 @@
   cursor: pointer;
   font-size: 0.8rem;
   padding: 0;
+  transition: color 0.2s;
+}
+
+.style-delete-reply-btn:hover {
+  color: darkred;
+}
+
+/* ---------------- 모바일 대응 ---------------- */
+@media screen and (max-width: 480px) {
+  .style-detail {
+    margin: 10px;
+  }
+
+  .style-user-left {
+    gap: 8px;
+  }
+
+  .style-profile-large {
+    width: 50px;
+    height: 50px;
+  }
+
+  .style-userid {
+    font-size: 14px;
+  }
+
+  .style-post-content h2 {
+    font-size: 16px;
+  }
+
+  .style-post-content p {
+    font-size: 14px;
+  }
+
+  .style-actions {
+    font-size: 14px;
+  }
+
+  .style-comment-section textarea {
+    height: 50px;
+  }
+}
+
+.style-hashtags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.style-hashtag {
+  color: #007aff;
+  background-color: #e8f3ff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.style-hashtag:hover {
+  background-color: #007aff;
+  color: white;
 }

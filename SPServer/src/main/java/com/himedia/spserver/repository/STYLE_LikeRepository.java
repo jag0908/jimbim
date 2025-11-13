@@ -14,4 +14,5 @@ public interface STYLE_LikeRepository extends JpaRepository<STYLE_Like, Integer>
     Optional<STYLE_Like> findByMemberidAndSpost(Member member, STYLE_post post);
 
     void deleteAllBySpost(STYLE_post post);
+
 }

@@ -6,6 +6,8 @@ import { loginAction } from '../../store/userSlice';
 import axios from 'axios';
 import jaxios from '../../util/jwtutil';
 import '../../style/login.css';
+import SideMenu from './SideMenu';
+import '../../style/mypage.css';
 
 function Mypage() {
     const loginUser = useSelector( state=>state.user )
@@ -39,7 +41,6 @@ function Mypage() {
     const [member, setMember] = useState({});
 
     function reset(member){
-        console.log('reset', member)
         setMember( member );
         setType('')
         setPrePwd('')
@@ -71,12 +72,13 @@ function Mypage() {
                     reset(result.data.member)
                 }).catch((err)=>{ console.error(err);  })
             }
-        },[loginUser, navigate]
+        },[]
     )
 
     function edit(typ){
         reset(member)
         setType(typ)
+        if(typ!=='profileImg') document.getElementById('dataFile').value=''
     }
 
     function fileupload(e) {
@@ -233,213 +235,239 @@ function Mypage() {
         }
     }
     return (
-        <article>
-            <div>마이페이지</div>
-            <div>
-                <Link to={"/mypage"}>로그인 정보</Link>
-                <Link to={"/mypage/addresslist"}>주소록</Link>
-            </div>
-            {
-                (loginUser.provider==='KAKAO')?
-                (null):
-                (<>
+        <article style={{height:'100%'}}>
+            {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
+            <div style={{display:'flex'}}>
+                <SideMenu/>
+                <div className='mypage'>
+                    {
+                        (loginUser.provider==='KAKAO')?
+                        (null):
+                        (<>
+                            <div className='field'>
+                                <label>ID</label>
+                                <div>{loginUser.userid}</div>
+                            </div>
+                            <div className='field'>
+                                <label>비밀번호</label>
+                                {
+                                    (type==='pwd')?
+                                    (<>
+                                        <div className='field'>
+                                            <label>현재 비밀번호</label>
+                                            <input type="password" value={prePwd} onChange={
+                                                (e)=>{ setPrePwd(e.currentTarget.value )}
+                                            }/>
+                                        </div>
+                                        <div className='field'>
+                                            <label>새 비밀번호</label>
+                                            <input type="password" value={pwd} onChange={
+                                                (e)=>{ setPwd(e.currentTarget.value )}
+                                            }/>
+                                        </div>
+                                        <div className='field'>
+                                            <label>비밀번호 확인</label>
+                                            <input type="password" value={pwdChk} onChange={
+                                                (e)=>{ setPwdChk(e.currentTarget.value )}
+                                            }/>
+                                        </div>
+                                        <button onClick={()=>{updatePwd()}}>수정</button>
+                                        <button onClick={()=>{edit('')}}>취소</button>
+                                    </>):
+                                    (<>
+                                        <div>********</div>
+                                        <div className='btns'>
+                                            <button onClick={()=>{edit('pwd')}}>변경</button>
+                                        </div>
+                                    </>)
+                                }
+                            </div>
+                        </>)
+                    }
                     <div className='field'>
-                        <label>ID</label>
-                        <div>{loginUser.userid}</div>
-                    </div>
-                    <div className='field'>
-                        <label>비밀번호</label>
+                        <label>이름</label>
                         {
-                            (type==='pwd')?
+                            (type==='name')?
                             (<>
-                                <div className='field'>
-                                    <label>현재 비밀번호</label>
-                                    <input type="password" value={prePwd} onChange={
-                                        (e)=>{ setPrePwd(e.currentTarget.value )}
-                                    }/>
+                                <input type="text" value={name} onChange={(e)=>{
+                                    setName( e.currentTarget.value )
+                                }}/>
+                                <div className='btns'>
+                                    <button onClick={()=>{onSubmit()}}>수정</button>
+                                    <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
-                                <div className='field'>
-                                    <label>새 비밀번호</label>
-                                    <input type="password" value={pwd} onChange={
-                                        (e)=>{ setPwd(e.currentTarget.value )}
-                                    }/>
-                                </div>
-                                <div className='field'>
-                                    <label>비밀번호 확인</label>
-                                    <input type="password" value={pwdChk} onChange={
-                                        (e)=>{ setPwdChk(e.currentTarget.value )}
-                                    }/>
-                                </div>
-                                <button onClick={()=>{updatePwd()}}>수정</button>
-                                <button onClick={()=>{edit('')}}>취소</button>
                             </>):
                             (<>
-                                <div>********</div>
-                                <button onClick={()=>{edit('pwd')}}>변경</button>
+                                <div>{member.name}</div>
+                                <div className='btns'>
+                                    <button onClick={()=>{edit('name')}}>변경</button>
+                                </div>
                             </>)
                         }
                     </div>
-                </>)
-            }
-            <div className='field'>
-                <label>이름</label>
-                {
-                    (type==='name')?
-                    (<>
-                        <input type="text" value={name} onChange={(e)=>{
-                            setName( e.currentTarget.value )
-                        }}/>
-                        <button onClick={()=>{onSubmit()}}>수정</button>
-                        <button onClick={()=>{edit('')}}>취소</button>
-                    </>):
-                    (<>
-                        <div>{member.name}</div>
-                        <button onClick={()=>{edit('name')}}>변경</button>
-                    </>)
-                }
-            </div>
-            <div className='field'>
-                <label>이메일</label>
-                {
-                    (type==='email')?
-                    (<>
-                        <input type="text" value={email} onChange={(e)=>{
-                            setEmail( e.currentTarget.value )
-                        }}/>
-                        <button onClick={()=>{onSubmit()}}>수정</button>
-                        <button onClick={()=>{edit('')}}>취소</button>
-                    </>):
-                    (<>
-                        <div>{member.email}</div>
-                        <button onClick={()=>{edit('email')}}>변경</button>
-                    </>)
-                }
-            </div>
-            <div className='field'>
-                <label>전화번호</label>
-                {
-                    (type==='phone')?
-                    (<>
-                        <div>
-                            <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
-                                setPhone1( e.currentTarget.value )
-                            }}/>&nbsp;-&nbsp;
-                            <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                                setPhone2( e.currentTarget.value )
-                            }}/>&nbsp;-&nbsp;
-                            <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                                setPhone3( e.currentTarget.value )
-                            }}/>
-                        </div>
-                        <button onClick={()=>{onSubmit()}}>수정</button>
-                        <button onClick={()=>{edit('')}}>취소</button>
-                    </>):
-                    (<>
-                        <div>{member.phone}</div>
-                        <button onClick={()=>{edit('phone')}}>변경</button>
-                    </>)
-                }
-            </div>
-            <div className='field'>
-                <label>주민등록번호</label>
-                {
-                    (type==='rrn')?
-                    (<>
-                        <div>
-                            <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
-                                setRrn1( e.currentTarget.value )
-                            }}/>&nbsp;-&nbsp;
-                            <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
-                                setRrn2( e.currentTarget.value )
-                            }} style={{width:'10px'}}/> * * * * * * 
-                        </div>
-                        <button onClick={()=>{onSubmit()}}>수정</button>
-                        <button onClick={()=>{edit('')}}>취소</button>
-                    </>):
-                    (<>
-                        <div>{member.rrn}</div>
-                        <button onClick={()=>{edit('rrn')}}>변경</button>
-                    </>)
-                }
-            </div>
-            <div className='field'>
-                <label>프로필사진</label>
-                {
-                    (type==='profileImg')?
-                    (<>
-                        <div className="previewContainer">
-                            {
-                                (preview)?
-                                (
-                                <div className='imgBox'>
-                                    <img src={preview} alt=''/>
+                    <div className='field'>
+                        <label>이메일</label>
+                        {
+                            (type==='email')?
+                            (<>
+                                <input type="text" value={email} onChange={(e)=>{
+                                    setEmail( e.currentTarget.value )
+                                }}/>
+                                <div className='btns'>
+                                    <button onClick={()=>{onSubmit()}}>수정</button>
+                                    <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
-                                ):
-                                (<></>)
-                            }
-                        </div>
-                    </>):
-                    (<>
-                        <div className="previewContainer">
-                            <div className='imgBox'>
-                                <img src={member.profileImg} alt=''/>
-                            </div>
-                        </div>
-                    </>)
-                }
-                <label htmlFor="dataFile"><div>다른 이미지 업로드</div></label>
-                <input id='dataFile' name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
-                {
-                    (type==='profileImg')?
-                    (<>
-                        <button onClick={()=>{onSubmit()}}>수정</button>
-                        <button onClick={()=>{edit('')}}>취소</button>
-                    </>):
-                    (<></>)
-                }
-            </div>
-            <div className='field'>
-                <label>소개글</label>
-                {
-                    (type==='profileMsg')?
-                    (<>
-                        <input type="text" value={profileMsg} onChange={(e)=>{
-                            setProfileMsg( e.currentTarget.value )
-                        }}/>
-                        <button onClick={()=>{onSubmit()}}>수정</button>
-                        <button onClick={()=>{edit('')}}>취소</button>
-                    </>):
-                    (<>
-                        <div>{member.profileMsg}</div>
-                        <button onClick={()=>{edit('profileMsg')}}>변경</button>
-                    </>)
-                }
-            </div>
-            <div className='field'>
-                <label>동의사항(선택)</label>
-                <div><label>약관 동의</label> {
-                    (terms_agree === 'N' || terms_agree === 'Y')?
-                    (
-                        (terms_agree === 'N')?  
-                        (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
-                        (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
-                    ):(null)
-                }</div>
-                <div><label>개인정보 동의</label> {
-                    (personal_agree === 'N' || personal_agree === 'Y')?
-                    (
-                        (personal_agree === 'N')?  
-                        (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
-                        (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
-                    ):(null)
-                }</div>
-            </div>
-            <div className='field'>
-                <label>가입일</label>
-                <div>{
-                    (member.indate)?
-                    (member.indate.substring(0,10)):(null)
-                }</div>
+                            </>):
+                            (<>
+                                <div>{member.email}</div>
+                                <div className='btns'>
+                                    <button onClick={()=>{edit('email')}}>변경</button>
+                                </div>
+                            </>)
+                        }
+                    </div>
+                    <div className='field'>
+                        <label>전화번호</label>
+                        {
+                            (type==='phone')?
+                            (<>
+                                <div>
+                                    <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
+                                        setPhone1( e.currentTarget.value )
+                                    }}/>&nbsp;-&nbsp;
+                                    <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                                        setPhone2( e.currentTarget.value )
+                                    }}/>&nbsp;-&nbsp;
+                                    <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                                        setPhone3( e.currentTarget.value )
+                                    }}/>
+                                </div>
+                                <div className='btns'>
+                                    <button onClick={()=>{onSubmit()}}>수정</button>
+                                    <button onClick={()=>{edit('')}}>취소</button>
+                                </div>
+                            </>):
+                            (<>
+                                <div>{member.phone}</div>
+                                <div className='btns'>
+                                    <button onClick={()=>{edit('phone')}}>변경</button>
+                                </div>
+                            </>)
+                        }
+                    </div>
+                    <div className='field'>
+                        <label>주민등록번호</label>
+                        {
+                            (type==='rrn')?
+                            (<>
+                                <div>
+                                    <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
+                                        setRrn1( e.currentTarget.value )
+                                    }}/>&nbsp;-&nbsp;
+                                    <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
+                                        setRrn2( e.currentTarget.value )
+                                    }} style={{width:'10px'}}/> * * * * * * 
+                                </div>
+                                <div className='btns'>
+                                    <button onClick={()=>{onSubmit()}}>수정</button>
+                                    <button onClick={()=>{edit('')}}>취소</button>
+                                </div>
+                            </>):
+                            (<>
+                                <div>{member.rrn}</div>
+                                <div className='btns'>
+                                    <button onClick={()=>{edit('rrn')}}>변경</button>
+                                </div>
+                            </>)
+                        }
+                    </div>
+                    <div className='field'>
+                        <label>프로필사진</label>
+                        {
+                            (type==='profileImg')?
+                            (<>
+                                <div className="previewContainer">
+                                    {
+                                        (preview)?
+                                        (
+                                        <div className='imgBox'>
+                                            <img src={preview} alt=''/>
+                                        </div>
+                                        ):
+                                        (<></>)
+                                    }
+                                </div>
+                            </>):
+                            (<>
+                                <div className="previewContainer">
+                                    <div className='imgBox'>
+                                        <img src={member.profileImg} alt=''/>
+                                    </div>
+                                </div>
+                            </>)
+                        }
+                        <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                        <input id='dataFile' name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
+                        {
+                            (type==='profileImg')?
+                            (
+                                <div className='btns'>
+                                    <button onClick={()=>{onSubmit()}}>수정</button>
+                                    <button onClick={()=>{edit('')}}>취소</button>
+                                </div>
+                            ):
+                            (null)
+                        }
+                    </div>
+                    
+                    <div className='field'>
+                        <label>소개글</label>
+                        {
+                            (type==='profileMsg')?
+                            (<>
+                                <input type="text" value={profileMsg} onChange={(e)=>{
+                                    setProfileMsg( e.currentTarget.value )
+                                }}/>
+                                <div className='btns'>
+                                    <button onClick={()=>{onSubmit()}}>수정</button>
+                                    <button onClick={()=>{edit('')}}>취소</button>
+                                </div>
+                            </>):
+                            (<>
+                                <div>{member.profileMsg}</div>
+                                <div className='btns'>
+                                    <button onClick={()=>{edit('profileMsg')}}>변경</button>
+                                </div>
+                            </>)
+                        }
+                    </div>
+                    <div className='field'>
+                        <label>동의사항(선택)</label>
+                        <div><label>약관 동의</label> {
+                            (terms_agree === 'N' || terms_agree === 'Y')?
+                            (
+                                (terms_agree === 'N')?  
+                                (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
+                                (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
+                            ):(null)
+                        }</div>
+                        <div><label>개인정보 동의</label> {
+                            (personal_agree === 'N' || personal_agree === 'Y')?
+                            (
+                                (personal_agree === 'N')?  
+                                (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
+                                (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
+                            ):(null)
+                        }</div>
+                    </div>
+                    <div className='field'>
+                        <label>가입일</label>
+                        <div>{
+                            (member.indate)?
+                            (member.indate.substring(0,10)):(null)
+                        }</div>
+                    </div>
+                </div>
             </div>
         </article>
     )

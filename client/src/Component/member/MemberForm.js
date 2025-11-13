@@ -81,6 +81,7 @@ function MemberForm(props) {
         setFile({});
         // 미리보기도 같이 갱신
         setPreview('');
+        document.getElementById('dataFile').value=''
     };
 
     // 파일 업로드시 formData 추가
@@ -277,9 +278,7 @@ function MemberForm(props) {
                 ):(<></>)
             }
             <div className='field'>
-                {/* 파일업로드 인풋 */}
-                <label>프로필사진 변경</label>
-                <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} />
+                <label>프로필사진</label>
                 {/* 미리보기 이미지 */}
                 <div className="previewContainer">
                     {
@@ -287,12 +286,26 @@ function MemberForm(props) {
                         (
                         <div className='imgBox'>
                             <img src={preview}/>
-                            <div className='removeBtn'onClick={()=>{handleRemoveFile();}}>X</div>
                         </div>
                         ):
-                        (<></>)
+                        ((type=='kakao')?
+                            (
+                            <div className='imgBox'>
+                                <img src={kakaoMember.profileImg}/>
+                            </div>
+                            ):(<>프로필 사진 없음</>)
+                        )
                     }
                 </div>
+                {/* 파일업로드 인풋 */}
+                <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                <input id='dataFile' name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
+                    {
+                        (preview)?
+                        (<div className='btns'>
+                            <button onClick={()=>{handleRemoveFile()}} style={{backgroundColor:'#6c757d'}}>취소</button>
+                        </div>):(<></>)
+                    }
             </div>
             <div className='field'>
                 <label>소개글</label>

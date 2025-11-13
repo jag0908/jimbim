@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate, Link  } from 'react-router-dom'
 import jaxios from '../../util/jwtutil';
 import EditAddressForm from './EditAddressForm';
+import SideMenu from './SideMenu';
 
 function AddressList() {
     const loginUser = useSelector( state=>state.user )
@@ -39,7 +40,7 @@ function AddressList() {
                 })
                 .catch((err)=>{console.error(err)})
             }
-        },[loginUser, navigate]
+        },[]
     )
 
     function setOnEditForm(address){
@@ -85,44 +86,60 @@ function AddressList() {
         }
     }
     return (
-        <article>
-            <div>마이페이지</div>
-            <div>
-                <Link to={"/mypage"}>로그인 정보</Link>
-                <Link to={"/mypage/addresslist"}>주소록</Link>
+        <article style={{height:'100%'}}>
+            <div style={{display:'flex'}}>
+                <SideMenu/>
+                <div className='mypage'>
+                    <div className='btns'>
+                        <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
+                    </div>
+                    {(address_id===-2)?
+                    (<>
+                        <EditAddressForm editAddress={editAddress} />
+                    </>):(null)}
+                    {
+                        (addressList)?
+                        (
+                            addressList.map((address, idx)=>{
+                                return (
+                                    <div key={idx}>
+                                        {
+                                            (address_id===address.address_id)?
+                                            (<>
+                                                <EditAddressForm editAddress={editAddress} />
+                                            </>):(
+                                                <>
+                                                    <div>
+                                                        <div className=''>주소명</div>
+                                                        <div>{address.address_name}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className=''>우편번호</div>
+                                                        <div>{address.address_zipnum}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className=''>도로명주소</div>
+                                                        <div>{address.address_simple}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className=''>상세주소</div>
+                                                        <div>{address.address_detail}</div>
+                                                    </div>
+                                                    <div className='btns'>
+                                                        <button onClick={()=>{setOnEditForm(address)}}>수정</button>
+                                                        <button onClick={()=>{deleteAddress(address.address_id)}}>삭제</button>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
+                                    </div>
+                                )
+                            })
+                        ):
+                        (<div>현재 주소가 없습니다</div>)
+                    }
+                </div>
             </div>
-            {
-                (addressList)?
-                (
-                    addressList.map((address, idx)=>{
-                        return (
-                            <div className='row' key={idx} style={{border:'1px solid red'}}>
-                                {
-                                    (address_id===address.address_id)?
-                                    (<>
-                                        <EditAddressForm editAddress={editAddress} />
-                                    </>):(
-                                        <>
-                                            <button onClick={()=>{setOnEditForm(address)}}>수정</button>
-                                            <button onClick={()=>{deleteAddress(address.address_id)}}>삭제</button>
-                                            <div className='col'>주소명 {address.address_name}</div>
-                                            <div className='col'>우편번호 {address.address_zipnum}</div>
-                                            <div className='col'>도로명주소 {address.address_simple}</div>
-                                            <div className='col'>상세주소 {address.address_detail}</div>
-                                        </>
-                                    )
-                                }
-                            </div>
-                        )
-                    })
-                ):
-                (<div>현재 주소가 없습니다</div>)
-            }
-            <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
-            {(address_id===-2)?
-            (<>
-                <EditAddressForm editAddress={editAddress} />
-            </>):(null)}
         </article>
         
     )

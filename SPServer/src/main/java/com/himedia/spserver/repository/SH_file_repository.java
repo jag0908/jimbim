@@ -11,4 +11,5 @@ public interface SH_file_repository extends JpaRepository<File,Integer> {
 
     List<File> findAllByShPost(SH_post post);
 
+    List<File> findByShPost(SH_post post);
 }

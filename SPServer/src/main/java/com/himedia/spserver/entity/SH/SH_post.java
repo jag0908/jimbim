@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
@@ -22,6 +23,8 @@ public class SH_post {  // second hand
     private String content;
     @CreationTimestamp
     private Timestamp indate;
+    @UpdateTimestamp
+    private Timestamp updateDate;
     @Column(nullable = false)
     private Integer price;
     @Column(nullable = false)

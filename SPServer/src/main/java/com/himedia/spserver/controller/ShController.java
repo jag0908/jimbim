@@ -1,12 +1,10 @@
 package com.himedia.spserver.controller;
 
-import com.himedia.spserver.dto.ShFileDto;
-import com.himedia.spserver.dto.ShPostDto;
+import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
-import com.himedia.spserver.dto.ShViewCountDTO;
 import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +115,18 @@ public class ShController {
     public HashMap<String, Object> shViewCount(@RequestBody ShViewCountDTO dto) {
         HashMap<String, Object> result = new HashMap<>();
         ss.addViewCount(dto.getPostId(), dto.getMemberId());
+        return result;
+    }
+
+    @PostMapping("/sh-update")
+    public HashMap<String, Object> shUpdate(@ModelAttribute ShPostUpdateReqDTO reqDto) {
+        HashMap<String, Object> result = new HashMap<>();
+        ShPostUpdateReqDTO resDto = ss.updatePost(reqDto);
+
+
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+
         return result;
     }
 

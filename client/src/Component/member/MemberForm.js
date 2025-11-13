@@ -1,14 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch} from 'react-redux';
 import { loginAction } from '../../store/userSlice';
 import axios from 'axios'
 import { Cookies } from 'react-cookie';
+
+
 function MemberForm(props) {
     
     const navigate = useNavigate()
     const cookies = new Cookies()
     const dispatch = useDispatch();
+    const fileref = useRef();
 
     const {
         userid, setUserid,
@@ -74,6 +77,7 @@ function MemberForm(props) {
         const url = URL.createObjectURL(newfile);
 
         setPreview(url)
+        fileref.current.value=''
     };
 
     // 파일 삭제
@@ -81,7 +85,6 @@ function MemberForm(props) {
         setFile({});
         // 미리보기도 같이 갱신
         setPreview('');
-        document.getElementById('dataFile').value=''
     };
 
     // 파일 업로드시 formData 추가
@@ -299,7 +302,7 @@ function MemberForm(props) {
                 </div>
                 {/* 파일업로드 인풋 */}
                 <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
-                <input id='dataFile' name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
+                <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
                     {
                         (preview)?
                         (<div className='btns'>

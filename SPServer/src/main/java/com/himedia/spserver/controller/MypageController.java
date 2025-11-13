@@ -36,7 +36,7 @@ public class MypageController {
     @GetMapping("/getAddressList")
     public HashMap<String, Object> getAddressList(@RequestParam("member_id") String member_id) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("getAddress : "+ mys.getAddressList( member_id ));
+        //System.out.println("getAddress : "+ mys.getAddressList( member_id ));
         result.put("addressList", mys.getAddressList( member_id ));
         return result;
     }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Cookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +14,7 @@ function Mypage() {
     const navigate = useNavigate();
     const cookies = new Cookies()
     const dispatch = useDispatch();
+    const fileref = useRef();
 
     const [prePwd, setPrePwd] = useState('');
     const [pwd, setPwd] = useState('');
@@ -78,7 +79,6 @@ function Mypage() {
     function edit(typ){
         reset(member)
         setType(typ)
-        if(typ!=='profileImg') document.getElementById('dataFile').value=''
     }
 
     function fileupload(e) {
@@ -93,6 +93,7 @@ function Mypage() {
         const url = URL.createObjectURL(newfile);
 
         setPreview(url)
+        fileref.current.value=''
     };
 
     // 파일 업로드시 formData 추가
@@ -407,7 +408,7 @@ function Mypage() {
                             </>)
                         }
                         <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
-                        <input id='dataFile' name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
+                        <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
                         {
                             (type==='profileImg')?
                             (

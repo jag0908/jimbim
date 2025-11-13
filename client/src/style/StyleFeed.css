@@ -1,23 +1,23 @@
-.feed-container {
+.style-feed-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
   font-family: 'Noto Sans KR', sans-serif;
 }
 
-.hashtag-bar {
+.style-hashtag-bar {
   margin-bottom: 15px;
   font-weight: 600;
   color: #555;
   font-size: 14px;
 }
 
-.write-button-area {
+.style-write-button-area {
   text-align: right;
   margin-bottom: 20px;
 }
 
-.write-btn {
+.style-write-btn {
   padding: 8px 15px;
   font-size: 14px;
   cursor: pointer;
@@ -28,17 +28,17 @@
   transition: background-color 0.3s;
 }
 
-.write-btn:hover {
+.style-write-btn:hover {
   background-color: #005bb5;
 }
 
-.feed-grid {
+.style-feed-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
   gap: 20px;
 }
 
-.feed-card {
+.style-feed-card {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
@@ -48,17 +48,17 @@
   padding-bottom: 15px;
 }
 
-.image-wrapper {
+.style-image-wrapper {
   position: relative;
 }
 
-.post-img {
+.style-post-img {
   width: 100%;
   height: 300px;
   object-fit: cover;
 }
 
-.multiple-count {
+.style-multiple-count {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -70,14 +70,14 @@
   font-weight: 700;
 }
 
-.feed-info {
+.style-feed-info {
   display: flex;
   align-items: center;
   padding: 10px 15px 10px 15px;
   gap: 10px;
 }
 
-.profile-img {
+.style-profile-img {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -85,30 +85,30 @@
   border: 2px solid #0077ff;
 }
 
-.user-info {
+.style-user-info {
   display: flex;
   flex-direction: column;
 }
 
-.title {
+.style-title {
   font-weight: 700;
   font-size: 16px;
   color: #222;
   margin-bottom: 3px;
 }
 
-.nickname {
+.style-nickname {
   font-size: 18px;
   color: #666;
 }
 
-.feed-actions {
+.style-feed-actions {
   padding: 0 15px 10px 15px;
   display: flex;
   align-items: center;
 }
 
-.like-btn {
+.style-like-btn {
   background: none;
   border: none;
   font-size: 18px;
@@ -122,11 +122,11 @@
   margin-left: auto;
 }
 
-.like-btn.liked {
+.style-like-btn.liked {
   color: #e0245e; /* 진한 빨간색 */
 }
 
-.post-content {
+.style-post-content {
   padding: 0 15px;
   font-size: 14px;
   color: #444;
@@ -135,7 +135,7 @@
   min-height: 40px;
 }
 
-.no-posts {
+.style-no-posts {
   text-align: center;
   font-size: 18px;
   color: #999;

@@ -46,8 +46,13 @@ public class CustomSecurityConfig {
                         "/api/style/post/**"
                 ).permitAll()
                 .requestMatchers(
+                        "/community/getCommunityList/**"
+                ).permitAll()
+                .requestMatchers(
                         "/style/write",
-                        "/api/style/write"
+                        "/api/style/write",
+                        "/style/reply/**",
+                        "/api/style/reply/**"
                 ).authenticated()
                 .anyRequest().permitAll()
         );

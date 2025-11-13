@@ -1,12 +1,15 @@
 package com.himedia.spserver.controller;
 
+import com.himedia.spserver.dto.ShFileDto;
+import com.himedia.spserver.dto.ShPostDto;
+import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.dto.ShViewCountDTO;
 import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +31,9 @@ public class ShController {
     @GetMapping("/sh-list")
     public HashMap<String, Object> shList() {
         HashMap<String, Object> result = new HashMap<>();
-        List<ShService.SHPostWithFilesDTO> shList = ss.getShList();
+
+        // 서비스에서 DTO 변환된 게시글 목록 조회
+        List<ShPostDto> shList = ss.getShList();
 
         if (shList == null || shList.isEmpty()) {
             result.put("msg", "<h1>텅 비었습니다.</h1>");
@@ -71,13 +76,20 @@ public class ShController {
 
         SH_post post = ss.insertShPost(member_id, title, content, price, categoryId, directYN, deliveryYN, deliveryPrice);
 
+        boolean firstFile = true; // 첫 번째 파일 체크
         for(MultipartFile file : files) {
             try {
                 String uploadFilePathName = sus.saveFile( file );
                 result.put("files", uploadFilePathName);
 
 
-                ss.insertFiles(post, file.getOriginalFilename(), uploadFilePathName, file.getSize(), file.getContentType());
+                File savedFile = ss.insertFiles(post, file.getOriginalFilename(), uploadFilePathName, file.getSize(), file.getContentType());
+                // 첫 번째 파일이면 대표이미지로 설정
+                if(firstFile) {
+                    ss.updateRepresentFile(post, savedFile);
+                    firstFile = false;
+                }
+
             } catch (IllegalStateException | IOException e) {
                 e.printStackTrace();
             }
@@ -91,16 +103,21 @@ public class ShController {
     @GetMapping("/sh-view/{id}")
     public HashMap<String, Object> getPostView(@PathVariable Integer id) {
         HashMap<String, Object> result = new HashMap<>();
-        ShService.SHPostWithFilesDTO shPost = ss.getShPost(id);
+        ShPostDto post = ss.getShPost(id);
         ArrayList<SH_Category> shCategorys = ss.getShCategorys();
-
-
-            result.put("msg", "ok");
-            result.put("shPost", shPost);
-            result.put("category", shCategorys);
+        result.put("post", post);
+        result.put("category", shCategorys);
 
         return result;
     }
 
+
+
+    @PostMapping("/sh-view-count")
+    public HashMap<String, Object> shViewCount(@RequestBody ShViewCountDTO dto) {
+        HashMap<String, Object> result = new HashMap<>();
+        ss.addViewCount(dto.getPostId(), dto.getMemberId());
+        return result;
+    }
 
 }

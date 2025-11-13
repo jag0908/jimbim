@@ -10,4 +10,6 @@ import java.util.List;
 public interface STYLE_PosthashRepository extends JpaRepository<STYLE_Posthash, Integer> {
 
     List<STYLE_Posthash> findByPostId(STYLE_post post);
+
+    void deleteAllByPostId(STYLE_post post);
 }

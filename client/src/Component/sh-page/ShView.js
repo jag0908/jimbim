@@ -5,38 +5,98 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { useSelector } from 'react-redux';
 
 
 
 const settings = {
-    dot:false,
+    dots:true,
     arrows:false,
-    infinite:false,
+    infinite:true,
     speed:500,
     slidesToShow:1,
     slidesToScroll:1
 }
 
 function ShView() {
+    const baseURL = process.env.REACT_APP_BASE_URL;
+
+    const loginUser = useSelector(state=>state.user);
+
     const {id} = useParams();
     const navigate = useNavigate();
 
-    const [postDetail, setPostDetail] = useState({});
-    const [category, setCategory] = useState([]);
+    const [postDetail, setPostDetail] = useState(null);
+    const [category, setCategory] = useState(null);
 
 
+
+    async function viewed() {
+
+
+        // 1. 조회수 증가
+        try {
+            await jaxios.post(`/api/sh-page/sh-view-count`, { postId: id, memberId: loginUser.member_id });
+            console.log("조회수 증가 완료");
+        } catch (err) {
+            console.error(err);
+        }
+        
+
+        // 2. 데이터 가져오기 (조회수 증가 후)
+        try {
+            const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
+            console.log(res.data.post)
+            setPostDetail(res.data.post);
+            setCategory(res.data.category);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
 
     useEffect(()=> {
-        jaxios.get(`/api/sh-page/sh-view/${id}`)
-            .then((res)=> {
-                console.log(res);
-                setPostDetail(res.data.shPost);
-                setCategory(res.data.category)
-            }).catch(err=>console.error(err));
-
-
+        viewed();
     }, [])
+
+    function formatDateTime(indate) {
+        const date = new Date(indate);
+        const now = new Date();
+
+        // 시간 제외하고 날짜만 비교하기 위해 00:00 기준으로 변환
+        const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const diffMs = now - date;
+        const diffMinutes = Math.floor(diffMs / 1000 / 60);
+        const diffHours = Math.floor(diffMinutes / 60);
+
+        const diffDays = Math.floor((startOfNow - startOfDate) / (1000 * 60 * 60 * 24));
+
+        // 오늘일 경우
+        if (diffDays === 0) {
+            if (diffHours > 0) return `${diffHours}시간 전`;
+            if (diffMinutes > 0) return `${diffMinutes}분 전`;
+            return `방금 전`;
+        }
+
+        // 1달(30일) 미만
+        if (diffDays < 30) {
+            return `${diffDays}일 전`;
+        }
+
+        const diffMonths = Math.floor(diffDays / 30);
+        if (diffMonths < 12) {
+            return `${diffMonths}달 전`;
+        }
+
+        // 1년 이상은 날짜 출력
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
 
     function formatPrice(num) {
       return num.toLocaleString('ko-KR');
@@ -45,54 +105,196 @@ function ShView() {
   return (
     <div className='shView'>
         <div className='viewWrap'>
-            <div className='inputWrap'>
-                <h4 className='tit'>[{postDetail.post && category?category[postDetail.post.category].category_name:"데이터 불러오는중..."}]</h4>
+            <div className='top'>
+                <div className='catetory'>[{category?category[postDetail.category].category_name:null}]</div>
+                <h4 className='tit'>{postDetail?postDetail.title:<Lodding />}</h4>
             </div>
-            <h2 className='mainTitle'>{postDetail.post?postDetail.post.title:"데이터 불러오는중..."}</h2>
-             <Slider className='imgGroup' {...settings}>
-                {
-                    (postDetail.files || []) ? 
-                    (postDetail.files || []).map((file, i)=> {
-                        return(
-                            <div className='imgBox' key={i}>
-                                <img src={file.path} />
+
+            <div className='rayoutWrap'>
+                <div className='leftBox'>
+                    <Slider className='imgGroup' {...settings}>
+                        {
+                            postDetail && postDetail.files.map((file, i)=> {
+                                return(
+                                <div className='imgBox'>
+                                    <img src={file.path} />
+                                </div>  
+                                )
+                            })
+                        }
+                    </Slider>
+                    <div className='userWrap'>
+                        <div className='userProfile'>
+                            <div className='profileImg'>
+                            {
+                                (postDetail && postDetail.member_profileImg)
+                                ? 
+                                (<img src={postDetail.member_profileImg} />)
+                                : 
+                                (<img src={`${baseURL}/sh_img/1.png`} />)
+                            }
                             </div>
-                        )
-                    }):
-                    "텅"
+
+                            <div className='profileInfo'>
+                            <span className='nickname'>
+                                {
+                                    postDetail?
+                                    postDetail.member_name:
+                                    <Lodding/>
+                                }
+                            </span>
+                            <span className='etc'>
+                                {
+                                    postDetail?
+                                    postDetail.member_profileMsg:
+                                    <Lodding/>
+                                }
+                            </span>
+                            </div>
+                        </div>
+
+                        <div className='userState'>
+                            매너단계: 
+                            <span>
+                                {
+                                    postDetail?
+                                    postDetail.member_blacklist:
+                                    <Lodding/>
+                                }
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+                <div className='rightBox'>
+                    <div className='dataBoxWrap'>
+                        <h2 className='mainTitle'>
+                            {
+                                postDetail?
+                                postDetail.title:
+                                <Lodding/>
+                            }
+                        </h2>
+                    </div>
+                    <div className='dataBoxWrap dobule'>
+                        <div className='catetory'></div>
+                        <div className='date'>{}</div>
+                    </div>
+                    <div className='dataBoxWrap'>
+                        <span className='dataBox price'>
+                            {
+                                postDetail?
+                                 formatPrice(postDetail.price):
+                                <Lodding/>
+                            }
+                            원
+                        </span>
+                    </div>
+                    <div className='dataBoxWrap'>
+                        <textarea id='dataTTA' className='tta' readOnly disabled 
+                        value={
+                                postDetail?
+                                postDetail.content:
+                                <Lodding/>
+                            }
+                        ></textarea>
+                    </div>
+
+                    <div className='dataBoxWrap'>
+                        <div className='util'>
+                            <span className='tit'>채팅</span>
+                            <span className='dataBox srt'>0</span>
+                        </div>
+                        <div className='util'>
+                            <span className='tit'>관심</span>
+                            <span className='dataBox srt'>0</span>
+                        </div>
+                        <div className='util'>
+                            <span className='tit'>조회수</span>
+                            <span className='dataBox srt'>
+                                {
+                                    postDetail?
+                                    postDetail.viewCount:
+                                    <Lodding/>
+                                }
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div className='line'></div>
                     
-                }
-            </Slider>
+                    <div className='dataBoxWrap'>
+                        <h4 className='tit'>직거래</h4>
+                        <span className='dataBox srt'>
+                            {
+                                postDetail?
+                                (
+                                    postDetail.directYN === "N" ? "불가능" :
+                                    "가능"
+                                ):
+                                <Lodding/>
+                            }
+                        </span>
+
+                        <div></div><div></div><div></div>
+
+                        <h4 className='tit'>택배거래</h4>
+                        <span className='dataBox srt'>
+                            {
+                                postDetail?
+                                (
+                                    postDetail.delivery_yn === "N" ? "불가능" :
+                                    "가능"
+                                ):
+                                <Lodding/>
+                            }
+                        </span>
+                    </div>
+
+                    <div className={
+                            `dataBoxWrap ${postDetail && postDetail.delivery_yn=="N"?
+                                "display-none":
+                                "display-block"
+                            }`
+                        }>
+                        <h4 className='tit'>택배비</h4>
+                        <span className='dataBox price srt'>
+                            {
+                                postDetail?
+                                postDetail.delivery_price:
+                                <Lodding/>
+                            }
+                            원</span>
+                    </div>
+                </div>
+            </div>
+            
+             
 
             
-            <div className='inputWrap'>
-                <h4 className='tit'>자세한 설명</h4>
-                <textarea id='dataTTA' readOnly disabled value={postDetail.post?postDetail.post.content:"데이터 불러오는중..."}></textarea>
-            </div>
-            <div className='inputWrap'>
-                <h4 className='tit'>가격</h4>
-                <span className='dataBox'>{postDetail.post?formatPrice(postDetail.post.price):"데이터 불러오는중..."}원</span>
-            </div>
-            <div className='inputWrap radio'>
-                <h4 className='tit'>직거래 유무</h4>
-                <span className='dataBox srt'>{postDetail.post?(postDetail.post.direct_yn === "Y"?"가능":"불가능"):"데이터 불러오는중..."}</span>
-            </div>
-            <div className='inputWrap radio'>
-                <h4 className='tit'>택배거래 유무</h4>
-
-                <span className='dataBox srt'>{postDetail.post?(postDetail.post.delivery_yn === "Y"?"가능":"불가능"):"데이터 불러오는중..."}</span>
-            </div>
-            <div className={`inputWrap ${postDetail.post?(postDetail.post.delivery_yn === "Y"? 'display-block':'display-none'):"데이터 불러오는중..."}`}>
-                <h4 className='tit'>택배비</h4>
-                <span className='dataBox srt'>{postDetail.post?(formatPrice(postDetail.post.delivery_price)):"데이터 불러오는중..."}원</span>
-            </div>
+            
         </div>
         <div className='btnWrap'>
-            <button className='navBtn pointBtn' onClick={()=> {navigate("/update");}}>수정하기</button>
+            {
+                postDetail && postDetail.member_id == loginUser.member_id ? 
+                (
+                    <button className='navBtn pointBtn' onClick={() => navigate(`/sh-page/sh-update/${id}`)}>
+                    수정하기
+                    </button>
+                ):
+                null
+            }
+            
             <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
         </div>
     </div>
   )
+}
+
+function Lodding() {
+    return <span style={{fontSize:"14px"}}>불러오는중...</span>
 }
 
 export default ShView

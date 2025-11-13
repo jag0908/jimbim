@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class StyleService {
 
     private final STYLE_PostRepository postRepository;
@@ -37,6 +36,39 @@ public class StyleService {
                 .map(File::getPath)
                 .collect(Collectors.toList());
     }
+
+    public List<StylePostDTO> getPostsByUseridDTO(String userid) {
+        List<STYLE_post> posts = findPostsByUserid(userid);
+
+        return posts.stream().map(post -> {
+            List<String> imageUrls = getAllImageUrls(post);
+            List<String> hashtags = posthashRepository.findByPostId(post)
+                    .stream().map(ph -> ph.getTagId().getWord())
+                    .collect(Collectors.toList());
+
+            int likeCount = likeRepository.countBySpost(post);
+            int replyCount = replyRepository.countBySpost(post);
+
+            return StylePostDTO.builder()
+                    .spost_id(post.getSpostId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .s_images(imageUrls)
+                    .indate(post.getIndate())
+                    .likeCount(likeCount)
+                    .replyCount(replyCount)
+                    .userid(post.getMember().getUserid())
+                    .profileImg(post.getMember().getProfileImg())
+                    .viewCount(post.getViewCount())
+                    .hashtags(hashtags)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    private List<STYLE_post> findPostsByUserid(String userid) {
+        return postRepository.findAllByMember_UseridOrderByIndateDesc(userid);
+    }
+
 
     // 전체 피드 조회
     public List<StylePostDTO> getAllPosts() {
@@ -67,6 +99,10 @@ public class StyleService {
                     .hashtags(hashtags)
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    public void save(STYLE_post post) {
+        postRepository.save(post);
     }
 
     // 단일 게시물 조회
@@ -174,26 +210,54 @@ public class StyleService {
         return Map.of("liked", liked, "likeCount", likeCount);
     }
 
-    public boolean toggleFollow(String userid, String targetUserid) {
+     //✅ 팔로우 토글 (팔로우 중이면 취소, 아니면 등록)
+    public boolean toggleFollow(String startUserid, String endUserid) {
+        Member startMember = memberRepository.findByUserid(startUserid);
+        Member endMember = memberRepository.findByUserid(endUserid);
 
-        Member startMember = memberRepository.findByUserid(userid);
-        Member endMember = memberRepository.findByUserid(targetUserid);
+        if (startMember == null || endMember == null) {
+            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+        }
+
+        return followRepository.findByStartMemberAndEndMember(startMember, endMember)
+                .map(existing -> {
+                    followRepository.delete(existing);
+                    return false; // 언팔로우
+                })
+                .orElseGet(() -> {
+                    Follow newFollow = new Follow();
+                    newFollow.setStartMember(startMember);
+                    newFollow.setEndMember(endMember);
+                    followRepository.save(newFollow);
+                    return true; // 팔로우 성공
+                });
+    }
+
+    // ✅ 팔로워 목록
+    public List<String> getFollowers(String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        return followRepository.findByEndMember(member).stream()
+                .map(f -> f.getStartMember().getUserid())
+                .collect(Collectors.toList());
+    }
+
+    // ✅ 팔로잉 목록
+    public List<String> getFollowing(String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        return followRepository.findByStartMember(member).stream()
+                .map(f -> f.getEndMember().getUserid())
+                .collect(Collectors.toList());
+    }
+
+    // ✅ 팔로우 상태 확인
+    public boolean isFollowing(String startUserid, String endUserid) {
+        Member startMember = memberRepository.findByUserid(startUserid);
+        Member endMember = memberRepository.findByUserid(endUserid);
 
         if (startMember == null || endMember == null)
             throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
 
-        Optional<Follow> existingFollow = followRepository.findByStart_memberAndEnd_member(startMember, endMember);
-
-        if (existingFollow.isPresent()) {
-            followRepository.delete(existingFollow.get());
-            return false; // 언팔로우됨
-        } else {
-            Follow follow = new Follow();
-            follow.setStart_member(startMember);
-            follow.setEnd_member(endMember);
-            followRepository.save(follow);
-            return true; // 팔로우됨
-        }
+        return followRepository.findByStartMemberAndEndMember(startMember, endMember).isPresent();
     }
 
     public STYLE_post findBySpostId(Integer id) {
@@ -262,4 +326,16 @@ public class StyleService {
         replyRepository.delete(reply);
     }
 
+    public void deletePost(Integer spostId, String userid) {
+        STYLE_post post = postRepository.findById(spostId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if (!post.getMember().getUserid().equals(userid)) {
+            throw new RuntimeException("본인 게시글만 삭제할 수 있습니다.");
+        }
+
+        // 파일 삭제 가능 (S3, DB)
+        fileRepository.deleteAll(fileRepository.findByPost(post));
+        postRepository.delete(post);
+    }
 }

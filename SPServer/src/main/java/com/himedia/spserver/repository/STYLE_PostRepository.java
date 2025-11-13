@@ -14,4 +14,6 @@ public interface STYLE_PostRepository extends JpaRepository<STYLE_post, Integer>
 
 
     Optional<STYLE_post> findBySpostId(Integer id);
+
+    List<STYLE_post> findAllByMember_UseridOrderByIndateDesc(String userid);
 }

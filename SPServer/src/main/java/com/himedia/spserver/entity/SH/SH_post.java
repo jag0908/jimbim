@@ -5,6 +5,7 @@ import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -19,11 +20,8 @@ public class SH_post {  // second hand
     private String title;
     @Column(nullable = false, length = 2000)
     private String content;
-    private String sh_image;
-//    @Column( columnDefinition="DATETIME default now()" )
-//    private Timestamp indate;
-    @Column(nullable = false, updatable = false)
-    private Timestamp indate = new Timestamp(System.currentTimeMillis());
+    @CreationTimestamp
+    private Timestamp indate;
     @Column(nullable = false)
     private Integer price;
     @Column(nullable = false)
@@ -38,12 +36,16 @@ public class SH_post {  // second hand
     @Column(nullable = false)
     private String category;
 
+    @Column(nullable = false)
+    private Integer viewCount = 0;
+
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     Member member;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "represent_file_id")
+    private File representFile;
 
-    @ManyToOne
-    @JoinColumn(name = "file_id")
-    File file;
 }

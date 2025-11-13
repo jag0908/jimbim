@@ -1,23 +1,24 @@
 package com.himedia.spserver.service;
 
+import com.himedia.spserver.dto.ShFileDto;
+import com.himedia.spserver.dto.ShPostDto;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 
-import com.himedia.spserver.repository.FileRepository;
-import com.himedia.spserver.repository.SH_file_repository;
-import com.himedia.spserver.repository.ShCategoryRepository;
-import com.himedia.spserver.repository.ShRepository;
+import com.himedia.spserver.entity.SH.ShViewHistory;
+import com.himedia.spserver.mapper.ShMapper;
+import com.himedia.spserver.repository.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,30 +29,20 @@ public class ShService {
     private final ShCategoryRepository sc;   // 두 개 Repository도 가능
     private final SH_file_repository sfr;
     private final FileRepository fr;
+    private final ShViewRepository svr;
 
-    public List<SHPostWithFilesDTO> getShList() {
-        List<SH_post> shList = sr.findAll();
-        List<SHPostWithFilesDTO> result = new ArrayList<>();
+    private final ShRepository shRepository;
 
-        for (SH_post post : shList) {
-            SHPostWithFilesDTO dto = new SHPostWithFilesDTO();
-            dto.setPost(post);
-            dto.setFiles(fr.findByShPost(post)); // 커스텀 메서드 사용
-            result.add(dto);
-        }
+    public List<ShPostDto> getShList() {
+        // fetch join으로 대표 파일까지 한 번에 조회
+        List<SH_post> posts = shRepository.findAllWithRepresentFile();
 
-        return result;
+        // 엔티티 → DTO 변환
+        return posts.stream()
+                .map(ShMapper::toDto)
+                .toList();
     }
 
-    public SHPostWithFilesDTO getShPost(Integer id) {
-        SH_post shPost = sr.findByPostId(id);
-
-        SHPostWithFilesDTO dto = new SHPostWithFilesDTO();
-        dto.setPost(shPost);
-        dto.setFiles(fr.findByShPost(shPost));
-
-        return dto;
-    }
 
     public ArrayList<SH_Category> getShCategorys() {
         ArrayList<SH_Category> shCategorys = (ArrayList<SH_Category>) sc.findAll();
@@ -73,11 +64,12 @@ public class ShService {
         post.setDelivery_price(deliveryPrice);
 
         sr.save(post);
+
         return post;
     }
 
 
-    public void insertFiles(SH_post post, String originalFilename, String path, Long size, String type) {
+    public File insertFiles(SH_post post, String originalFilename, String path, Long size, String type) {
         File file = new File();
         file.setShPost(post);
         file.setOriginalname(originalFilename);
@@ -85,18 +77,53 @@ public class ShService {
         file.setSize(size);
         file.setContentType(type);
         fr.save(file);
+        return file;
+    }
+
+    // 대표 이미지로 설정
+    public void updateRepresentFile(SH_post post, File file) {
+        post.setRepresentFile(file);
+        sr.save(post); // 변경된 대표이미지 저장
     }
 
 
+    public void addViewCount(Integer postId, Integer memberId) {
+        // 이미 조회했는지 체크
+        boolean alreadyViewed = svr.existsByPostIdAndMemberId(postId, memberId);
+        if (alreadyViewed) return;
 
-    @Setter
-    @Getter
-    public class SHPostWithFilesDTO {
-        private SH_post post;
-        private List<File> files;
+        // 조회수 증가
+        SH_post shPost = sr.findByPostId(postId);
+        shPost.setViewCount(shPost.getViewCount() + 1);
 
-        // getter, setter
+        // 기록 저장
+        ShViewHistory vh = new ShViewHistory();
+        vh.setPostId(postId);
+        vh.setMemberId(memberId);
+        svr.save(vh);
     }
+
+    public ShPostDto getShPost(Integer id) {
+        SH_post post = sr.findByPostId(id);
+
+        List<File> files = sfr.findAllByShPost(post);
+        List<ShFileDto> fileDtos = files.stream() // stream은 map() 함수를 쓸수있게 변환해줌
+                .map(file -> new ShFileDto(
+                        file.getFile_id(),
+                        file.getOriginalname(),
+                        file.getSize(),
+                        file.getPath(),
+                        file.getContentType(),
+                        file.getIndate()
+                ))
+                .collect(Collectors.toList()); // 다시 원래 기본배열로 변경해줌
+
+        ShPostDto postDto = ShMapper.toDto(post);  // 매퍼로 DTO 변환
+        postDto.setFiles(fileDtos);
+
+        return postDto;
+    }
+
 }
 
 

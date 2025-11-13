@@ -23,6 +23,12 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 전송된 요청(request)에 담긴 header 로 "사용자 정보"와 "토큰"을 점검
         String authHeaderStr = request.getHeader("Authorization");
+
+        if (authHeaderStr == null || !authHeaderStr.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // axios.post('URL', null, {params:{}, header:{ 'Athoriztion':`Bearer ${accessToken}`  } )
         try{
             String accessToken = authHeaderStr.substring(7);
@@ -148,6 +154,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/style/posts")) return true;
         if (path.startsWith("/api/style/post/")) return true;
         if (path.startsWith("/api/style/fileupload")) return true;
+        if (path.startsWith("/communityList/getCommunityList/")) return true;
 
         return false;
     }

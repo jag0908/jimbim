@@ -12,8 +12,13 @@ public interface STYLE_PostRepository extends JpaRepository<STYLE_post, Integer>
     @Query("SELECT p FROM STYLE_post p ORDER BY p.indate DESC")
     List<STYLE_post> findAllByOrderByIndateDesc();
 
-
     Optional<STYLE_post> findBySpostId(Integer id);
 
     List<STYLE_post> findAllByMember_UseridOrderByIndateDesc(String userid);
+
+    @Query("SELECT p FROM STYLE_post p LEFT JOIN p.likes l GROUP BY p ORDER BY COUNT(l) DESC, p.indate DESC")
+    List<STYLE_post> findAllOrderByLikeCountDesc();
+
+    @Query("SELECT p FROM STYLE_post p ORDER BY p.viewCount DESC, p.indate DESC")
+    List<STYLE_post> findAllOrderByViewCountDesc();
 }

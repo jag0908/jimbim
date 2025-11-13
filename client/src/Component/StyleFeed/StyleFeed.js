@@ -8,14 +8,27 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 function StyleFeed() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
+  const [category, setCategory] = useState("default");
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await jaxios.get(`${baseURL}/style/posts`);
-      setPosts(res.data);
+      let url = "";
+      if (category === "default") url = `${baseURL}/style/posts`;
+      else if (category === "trending") url = `${baseURL}/style/trending`;
+      else if (category === "views") url = `${baseURL}/style/views`;
+      else if (category === "tags") url = `${baseURL}/style/hot-tags`;
+      else if (category === "accounts") url = `${baseURL}/style/hot-users`;
+
+      try {
+        const res = await jaxios.get(url);
+        setPosts(res.data);
+      } catch (err) {
+        console.error("게시글 불러오기 실패:", err);
+      }
     };
+
     fetchPosts();
-  }, []); // ← []를 [location]으로 바꾸면 페이지 이동마다 새로 불러옴
+  }, [category]); // 카테고리 변경 시마다 호출
 
   // 좋아요 토글 함수
   const toggleLike = async (postId) => {
@@ -44,8 +57,37 @@ function StyleFeed() {
 
   return (
     <div className="style-feed-container">
-      <div className="style-hashtag-bar">
-        #오늘뭐입지 #트렌드스타일 #봄코디 #컬러룩 #유행잇템
+      <div className="style-category-bar">
+        <button
+          className={`style-category-btn ${category === "default" ? "active" : ""}`}
+          onClick={() => setCategory("default")}
+        >
+          🏠 전체보기
+        </button>
+        <button
+          className={`style-category-btn ${category === "trending" ? "active" : ""}`}
+          onClick={() => setCategory("trending")}
+        >
+          🔥 요즘 트렌드
+        </button>
+        <button
+          className={`style-category-btn ${category === "views" ? "active" : ""}`}
+          onClick={() => setCategory("views")}
+        >
+          👀 인기 스타일
+        </button>
+        <button
+          className={`style-category-btn ${category === "tags" ? "active" : ""}`}
+          onClick={() => setCategory("tags")}
+        >
+          🏷️ HOT 태그
+        </button>
+        <button
+          className={`style-category-btn ${category === "accounts" ? "active" : ""}`}
+          onClick={() => setCategory("accounts")}
+        >
+          👤 HOT 계정
+        </button>
       </div>
 
       <div className="style-write-button-area">

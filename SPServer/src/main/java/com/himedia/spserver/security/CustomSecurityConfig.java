@@ -7,6 +7,7 @@ import com.himedia.spserver.security.handler.APILoginSuccessHandler;
 import com.himedia.spserver.security.handler.CustomAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,22 +38,16 @@ public class CustomSecurityConfig {
 
         //권한별 접근 제어
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/member/**",
-                        "/api/member/**",
-                        "/style/posts",
-                        "/style/post/**",
-                        "/uploads/**",
-                        "/api/style/post/**"
-                ).permitAll()
-                .requestMatchers(
-                        "/community/getCommunityList/**"
-                ).permitAll()
+                // 로그인 없이 접근 가능한 GET 요청
+                .requestMatchers(HttpMethod.GET, "/style/post/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/style/posts").permitAll()
+                .requestMatchers("/member/**", "/api/member/**", "/uploads/**").permitAll()
                 .requestMatchers(
                         "/style/write",
                         "/api/style/write",
                         "/style/reply/**",
-                        "/api/style/reply/**"
+                        "/api/style/reply/**",
+                        "/style/post/**"      // DELETE / PUT 요청은 인증 필요
                 ).authenticated()
                 .anyRequest().permitAll()
         );
@@ -92,6 +87,7 @@ public class CustomSecurityConfig {
         // 메서드방식
         configuration.setAllowedMethods( Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE") );
         // 헤더
+
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         // 전송해줄 데이터의 JSON 처리
         configuration.setAllowCredentials(true);

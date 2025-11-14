@@ -24,7 +24,7 @@ function WriteCommunity() {
     useEffect(
         ()=>{
             if( !loginUser || !loginUser.userid ){
-                alert('로그인이 필요한 서비스 입니다');
+                alert('로그인이 필요 서비스 입니다');
                 navigate('/');
             }
             setUserid(loginUser.userid);

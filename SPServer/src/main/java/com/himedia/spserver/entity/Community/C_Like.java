@@ -13,9 +13,9 @@ public class C_Like {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    Member member;
 
     @ManyToOne
     @JoinColumn(name = "cpost_id")
-    C_post cpost_id;
+    C_post cpost;
 }

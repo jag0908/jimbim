@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 public class C_Category {
     @Id
-    private Integer category_id;
-    private String category_name;
+    private Integer categoryId;
+    private String categoryName;
 }

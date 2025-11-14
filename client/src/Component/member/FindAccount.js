@@ -21,7 +21,7 @@ function FindAccount() {
         .then((result)=>{
             if( result.data.msg=='ok'){
                 setUserid(result.data.userid)
-                setViewId({ width:'100%', margin:'5px 0', border:'1px solid green', padding:'5px 0', display: 'flex'})
+                setViewId({ width:'100%', margin:'5px 0', padding:'5px 0', display: 'flex'})
             }else{
                 alert('해당이름과 전화번호의 회원이 없습니다.')
             }
@@ -69,17 +69,17 @@ function FindAccount() {
 
     return (
         <article>
-            <div className='subPage' >
+            <div className='subPage'>
                 <div className='memberform'>
-                    <h2>FIND ACCOUNT</h2>
+                    <h2>아이디 찾기</h2>
                     <div className='field'>
-                        <label>NAME</label>
-                        <input type="text" style={{flex:'3'}} value={name} onChange={(e)=>{
+                        <label>이름</label>
+                        <input type="text" value={name} onChange={(e)=>{
                             setName( e.currentTarget.value )}}/>
                     </div>
                     <div className='field'>
-                        <label>PHONE</label>
-                        <input type="text" style={{flex:'3'}} value={phone} onChange={(e)=>{
+                        <label>전화번호</label>
+                        <input type="text" value={phone} onChange={(e)=>{
                             setPhone( e.currentTarget.value )}}/>
                     </div>
                     <div className="btns">
@@ -90,27 +90,27 @@ function FindAccount() {
                     <div className='field' style={viewId}>비밀번호를 찾으려면 아래 이메일인증을 진행하세요</div>
 
                     <div className='field' style={viewId}>
-                        <label>EMAIL</label>
-                        <input type="text" style={{flex:'2'}} value={email} onChange={(e)=>{
+                        <label>이메일</label>
+                        <input type="text" value={email} onChange={(e)=>{
                             setEmail( e.currentTarget.value )}}/>
                         <button style={{flex:'1'}} onClick={()=>{sendMail()}}>이메일 보내기</button>
                     </div>
                     <div className='field' style={viewId}>
                         <label>인증코드</label>
-                        <input type="text" style={{flex:'2'}} value={usercode} onChange={(e)=>{setUsercode( e.currentTarget.value )}}/>
-                        <button  style={{flex:'1'}} onClick={()=>{confirmCode()}}>코드 인증</button>
+                        <input type="text" value={usercode} onChange={(e)=>{setUsercode( e.currentTarget.value )}}/>
+                        <button onClick={()=>{confirmCode()}}>코드 인증</button>
                     </div>
                     
                     <div className='field' style={viewPW}>
-                        <label>NEW PASSWORD</label>
-                        <input type="password" style={{flex:'3'}} value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value )}}/>
+                        <label>새 비밀번호</label>
+                        <input type="password" value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value )}}/>
                     </div>
                     <div className='field' style={viewPW}>
-                        <label>NEW PASSWORD CHK</label>
-                        <input type="password" style={{flex:'3'}} value={pwdChk} onChange={(e)=>{setPwdChk( e.currentTarget.value )}}/>
+                        <label>새 비밀번호 확인</label>
+                        <input type="password" value={pwdChk} onChange={(e)=>{setPwdChk( e.currentTarget.value )}}/>
                     </div>
                     <div className="btns"  style={viewPW}>
-                        <button onClick={()=>{resetPw()}}>RESET PW</button>
+                        <button onClick={()=>{resetPw()}}>비밀번호 변경</button>
                     </div>
 
                 </div>

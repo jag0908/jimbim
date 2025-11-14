@@ -51,11 +51,11 @@ function Login() {
             <div className='subPage'>
                 <div className='memberform'>
                     <div className='field'>
-                        <label>USERID</label>
+                        <label>아이디</label>
                         <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='field'>
-                        <label>PASSWORD</label>
+                        <label>비밀번호</label>
                         <input type='password'  value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='btns'>

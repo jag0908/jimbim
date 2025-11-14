@@ -40,13 +40,25 @@ public class StyleController {
 
     // 🔥 요즘 트렌드 (좋아요 많은 순)
     @GetMapping("/trending")
-    public ResponseEntity<List<STYLE_post>> getTrendingPosts() {
-        return ResponseEntity.ok(styleService.getAllPostsOrderByLikes());
+    public ResponseEntity<List<StylePostDTO>> getTrendingPosts() {
+        return ResponseEntity.ok(styleService.getAllPostsOrderByLikesDTO());
     }
 
     @GetMapping("/views")
-    public ResponseEntity<List<STYLE_post>> getPopularPosts() {
-        return ResponseEntity.ok(styleService.getAllPostsOrderByViews());
+    public ResponseEntity<List<StylePostDTO>> getPopularPosts() {
+        return ResponseEntity.ok(styleService.getAllPostsOrderByViewsDTO());
+    }
+
+    // 🔥 인기 해시태그
+    @GetMapping("/hot-tags")
+    public ResponseEntity<?> getHotTags() {
+        return ResponseEntity.ok(styleService.getHotTags());
+    }
+
+    // 🔥 인기 계정(팔로워 많은 순)
+    @GetMapping("/hot-users")
+    public ResponseEntity<?> getHotUsers() {
+        return ResponseEntity.ok(styleService.getHotUsers());
     }
 
 

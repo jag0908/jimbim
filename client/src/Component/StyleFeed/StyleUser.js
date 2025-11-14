@@ -5,6 +5,7 @@ import "../../style/StyleUser.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 
+
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function StyleUser() {
@@ -53,6 +54,8 @@ function StyleUser() {
     try {
       const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
       setIsFollowing(res.data.followed);
+      checkFollowStatus();   // 팔로우 상태 갱신
+      fetchUserInfo();       // 유저 정보 갱신 (팔로워 수 포함)
       alert(res.data.message);
     } catch (err) {
       console.error("팔로우 토글 실패", err);

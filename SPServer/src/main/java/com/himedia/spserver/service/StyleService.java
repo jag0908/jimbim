@@ -281,6 +281,7 @@ public class StyleService {
                     Map<String, Object> map = new HashMap<>();
                     map.put("reply_id", r.getReply_id());
                     map.put("userid", r.getMemberid().getUserid());
+                    map.put("profileImg", r.getMemberid().getProfileImg());
                     map.put("content", r.getContent());
                     map.put("indate", r.getIndate());
                     return map;
@@ -311,6 +312,7 @@ public class StyleService {
         Map<String, Object> result = new HashMap<>();
         result.put("reply_id", reply.getReply_id());
         result.put("userid", reply.getMemberid().getUserid());
+        result.put("profileImg", reply.getMemberid().getProfileImg());
         result.put("content", reply.getContent());
         result.put("indate", reply.getIndate());
 
@@ -384,6 +386,9 @@ public class StyleService {
             List<File> filesToDelete = currentFiles.stream()
                     .filter(f -> !existingImages.contains(f.getPath()))
                     .toList();
+            for (File f : filesToDelete) {
+                sus.deleteFile(f.getPath());  // S3 삭제 추가
+            }
             fileRepository.deleteAll(filesToDelete);
         } else {
             // 기존 이미지 전부 삭제
@@ -413,7 +418,8 @@ public class StyleService {
 
         if (hashtags != null && !hashtags.isEmpty()) {
             for (String rawTag : hashtags) {
-                String word = rawTag.replaceAll("[#\\s]", "");
+                String word = rawTag.replaceAll("[#\\s]", "").trim();
+                if (word.isEmpty()) continue;
                 STYLE_Hashtag tag = hashtagRepository.findByWord(word)
                         .orElseGet(() -> {
                             STYLE_Hashtag newTag = new STYLE_Hashtag();
@@ -429,11 +435,113 @@ public class StyleService {
         }
     }
 
-    public List<STYLE_post> getAllPostsOrderByLikes() {
-        return postRepository.findAllOrderByLikeCountDesc();
+    public List<StylePostDTO> getAllPostsOrderByLikesDTO() {
+        List<STYLE_post> posts = postRepository.findAllOrderByLikeCountDesc();
+        return convertToDTO(posts);
     }
 
-    public List<STYLE_post> getAllPostsOrderByViews() {
-        return postRepository.findAllOrderByViewCountDesc();
+    public List<StylePostDTO> getAllPostsOrderByViewsDTO() {
+        List<STYLE_post> posts = postRepository.findAllOrderByViewCountDesc();
+        return convertToDTO(posts);
     }
+
+    private List<StylePostDTO> convertToDTO(List<STYLE_post> posts) {
+        return posts.stream().map(post -> {
+            int likeCount = likeRepository.countBySpost(post);
+
+            List<String> imageUrls = fileRepository.findAllByPost(post)
+                    .stream().map(File::getPath).toList();
+
+            return StylePostDTO.builder()
+                    .spost_id(post.getSpostId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .s_images(imageUrls)
+                    .userid(post.getMember().getUserid())
+                    .profileImg(post.getMember().getProfileImg())
+                    .likeCount(likeCount)
+                    .build();
+        }).toList();
+    }
+
+    public List<Map<String, Object>> getHotTags() {
+        List<Object[]> hotTags = posthashRepository.findHotTags();
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        // 상위 10개 태그만 처리
+        hotTags.stream().limit(10).forEach(row -> {
+            String tagName = (String) row[0];
+
+            // 해당 태그의 게시물 가져오기
+            List<STYLE_post> posts = postRepository.findPostsByTag(tagName);
+
+            List<Map<String, Object>> postDtos = posts.stream()
+                    .limit(4)
+                    .map(post -> {
+                        Map<String, Object> p = new HashMap<>();
+                        p.put("spost_id", post.getSpostId());
+                        p.put("s_images",
+                                fileRepository.findByPost(post)
+                                        .stream()
+                                        .map(File::getPath)
+                                        .toList()
+                        );
+                        p.put("userid", post.getMember().getUserid());
+                        p.put("profileImg", post.getMember().getProfileImg());
+                        p.put("likeCount", post.getLikes().size());
+                        return p;
+                    }).toList();
+
+            Map<String, Object> tagMap = new HashMap<>();
+            tagMap.put("tagName", tagName);
+            tagMap.put("posts", postDtos);
+
+            result.add(tagMap);
+        });
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getHotUsers() {
+
+        // 팔로워 많은 사람 기준 인기유저 선정
+        List<Member> allMembers = memberRepository.findAll();
+
+        List<Map<String, Object>> result = allMembers.stream()
+                .map(member -> {
+                    int followerCount = followRepository.findByEndMember(member).size();
+
+                    // 유저 게시물 4개
+                    List<STYLE_post> posts = postRepository
+                            .findAllByMember_UseridOrderByIndateDesc(member.getUserid())
+                            .stream().limit(4).toList();
+
+                    List<Map<String, Object>> postDto = posts.stream()
+                            .map(p -> Map.of(
+                                    "spost_id", p.getSpostId(),
+                                    "s_images", fileRepository.findAllByPost(p)
+                                            .stream().map(File::getPath).toList()
+                            ))
+                            .toList();
+
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("userid", member.getUserid());
+                    m.put("profileImg", member.getProfileImg());
+                    m.put("followerCount", followerCount);
+                    m.put("posts", postDto);
+
+                    return m;
+                })
+                .sorted((a, b) ->
+                        ((Integer) b.get("followerCount")) - ((Integer) a.get("followerCount"))
+                )
+                .limit(10) // 상위 10명만
+                .toList();
+
+        return result;
+    }
+
+
+
 }

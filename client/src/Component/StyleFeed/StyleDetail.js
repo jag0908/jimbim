@@ -85,8 +85,11 @@ const StyleDetail = () => {
 
   try {
     const res = await jaxios.post(`${baseURL}/style/reply/${id}`, { content: comment });
-    const newReply = res.data; // 서버가 새 댓글만 반환
-    setReplies(prev => [...prev, newReply]); // 기존 댓글 + 새 댓글
+
+    const newReply = res.data.replies;   // ⭐ 서버에서 전달한 새 댓글 1개
+
+    setReplies((prev) => [...prev, newReply]);  // ⭐ 즉시 화면에 추가
+
     setComment(""); // 입력창 초기화
   } catch (err) {
     console.error("댓글 작성 오류", err);
@@ -221,12 +224,13 @@ const StyleDetail = () => {
         <h2>{title}</h2>
         <p>{content}</p>
 
+        <br/>
         {/* 해시태그 표시 */}
         {post.hashtags && post.hashtags.length > 0 && (
           <div className="style-hashtags">
             {post.hashtags.map((tag, index) => (
               <span key={index} className="style-hashtag">
-                #{tag}
+                #{tag}&nbsp;
               </span>
             ))}
           </div>
@@ -263,7 +267,14 @@ const StyleDetail = () => {
           return (
             <div key={reply.reply_id} className="style-reply">
               <div className="style-reply-header">
-                <div className="style-reply-left">
+
+                <div className="style-reply-left" 
+                  onClick={() => navigate(`/styleUser/${reply.userid}`)}>
+                  <img
+                    src={reply.profileImg || "/default_profile.png"}
+                    alt={reply.userid}
+                    className="style-reply-profile"
+                  />
                   <strong>{reply.userid}</strong>
                 </div>
                 <div className="style-reply-right">

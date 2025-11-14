@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 @Data
 public class C_Reply {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
+    @Column(name = "reply_id")
     private Integer reply_id;
     private String content;
     @Column( columnDefinition="DATETIME default now()" )
@@ -17,9 +19,9 @@ public class C_Reply {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member memberid;
+    Member member;
 
     @ManyToOne
     @JoinColumn(name = "cpost_id")
-    C_post cpostid;
+    C_post cpost;
 }

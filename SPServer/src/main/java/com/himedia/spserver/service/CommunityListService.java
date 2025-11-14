@@ -1,17 +1,15 @@
 package com.himedia.spserver.service;
 
-import com.himedia.spserver.dto.Paging;
-import com.himedia.spserver.entity.Community.*;
+import com.himedia.spserver.dto.CommunityViewDTO;
+import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.repository.CommunityListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,18 +18,18 @@ public class CommunityListService {
     @Autowired
     private CommunityListRepository cr;
 
-    public void addReadCount(int cpostNum) {
-        C_post post = cr.findByCpostNum(cpostNum);
-        if (post != null) {
-            post.setReadcount(post.getReadcount() + 1);
-        }
+    // 조회수 증가
+    public void addReadCount(int cpost_id) {
+        Optional<C_post> optionalPost = cr.findById(cpost_id);
+        optionalPost.ifPresent(post -> post.setReadcount(post.getReadcount() + 1));
     }
 
+    // 게시글 수정
     public HashMap<String, Object> updateCommunity(C_post post) {
         HashMap<String, Object> result = new HashMap<>();
-        C_post updateCommunity = cr.findByCpostNum(post.getCpostNum());
-
-        if (updateCommunity != null) {
+        Optional<C_post> optionalPost = cr.findById(post.getCpost_id());
+        if(optionalPost.isPresent()) {
+            C_post updateCommunity = optionalPost.get();
             updateCommunity.setTitle(post.getTitle());
             updateCommunity.setContent(post.getContent());
             updateCommunity.setC_image(post.getC_image());
@@ -40,36 +38,27 @@ public class CommunityListService {
         } else {
             result.put("msg", "notok");
         }
-
         return result;
     }
 
-    public HashMap<String, Object> getCommunityList(int page) {
+    // 게시글 리스트 조회 (DTO 기반)
+    public HashMap<String, Object> getCommunityList(int page, Integer categoryId) {
         HashMap<String, Object> result = new HashMap<>();
 
-        Paging paging = new Paging();
-        paging.setPage(page);
-
-        int totalCount = (int) cr.count();
-        paging.setTotalCount(totalCount);
-        paging.calPaing();
-
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "readcount"));
-        Page<C_post> list = cr.findAll(pageable);
-
-        System.out.println("DB에서 조회된 게시글 수: " + list.getContent().size());
+        Page<CommunityViewDTO> list = (categoryId == null || categoryId == 0)
+                ? cr.findAllDTO(pageable)
+                : cr.findByCategoryDTO(categoryId, pageable);
 
         result.put("communityList", list.getContent());
-        result.put("paging", paging);
+        result.put("totalPages", list.getTotalPages());
+        result.put("currentPage", page);
 
         return result;
     }
 
-    public void insertCommunity(C_post cpost) {
-        cr.save(cpost);
-    }
-
-    public C_post getCommunity(int num) {
-        return cr.findByCpostNum(num);
+    // 게시글 상세조회
+    public Optional<C_post> getCommunityById(int id) {
+        return cr.findById(id);
     }
 }

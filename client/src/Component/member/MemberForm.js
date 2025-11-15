@@ -213,7 +213,7 @@ function MemberForm(props) {
                 (type=='join')?
                 (<>
                     <div className='field'>
-                        <label><span>*</span>ID <button onClick={ ()=>{idCheck()} }>ID CHECK</button></label>
+                        <label><span>*</span>아이디 <button onClick={ ()=>{idCheck()} }>중복검사</button></label>
                         <input type="text" value={userid} onChange={(e)=>{
                             setUserid( e.currentTarget.value )
                         }}/>
@@ -271,15 +271,6 @@ function MemberForm(props) {
                     }} style={{width:'10px'}}/> * * * * * * 
                 </div>
             </div>
-            {
-                (type=='kakao')?
-                (
-                <div className='field'>
-                    <label>프로필사진</label>
-                    <div><img src={kakaoMember.profileImg}/></div>
-                </div>
-                ):(<></>)
-            }
             <div className='field'>
                 <label>프로필사진</label>
                 {/* 미리보기 이미지 */}

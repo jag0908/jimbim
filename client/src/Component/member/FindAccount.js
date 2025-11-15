@@ -71,19 +71,19 @@ function FindAccount() {
         <article>
             <div className='subPage' >
                 <div className='memberform'>
-                    <h2>FIND ACCOUNT</h2>
+                    <h2>아이디 찾기</h2>
                     <div className='field'>
-                        <label>NAME</label>
+                        <label>이름</label>
                         <input type="text" style={{flex:'3'}} value={name} onChange={(e)=>{
                             setName( e.currentTarget.value )}}/>
                     </div>
                     <div className='field'>
-                        <label>PHONE</label>
+                        <label>전화번호</label>
                         <input type="text" style={{flex:'3'}} value={phone} onChange={(e)=>{
                             setPhone( e.currentTarget.value )}}/>
                     </div>
                     <div className="btns">
-                        <button onClick={()=>{findid()}}>FIND ID</button>
+                        <button onClick={()=>{findid()}}>아이디 찾기</button>
                     </div>
 
                     <div className='field' style={viewId}><b>검색하신 아이디는 {userid} 입니다</b></div>
@@ -102,15 +102,15 @@ function FindAccount() {
                     </div>
                     
                     <div className='field' style={viewPW}>
-                        <label>NEW PASSWORD</label>
+                        <label>새 비밀번호</label>
                         <input type="password" style={{flex:'3'}} value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value )}}/>
                     </div>
                     <div className='field' style={viewPW}>
-                        <label>NEW PASSWORD CHK</label>
+                        <label>새 비밀번호 확인</label>
                         <input type="password" style={{flex:'3'}} value={pwdChk} onChange={(e)=>{setPwdChk( e.currentTarget.value )}}/>
                     </div>
                     <div className="btns"  style={viewPW}>
-                        <button onClick={()=>{resetPw()}}>RESET PW</button>
+                        <button onClick={()=>{resetPw()}}>비밀번호 재설정</button>
                     </div>
 
                 </div>

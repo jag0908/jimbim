@@ -51,11 +51,11 @@ function Login() {
             <div className='subPage'>
                 <div className='memberform'>
                     <div className='field'>
-                        <label>USERID</label>
+                        <label>아이디</label>
                         <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='field'>
-                        <label>PASSWORD</label>
+                        <label>비밀번호</label>
                         <input type='password'  value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='btns'>
@@ -63,8 +63,8 @@ function Login() {
                         <button onClick={()=>{ navigate('/join')}}>회원가입</button>
                         <button onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>
                     </div>
-                    <div className="sns-btns">
-                        <button style={{background:'yellow', margin:'2px'}} onClick={
+                    <div className="btns">
+                        <button style={{background:'yellow', color:'black', fontWeight:'bold'}} onClick={
                             ()=>{window.location.href=`${baseURL}/member/kakaostart`}
                         }>KAKAO</button>
                     </div>

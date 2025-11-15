@@ -272,8 +272,10 @@ function Mypage() {
                                                 (e)=>{ setPwdChk(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <button onClick={()=>{updatePwd()}}>수정</button>
-                                        <button onClick={()=>{edit('')}}>취소</button>
+                                        <div className='btns'>
+                                            <button onClick={()=>{updatePwd()}}>수정</button>
+                                            <button onClick={()=>{edit('')}}>취소</button>
+                                        </div>
                                     </>):
                                     (<>
                                         <div>********</div>
@@ -467,6 +469,9 @@ function Mypage() {
                             (member.indate)?
                             (member.indate.substring(0,10)):(null)
                         }</div>
+                    </div>
+                    <div className='btns'>
+                        <button onClick={()=>{navigate('/deleteMember')}} style={{backgroundColor:"red"}}>회원탈퇴</button>
                     </div>
                 </div>
             </div>

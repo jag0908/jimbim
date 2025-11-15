@@ -20,7 +20,10 @@ function EditAddressForm(props) {
 
     // 모달창을 위한 style
     const customStyles = {
-        overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", },
+        overlay: {
+            backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", 
+            zIndex: "2000"
+        },
         content: {
             left: "0",
             margin: "auto",

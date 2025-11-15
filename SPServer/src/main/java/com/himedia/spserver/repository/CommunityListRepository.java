@@ -29,4 +29,6 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
     Page<CommunityViewDTO> findByCategoryDTO(Integer categoryId, Pageable pageable);
 
     long countByCategoryCategoryId(Integer categoryId);
+
+    Page<C_post> findByCategoryId(Integer categoryId, Pageable pageable);
 }

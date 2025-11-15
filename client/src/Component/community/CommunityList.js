@@ -47,7 +47,9 @@ function CommunityList() {
                     console.error(result.data.error);
                     return;
                 }
-                setCommunityList(result.data.communityList || []);
+                const sortedList = (result.data.communityList || []).sort((a,b) => new Date(b.indate) - new Date(a.indate));
+                setCommunityList(sortedList);
+
                 const newPaging = result.data.paging || {};
                 setPaging({
                     page: newPaging.page || 1,
@@ -89,15 +91,23 @@ function CommunityList() {
         setSelectedCategoryId(categoryId);
     }
 
+    function onWriteClick() {
+        if(!loginUser || !loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다.");
+            navigate("/login");
+        } else {
+            navigate("/writeCommunity");
+        }
+    }
+
     return (
         <>
-            {loginUser && loginUser.userid && (
-                <div className="writeBtnArea top">
-                    <button className="writeBtn" onClick={() => navigate("/WriteCommunity")}>
-                        글쓰기
-                    </button>
-                </div>
-            )}
+            {/* 글쓰기 버튼 항상 상단 */}
+            <div className="writeBtnArea top">
+                <button className="writeBtn" onClick={onWriteClick}>
+                    글쓰기
+                </button>
+            </div>
 
             <div className='community'>
                 <div className="sidebar">
@@ -121,7 +131,6 @@ function CommunityList() {
                         <div className='titlecol'>작성자</div>
                         <div className='titlecol'>작성일</div>
                         <div className='titlecol'>조회수</div>
-                        <div className='titlecol'>좋아요</div>
                     </div>
 
                     {communityList.length === 0 ? (
@@ -129,13 +138,12 @@ function CommunityList() {
                     ) : (
                         communityList.map((community, idx) => (
                             <div className='row' key={idx}>
-                                <div className='col' onClick={() => onCommunityView(community.cpostId || community.cpost_id)}>
+                                <div className='col' onClick={() => onCommunityView(community.cpost_id)}>
                                     {community.title}
                                 </div>
                                 <div className='col'>{community.userid || community.member?.userid}</div>
                                 <div className='col'>{community.indate?.substring(0, 10) || ""}</div>
                                 <div className='col'>{community.readcount}</div>
-                                <div className='col'>{community.c_like}</div>
                             </div>
                         ))
                     )}

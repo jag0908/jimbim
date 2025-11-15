@@ -1,6 +1,5 @@
 package com.himedia.spserver.controller;
 
-import com.himedia.spserver.dto.CommunityViewDTO;
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.service.CommunityListService;
 import jakarta.servlet.ServletContext;
@@ -31,6 +30,19 @@ public class CommunityListController {
         return cs.getCommunityList(page, categoryId);
     }
 
+    // 게시글 상세조회
+    @GetMapping("/getCommunity/{id}")
+    public HashMap<String, Object> getCommunity(@PathVariable int id) {
+        HashMap<String, Object> result = new HashMap<>();
+        Optional<C_post> post = cs.getCommunityById(id);
+        if (post.isPresent()) {
+            result.put("community", post.get());
+        } else {
+            result.put("error", "notfound");
+        }
+        return result;
+    }
+
     // 조회수 증가
     @PostMapping("/addReadCount")
     public HashMap<String, Object> addReadCount(@RequestParam("num") int cpost_id) {
@@ -40,23 +52,37 @@ public class CommunityListController {
         return result;
     }
 
-    // 게시글 상세조회
-    @GetMapping("/getCommunity/{id}")
-    public HashMap<String, Object> getCommunity(@PathVariable int id) {
+    // 게시글 작성
+    @PostMapping("/createCommunity")
+    public HashMap<String, Object> createCommunity(@RequestBody C_post cpost) {
         HashMap<String, Object> result = new HashMap<>();
-        Optional<C_post> post = cs.getCommunityById(id);
-        if(post.isPresent()) {
-            result.put("community", post.get());
-        } else {
-            result.put("error", "notfound");
+        try {
+            cs.saveCommunity(cpost);
+            result.put("msg", "ok");
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("error", "failed");
         }
         return result;
     }
 
     // 게시글 수정
     @PostMapping("/updateCommunity")
-    public HashMap<String, Object> updateCommunity(@RequestBody C_post cpost){
+    public HashMap<String, Object> updateCommunity(@RequestBody C_post cpost) {
         return cs.updateCommunity(cpost);
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/deleteCommunity/{id}")
+    public HashMap<String, Object> deleteCommunity(@PathVariable int id) {
+        HashMap<String, Object> result = new HashMap<>();
+        try {
+            cs.deleteCommunity(id);
+            result.put("msg", "deleted");
+        } catch (Exception e) {
+            result.put("error", "failed");
+        }
+        return result;
     }
 
     // 파일 업로드
@@ -67,8 +93,12 @@ public class CommunityListController {
         Calendar today = Calendar.getInstance();
         long dt = today.getTimeInMillis();
         String filename = file.getOriginalFilename();
-        String fn1 = filename.substring(0, filename.indexOf("."));
-        String fn2 = filename.substring(filename.indexOf("."));
+        if (filename == null) {
+            result.put("error", "파일이 없습니다.");
+            return result;
+        }
+        String fn1 = filename.substring(0, filename.lastIndexOf("."));
+        String fn2 = filename.substring(filename.lastIndexOf("."));
         String uploadPath = path + "/" + fn1 + dt + fn2;
         try {
             file.transferTo(new File(uploadPath));
@@ -76,6 +106,7 @@ public class CommunityListController {
             result.put("savefilename", fn1 + dt + fn2);
         } catch (IOException e) {
             e.printStackTrace();
+            result.put("error", "파일 업로드 실패");
         }
         return result;
     }

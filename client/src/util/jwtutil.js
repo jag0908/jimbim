@@ -3,23 +3,43 @@ import {Cookies} from 'react-cookie'
 const jaxios = axios.create()
 const cookies = new Cookies()
 
-const beforeReq=( config )=>{
-    // 쿠키에 있는 토큰을 header에 포함시킵니다
+const beforeReq = (config) => {
+  let loginUser = cookies.get('user');
 
-    // 쿠키에서 사용자정보를 불러옵니다
-    const loginUser = cookies.get('user')
-    if( !loginUser || !loginUser.userid ) {
-        // 현재 로그인 정보가 없다면 에러메세지를 갖고 jaxios로 요청한 곳으로 돌아갑니다
-        alert('로그인이 필요한 서비스 입니다')
-        return Promise.reject(
-            { response:{data:{error:"REQUIRE_LOGIN"}} }
-            // REQUIRE_LOGIN는 react에서 result.data.error 를 console 에 출력하면 확인이 가능합니다
-        )
+  if (!loginUser) {
+    console.warn('⚠️ 로그인 정보 없음 — Authorization 헤더 추가 안함');
+    return config;
+  }
+
+  if (typeof loginUser === 'string') {
+    try {
+      loginUser = JSON.parse(loginUser);
+    } catch (e) {
+      console.error('❌ 쿠키 파싱 실패:', e);
+      return config;
     }
-    const { accessToken } = loginUser
-    config.headers.Authorization  = `Bearer ${accessToken}`
-    return config
-}
+  }
+
+  // 여기서 토큰 payload 확인
+  if (loginUser.accessToken) {
+    try {
+      const token = loginUser.accessToken;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      //console.log("token payload:", payload);
+      //console.log("exp:", new Date(payload.exp * 1000));  // 만료 시간
+    } catch (err) {
+      console.error("❌ 토큰 디코딩 실패:", err);
+    }
+  } else {
+    console.warn('⚠️ accessToken 없음 — Authorization 헤더 추가 안함');
+    return config;
+  }
+
+  config.headers = { ...config.headers, Authorization: `Bearer ${loginUser.accessToken}` };
+  return config;
+};
+
+
 
 const requestFail=(err)=>{
     console.log("reqeust fail error.............")
@@ -47,10 +67,14 @@ const beforeRes= async (res)=>{
         // 위요청의 응답은 갱신되었거나 유효기간이 지나지 않은 원래 토큰이 담겨서 옵니다
         loginUser.accessToken = result.data.accessToken;
         loginUser.refreshToken = result.data.refreshToken;
-        cookies.set('user',  JSON.stringify( loginUser ), {path:'/',} )
+        cookies.set('user', JSON.stringify({
+            userid: loginUser.userid,
+            accessToken: result.data.accessToken,
+            refreshToken: result.data.refreshToken,
+        }), { path: '/' });
         const originalRequest = res.config
-        originalRequest.headers.Authorization = `Bearer ${result.data.accessToken}`
-        return await axios(originalRequest)  // 새로운 요청을 보내고 받은 응답을 리턴
+        originalRequest.headers = {...originalRequest.headers,Authorization: `Bearer ${loginUser.accessToken}`,};
+        return await jaxios(originalRequest)  // 새로운 요청을 보내고 받은 응답을 리턴
     }
     return res   // 원래의 요청에 대한 응답을 리턴
 }

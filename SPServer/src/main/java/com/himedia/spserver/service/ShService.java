@@ -2,6 +2,8 @@ package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.ShFileDto;
 import com.himedia.spserver.dto.ShPostDto;
+import com.himedia.spserver.dto.ShPostUpdateReqDTO;
+import com.himedia.spserver.dto.ShPostUpdateResDTO;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
@@ -13,9 +15,12 @@ import com.himedia.spserver.repository.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -122,6 +127,74 @@ public class ShService {
         postDto.setFiles(fileDtos);
 
         return postDto;
+    }
+
+
+
+
+
+
+
+
+    @Autowired
+    S3UploadService sus;
+
+    public ShPostUpdateReqDTO updatePost(ShPostUpdateReqDTO reqDto) {
+        // 1. 기존 게시글 조회
+        SH_post post = sr.findByPostId(reqDto.getPostId());
+        if(post == null) throw new RuntimeException("게시글이 존재하지 않습니다");
+
+        // 2. 게시글 정보 업데이트
+        post.setCategory(reqDto.getCategoryId());
+        post.setTitle(reqDto.getTitle());
+        post.setContent(reqDto.getContent());
+        post.setPrice(reqDto.getPrice());
+        post.setDirect_yn(reqDto.getDirectYN());
+        post.setDelivery_yn(reqDto.getDeliveryYN());
+        post.setDelivery_price(reqDto.getDeliveryPrice());
+
+        // 3. 삭제할 파일 처리
+        if(reqDto.getRmFiles() != null) {
+            for(Integer fileId : reqDto.getRmFiles()) {
+                File fileEntity = sfr.findById(fileId).orElse(null);
+                if(fileEntity != null) {
+                    // S3 삭제는 현재 생략
+                    sfr.delete(fileEntity);
+                }
+            }
+        }
+
+        // 4. 새로운 파일 업로드
+        List<MultipartFile> files = reqDto.getFiles();
+        if(files != null && !files.isEmpty()) {
+            boolean isFirstFile = post.getRepresentFile() == null; // 기존 대표 이미지 없으면 첫 파일을 대표로
+            for(MultipartFile file : files) {
+                try {
+                    // S3에 저장
+                    String savedFilePath = sus.saveFile(file);
+
+                    // DB에 저장
+                    File newFile = new File();
+                    newFile.setShPost(post);
+                    newFile.setPath(savedFilePath);
+                    newFile.setOriginalname(file.getOriginalFilename());
+                    sfr.save(newFile);
+
+                    // 대표 이미지 설정
+                    if(isFirstFile) {
+                        post.setRepresentFile(newFile);
+                        isFirstFile = false;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // 5. 게시글 저장 (대표 이미지 포함)
+        sr.save(post);
+
+        return reqDto;
     }
 
 }

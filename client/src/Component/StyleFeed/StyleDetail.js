@@ -85,8 +85,11 @@ const StyleDetail = () => {
 
   try {
     const res = await jaxios.post(`${baseURL}/style/reply/${id}`, { content: comment });
-    const newReply = res.data; // 서버가 새 댓글만 반환
-    setReplies(prev => [...prev, newReply]); // 기존 댓글 + 새 댓글
+
+    const newReply = res.data.replies;   // ⭐ 서버에서 전달한 새 댓글 1개
+
+    setReplies((prev) => [...prev, newReply]);  // ⭐ 즉시 화면에 추가
+
     setComment(""); // 입력창 초기화
   } catch (err) {
     console.error("댓글 작성 오류", err);
@@ -116,13 +119,11 @@ const StyleDetail = () => {
   };
 
   const handleDeletePost = async () => {
-  if (!window.confirm("게시글을 삭제하시겠습니까?")) return;
-
+    if (!window.confirm("게시글을 삭제하시겠습니까?")) return;
     try {
-      const token = localStorage.getItem("accessToken"); // 로그인 시 발급받은 토큰
       await jaxios.delete(`${baseURL}/style/post/${id}`);
       alert("게시글이 삭제되었습니다.");
-      navigate("/style"); // Feed 페이지로 이동
+      navigate("/style");
     } catch (err) {
       console.error("게시글 삭제 오류", err);
       if (err.response?.status === 401) {
@@ -133,7 +134,7 @@ const StyleDetail = () => {
     }
   };
   const { title, content, profileImg, userid, s_images = [] } = post;
-  const indate = post.indate ? new Date(post.indate.replace(' ', 'T').replace('.0', '')): null;
+  const indate = post.indate ? new Date(post.indate.replace(' ', 'T').replace(/\.\d+$/, '')): null;
   const isMyPost = post ? post.userid === myUserid : false;
 
   // ⭐ ImageSlider를 내부 컴포넌트로 정의
@@ -187,9 +188,20 @@ const StyleDetail = () => {
         </div>
 
         {isMyPost ? (
-          <button className="style-delete-post-btn" onClick={handleDeletePost}>
-            게시글 삭제
-          </button>
+          <div className="style-my-post-actions">
+            <button
+              className="style-edit-post-btn"
+              onClick={() => navigate(`/style/edit/${id}`)}
+            >
+              수정
+            </button>
+            <button
+              className="style-delete-post-btn"
+              onClick={handleDeletePost}
+            >
+              삭제
+            </button>
+          </div>
         ) : (
           <button
             className={`style-follow-btn ${isFollowing ? "following" : ""}`}
@@ -211,6 +223,18 @@ const StyleDetail = () => {
       <div className="style-post-content">
         <h2>{title}</h2>
         <p>{content}</p>
+
+        <br/>
+        {/* 해시태그 표시 */}
+        {post.hashtags && post.hashtags.length > 0 && (
+          <div className="style-hashtags">
+            {post.hashtags.map((tag, index) => (
+              <span key={index} className="style-hashtag">
+                #{tag}&nbsp;
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 좋아요/댓글/공유 */}
@@ -243,7 +267,14 @@ const StyleDetail = () => {
           return (
             <div key={reply.reply_id} className="style-reply">
               <div className="style-reply-header">
-                <div className="style-reply-left">
+
+                <div className="style-reply-left" 
+                  onClick={() => navigate(`/styleUser/${reply.userid}`)}>
+                  <img
+                    src={reply.profileImg || "/default_profile.png"}
+                    alt={reply.userid}
+                    className="style-reply-profile"
+                  />
                   <strong>{reply.userid}</strong>
                 </div>
                 <div className="style-reply-right">

@@ -41,7 +41,9 @@ function StyleWrite() {
 
     const newPreviews = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...files]);
+    console.log(setImages,document.getElementById('intid').value)
     setPreviews((prev) => [...prev, ...newPreviews]);
+    
   };
 
   // 이미지 삭제
@@ -130,7 +132,7 @@ function StyleWrite() {
             ))}
             <label className="upload-btn">
               <FaPlus />
-              <input type="file" accept="image/*" multiple onChange={handleImageChange} hidden />
+              <input id= "intid" type="file" accept="image/*" multiple onChange={handleImageChange} hidden />
             </label>
           </div>
         </div>

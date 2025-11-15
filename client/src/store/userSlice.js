@@ -90,6 +90,9 @@ export const userSlice = createSlice(
                 state.roleNames = [];
                 state.accessToken = '';
                 state.refreshToken = '';
+
+                const cookies = new Cookies();
+                cookies.remove('user', { path: '/' });
             }
         }
     }

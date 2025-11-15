@@ -31,5 +31,8 @@ public class C_post {
     @JoinColumn(name = "member_id")
     Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private C_Category category;
 
 }

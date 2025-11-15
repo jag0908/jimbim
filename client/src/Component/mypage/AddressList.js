@@ -37,6 +37,7 @@ function AddressList() {
                 jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id}})
                 .then((result)=>{
                     setAddressList(result.data.addressList)
+                    console.log(result.data.addressList)
                 })
                 .catch((err)=>{console.error(err)})
             }
@@ -98,7 +99,7 @@ function AddressList() {
                         <EditAddressForm editAddress={editAddress} />
                     </>):(null)}
                     {
-                        (addressList)?
+                        (addressList.length!=0)?
                         (
                             addressList.map((address, idx)=>{
                                 return (

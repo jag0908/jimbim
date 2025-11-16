@@ -69,12 +69,16 @@ const beforeRes= async (res)=>{
         loginUser.refreshToken = result.data.refreshToken;
         cookies.set('user', JSON.stringify({
             userid: loginUser.userid,
+            pwd: loginUser.pwd,
+            member_id: loginUser.member_id,
+            provider: loginUser.provider,
+            roleNames: loginUser.roleNames,
             accessToken: result.data.accessToken,
             refreshToken: result.data.refreshToken,
         }), { path: '/' });
         const originalRequest = res.config
         originalRequest.headers = {...originalRequest.headers,Authorization: `Bearer ${loginUser.accessToken}`,};
-        return await jaxios(originalRequest)  // 새로운 요청을 보내고 받은 응답을 리턴
+        return await axios(originalRequest)  // 새로운 요청을 보내고 받은 응답을 리턴
     }
     return res   // 원래의 요청에 대한 응답을 리턴
 }

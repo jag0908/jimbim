@@ -268,7 +268,7 @@ function MemberForm(props) {
                     }}/>&nbsp;-&nbsp;
                     <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
                         setRrn2( e.currentTarget.value )
-                    }} style={{width:'10px'}}/> * * * * * * 
+                    }} style={{width:'35px'}}/> * * * * * * 
                 </div>
             </div>
             <div className='field'>

@@ -8,6 +8,7 @@ import FindAccount from './Component/member/FindAccount'
 import DeleteMember from './Component/member/DeleteMember'
 
 import Mypage from './Component/mypage/Mypage'
+import Profile from './Component/mypage/Profile'
 import AddressList from './Component/mypage/AddressList'
 import Buying from './Component/mypage/Buying'
 import Selling from './Component/mypage/Selling'
@@ -53,6 +54,7 @@ function App() {
 				<Route path="/findAccount" element={<FindAccount />} />
 				<Route path="/deleteMember" element={<DeleteMember />} />
 				<Route path="/mypage" element={<Mypage />} />
+				<Route path="/mypage/profile" element={<Profile />} />
 				<Route path="/mypage/addresslist" element={<AddressList />} />
 				<Route path="/mypage/buying" element={<Buying />} />
 				<Route path="/mypage/selling" element={<Selling />} />

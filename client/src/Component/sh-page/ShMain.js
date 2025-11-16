@@ -21,17 +21,17 @@ function ShMain() {
     }, []);
 
     async function startApi() {
-      await jaxios.get("/api/sh-page/sh-list")
+      await axios.get("/api/sh-page/sh-list")
         .then((result) => {
-            console.log(result);
-            setShPostArr([...result.data.shList]);
+            console.log([...result.data.postList]);
+            setShPostArr([...result.data.postList]);
         }).catch((err) => {
             console.error(err);
         });
 
       await jaxios.get("/api/sh-page/sh-category")
         .then((result) => {
-            setCategoryArr([...result.data.shCategory]);
+            setCategoryArr([...result.data.categoryList]);
         }).catch((err) => {
             console.error(err);
         });
@@ -117,7 +117,7 @@ function ShMain() {
                 <div className='list' key={i}>
                   <Link to={`/sh-page/sh-view/${ShPost.postId}`}>
                       <div className='imgBox'>
-                        <img key={i} src={ShPost.representFile && ShPost.representFile.path} />
+                        <img key={i} src={ShPost.firstFilePath && ShPost.firstFilePath} />
                       </div>
             
                       <h3 className='data title'>{ShPost.title}</h3>

@@ -54,7 +54,7 @@ function Selling() {
 									)
 								})
 							):
-							(<div>아직 구매내역이 없습니다</div>)
+							(<div>아직 판매내역이 없습니다</div>)
 						}
 					</div>
 					<div>
@@ -77,7 +77,7 @@ function Selling() {
 									)
 								})
 							):
-							(<div>아직 구매내역이 없습니다</div>)
+							(<div>아직 판매내역이 없습니다</div>)
 						}
 					</div>
 				</div>

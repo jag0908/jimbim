@@ -6,7 +6,9 @@ import com.himedia.spserver.entity.Mypage.SHOP_Order;
 import com.himedia.spserver.entity.Mypage.SHOP_Orderdetail;
 import com.himedia.spserver.entity.Mypage.SH_Orderdetail;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.SH.SH_zzim;
 import com.himedia.spserver.entity.SHOP.SHOP_post;
+import com.himedia.spserver.entity.SHOP.SHOP_zzim;
 import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class MypageService {
     private final SHOP_OrderRepository shopor;
     private final SH_postRepository shpr;
     private final SHOP_postRepository shoppr;
+    private final SH_zzimRepository shzr;
+    private final SHOP_zzimRepository shopzr;
 
     public void insertAddress(Address address) {
         ar.save(address);
@@ -65,5 +69,15 @@ public class MypageService {
     public List<SHOP_post> getShopSellingList(String memberId) {
         Member member = mr.findById(memberId).get();
         return shoppr.findAllByMember(member);
+    }
+
+    public List<SH_zzim> getShZzimList(String memberId) {
+        Member member = mr.findById(memberId).get();
+        return shzr.findAllByMember(member);
+    }
+
+    public List<SHOP_zzim> getShopZzimList(String memberId) {
+        Member member = mr.findById(memberId).get();
+        return shopzr.findAllByMember(member);
     }
 }

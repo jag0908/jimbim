@@ -57,4 +57,12 @@ public class MypageController {
         result.put("shopBuyingList", mys.getShopBuyingList( member_id ));
         return result;
     }
+
+    @GetMapping("/getSellingList")
+    public HashMap<String, Object> getSellingList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shSellingList", mys.getShSellingList( member_id ));
+        result.put("shopSellingList", mys.getShopSellingList( member_id ));
+        return result;
+    }
 }

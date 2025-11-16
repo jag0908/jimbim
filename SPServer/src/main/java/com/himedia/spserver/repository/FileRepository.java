@@ -11,7 +11,7 @@ public interface FileRepository extends JpaRepository<File,Integer> {
         List<File> findAllByPost(STYLE_post post);
 
         List<File> findByPost(STYLE_post post);
-        List<File> findByShPost(SH_post shPost);
+
 
     void deleteAllByPost(STYLE_post post);
 }

@@ -74,7 +74,7 @@ const beforeRes= async (res)=>{
         }), { path: '/' });
         const originalRequest = res.config
         originalRequest.headers = {...originalRequest.headers,Authorization: `Bearer ${loginUser.accessToken}`,};
-        return await jaxios(originalRequest)  // 새로운 요청을 보내고 받은 응답을 리턴
+        return await axios(originalRequest)  // 새로운 요청을 보내고 받은 응답을 리턴
     }
     return res   // 원래의 요청에 대한 응답을 리턴
 }

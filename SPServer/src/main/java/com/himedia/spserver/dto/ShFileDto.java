@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
 @Data
-@AllArgsConstructor
 public class ShFileDto {
     private Integer fileId;
     private String originalName;
@@ -16,4 +15,6 @@ public class ShFileDto {
     private String contentType;
     @CreationTimestamp
     private Timestamp indate;
+
+    private Integer postId;
 }

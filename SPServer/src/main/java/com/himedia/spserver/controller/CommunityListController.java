@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,9 +24,6 @@ public class CommunityListController {
 
     @Autowired
     ServletContext sc;
-
-    @Autowired
-    S3UploadService sus;
 
     // 게시글 리스트 조회
     @GetMapping("/getCommunityList/{page}")
@@ -89,20 +87,21 @@ public class CommunityListController {
         return result;
     }
 
+    // 가장 최근 게시글 가져오기(날짜 제일 최근인 게시물)
+    @GetMapping("/getNewCommunity")
+    public HashMap<String, Object> getNewCommunity() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("community", cs.getNewCommunity());
+        return result;
+    }
+
     // 파일 업로드
     @PostMapping("/fileupload")
-    public HashMap<String, Object> fileUpload(  @RequestParam("imageList") MultipartFile[] file ) {
+    public HashMap<String, Object> fileUpload(@RequestParam("imageList") List<MultipartFile> file, @RequestParam("cpostId") String cpostId) {
         HashMap<String , Object> result = new HashMap<>();
         try {
-            String[] imageList = new String[file.length];
-            String[] uploadFilePathNameList = new String[file.length];
-            for(int i=0; i<file.length; i++) {
-                String uploadFilePathName = sus.saveFile( file[i] );
-                imageList[i] = file[i].getOriginalFilename();
-                uploadFilePathNameList[i] = uploadFilePathName;
-            }
-            result.put("imageList", imageList );
-            result.put("savefilenameList", uploadFilePathNameList);
+            cs.fileUpload(file, cpostId);
+            result.put("msg", "ok");
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }

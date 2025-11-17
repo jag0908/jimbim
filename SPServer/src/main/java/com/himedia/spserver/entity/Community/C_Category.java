@@ -10,4 +10,6 @@ public class C_Category {
     @Id
     private Integer categoryId;
     private String categoryName;
+
+    private Integer id;
 }

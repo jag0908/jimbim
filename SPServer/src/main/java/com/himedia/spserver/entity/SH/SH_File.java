@@ -1,6 +1,6 @@
-package com.himedia.spserver.entity;
-import com.himedia.spserver.entity.STYLE.STYLE_post;
-import com.himedia.spserver.entity.SH.SH_post;
+package com.himedia.spserver.entity.SH;
+
+
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,10 +9,10 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
-public class File {
+public class SH_File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer file_id;
+    private Integer fileId;
     @Column(nullable = false, length = 200)
     private String originalname;
     @Column(nullable = false)
@@ -22,13 +22,12 @@ public class File {
     @Column(nullable = false)
     private String contentType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "spostId") // STYLE_post의 PK (spost_id)와 연결
-    private STYLE_post post;
-
-
     @CreationTimestamp
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postid")
+    private SH_post post;
 
 }

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 
 function ShWrite() {
     const loginUser = useSelector(state=>state.user);
+    
     const navigate = useNavigate();
     const {id} = useParams();
 
@@ -29,8 +30,12 @@ function ShWrite() {
     const [previewUrls, setPreviewUrls] = useState([]); // 미리보기용 URL
     const [fileLength, setFileLength] = useState(0);  // 기존서버 + 현재 저장되는 파일들의 배열의 사이즈
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     async function getPostData() {
+      
+        
         try {
             let getCategory = await jaxios.get("/api/sh-page/sh-category");
             setCategoryArr([...getCategory.data.shCategory]); 
@@ -54,6 +59,7 @@ function ShWrite() {
     }
 
     useEffect(()=> {
+        console.log(loginUser)
        getPostData();
     }, []);
 
@@ -108,7 +114,9 @@ function ShWrite() {
         setFileLength(prev => prev - 1);
     }
 
-    function updatePost() {   // 업데이트 axios 요청을 서버에 보낼 함수
+    async function updatePost() {   // 업데이트 axios 요청을 서버에 보낼 함수
+
+       setIsSubmitting(true); // 클릭 즉시 block
 
        if(Number(deliveryPrice) > 5000) {return alert("배달비는 5천원을 넘을 수 없습니다.")}
 
@@ -118,30 +126,36 @@ function ShWrite() {
         });
 
         oldRemoveArr.map((rmFile, i)=> {
-            formData.append(`rmFiles`, rmFile);
+            formData.append(`rmFiles`, Number(rmFile));
         });
 
-        formData.append("postId", id);
-        formData.append("memberId", loginUser.member_id);
+        formData.append("postId", Number(id));
         formData.append("title", title);
         formData.append("content", content);
-        formData.append("price", price);
+        formData.append("price", Number(price));
         formData.append("categoryId", categoryId);
         formData.append("directYN", directYN);
         formData.append("deliveryYN", deliveryYN);
         if (deliveryYN === "Y") {
-            formData.append("deliveryPrice", deliveryPrice);
+            formData.append("deliveryPrice", Number(deliveryPrice));
         };
 
         const formDataObj = Object.fromEntries(formData.entries());
         console.log(formDataObj);
 
-        jaxios.post("/api/sh-page/sh-update", formData)
-            .then((result)=> {
-                alert("수정이 완료되었습니다!");
-                console.log(result.data);
-                // navigate(`/sh-page/sh-view/${id}`);
-            }).catch(err=>console.error(err));
+
+        console.log("updatePost 호출", isSubmitting);
+        try {
+
+            const res = await jaxios.post("/api/sh-page/sh-update", formData);
+            alert("수정이 완료되었습니다!");
+            navigate("/sh-page/sh-view/" + id);
+        } catch(err) {
+            console.error(err)
+        } finally {
+            setIsSubmitting(false); // 항상 초기화
+        }
+
     }
 
 

@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import "../../style/StyleDetail.css";
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import Reply from "./Reply"; 
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -16,6 +17,7 @@ const StyleDetail = () => {
   const [comment, setComment] = useState("");
   const [replies, setReplies] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [commentParent, setCommentParent] = useState(null);
 
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.user);
@@ -80,24 +82,44 @@ const StyleDetail = () => {
   };
 
   // 댓글 작성
-  const handleCommentSubmit = async () => {
-  if (!comment.trim()) return; // 빈 댓글 방지
+  const handleCommentSubmit = async (parentId = null) => {
+  if (!comment.trim()) return;
 
   try {
-    const res = await jaxios.post(`${baseURL}/style/reply/${id}`, { content: comment });
+    let contentToSend = comment;
 
-    const newReply = res.data.replies;   // ⭐ 서버에서 전달한 새 댓글 1개
+    if (parentId) {
+      // 부모 댓글 작성자 찾기
+      const parent = replies.find(r => r.reply_id === parentId);
+      if (parent) {
+        contentToSend = `@${parent.userid} ${comment}`; // 자동으로 @ 붙이기
+      }
+    }
 
-    setReplies((prev) => [...prev, newReply]);  // ⭐ 즉시 화면에 추가
+    const res = await jaxios.post(`${baseURL}/style/reply/${id}`, {
+      content: contentToSend,
+      parentId: parentId
+    });
 
-    setComment(""); // 입력창 초기화
+    const newReply = res.data.reply;
+
+    if (parentId) {
+      setReplies(prev => prev.map(r =>
+        r.reply_id === parentId
+          ? { ...r, children: [...(r.children || []), newReply] }
+          : r
+      ));
+    } else {
+      setReplies(prev => [...prev, newReply]);
+    }
+
+    setComment("");
+    setCommentParent(null); // 답글 완료 후 입력창 초기화
   } catch (err) {
     console.error("댓글 작성 오류", err);
-    if (err.response?.data?.error === 'REQUIRE_LOGIN') {
-      alert("로그인 후 이용 가능합니다");
-    }
   }
 };
+
 
   // 공유 버튼
   const handleShare = async () => {
@@ -106,17 +128,31 @@ const StyleDetail = () => {
     alert("게시글 링크가 복사되었습니다!");
   };
 
+  //재귀 삭제 함수
+  const removeReplyById = (repliesArray, replyId) =>{
+    return repliesArray
+      .filter(r=>r.reply_id !== replyId)
+      .map(r => ({
+        ...r,
+        children: r.children ? removeReplyById(r.children, replyId) : []
+      }));
+  };
+
   //댓글 삭제
   const handleDeleteReply = async (replyId) => {
-    if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
-    try {
-      await jaxios.delete(`${baseURL}/style/reply/${replyId}`);
-      setReplies(replies.filter(r => r.reply_id !== replyId));
-    } catch (err) {
-      console.error("댓글 삭제 오류", err);
-      alert("댓글 삭제 중 오류가 발생했습니다.");
-    }
-  };
+  if (!replyId) return alert("댓글 ID가 없습니다.");
+  if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+
+  try {
+    await jaxios.delete(`${baseURL}/style/reply/${replyId}`, { data: { userid: myUserid } });
+    setReplies(prev => removeReplyById(prev, replyId));
+  } catch (err) {
+    console.error("댓글 삭제 오류", err.response?.data || err);
+    alert(err.response?.data?.message || "댓글 삭제 중 오류가 발생했습니다.");
+  }
+};
+
+
 
   const handleDeletePost = async () => {
     if (!window.confirm("게시글을 삭제하시겠습니까?")) return;
@@ -250,49 +286,32 @@ const StyleDetail = () => {
 
       {/* 댓글 입력창 */}
       <div className="style-comment-section">
+        {commentParent && (
+          <div style={{ marginBottom: "8px", color: "#555" }}>
+            @{replies.find(r => r.reply_id === commentParent)?.userid || "사용자"} 에게 답글
+            <button onClick={() => setCommentParent(null)} style={{ marginLeft: "8px" }}>취소</button>
+          </div>
+        )}
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="댓글을 입력하세요..."
-        ></textarea>
-        <button onClick={handleCommentSubmit}>등록</button>
+          placeholder={commentParent ? "답글을 입력하세요..." : "댓글을 입력하세요..."}
+        />
+        <button onClick={() => handleCommentSubmit(commentParent)}>등록</button>
+
       </div>
 
       {/* 댓글 목록 */}
       <div className="style-replies">
-        {replies.map((reply) => {
-          const replyDate = reply.indate ? new Date(reply.indate).toLocaleString() : "시간 없음";
-          const isMyComment = reply.userid === myUserid;   // 댓글 작성자와 비교
-
-          return (
-            <div key={reply.reply_id} className="style-reply">
-              <div className="style-reply-header">
-
-                <div className="style-reply-left" 
-                  onClick={() => navigate(`/styleUser/${reply.userid}`)}>
-                  <img
-                    src={reply.profileImg || "/default_profile.png"}
-                    alt={reply.userid}
-                    className="style-reply-profile"
-                  />
-                  <strong>{reply.userid}</strong>
-                </div>
-                <div className="style-reply-right">
-                  <span className="style-reply-date">{replyDate}</span>
-                  {isMyComment && (
-                    <button
-                      className="style-delete-reply-btn"
-                      onClick={() => handleDeleteReply(reply.reply_id)}
-                    >
-                      삭제
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="style-reply-content">{reply.content}</div>
-            </div>
-          );
-        })}
+        {replies.map(reply => (
+        <Reply
+          key={reply.reply_id}
+          reply={reply}
+          myUserid={myUserid}
+          handleDeleteReply={handleDeleteReply}
+          setReplyParent={(parentId) => setCommentParent(parentId)} //답글용
+        />
+        ))}
       </div>
     </div>
   );

@@ -2,46 +2,83 @@ import React, { useEffect, useState } from 'react';
 import '../../style/StyleHotAccounts.css';
 import { useNavigate } from 'react-router-dom';
 import jaxios from '../../util/jwtutil';
+import { useSelector } from "react-redux";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function StyleHotAccounts() {
   const [accounts, setAccounts] = useState([]);
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user);
+  const myUserid = currentUser?.userid;
+  const [message, setMessage] = useState("");
 
   const [followStatus, setFollowStatus] = useState({});
 
   useEffect(() => {
-    const loadHotUsers = async () => {
-      try {
-        const res = await jaxios.get(`${baseURL}/style/hot-users`);
-        setAccounts(res.data);
+  const loadHotUsers = async () => {
+    try {
+      const res = await jaxios.get(`${baseURL}/style/hot-users`);
+      setAccounts(res.data);
 
-        // 팔로우 상태도 불러오기
-        const temp = {};
-        for (let u of res.data) {
-          const r = await jaxios.get(`${baseURL}/style/follow/${u.userid}`);
-          temp[u.userid] = r.data.followed;
-        }
-        setFollowStatus(temp);
+      if (!myUserid) return; // 로그인 안 했으면 팔로우 체크 X
 
-      } catch (err) {
-        console.error("HOT 계정 불러오기 오류", err);
-      }
-    };
-    loadHotUsers();
-  }, []);
+      const followResults = await Promise.all(
+        res.data.map((u) => jaxios.get(`${baseURL}/style/follow/${u.userid}`))
+      );
+
+      const temp = {};
+      res.data.forEach((u, i) => {
+        temp[u.userid] = followResults[i].data.followed;
+      });
+
+      setFollowStatus(temp);
+    } catch (err) {
+      console.error("HOT 계정 불러오기 오류", err);
+    }
+  };
+
+  loadHotUsers();
+}, [myUserid]);
 
   const toggleFollow = async (userid) => {
     try {
-      const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
-      setFollowStatus(prev => ({ ...prev, [userid]: res.data.followed }));
+    const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
+
+    setFollowStatus(prev => ({
+      ...prev,
+      [userid]: res.data.followed
+    }));
+
+    // 🔥 팔로워 수 UI도 즉시 갱신
+    setAccounts(prev =>
+      prev.map(acc =>
+        acc.userid === userid
+          ? {
+              ...acc,
+              followerCount: res.data.followed
+                ? acc.followerCount + 1
+                : acc.followerCount - 1
+            }
+          : acc
+      )
+    );
+    
+    alert(res.data.message);
+
     } catch (err) {
-      alert("로그인이 필요합니다.");
+      console.error("팔로우 토글 실패", err);
     }
   };
 
   return (
+    <>
+    {message && (
+      <div className="follow-message">
+        {message}
+      </div>
+    )}
+
     <div className="hot-accounts-container">
       {accounts.map((user, index) => (
         <div key={user.userid} className="hot-account-box">
@@ -65,12 +102,14 @@ function StyleHotAccounts() {
 
             <span className="follow-count">팔로워 {user.followerCount}</span>
 
-            <button
-              className={`follow-btn ${followStatus[user.userid] ? "following" : ""}`}
-              onClick={() => toggleFollow(user.userid)}
-            >
-              {followStatus[user.userid] ? "팔로잉" : "팔로우"}
-            </button>
+            {myUserid && myUserid !== user.userid && (
+              <button
+                className={`follow-btn ${followStatus[user.userid] ? "following" : ""}`}
+                onClick={() => toggleFollow(user.userid)}
+              >
+                {followStatus[user.userid] ? "팔로잉" : "팔로우"}
+              </button>
+            )}
           </div>
 
           {/* 게시물 영역 = Feed 카드 UI */}
@@ -98,6 +137,7 @@ function StyleHotAccounts() {
         </div>
       ))}
     </div>
+  </>  
   );
 }
 

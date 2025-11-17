@@ -5,12 +5,21 @@ import Join from './Component/member/Join'
 import KakaoIdLogin from './Component/member/KakaoIdLogin'
 import KakaoIdFirstEdit from './Component/member/KakaoIdFirstEdit'
 import FindAccount from './Component/member/FindAccount'
+import DeleteMember from './Component/member/DeleteMember'
+
 import Mypage from './Component/mypage/Mypage'
+import Profile from './Component/mypage/Profile'
 import AddressList from './Component/mypage/AddressList'
+import Buying from './Component/mypage/Buying'
+import Selling from './Component/mypage/Selling'
+import Zzim from './Component/mypage/Zzim'
+
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
 import StyleUser from './Component/StyleFeed/StyleUser'
+import StyleEdit from './Component/StyleFeed/StyleEdit'
+
 import ShMain from './Component/sh-page/ShMain'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
@@ -43,14 +52,20 @@ function App() {
 				<Route path="/kakaoIdLogin/:userid" element={<KakaoIdLogin />} />
 				<Route path="/kakaoIdFirstEdit/:userid" element={<KakaoIdFirstEdit />} />
 				<Route path="/findAccount" element={<FindAccount />} />
+				<Route path="/deleteMember" element={<DeleteMember />} />
 				<Route path="/mypage" element={<Mypage />} />
+				<Route path="/mypage/profile" element={<Profile />} />
 				<Route path="/mypage/addresslist" element={<AddressList />} />
+				<Route path="/mypage/buying" element={<Buying />} />
+				<Route path="/mypage/selling" element={<Selling />} />
+				<Route path="/mypage/zzim" element={<Zzim />} />
 
 				{/* 이삭 */}
 				<Route path="/style" element={<StyleFeed />} />
 				<Route path="/style/:id" element={<StyleDetail />} />
 				<Route path="/stylewrite" element={<StyleWrite />} />
 				<Route path="/styleUser/:userid" element={<StyleUser />} />
+				<Route path="/style/edit/:id" element={<StyleEdit />} />
 
 				{/* 정진 */}
 				<Route path="/sh-page" element={<ShMain />} />

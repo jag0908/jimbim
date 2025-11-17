@@ -98,7 +98,7 @@ function AddressList() {
                         <EditAddressForm editAddress={editAddress} />
                     </>):(null)}
                     {
-                        (addressList)?
+                        (addressList.length!=0)?
                         (
                             addressList.map((address, idx)=>{
                                 return (

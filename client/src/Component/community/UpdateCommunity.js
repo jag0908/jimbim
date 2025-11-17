@@ -22,7 +22,7 @@ function UpdateCommunity() {
     useEffect(
         ()=>{
             if(!loginUser || !loginUser.userid){
-                alert('로그인이 필요한 서비스 입니다')
+                alert('로그인 필요한 서비스 입니다')
                 navigate('/login');
             }
             jaxios.get(`/api/community/getCommunity/${num}`)

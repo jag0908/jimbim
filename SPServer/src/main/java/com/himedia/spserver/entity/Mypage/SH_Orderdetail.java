@@ -30,5 +30,5 @@ public class SH_Orderdetail {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    Member memberId;
 }

@@ -34,4 +34,14 @@ public class S3UploadService {
         return amazonS3.getUrl(bucket, originalFilename).toString();
 
     }
+
+    public void deleteFile(String path) {
+        if (path == null || path.isEmpty()) return;
+
+        // URL에서 객체 키 추출
+        // https://bucket-name.s3.amazonaws.com/file.jpg -> file.jpg
+        String fileName = path.substring(path.lastIndexOf("/") + 1);
+
+        amazonS3.deleteObject(bucket, fileName);
+    }
 }

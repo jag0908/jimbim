@@ -40,12 +40,12 @@ public class MemberService {
     public Member updateMember(Member member) {
         Member updateMem = mr.findByUserid( member.getUserid());
 
-        if(!member.getName().isEmpty()) updateMem.setName(member.getName());
-        if(!member.getEmail().isEmpty()) updateMem.setEmail(member.getEmail());
-        if(!member.getPhone().isEmpty()) updateMem.setPhone(member.getPhone());
-        if(!member.getRrn().isEmpty()) updateMem.setRrn(member.getRrn());
-        if(!member.getProfileImg().isEmpty()) updateMem.setProfileImg(member.getProfileImg());
-        if(!member.getProfileMsg().isEmpty()) updateMem.setProfileMsg(member.getProfileMsg());
+        if(!"".equals(member.getName()) && member.getName()!=null ) updateMem.setName(member.getName());
+        if(!"".equals(member.getEmail()) && member.getEmail()!=null) updateMem.setEmail(member.getEmail());
+        if(!"".equals(member.getPhone()) && member.getPhone()!=null) updateMem.setPhone(member.getPhone());
+        if(!"".equals(member.getRrn()) && member.getRrn()!=null) updateMem.setRrn(member.getRrn());
+        if(!"".equals(member.getProfileImg()) && member.getProfileImg()!=null) updateMem.setProfileImg(member.getProfileImg());
+        if(!"".equals(member.getProfileMsg()) && member.getProfileMsg()!=null) updateMem.setProfileMsg(member.getProfileMsg());
 
         return updateMem;
     }

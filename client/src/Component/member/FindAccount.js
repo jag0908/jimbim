@@ -83,7 +83,7 @@ function FindAccount() {
                             setPhone( e.currentTarget.value )}}/>
                     </div>
                     <div className="btns">
-                        <button onClick={()=>{findid()}}>FIND ID</button>
+                        <button onClick={()=>{findid()}}>아이디 찾기</button>
                     </div>
 
                     <div className='field' style={viewId}><b>검색하신 아이디는 {userid} 입니다</b></div>

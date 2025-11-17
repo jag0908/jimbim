@@ -15,6 +15,7 @@
 .style-write-button-area {
   text-align: right;
   margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .style-write-btn {
@@ -140,4 +141,34 @@
   font-size: 18px;
   color: #999;
   padding: 40px 0;
+}
+
+
+.style-category-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+.style-category-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #777;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.style-category-btn:hover {
+  color: #000;
+}
+
+.style-category-btn.active {
+  color: #000;
+  border-bottom: 2px solid #000;
+  padding-bottom: 4px;
 }

@@ -55,7 +55,8 @@ function ShWrite() {
         // 브라우저에서 바로 미리보기 URL 생성
         const urls = allFiles.map(file => URL.createObjectURL(file));
         setPreviewUrls(urls);
-        
+
+        e.target.value = null;
     };
 
     // 파일 삭제

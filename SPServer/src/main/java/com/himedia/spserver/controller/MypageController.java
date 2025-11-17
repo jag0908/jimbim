@@ -49,4 +49,28 @@ public class MypageController {
         result.put("msg", "ok");
         return result;
     }
+
+    @GetMapping("/getBuyingList")
+    public HashMap<String, Object> getBuyingList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shBuyingList", mys.getShBuyingList( member_id ));
+        result.put("shopBuyingList", mys.getShopBuyingList( member_id ));
+        return result;
+    }
+
+    @GetMapping("/getSellingList")
+    public HashMap<String, Object> getSellingList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shSellingList", mys.getShSellingList( member_id ));
+        result.put("shopSellingList", mys.getShopSellingList( member_id ));
+        return result;
+    }
+
+    @GetMapping("/getZzimList")
+    public HashMap<String, Object> getZzimList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shZzimList", mys.getShZzimList( member_id ));
+        result.put("shopZzimList", mys.getShopZzimList( member_id ));
+        return result;
+    }
 }

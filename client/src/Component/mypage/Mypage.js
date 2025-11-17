@@ -245,7 +245,7 @@ function Mypage() {
                         {
                             (type==='email')?
                             (<>
-                                <input type="text" value={email} onChange={(e)=>{
+                                <input type="text" className='inputemail' value={email} onChange={(e)=>{
                                     setEmail( e.currentTarget.value )
                                 }}/>
                                 <div className='btns'>
@@ -267,13 +267,13 @@ function Mypage() {
                             (type==='phone')?
                             (<>
                                 <div>
-                                    <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
+                                    <input type="text" className='inputphone' value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
                                         setPhone1( e.currentTarget.value )
-                                    }}/>&nbsp;-&nbsp;
-                                    <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                                    <input type="text" className='inputphone' value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
                                         setPhone2( e.currentTarget.value )
-                                    }}/>&nbsp;-&nbsp;
-                                    <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                                    <input type="text" className='inputphone' value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
                                         setPhone3( e.currentTarget.value )
                                     }}/>
                                 </div>
@@ -296,12 +296,12 @@ function Mypage() {
                             (type==='rrn')?
                             (<>
                                 <div>
-                                    <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
+                                    <input type="text" className='inputrrn1' value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
                                         setRrn1( e.currentTarget.value )
-                                    }}/>&nbsp;-&nbsp;
-                                    <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
-                                        setRrn2( e.currentTarget.value ); console.log(e)
-                                    }} style={{width:'35px'}}/> * * * * * * 
+                                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                                    <input type="text" id='inputrrn2' value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
+                                        setRrn2( e.currentTarget.value );
+                                    }}/> * * * * * * 
                                 </div>
                                 <div className='btns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
@@ -318,22 +318,36 @@ function Mypage() {
                     </div>
                     <div className='field'>
                         <label>동의사항(선택)</label>
-                        <div><label>약관 동의</label> {
-                            (terms_agree === 'N' || terms_agree === 'Y')?
-                            (
-                                (terms_agree === 'N')?  
-                                (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
-                                (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
-                            ):(null)
-                        }</div>
-                        <div><label>개인정보 동의</label> {
-                            (personal_agree === 'N' || personal_agree === 'Y')?
-                            (
-                                (personal_agree === 'N')?  
-                                (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
-                                (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
-                            ):(null)
-                        }</div>
+                        <div className='checkboxField'>
+                            <div className='checkboxLabel'>
+                                <label>약관 동의</label>
+                            </div>
+                            <div className='agreeCheckbox'>
+                            {
+                                (terms_agree === 'N' || terms_agree === 'Y')?
+                                (
+                                    (terms_agree === 'N')?  
+                                    (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
+                                    (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
+                                ):(null)
+                            }
+                            </div>
+                        </div> 
+                        <div className='checkboxField'>
+                            <div className='checkboxLabel'>
+                                <label>개인정보 동의</label>
+                            </div>
+                            <div className='agreeCheckbox'>
+                            {
+                                (personal_agree === 'N' || personal_agree === 'Y')?
+                                (
+                                    (personal_agree === 'N')?  
+                                    (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
+                                    (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
+                                ):(null)
+                            }
+                            </div>
+                        </div>
                     </div>
                     <div className='field'>
                         <label>가입일</label>

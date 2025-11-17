@@ -109,7 +109,7 @@ function Profile() {
                                 <input type="text" value={name} onChange={(e)=>{
                                     setName( e.currentTarget.value )
                                 }}/>
-                                <div className='btns'>
+                                <div className='btns formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
@@ -166,7 +166,7 @@ function Profile() {
                         {
                             (type==='profileMsg')?
                             (<>
-                                <input type="text" value={profileMsg} onChange={(e)=>{
+                                <textarea value={profileMsg} onChange={(e)=>{
                                     setProfileMsg( e.currentTarget.value )
                                 }}/>
                                 <div className='btns'>

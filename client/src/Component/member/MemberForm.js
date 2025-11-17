@@ -279,44 +279,49 @@ function MemberForm(props) {
                 <label>프로필사진</label>
                 {/* 미리보기 이미지 */}
                 <div className="previewContainer">
+                    <div className='imgBox'>
                     {
                         (preview)?
-                        (
-                        <div className='imgBox'>
-                            <img src={preview}/>
-                        </div>
-                        ):
+                        (<>
+                            <img src={preview} className='formimgpreview'/>
+                            <button className='imgcancel' onClick={()=>{handleRemoveFile()}}>취소</button>
+                        </>):
                         ((type=='kakao')?
                             (
-                            <div className='imgBox'>
-                                <img src={kakaoMember.profileImg}/>
-                            </div>
-                            ):(<>프로필 사진 없음</>)
+                            <img src={kakaoMember.profileImg}/>
+                            ):(<div className='noimgmsg'>프로필 사진 없음</div>)
                         )
                     }
+                    </div>
                 </div>
                 {/* 파일업로드 인풋 */}
                 <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
                 <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
-                    {
-                        (preview)?
-                        (<div className='btns'>
-                            <button onClick={()=>{handleRemoveFile()}} style={{backgroundColor:'#6c757d'}}>취소</button>
-                        </div>):(<></>)
-                    }
             </div>
             <div className='field'>
                 <label>소개글</label>
-                <input type="text" value={profileMsg} onChange={(e)=>{
-                    setProfileMsg( e.currentTarget.value )
-                }}/>
+                <textarea onChange={(e)=>{setProfileMsg( e.currentTarget.value )}} className='formProfileMsg' maxLength={255}>{profileMsg}</textarea>
             </div>
             <div className='field'>
                 <label>동의사항(선택)</label>
-                <div><label>약관 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/></div>
-                <div><label>개인정보 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/></div>
+                <div className='checkboxField'>
+                    <div className='checkboxLabel'>
+                        <label>약관 동의</label>
+                    </div>
+                    <div className='agreeCheckbox'>
+                        <input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/>
+                    </div>
+                </div>
+                <div className='checkboxField'>
+                    <div className='checkboxLabel'>
+                        <label>개인정보 동의</label>
+                    </div>
+                    <div className='agreeCheckbox'>
+                        <input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/>
+                    </div>
+                </div>
             </div>
-            <div className="btns">
+            <div className="btns formBtns">
                 <button onClick={()=>{onSubmit()}}>완료</button>
                 <button onClick={()=>{navigate(back)}}>취소</button>
             </div>

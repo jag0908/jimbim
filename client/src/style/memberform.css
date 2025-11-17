@@ -44,6 +44,19 @@
     font-size: 130%;
 }
 
+.noimgmsg{
+    margin-bottom: 6px;
+}
+
+.imgcancel{
+    background-color:#6c757d;
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 6px;
+    transition: background-color 0.2s, transform 0.1s;
+    font-size: 14px;
+    margin: 6px;
+}
 .imgBtns{
     background-color: #007bff;
     color: #fff;
@@ -54,4 +67,25 @@
     font-size: 14px;
     transition: background-color 0.2s, transform 0.1s;
     text-align: center;
+    width: 120px;
+}
+
+.formimgpreview{
+    max-width: 400px;
+}
+
+.formProfileMsg{
+    width: 400px;
+}
+
+.checkboxField{
+    display: flex;
+    margin: 6px;
+}
+.checkboxLabel{
+    width: 120px;
+}
+.formBtns{
+    margin-top: 0px;
+    margin-bottom: 15px;
 }

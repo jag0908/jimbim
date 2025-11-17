@@ -1,8 +1,5 @@
 package com.himedia.spserver.controller;
-import com.himedia.spserver.dto.MemberDTO;
-import com.himedia.spserver.dto.ShPostResDto;
-import com.himedia.spserver.dto.ShPostWriteReqDto;
-import com.himedia.spserver.dto.ShViewCountDTO;
+import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
@@ -46,6 +43,8 @@ public class ShController {
             @RequestParam("deliveryYN") String deliveryYN,
             @RequestParam(value = "deliveryPrice", required = false) Integer deliveryPrice
     ) throws IOException, CustomJWTException {
+        HashMap<String, Object> result = new HashMap<>();
+
         String token = authHeader.replace("Bearer ", "");
         Map<String, Object> claims = JWTUtil.validateToken(token);
 
@@ -60,9 +59,12 @@ public class ShController {
         reqDto.setDeliveryPrice(deliveryPrice);
 
         SH_post post = ss.insertPost(reqDto);
+        if (files == null || files.isEmpty()) {
+            return result;
+        }
         ss.insertFile(files, post);
 
-        HashMap<String, Object> result = new HashMap<>();
+
         return result;
     }
 
@@ -89,10 +91,67 @@ public class ShController {
         result.put("post", postData);
         result.put("category", categoryName);
 
-
         return result;
     }
 
+    @PostMapping("/sh-update")
+    public HashMap<String, Object> shUpdate(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files,
+            @RequestParam(value = "rmFiles", required = false) List<Integer> rmFiles,
+
+            @RequestParam("postId") Integer postId,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("price") Integer price,
+            @RequestParam("categoryId") Integer categoryId,
+            @RequestParam("directYN") String directYN,
+            @RequestParam("deliveryYN") String deliveryYN,
+            @RequestParam(value = "deliveryPrice", required = false) Integer deliveryPrice,
+            @RequestParam("pMemnerId") Integer pMemnerId
+    ) throws CustomJWTException, IOException {
+        HashMap<String, Object> result = new HashMap<>();
+
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+
+        if(!(pMemnerId.equals(claims.get("member_id")))) {
+            result.put("msg", "notOk");
+            return result;
+        }
+
+        ShPostUpdateReqDTO reqDto = new ShPostUpdateReqDTO();
+        reqDto.setPostId(postId);
+        reqDto.setTitle(title);
+        reqDto.setContent(content);
+        reqDto.setPrice(price);
+        reqDto.setCategoryId(categoryId);
+        reqDto.setDirectYN(directYN);
+        reqDto.setDeliveryYN(deliveryYN);
+        reqDto.setDeliveryPrice(deliveryPrice);
+        reqDto.setRmFiles(rmFiles);
+
+        SH_post post = ss.updatePost(reqDto);
+        if (files == null || files.isEmpty()) {
+            return result;
+        }
+        ss.insertFile(files, post);
+        return result;
+    }
+
+    @PostMapping("/delete-post")
+    public HashMap<String, Object> deletePost(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("postId") Integer postId
+    ) throws CustomJWTException {
+
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+
+        HashMap<String, Object> msg = ss.deletePost(postId, claims);
+
+        return msg;
+    }
 
 
 }

@@ -30,7 +30,8 @@ function ShWrite() {
     const [previewUrls, setPreviewUrls] = useState([]); // 미리보기용 URL
     const [fileLength, setFileLength] = useState(0);  // 기존서버 + 현재 저장되는 파일들의 배열의 사이즈
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [pMemberId, setPMemberId] = useState("");
+
 
 
     async function getPostData() {
@@ -38,29 +39,39 @@ function ShWrite() {
         
         try {
             let getCategory = await jaxios.get("/api/sh-page/sh-category");
-            setCategoryArr([...getCategory.data.shCategory]); 
+            setCategoryArr([...getCategory.data.categoryList]); 
 
             const getPost = await jaxios.get(`/api/sh-page/sh-view/${id}`);
             let res = getPost.data.post;
-                    console.log(res)
+            console.log(getPost.data)
             setTitle(res.title);
-            setCategoryId(res.category);
+            setCategoryId(res.categoryId);
             setContent(res.content);
             setPrice(res.price);
-            setDirectYN(res.direct_yn);
-            setDeliveryYN(res.delivery_yn);
-            setDeliveryPrice(res.delivery_price);
+            setDirectYN(res.directYN);
+            setDeliveryYN(res.deliveryYN);
+            setDeliveryPrice(res.deliveryPrice);
+
+            setPMemberId(res.member.memberId);
+            
 
             setOldFiles([...res.files]);
             setFileLength(res.files.length);
+
+
+            if(loginUser.member_id != res.member.memberId) {
+                alert("잘못된 접근입니다.");
+                return navigate("/sh-page/sh-view/" + id);
+            }
+            
         } catch (err) {
             console.error(err);
         }
     }
 
     useEffect(()=> {
-        console.log(loginUser)
-       getPostData();
+        getPostData();
+
     }, []);
 
 
@@ -114,9 +125,25 @@ function ShWrite() {
         setFileLength(prev => prev - 1);
     }
 
-    async function updatePost() {   // 업데이트 axios 요청을 서버에 보낼 함수
+    function deletePost() {
+        if(window.confirm("정말로 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다.")) {
+            jaxios.post("/api/sh-page/delete-post", null, {params: {postId: id}})  
+                .then((result)=> {
+                    console.log(result.data.msg);
+                    if(result.data.msg == "notOk") {
+                        alert("잘못된 접근입니다. 삭제하실 수 없습니다.");
+                        return navigate("/sh-page/sh-view/" + id);
+                    } else if(result.data.msg == "ok") {
+                        alert("삭제가 성공적으로 완료되었습니다.");
+                        return navigate("/sh-page");
+                    }
+                }).catch(err => console.error(err));
+        } else {
+            return
+        }
+    }
 
-       setIsSubmitting(true); // 클릭 즉시 block
+    async function updatePost() {   // 업데이트 axios 요청을 서버에 보낼 함수
 
        if(Number(deliveryPrice) > 5000) {return alert("배달비는 5천원을 넘을 수 없습니다.")}
 
@@ -136,6 +163,9 @@ function ShWrite() {
         formData.append("categoryId", categoryId);
         formData.append("directYN", directYN);
         formData.append("deliveryYN", deliveryYN);
+
+        formData.append("pMemnerId", pMemberId);
+
         if (deliveryYN === "Y") {
             formData.append("deliveryPrice", Number(deliveryPrice));
         };
@@ -144,16 +174,17 @@ function ShWrite() {
         console.log(formDataObj);
 
 
-        console.log("updatePost 호출", isSubmitting);
         try {
 
             const res = await jaxios.post("/api/sh-page/sh-update", formData);
+            if(res.data.msg == "notOk") {
+                alert("잘못된 접근입니다.");
+                return navigate("/sh-page/sh-view/" + id);
+            }
             alert("수정이 완료되었습니다!");
             navigate("/sh-page/sh-view/" + id);
         } catch(err) {
             console.error(err)
-        } finally {
-            setIsSubmitting(false); // 항상 초기화
         }
 
     }
@@ -273,8 +304,13 @@ function ShWrite() {
             </div>
         </div>
         <div className='btnWrap'>
-            <button className='navBtn pointBtn' onClick={()=> {updatePost();}}>수정 완료</button>
-            <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
+            <button className='navBtn deleteBtn pointBtn' onClick={()=> {deletePost();}}>
+                삭제
+            </button>
+            <div className='btnWrap'>
+                <button className='navBtn pointBtn' onClick={()=> {updatePost();}}>수정 완료</button>
+                <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
+            </div>
         </div>
     </div>
   )

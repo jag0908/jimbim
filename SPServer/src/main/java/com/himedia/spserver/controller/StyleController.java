@@ -208,7 +208,7 @@ public class StyleController {
 
         return ResponseEntity.ok(Map.of(
                 "followed", followed,
-                "message", followed ? "팔로우 성공" : "언팔로우 됨"
+                "message", followed ? "팔로우 성공" : "팔로우 취소"
         ));
     }
 
@@ -231,16 +231,14 @@ public class StyleController {
             @AuthenticationPrincipal MemberDTO memberDTO
     ) {
         if (memberDTO == null) {
-            // Access Token 만료 시 응답
-            Map<String, Object> res = new HashMap<>();
-            res.put("error", "Access token expired");
-            res.put("code", "TOKEN_EXPIRED");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Access token expired", "code", "TOKEN_EXPIRED"));
         }
 
         try {
-            Map<String, Object> replies = styleService.addReply(spostId, memberDTO.getUserid(), body.get("content"));
-            return ResponseEntity.ok(Map.of("replies", replies));
+            Integer parentId = body.get("parentId") != null ? Integer.valueOf(body.get("parentId")) : null;
+            Map<String, Object> reply = styleService.addReply(spostId, memberDTO.getUserid(), body.get("content"), parentId);
+            return ResponseEntity.ok(Map.of("reply", reply));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록 실패");

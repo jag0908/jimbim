@@ -16,6 +16,9 @@ function Login() {
     const dispatch = useDispatch()
     const baseURL = process.env.REACT_APP_BASE_URL;
 
+    const kakaobuttonstyle = {
+        background:'yellow', color:'black', fontWeight:'bold', width:'100%'
+    }
     useEffect(
         ()=>{
             if( loginUser && loginUser.userid ){
@@ -47,9 +50,9 @@ function Login() {
 
     return (
         <article>
-            <div>로그인</div>
             <div className='subPage'>
                 <div className='memberform'>
+                    <div className='formtitle'>로그인</div>
                     <div className='field'>
                         <label>아이디</label>
                         <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
@@ -64,7 +67,7 @@ function Login() {
                         <button onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>
                     </div>
                     <div className="btns">
-                        <button style={{background:'yellow', color:'black', fontWeight:'bold'}} onClick={
+                        <button style={kakaobuttonstyle} onClick={
                             ()=>{window.location.href=`${baseURL}/member/kakaostart`}
                         }>KAKAO</button>
                     </div>

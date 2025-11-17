@@ -1,0 +1,57 @@
+.formtitle{
+    margin: 50px 0;
+    font-weight: bold;
+    font-size: 130%;
+}
+.requireguide{
+    margin-bottom: 30px;
+    font-style: italic;
+    font-size: 85%;
+    color: #666666;
+}
+.requiremark{
+    color: red;
+    margin-right: 5px;
+}
+.idcheck{
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 6px;
+    transition: background-color 0.2s, transform 0.1s;
+    font-size: 14px;
+    margin-left: 10px;
+}
+.inputemail{
+    width: 200px;
+}
+
+.inputphone{
+    width: 60px;
+}
+
+.inputrrn1{
+    width: 80px;
+}
+
+#inputrrn2{
+    width: 25px;
+    padding: 0;
+    text-align: center;
+}
+
+.memberformdash{
+    font-size: 130%;
+}
+
+.imgBtns{
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, transform 0.1s;
+    text-align: center;
+}

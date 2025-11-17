@@ -67,7 +67,7 @@ public class CommunityListService {
         if (categoryId == null || categoryId == 0) {
             list = cr.findAll(pageable);
         } else {
-            list = cr.findByCategoryId(categoryId, pageable);
+            list = cr.findByCategory_categoryId(categoryId, pageable);
         }
 
         result.put("communityList", list.getContent());

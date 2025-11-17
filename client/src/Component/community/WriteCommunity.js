@@ -21,6 +21,11 @@ function WriteCommunity() {
     const [selectedCategoryId, setSelectedCategoryId] = useState(0);
     const [isAnonymous, setIsAnonymous] = useState(false);
 
+    const [fileArr, setFileArr] = useState([]);
+    const [fileLength, setFileLength] = useState(0);
+    
+    const [previewUrls, setPreviewUrls] = useState([]); // 이미지 미리보기 URL 배열
+
     const navigate = useNavigate();
 
     const categories = [
@@ -39,10 +44,60 @@ function WriteCommunity() {
         }
     }, [loginUser]);
 
+    function fileupload(e) {
+        if(!e.target) {return}
+
+        let newfiles = Array.from(e.target.files);
+
+        // 기존 파일과 합치기
+        const allFiles = [...fileArr, ...newfiles];
+
+        if (allFiles.length > 10) {
+            alert("최대 10개까지 선택 가능합니다.");
+            e.target.value = null; // 선택 초기화
+            return;
+        };
+
+        setFileLength(allFiles.length);
+        setFileArr(allFiles);
+
+        // 브라우저에서 바로 미리보기 URL 생성
+        const urls = allFiles.map(file => URL.createObjectURL(file));
+        setPreviewUrls(urls);
+
+        console.log('allfiles', allFiles, 'urls', urls)
+        e.target.value = null;
+    };
+    // 파일 삭제
+    const handleRemoveFile = (index) => {
+        const newFiles = fileArr.filter((_, i) => i !== index);
+        setFileArr(newFiles);
+
+        // 미리보기도 같이 갱신
+        const newUrls = previewUrls.filter((_, i) => i !== index);
+        setPreviewUrls(newUrls);
+        setFileLength(fileLength-1)
+    };
+    // 파일 업로드시 formData 추가
+    function createFormData(fileArr) {
+        if(!fileArr[0].name) return;
+
+        const formData = new FormData();
+        // 파일 데이터 저장
+        Object.values(fileArr).forEach((fileArr) => formData.append("imageList", fileArr));
+
+        axios.post("/api/communityList/fileupload", formData)
+        .then((result)=> {
+            alert("업로드 성공");
+            console.log(result.data);
+        }).catch(err=>console.error(err));
+    }
+
+    /*
     function onFileUpload(e) {
         const formData = new FormData();
         formData.append('image', e.target.files[0]);
-        jaxios.post(`${baseURL}/community/fileupload`, formData)
+        axios.post(`api/communityList/fileupload`, formData)
             .then((result) => {
                 setSavefilename(result.data.savefilename);
                 setImage(result.data.image);
@@ -51,6 +106,8 @@ function WriteCommunity() {
             })
             .catch((err) => { console.error(err); })
     }
+
+    */
 
     function onSubmit() {
         if (!title) return alert('제목을 입력하세요');
@@ -68,12 +125,18 @@ function WriteCommunity() {
             categoryId: selectedCategoryId
         };
 
-        axios.post(`${baseURL}/community/CommunityList`, postData)
+        axios.post(`api/community/CommunityList`, postData)
             .then(() => {
-                alert('게시물이 작성되었습니다');
-                navigate('/communityList');
             })
             .catch((err) => { console.error(err) });
+
+            
+        createFormData(fileArr)
+
+        
+        alert('게시물이 작성되었습니다');
+        navigate('/communityList');
+        
     }
 
     return (
@@ -110,13 +173,21 @@ function WriteCommunity() {
                 <label>내용</label>
                 <textarea rows='10' value={content} onChange={(e) => setContent(e.currentTarget.value)}></textarea>
             </div>
-            <div className='field'>
-                <label>이미지</label>
-                <input type='file' onChange={onFileUpload} />
-            </div>
-            <div className='field'>
-                <label>이미지 미리보기</label>
-                <div><img src={imgSrc} style={imgStyle} alt="" /></div>
+            <div className='inputWrap file'>
+                <label htmlFor="dataFile">+ <span>{fileLength}/10</span></label>
+                {/* 파일업로드 인풋 */}
+                <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} multiple />
+                {/* 미리보기 이미지 */}
+                <div className="previewContainer">
+                    {previewUrls.map((url, i) => (
+                        <div className='imgBox' key={i} >
+                            <img src={url} alt={`preview-${i}`} />
+                            <div className={`removeBtn removeBtn_${i}`}onClick={()=> {
+                                handleRemoveFile(i);
+                            }}>X</div>
+                        </div>    
+                    ))}
+                </div>
             </div>
             <div className='btns'>
                 <button onClick={onSubmit}>작성완료</button>

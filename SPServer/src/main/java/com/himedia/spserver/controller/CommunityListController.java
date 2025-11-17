@@ -2,6 +2,7 @@ package com.himedia.spserver.controller;
 
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.service.CommunityListService;
+import com.himedia.spserver.service.S3UploadService;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,9 @@ public class CommunityListController {
 
     @Autowired
     ServletContext sc;
+
+    @Autowired
+    S3UploadService sus;
 
     // 게시글 리스트 조회
     @GetMapping("/getCommunityList/{page}")
@@ -87,6 +91,26 @@ public class CommunityListController {
 
     // 파일 업로드
     @PostMapping("/fileupload")
+    public HashMap<String, Object> fileUpload(  @RequestParam("imageList") MultipartFile[] file ) {
+        HashMap<String , Object> result = new HashMap<>();
+        try {
+            String[] imageList = new String[file.length];
+            String[] uploadFilePathNameList = new String[file.length];
+            for(int i=0; i<file.length; i++) {
+                String uploadFilePathName = sus.saveFile( file[i] );
+                imageList[i] = file[i].getOriginalFilename();
+                uploadFilePathNameList[i] = uploadFilePathName;
+            }
+            result.put("imageList", imageList );
+            result.put("savefilenameList", uploadFilePathNameList);
+        } catch (IllegalStateException | IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /*
+    @PostMapping("/fileupload")
     public HashMap<String, Object> uploadFile(@RequestParam("image") MultipartFile file) {
         HashMap<String, Object> result = new HashMap<>();
         String path = sc.getRealPath("/images");
@@ -110,4 +134,5 @@ public class CommunityListController {
         }
         return result;
     }
+    */
 }

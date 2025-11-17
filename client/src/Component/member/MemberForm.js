@@ -4,6 +4,7 @@ import { useDispatch} from 'react-redux';
 import { loginAction } from '../../store/userSlice';
 import axios from 'axios'
 import { Cookies } from 'react-cookie';
+import '../../style/memberform.css';
 
 
 function MemberForm(props) {
@@ -58,7 +59,7 @@ function MemberForm(props) {
             if( result.data.msg === 'ok'){
                 setMessage('사용가능')
                 setReid(userid);
-                setIdCheckMsgStyle({flex:'1', textAlign:'center', fontWeight:'bold' , color:'blue'})
+                setIdCheckMsgStyle({flex:'1', textAlign:'center', fontWeight:'bold' , color:'blue',})
             }else{
                 setMessage('사용 불가능')
                 setReid('')
@@ -207,27 +208,30 @@ function MemberForm(props) {
 
     return (
         <>
-            <div>{title}</div>
-            <div><span>*</span>은 필수 입력사항입니다</div>
+            <div className='formtitle'>{title}</div>
+            <div className='requireguide'><span className='requiremark'>*</span>은 필수 입력사항입니다</div>
             {
                 (type=='join')?
                 (<>
                     <div className='field'>
-                        <label><span>*</span>아이디 <button onClick={ ()=>{idCheck()} }>중복검사</button></label>
-                        <input type="text" value={userid} onChange={(e)=>{
-                            setUserid( e.currentTarget.value )
-                        }}/>
+                        <label><span className='requiremark'>*</span>아이디</label>
+                        <div>
+                            <input type="text" value={userid} onChange={(e)=>{
+                                setUserid( e.currentTarget.value )
+                            }}/>
+                            <button className='idcheck' onClick={ ()=>{idCheck()} }>중복검사</button>
+                        </div>
                         <div style={idCheckMsgStyle}>{message}</div>
                         <input type='hidden' name='reid' value={reid} />
                     </div>
                     <div className='field'>
-                        <label><span>*</span>비밀번호</label>
+                        <label><span className='requiremark'>*</span>비밀번호</label>
                         <input type="password" value={pwd} onChange={
                             (e)=>{ setPwd(e.currentTarget.value )}
                         }/>
                     </div>
                     <div className='field'>
-                        <label><span>*</span>비밀번호 확인</label>
+                        <label><span className='requiremark'>*</span>비밀번호 확인</label>
                         <input type="password" value={pwdChk} onChange={
                             (e)=>{ setPwdChk(e.currentTarget.value )}
                         }/>
@@ -235,40 +239,40 @@ function MemberForm(props) {
                 </>):(null)
             }
             <div className='field'>
-                <label><span>*</span>이름</label>
+                <label><span className='requiremark'>*</span>이름</label>
                 <input type="text" value={name} onChange={(e)=>{
                     setName( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
-                <label><span>*</span>이메일</label>
-                <input type="text" value={email} onChange={(e)=>{
+                <label><span className='requiremark'>*</span>이메일</label>
+                <input className='inputemail' type="text" value={email} onChange={(e)=>{
                     setEmail( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
-                <label><span>*</span>전화번호</label>
+                <label><span className='requiremark'>*</span>전화번호</label>
                 <div>
-                    <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
+                    <input type="text" className='inputphone' value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
                         setPhone1( e.currentTarget.value )
-                    }}/>&nbsp;-&nbsp;
-                    <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                    <input type="text" className='inputphone' value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
                         setPhone2( e.currentTarget.value )
-                    }}/>&nbsp;-&nbsp;
-                    <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                    <input type="text" className='inputphone'value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
                         setPhone3( e.currentTarget.value )
                     }}/>
                 </div>
             </div>
             <div className='field'>
-                <label><span>*</span>주민등록번호</label>
+                <label><span className='requiremark'>*</span>주민등록번호</label>
                 <div>
-                    <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
+                    <input type="text" className='inputrrn1' value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
                         setRrn1( e.currentTarget.value )
-                    }}/>&nbsp;-&nbsp;
-                    <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
+                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                    <input type="text" id='inputrrn2' value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
                         setRrn2( e.currentTarget.value )
-                    }} style={{width:'35px'}}/> * * * * * * 
+                    }}/> * * * * * * 
                 </div>
             </div>
             <div className='field'>

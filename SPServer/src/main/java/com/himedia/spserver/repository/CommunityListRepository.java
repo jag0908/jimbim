@@ -1,6 +1,7 @@
 package com.himedia.spserver.repository;
 
 import com.himedia.spserver.dto.CommunityViewDTO;
+import com.himedia.spserver.entity.Community.C_Category;
 import com.himedia.spserver.entity.Community.C_post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,5 +31,5 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
 
     long countByCategoryCategoryId(Integer categoryId);
 
-    Page<C_post> findByCategoryId(Integer categoryId, Pageable pageable);
+    Page<C_post> findByCategory_categoryId(Integer categoryId, Pageable pageable);
 }

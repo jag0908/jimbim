@@ -128,13 +128,14 @@ function WriteCommunity() {
             // 문자열데이터 userid 는 @RequestBody C_post cpost 로 같이 받을수 없음
             // 객체데이터가 담겨있는 loginUser를 넘겨줌
             member:loginUser,
-            pass,
             title,
             content,
-            image,
-            savefilename,
+            // pass,            <<      C_post 엔티티에 있는 데이터들만 spring에서 @RequestBody C_post cpost 로 받을수 있으며
+            // image,           <<      pass, image, savefilename은 C_post 엔티티에 없기때문에
+            // savefilename,    <<      존재 이유가 없음
+
             // 수정전 : 익명 선택 시 userid를 '익명'으로 설정
-            // 수정후 : isAnonymous 값 추가
+            // 수정후 : isAnonymous 값 자체를 입력함
             isAnonymous,
             categoryId: selectedCategoryId
         };

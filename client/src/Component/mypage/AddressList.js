@@ -29,6 +29,7 @@ function AddressList() {
                 alert("로그인이 필요한 서비스입니다")
                 navigate("/")
             }else{
+                console.log(loginUser)
                 // jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
                 // .then((result)=>{
                 //     setMember(result.data.member)

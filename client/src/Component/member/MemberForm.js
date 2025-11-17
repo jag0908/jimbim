@@ -300,7 +300,7 @@ function MemberForm(props) {
             </div>
             <div className='field'>
                 <label>소개글</label>
-                <textarea onChange={(e)=>{setProfileMsg( e.currentTarget.value )}} className='formProfileMsg' maxLength={255}>{profileMsg}</textarea>
+                <textarea onChange={(e)=>{setProfileMsg( e.currentTarget.value )}} className='formProfileMsg' maxLength={255} value={profileMsg}></textarea>
             </div>
             <div className='field'>
                 <label>동의사항(선택)</label>

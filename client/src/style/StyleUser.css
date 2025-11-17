@@ -66,20 +66,21 @@
 }
 
 .style-post-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 최대 4개까지 */
-  gap: 20px;
-  align-items: start;
+  column-count: 4;        /* 한 줄 최대 4개 */
+  column-gap: 20px;       /* 가로 간격 */
+  width: 90%;
+  margin: 0 auto;
 }
 
 .style-post-card {
+  break-inside: avoid;    /* 세로로 요소 깨짐 방지 */
+  margin-bottom: 20px;    /* 세로 간격 */
+  display: block;
+  width: 100%;            /* column 레이아웃에서 필수 */
   border: 1px solid #eee;
   border-radius: 10px;
   overflow: hidden;
-  transition: 0.2s;
-  display: flex;
-  flex-direction: column;
-  height: auto;
+  background: #fff;
 }
 
 .style-post-card:hover {
@@ -95,8 +96,8 @@
 
 .style-post-image img {
   width: 100%;
-  height: 100%;
-  object-fit: cover; /* 영역 꽉 채우기 */
+  height: auto;           /* 이미지 비율 유지 */
+  object-fit: cover;
   display: block;
 }
 

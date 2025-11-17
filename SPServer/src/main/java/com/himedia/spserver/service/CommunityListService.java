@@ -35,9 +35,6 @@ public class CommunityListService {
 
     // 게시글 저장
     public void saveCommunity(C_post cpost) {
-        if (cpost.getMember() == null) {
-            cpost.setMember(mr.findByUserid("익명"));
-        }
         cr.save(cpost);
     }
 

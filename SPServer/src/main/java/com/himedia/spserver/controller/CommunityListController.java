@@ -56,7 +56,7 @@ public class CommunityListController {
 
     // 게시글 작성
     @PostMapping("/createCommunity")
-    public HashMap<String, Object> createCommunity(@RequestBody C_post cpost) {
+    public HashMap<String, Object> createCommunity(@RequestBody C_post cpost){
         HashMap<String, Object> result = new HashMap<>();
         try {
             cs.saveCommunity(cpost);

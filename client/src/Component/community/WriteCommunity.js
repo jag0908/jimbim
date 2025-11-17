@@ -4,9 +4,11 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
 import '../../style/CommunityWrite.css';
+// 수정사항 : Ctrl + F '수정' 찾아가기
+
 // 수정필요 : 이미지 뜨지않음
 // 링크 클릭시 undefind로 이동됨
-// Ctrl + F '수정필요' 찾아가기
+
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function WriteCommunity() {
@@ -21,7 +23,7 @@ function WriteCommunity() {
     const [imgSrc, setImgSrc] = useState('');
     const [imgStyle, setImgStyle] = useState({ display: 'none' });
     const [selectedCategoryId, setSelectedCategoryId] = useState(0);
-    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState('N');
 
     const [fileArr, setFileArr] = useState([]);
     const [fileLength, setFileLength] = useState(0);
@@ -40,9 +42,13 @@ function WriteCommunity() {
         { id: 7, name: "핫딜" }
     ];
 
+    // 수정사항 : 미로그인시 쫓아냄, 
     useEffect(() => {
         if (loginUser && loginUser.userid) {
             setUserid(loginUser.userid);
+        }else{
+            alert("로그인이 필요한 서비스입니다")
+            navigate("/")
         }
     }, [loginUser]);
 
@@ -116,14 +122,20 @@ function WriteCommunity() {
         if (!content) return alert('내용을 입력하세요');
         if (!selectedCategoryId) return alert('카테고리를 선택하세요');
 
-        // 익명 선택 시 userid를 '익명'으로 설정
+        
         const postData = {
-            userid: isAnonymous ? '익명' : userid,
+            // 수정사항 : C_post 엔티티에서 필요한건 객체데이터 Member 이기 때문에 
+            // 문자열데이터 userid 는 @RequestBody C_post cpost 로 같이 받을수 없음
+            // 객체데이터가 담겨있는 loginUser를 넘겨줌
+            member:loginUser,
             pass,
             title,
             content,
             image,
             savefilename,
+            // 수정전 : 익명 선택 시 userid를 '익명'으로 설정
+            // 수정후 : isAnonymous 값 추가
+            isAnonymous,
             categoryId: selectedCategoryId
         };
 
@@ -152,7 +164,9 @@ function WriteCommunity() {
                 )}
                 <div>
                     <label>
-                        <input type='checkbox' checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} />
+                        {/* 수정전 : checkbox의 true 또는 false로 나오는 체크값(e.target.checked) 자체를 setIsAnonymous로 넣음 */}
+                        {/* 수정후 : checkbox의 체크값(e.target.checked) 이 true면 'Y' false면 'N' 을 넣음*/}
+                        <input type='checkbox' onChange={(e) => setIsAnonymous(e.target.checked ? 'Y' : 'N')} />
                         익명으로 작성
                     </label>
                 </div>

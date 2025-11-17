@@ -102,6 +102,15 @@ function ShView() {
       return num.toLocaleString('ko-KR');
     }
 
+
+
+
+
+    // 채팅
+    function openChat() {
+
+    }
+
   return (
     <div className='shView'>
         <div className='viewWrap'>
@@ -222,6 +231,14 @@ function ShView() {
 
                     </div>
 
+                    <div className='eventArea'>
+                        <button className='btnEvent btnChat' onClick={()=> {openChat()}}>1:1 채팅하기</button>
+                        <button className='btnEvent btnBuy'>구매하기</button>
+                        <button className='btnEvent btnZZim'>찜</button>
+                        <button className='btnEvent btnLike'>좋</button>
+                    </div>
+
+
 
                     <div className='line'></div>
                     
@@ -263,7 +280,7 @@ function ShView() {
                         <span className='dataBox price srt'>
                             {
                                 postDetail?
-                                postDetail.delivery_price:
+                                postDetail.deliveryPrice:
                                 <Lodding/>
                             }
                             원</span>
@@ -289,12 +306,93 @@ function ShView() {
             
             <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
         </div>
+
+        <PopupChatRoomList />
     </div>
   )
 }
 
 function Lodding() {
     return <span style={{fontSize:"14px"}}>불러오는중...</span>
+}
+
+function PopupChatRoomList() {
+    return <>
+    
+        <div className='popupWrap'>
+            <div className='popupHeader'>
+                <h3 className='pTitle'>채팅</h3>
+                <button className='bthClose'>X</button>
+            </div>
+            
+
+            <div className='pChatListWrap'>
+                <div className='pChatList'>
+                    <div className='chl left'>
+                        <img src="" alt="이미지" />
+                    </div>
+                    <div className='chl center'>
+                        <div className='pdTitle'>
+                            포스트타이틀입니다.
+                        </div>
+                        <div className='rMsg'>
+                            최근 메세지입니다.
+                        </div>
+                    </div>
+                    <div className='chl right'>
+                        <div className='rTime'>
+                            오후 5:44
+                        </div>
+                        <div className='alram'>
+                            1
+                        </div>
+                    </div>
+                </div> 
+                <div className='pChatList'>
+                    <div className='chl left'>
+                        <img src="" alt="이미지" />
+                    </div>
+                    <div className='chl center'>
+                        <div className='pdTitle'>
+                            포스트타이틀입니다.
+                        </div>
+                        <div className='rMsg'>
+                            최근 메세지입니다.
+                        </div>
+                    </div>
+                    <div className='chl right'>
+                        <div className='rTime'>
+                            오후 5:44
+                        </div>
+                        <div className='alram'>
+                            1
+                        </div>
+                    </div>
+                </div> 
+                <div className='pChatList'>
+                    <div className='chl left'>
+                        <img src="" alt="이미지" />
+                    </div>
+                    <div className='chl center'>
+                        <div className='pdTitle'>
+                            포스트타이틀입니다.
+                        </div>
+                        <div className='rMsg'>
+                            최근 메세지입니다.
+                        </div>
+                    </div>
+                    <div className='chl right'>
+                        <div className='rTime'>
+                            오후 5:44
+                        </div>
+                        <div className='alram'>
+                            1
+                        </div>
+                    </div>
+                </div>   
+            </div>
+        </div> 
+    </>
 }
 
 export default ShView

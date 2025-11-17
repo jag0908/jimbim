@@ -9,7 +9,7 @@ input, textarea, select {border: 1px solid #999; border-radius: 6px; font-size: 
 .display-block {display: block !important;}
 .display-none {display: none !important;}
 .line {flex-shrink: 0; margin: 30px auto 30px; width: 100%; height: 1px; background-color: #999;}
-
+button {cursor: pointer;}
 
 
 /* 메인페이지(전체 물건리스트) */
@@ -107,8 +107,34 @@ input, textarea, select {border: 1px solid #999; border-radius: 6px; font-size: 
 .shView .rayoutWrap .rightBox .price {font-size: 26px; font-weight: 600;} 
 .shView .rayoutWrap .rightBox .tta { width: 100%; height: 260px; box-sizing: border-box; border: none; font-size: 18px; font-weight: 500;}
 
+.shView .rayoutWrap .rightBox .eventArea {display: flex; gap: 10px; width: 100%;}
+.shView .rayoutWrap .rightBox .eventArea .btnEvent {display: flex; justify-content: center; align-items: center; width: 100%; height: 42px; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-weight: 500; color: #555; overflow: hidden;}
+.shView .rayoutWrap .rightBox .eventArea .btnEvent.btnChat {background-color: #ddd;}
+.shView .rayoutWrap .rightBox .eventArea .btnEvent.btnBuy {background-color: rgb(105, 221, 105);}
+.shView .rayoutWrap .rightBox .eventArea .btnEvent.btnZZim {flex-shrink: 0; width: 42px; border: 1px solid #ddd;}
+.shView .rayoutWrap .rightBox .eventArea .btnEvent.btnLike
+{flex-shrink: 0; width: 42px; border: 1px solid #ddd;}
 
 
 .shView .btnWrap {display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 60px; padding: 0 0px; width: 100%; box-sizing: border-box;}
 .shView .btnWrap .navBtn {padding: 0 12px; min-width: 64px; height: 36px; border: 1px solid #999; border-radius: 6px; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #555;}
 .shView .btnWrap .pointBtn {background-color: #555; color: #fff;}
+
+
+
+
+/* 채팅 */
+.shView .popupWrap {display: flex; flex-direction: column; position: fixed; z-index: 2000; top: 50%; right: 50%; width: 360px; padding: 28px 12px; background-color: #fff; box-shadow: 0px 0px 7px 2px #dfdfdf; box-sizing: border-box; border-radius: 8px; overflow: hidden; transform: translate(50%, -50%);}
+.shView .popupWrap .popupHeader {display: flex; justify-content: space-between; padding: 0 12px; box-sizing: border-box;}
+.shView .popupWrap .pTitle {font-size: 18px; font-weight: 600; color: #555;}
+.shView .popupWrap .bthClose { font-size: 18px; font-weight: 500;}
+.shView .popupWrap .pChatListWrap {display: flex; flex-direction: column; flex-shrink: 0; margin-top: 32px; height: 508px; overflow: auto;}
+.shView .popupWrap .pChatList {display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 0px 16px; width: 100%; height: 72px; border-bottom: 1px solid #ddd; box-sizing: border-box;}
+.shView .popupWrap .pChatList .left {flex-shrink: 0; width: 38px; height: 38px; border: 1px solid #ddd; border-radius: 36%; box-sizing: border-box; overflow: hidden;}
+.shView .popupWrap .pChatList .left > img {width: 100%; height: 100%; object-fit: cover;}
+.shView .popupWrap .pChatList .center {display: flex; flex-direction: column; gap: 2px; width: 100%; height: 42px;}
+.shView .popupWrap .pChatList .center .pdTitle {font-size: 14px; font-weight: 700; color: #555;}
+.shView .popupWrap .pChatList .center .rMsg {font-size: 14px; font-weight: 500; color: #bbb;}
+.shView .popupWrap .pChatList .right {display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; gap: 4px; height: 42px;}
+.shView .popupWrap .pChatList .right .rTime {font-size: 12px; font-weight: 500; color: #bbb;}
+.shView .popupWrap .pChatList .right .alram {display: flex; justify-content: center; align-items: center; width: 18px; height: 18px; background: rgb(250, 86, 86); border-radius: 50%; font-size: 12px; color: #f8f8f8; font-weight: 500; overflow: hidden;}

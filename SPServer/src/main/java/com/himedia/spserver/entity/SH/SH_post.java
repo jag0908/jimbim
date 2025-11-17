@@ -25,6 +25,7 @@ public class SH_post {  // second hand
     @CreationTimestamp
     private Timestamp indate;
 
+    @UpdateTimestamp
     private Timestamp updateDate;
 
     @Column(nullable = false)

@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -53,6 +51,9 @@ public class ShService {
         shPost.setDirectYN(reqDto.getDirectYN());
         shPost.setDeliveryYN(reqDto.getDeliveryYN());
         shPost.setDeliveryPrice(reqDto.getDeliveryPrice());
+        if (reqDto.getDeliveryPrice() == null) {
+            shPost.setDeliveryPrice(0);
+        }
         spr.save(shPost);
 
         return shPost;
@@ -90,7 +91,7 @@ public class ShService {
             ShPostResDto mapper = spm.toResDto(post);
 
             // 파일 최신 1개만 조회
-            SH_File firstFile = sfr.findTop1ByPost_PostIdOrderByIndateDesc(mapper.getPostId());
+            SH_File firstFile = sfr.findTop1ByPost_PostIdOrderByIndateAsc(mapper.getPostId());
             if (firstFile != null) {
                 mapper.setFirstFilePath(firstFile.getPath());
             }
@@ -123,7 +124,6 @@ public class ShService {
 
     public ShPostResDto getPost(Integer id) {
 
-//        SH_post postEntity = spr.findByPostId(id);
         Optional<SH_post> postEntity = spr.findByIdWithMember(id);
         if (postEntity == null) {
             throw new RuntimeException("게시글이 없습니다");
@@ -137,6 +137,7 @@ public class ShService {
         for (SH_File fileEntity : fileEntitys) {
             ShFileDto fileDto = new ShFileDto();
             fileDto.setPath(fileEntity.getPath());
+            fileDto.setFileId(fileEntity.getFileId());
             result.add(fileDto);
         }
 
@@ -145,4 +146,48 @@ public class ShService {
         return mapperDto;
     }
 
+    public SH_post updatePost(ShPostUpdateReqDTO reqDto) {
+        
+        // 게시글 수정 저장
+        SH_post post = spr.findByPostId(reqDto.getPostId());
+        post.setCategoryId(reqDto.getCategoryId());
+        post.setTitle(reqDto.getTitle());
+        post.setContent(reqDto.getContent());
+        post.setPrice(reqDto.getPrice());
+        post.setDirectYN(reqDto.getDirectYN());
+        post.setDeliveryYN(reqDto.getDeliveryYN());
+        post.setDeliveryPrice(reqDto.getDeliveryPrice());
+        if (reqDto.getDeliveryPrice() == null) {
+            post.setDeliveryPrice(0);
+        }
+
+        // 기존 파일 지우기
+        List<Integer> rmFiles = reqDto.getRmFiles();
+        System.out.println("@@@@@@@@@@@@@@@@@@@@" + rmFiles);
+        if (rmFiles != null && !rmFiles.isEmpty()) {
+            for(Integer rmFile : rmFiles) {
+                SH_File rmFileId = sfr.findByFileId(rmFile);
+                sfr.delete(rmFileId);
+            }
+        }
+        return post;
+    }
+
+    public HashMap<String, Object> deletePost(Integer postId, Map<String, Object> claims) {
+        HashMap<String, Object> result =  new HashMap<>();
+
+        SH_post post = spr.findByPostId(postId);
+
+
+        if (claims.get("member_id").equals(post.getMember().getMember_id())) {
+            sfr.deleteAllByPost_postId(postId);
+            spr.delete(post);
+
+            result.put("msg", "ok");
+            return result;
+        };
+
+        result.put("msg", "notOk");
+        return result;
+    }
 }

@@ -1,25 +1,28 @@
 package com.himedia.spserver.dto;
 
+import com.himedia.spserver.entity.Member;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class ShPostUpdateReqDTO {
+public class ShPostResDto {
     private Integer postId;
-    private Integer categoryId;
     private String title;
     private String content;
     private Integer price;
+    private Integer categoryId;
     private String directYN;
     private String deliveryYN;
     private Integer deliveryPrice;
+    private Integer viewCount;
+    private Timestamp indate;
+    private Timestamp updateDate;
 
-    private List<MultipartFile> files;
-    private List<Integer> rmFiles;
+    private List<ShFileDto> files;
+    private String firstFilePath;
 
-    private Integer memberId;
+    private ShMemberDto member;
+
 }
-

@@ -24,10 +24,11 @@ function ShWrite() {
     const [previewUrls, setPreviewUrls] = useState([]); // 이미지 미리보기 URL 배열
 
     useEffect(()=> {
-        jaxios.get("/api/sh-page/sh-category")
+    
+        axios.get("/api/sh-page/sh-category")
             .then((result)=> {
-                // console.log(result)
-                setCategoryArr([...result.data.shCategory]);
+
+                setCategoryArr([...result.data.categoryList]);
             }).catch(err=>console.error(err));
     }, []);
 
@@ -79,7 +80,6 @@ function ShWrite() {
             formData.append(`files`, file);
         })
 
-        formData.append("member_id", loginUser.member_id);
         formData.append("title", title);
         formData.append("content", content);
         formData.append("price", price);

@@ -2,10 +2,10 @@
 .community {
   display: flex;
   width: 1200px;
-  margin: 0 auto 20px; /* 아래 간격: 헤더-버튼 간격과 동일 */
+  margin: 0 auto 20px;
   font-family: "Noto Sans KR", sans-serif;
   align-items: flex-start;
-  gap: 20px; /* 사이드바와 리스트 사이 간격 */
+  gap: 20px;
 }
 
 /* ---------- 사이드바 ---------- */
@@ -18,8 +18,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  height: 100%; /* 커뮤니티 리스트와 높이 맞춤 */
-  min-height: 500px; /* 최소 높이 설정 */
+  height: 100%;
+  min-height: 500px;
 }
 
 .sidebar h3 {
@@ -65,7 +65,7 @@
   border-radius: 6px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  min-height: 540px; /* 사이드바와 같은 최소 높이 */
+  min-height: 540px;
 }
 
 /* 제목 행 */
@@ -82,6 +82,7 @@
 .titlecol {
   flex: 1;
   padding: 0 8px;
+  text-align: center;
 }
 
 /* 각 게시글 행 */
@@ -99,13 +100,13 @@
 
 .col {
   flex: 1;
-  text-align: center;
+  text-align: center; /* 전체 컬럼 중앙 정렬 */
   font-size: 15px;
   padding: 0 8px;
 }
 
 .col:nth-child(1) {
-  text-align: left;
+  text-align: center; /* 제목 중앙 정렬 */
   color: #333;
   cursor: pointer;
 }
@@ -132,11 +133,10 @@
   margin-top: 20px;
 }
 
-/* 상단 오른쪽 배치 + 위아래 간격 균일 */
 .writeBtnArea.top {
   width: 1200px;
-  padding-top: 20px;   /* 헤더 아래 여백 */
-  margin: 0 auto 20px; /* 아래쪽 간격 (게시글 리스트와 동일) */
+  padding-top: 20px;
+  margin: 0 auto 20px;
   display: flex;
   justify-content: flex-end;
 }

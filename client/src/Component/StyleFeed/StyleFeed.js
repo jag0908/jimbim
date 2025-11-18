@@ -57,16 +57,16 @@ function StyleFeed() {
   return (
     <div className="style-feed-container">
 
-      <div className="style-category-bar">
-        <button className={`style-category-btn ${category === "default" ? "active" : ""}`} onClick={() => setCategory("default")}>🏠 전체보기</button>
-        <button className={`style-category-btn ${category === "trending" ? "active" : ""}`} onClick={() => setCategory("trending")}>🔥 요즘 트렌드</button>
-        <button className={`style-category-btn ${category === "views" ? "active" : ""}`} onClick={() => setCategory("views")}>👀 인기 스타일</button>
-        <button className={`style-category-btn ${category === "tags" ? "active" : ""}`} onClick={() => setCategory("tags")}>🏷️ HOT 태그</button>
-        <button className={`style-category-btn ${category === "accounts" ? "active" : ""}`} onClick={() => setCategory("accounts")}>👤 HOT 계정</button>
+      <div className="style-feed-category-bar">
+        <button className={`style-feed-category-btn ${category === "default" ? "active" : ""}`} onClick={() => setCategory("default")}>🏠 전체보기</button>
+        <button className={`style-feed-category-btn ${category === "trending" ? "active" : ""}`} onClick={() => setCategory("trending")}>🔥 요즘 트렌드</button>
+        <button className={`style-feed-category-btn ${category === "views" ? "active" : ""}`} onClick={() => setCategory("views")}>👀 관심 스타일</button>
+        <button className={`style-feed-category-btn ${category === "tags" ? "active" : ""}`} onClick={() => setCategory("tags")}>🏷️ HOT 태그</button>
+        <button className={`style-feed-category-btn ${category === "accounts" ? "active" : ""}`} onClick={() => setCategory("accounts")}>👤 HOT 계정</button>
       </div>
 
-      <div className="style-write-button-area">
-        <button className="style-write-btn" onClick={handleWriteClick}>
+      <div className="style-feed-write-button-area">
+        <button className="style-feed-write-btn" onClick={handleWriteClick}>
           글쓰기
         </button>
       </div>
@@ -81,22 +81,22 @@ function StyleFeed() {
       {(category !== "tags" && category !== "accounts") && (
         <div className="style-feed-grid">
           {!Array.isArray(posts) || posts.length === 0 ? (
-            <div className="style-no-posts">
+            <div className="style-feed-no-posts">
               😢 아직 등록된 스타일이 없습니다. 첫 번째 스타일을 공유해보세요!
             </div>
           ) : (
             posts.map(post => (
               <div key={post.spost_id} className="style-feed-card">
-                <div className="style-image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
+                <div className="style-feed-image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
                   {Array.isArray(post.s_images) ? (
                     <>
-                      <img src={post.s_images[0]} alt="post" className="style-post-img" />
+                      <img src={post.s_images[0]} alt="post" className="style-feed-post-img" />
                       {post.s_images.length > 1 && (
-                        <div className="style-multiple-count">+{post.s_images.length}</div>
+                        <div className="style-feed-multiple-count">+{post.s_images.length}</div>
                       )}
                     </>
                   ) : (
-                    <img src={post.s_images} alt="post" className="style-post-img" />
+                    <img src={post.s_images} alt="post" className="style-feed-post-img" />
                   )}
                 </div>
 
@@ -104,22 +104,22 @@ function StyleFeed() {
                   <img
                     src={post.profileImg || '/default_profile.png'}
                     alt="profile"
-                    className="style-profile-img"
+                    className="style-feed-profile-img"
                     onClick={() => navigate(`/styleUser/${post.userid}`)}
                   />
-                  <div className="style-user-info" onClick={() => navigate(`/styleUser/${post.userid}`)}>
-                    <span className="style-nickname">{post.userid}</span>
+                  <div className="style-feed-user-info" onClick={() => navigate(`/styleUser/${post.userid}`)}>
+                    <span className="style-feed-nickname">{post.userid}</span>
                   </div>
 
                   <button
-                    className={`style-like-btn ${post.liked ? "liked" : ""}`}
+                    className={`style-feed-like-btn ${post.liked ? "liked" : ""}`}
                     onClick={() => toggleLike(post.spost_id)}
                   >
                     {post.liked ? "❤️" : "🤍"} {post.likeCount}
                   </button>
                 </div>
 
-                <p className="style-post-content">{post.content}</p>
+                <p className="style-feed-post-title">{post.title}</p>
               </div>
             ))
           )}

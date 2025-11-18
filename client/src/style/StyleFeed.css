@@ -5,20 +5,20 @@
   font-family: 'Noto Sans KR', sans-serif;
 }
 
-.style-hashtag-bar {
+.style-feed-hashtag-bar {
   margin-bottom: 15px;
   font-weight: 600;
   color: #555;
   font-size: 14px;
 }
 
-.style-write-button-area {
+.style-feed-write-button-area {
   text-align: right;
   margin-bottom: 20px;
   margin-top: 10px;
 }
 
-.style-write-btn {
+.style-feed-write-btn {
   padding: 8px 15px;
   font-size: 14px;
   cursor: pointer;
@@ -29,37 +29,39 @@
   transition: background-color 0.3s;
 }
 
-.style-write-btn:hover {
+.style-feed-write-btn:hover {
   background-color: #005bb5;
 }
 
 .style-feed-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
-  gap: 20px;
+  column-count: 4;              /* 한 줄 4개 */
+  column-gap: 20px;             /* 가로 간격 */
+  width: 100%;
+  margin-top: 20px;
 }
 
 .style-feed-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  display: inline-block;
+  width: 100%;                  /* column 에서 너비 100이 정답 */
+  margin-bottom: 20px;          /* 카드 세로 간격 */
+  background: none;
+  border-radius: 0; 
+  box-shadow: none;     
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 15px;
 }
 
-.style-image-wrapper {
+.style-feed-image-wrapper {
   position: relative;
 }
 
-.style-post-img {
+.style-feed-post-img {
   width: 100%;
-  height: 300px;
+  height: auto;                 /* 🔥 비율 유지! (중요) */
   object-fit: cover;
+  border-radius: 12px;
 }
 
-.style-multiple-count {
+.style-feed-multiple-count {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -78,7 +80,7 @@
   gap: 10px;
 }
 
-.style-profile-img {
+.style-feed-profile-img {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -86,19 +88,19 @@
   border: 2px solid #0077ff;
 }
 
-.style-user-info {
+.style-feed-user-info {
   display: flex;
   flex-direction: column;
 }
 
-.style-title {
+.style-feed-title {
   font-weight: 700;
   font-size: 16px;
   color: #222;
   margin-bottom: 3px;
 }
 
-.style-nickname {
+.style-feed-nickname {
   font-size: 18px;
   color: #666;
 }
@@ -109,7 +111,7 @@
   align-items: center;
 }
 
-.style-like-btn {
+.style-feed-like-btn {
   background: none;
   border: none;
   font-size: 18px;
@@ -123,11 +125,11 @@
   margin-left: auto;
 }
 
-.style-like-btn.liked {
+.style-feed-like-btn.liked {
   color: #e0245e; /* 진한 빨간색 */
 }
 
-.style-post-content {
+.style-feed-post-title {
   padding: 0 15px;
   font-size: 14px;
   color: #444;
@@ -136,7 +138,7 @@
   min-height: 40px;
 }
 
-.style-no-posts {
+.style-feed-no-posts {
   text-align: center;
   font-size: 18px;
   color: #999;
@@ -144,7 +146,7 @@
 }
 
 
-.style-category-bar {
+.style-feed-category-bar {
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -153,7 +155,7 @@
   background: #fff;
 }
 
-.style-category-btn {
+.style-feed-category-btn {
   background: none;
   border: none;
   font-size: 1rem;
@@ -163,11 +165,11 @@
   transition: 0.2s;
 }
 
-.style-category-btn:hover {
+.style-feed-category-btn:hover {
   color: #000;
 }
 
-.style-category-btn.active {
+.style-feed-category-btn.active {
   color: #000;
   border-bottom: 2px solid #000;
   padding-bottom: 4px;

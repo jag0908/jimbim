@@ -297,7 +297,7 @@ public class StyleService {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, Object> addReply(Integer spostId, String userid, String content) {
+    public Map<String, Object> addReply(Integer spostId, String userid, String content, Integer parentId) {
         Member member = memberRepository.findByUserid(userid);
         STYLE_post post = findBySpostId(spostId);
 

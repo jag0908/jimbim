@@ -41,12 +41,12 @@ public class CustomUserDetailService implements UserDetailsService {
                 member.getRrn(),
                 member.getTerms_agree(),
                 member.getPersonal_agree(),
+                member.getDeleteyn(),
                 member.getIndate(),
                 member.getBlacklist(),
                 member.getProvider(),
                 member.getMemberRoleList().stream().map(memberRole -> memberRole.name()).collect(Collectors.toList())  // List<MemberRole> 형자료에서 List<String>형태로 변환
         );
-        System.out.println("member : " + member);
         System.out.println("memberdto : " + memberDTO);
         return memberDTO;
         // UsernamePasswordAuthenticationToken 로 리턴

@@ -16,6 +16,7 @@ const initialState={
     profileMsg:'',
     terms_agree:'',
     personal_agree:'',
+    deleteyn:'',
     blacklist:'',
     indate:'',
     roleNames:[],
@@ -39,6 +40,7 @@ const getLoginUser=()=>{
         member.profileMsg = decodeURIComponent( member.profileMsg );
         member.terms_agree = decodeURIComponent( member.terms_agree );
         member.personal_agree = decodeURIComponent( member.personal_agree );
+        member.deleteyn = decodeURIComponent( member.deleteyn );
         member.blacklist = decodeURIComponent( member.blacklist );
         member.indate = decodeURIComponent( member.indate );
         member.roleNames = decodeURIComponent( member.roleNames );
@@ -66,6 +68,7 @@ export const userSlice = createSlice(
                 state.profileMsg = action.payload.profileMsg;
                 state.terms_agree = action.payload.terms_agree;
                 state.personal_agree = action.payload.personal_agree;
+                state.deleteyn = action.payload.deleteyn;
                 state.blacklist = action.payload.blacklist;
                 state.indate = action.payload.indate;
                 state.roleNames = action.payload.roleNames;
@@ -85,6 +88,7 @@ export const userSlice = createSlice(
                 state.profileMsg = '';
                 state.terms_agree = '';
                 state.personal_agree = '';
+                state.deleteyn = '';
                 state.blacklist = '';
                 state.indate = '';
                 state.roleNames = [];

@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CurrentTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -21,6 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @DynamicInsert
 @DynamicUpdate
+// soft delete를 구현하는 어노테이션 (DB에서 값이 삭제되지 않고 대신 deleteyn값만 바뀜)
+@SQLDelete(sql = "UPDATE member SET deleteyn = 'Y' WHERE member_id = ?")
+@Where(clause = "deleteyn = 'N'")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +47,9 @@ public class Member {
     //@Column(nullable = false)
     @ColumnDefault("'N'")
     private String personal_agree;
+
+    @ColumnDefault("'N'")
+    private String deleteyn;
 
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;

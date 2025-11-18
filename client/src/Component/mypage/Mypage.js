@@ -207,19 +207,19 @@ function Mypage() {
                                 {
                                     (type==='pwd')?
                                     (<>
-                                        <div className='field'>
+                                        <div className='field subLabel'>
                                             <label>현재 비밀번호</label>
                                             <input type="password" value={prePwd} onChange={
                                                 (e)=>{ setPrePwd(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <div className='field'>
+                                        <div className='field subLabel'>
                                             <label>새 비밀번호</label>
                                             <input type="password" value={pwd} onChange={
                                                 (e)=>{ setPwd(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <div className='field'>
+                                        <div className='field subLabel'>
                                             <label>비밀번호 확인</label>
                                             <input type="password" value={pwdChk} onChange={
                                                 (e)=>{ setPwdChk(e.currentTarget.value )}
@@ -319,7 +319,7 @@ function Mypage() {
                     <div className='field'>
                         <label>동의사항(선택)</label>
                         <div className='checkboxField'>
-                            <div className='checkboxLabel'>
+                            <div className='subLabel'>
                                 <label>약관 동의</label>
                             </div>
                             <div className='agreeCheckbox'>
@@ -334,7 +334,7 @@ function Mypage() {
                             </div>
                         </div> 
                         <div className='checkboxField'>
-                            <div className='checkboxLabel'>
+                            <div className='subLabel'>
                                 <label>개인정보 동의</label>
                             </div>
                             <div className='agreeCheckbox'>

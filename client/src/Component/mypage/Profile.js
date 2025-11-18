@@ -132,7 +132,7 @@ function Profile() {
                                         (preview)?
                                         (
                                         <div className='imgBox'>
-                                            <img src={preview} alt=''/>
+                                            <img src={preview} alt='' className='formimgpreview'/>
                                         </div>
                                         ):
                                         (<></>)
@@ -142,7 +142,7 @@ function Profile() {
                             (<>
                                 <div className="previewContainer">
                                     <div className='imgBox'>
-                                        <img src={member.profileImg} alt=''/>
+                                        <img src={member.profileImg} alt='' className='formimgpreview'/>
                                     </div>
                                 </div>
                             </>)

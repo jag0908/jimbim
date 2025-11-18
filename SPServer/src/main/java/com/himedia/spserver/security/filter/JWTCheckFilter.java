@@ -47,6 +47,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String rrn = (String) claims.get("rrn");
             String terms_agree = (String) claims.get("terms_agree");
             String personal_agree = (String) claims.get("personal_agree");
+            String deleteyn = (String) claims.get("deleteyn");
             Object indateObj = claims.get("indate");
             Timestamp indate = null;
             if (indateObj instanceof Long) {
@@ -58,7 +59,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             List<String> roleNames = (List<String>) claims.get("roleNames");
 
             MemberDTO memberDTO = new MemberDTO(userid, pwd, member_id, name, profileImg, profileMsg, phone,
-                    email, rrn, terms_agree, personal_agree, indate, blacklist, provider, roleNames
+                    email, rrn, terms_agree, personal_agree, deleteyn, indate, blacklist, provider, roleNames
             );
 
             UsernamePasswordAuthenticationToken authenticationToken

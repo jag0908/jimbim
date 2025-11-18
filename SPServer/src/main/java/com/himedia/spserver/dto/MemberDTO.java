@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class MemberDTO extends User {
     public MemberDTO(  // 생성자
                        String username, String password, Integer member_id, String name, String profileImg, String profileMsg, String phone,
-                       String email, String rrn, String terms_agree, String personal_agree, Timestamp indate, Integer blacklist, String provider,
+                       String email, String rrn, String terms_agree, String personal_agree, String deleteyn, Timestamp indate, Integer blacklist, String provider,
                        List<String> roleNames
     ) {
             super(   // 부모클래스 생성자 호출
@@ -26,7 +26,7 @@ public class MemberDTO extends User {
             this.userid = username; this.pwd = password; this.member_id = member_id;
             this.name = name; this.profileImg = profileImg; this.profileMsg = profileMsg;
             this.phone = phone; this.email = email; this.rrn = rrn;
-            this.terms_agree = terms_agree; this.personal_agree = personal_agree; this.indate = indate;
+            this.terms_agree = terms_agree; this.personal_agree = personal_agree; this.deleteyn = deleteyn; this.indate = indate;
             this.blacklist = blacklist; this.provider = provider; this.roleNames = roleNames;
     }
 
@@ -41,6 +41,7 @@ public class MemberDTO extends User {
     private String rrn; //주민번호
     private String terms_agree;
     private String personal_agree;
+    private String deleteyn;
     private Timestamp indate;
     private Integer blacklist;
     private String provider;
@@ -62,6 +63,7 @@ public class MemberDTO extends User {
         dataMap.put("rrn",rrn);
         dataMap.put("terms_agree",terms_agree);
         dataMap.put("personal_agree",personal_agree);
+        dataMap.put("deleteyn",deleteyn);
         dataMap.put("indate",indate);
         dataMap.put("blacklist",blacklist);
         dataMap.put("provider",provider);

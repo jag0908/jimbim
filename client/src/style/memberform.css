@@ -80,10 +80,13 @@
 
 .checkboxField{
     display: flex;
-    margin: 6px;
 }
-.checkboxLabel{
+.subLabel{
     width: 120px;
+}
+.subLabel label{
+    font-size: 95%;
+    padding: 3px;
 }
 .formBtns{
     margin-top: 0px;

@@ -26,7 +26,6 @@ public class ChatService {
                 cr.findBySellerIdAndBuyerId(reqDto.getSellerId(), reqDto.getBuyerId());
 
         ChatRoomDto resDto = new ChatRoomDto();
-
         // 2. 이미 존재하면 그대로 반환
         if (chatRoomEntity.isPresent()) {
             ChatRoom room = chatRoomEntity.get();
@@ -109,20 +108,20 @@ public class ChatService {
         List<ChatRoomDto> result = new ArrayList<>();
 
         List<ChatRoom> chatRoomList = cr.findAllBySellerId(reqDto.getSellerId());
-        ChatRoomDto resDto = new ChatRoomDto();
+        System.out.println("chatRoomList size = " + chatRoomList.size());
         for(ChatRoom chatRoom : chatRoomList) {
+            ChatRoomDto resDto = new ChatRoomDto();
             resDto.setChatRoomId(chatRoom.getChatRoomId());
             resDto.setBuyerId(chatRoom.getBuyerId());
             resDto.setBuyerName(chatRoom.getBuyerName());
-            resDto.setSellerProfileImg(chatRoom.getSellerProfileImg());
-            resDto.setBuyerId(chatRoom.getBuyerId());
-            resDto.setBuyerName(chatRoom.getBuyerName());
             resDto.setSellerId(chatRoom.getSellerId());
+            resDto.setSellerName(chatRoom.getSellerName());
+            resDto.setSellerProfileImg(chatRoom.getSellerProfileImg());
+            resDto.setPostId(chatRoom.getPostId());
             resDto.setPostTitle(chatRoom.getPostTitle());
 
             result.add(resDto);
         }
-
         return result;
     }
 }

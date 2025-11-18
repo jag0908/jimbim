@@ -36,7 +36,7 @@ public class MypageController {
     @GetMapping("/getAddressList")
     public HashMap<String, Object> getAddressList(@RequestParam("member_id") String member_id) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("getAddress : "+ mys.getAddressList( member_id ));
+        //System.out.println("getAddress : "+ mys.getAddressList( member_id ));
         result.put("addressList", mys.getAddressList( member_id ));
         return result;
     }
@@ -47,6 +47,30 @@ public class MypageController {
         System.out.println("deleteAddress : "+ address_id);
         mys.deleteAddress( address_id );
         result.put("msg", "ok");
+        return result;
+    }
+
+    @GetMapping("/getBuyingList")
+    public HashMap<String, Object> getBuyingList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shBuyingList", mys.getShBuyingList( member_id ));
+        result.put("shopBuyingList", mys.getShopBuyingList( member_id ));
+        return result;
+    }
+
+    @GetMapping("/getSellingList")
+    public HashMap<String, Object> getSellingList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shSellingList", mys.getShSellingList( member_id ));
+        result.put("shopSellingList", mys.getShopSellingList( member_id ));
+        return result;
+    }
+
+    @GetMapping("/getZzimList")
+    public HashMap<String, Object> getZzimList(@RequestParam("member_id") String member_id) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("shZzimList", mys.getShZzimList( member_id ));
+        result.put("shopZzimList", mys.getShopZzimList( member_id ));
         return result;
     }
 }

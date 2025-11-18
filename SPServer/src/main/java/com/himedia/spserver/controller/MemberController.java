@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +21,6 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +34,8 @@ public class MemberController {
 
     @Autowired
     MemberService ms;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/idcheck")   // id 중복체크
     public HashMap<String, Object> idcheck(@RequestParam("userid") String userid ) {
@@ -53,6 +55,52 @@ public class MemberController {
         result.put("msg", "ok");
         return result;
     }
+
+    @PostMapping("/pwdcheck")   // 비밀번호 체크
+    public HashMap<String, Object> pwdcheck(@RequestParam("userid") String userid, @RequestParam("pwd") String pwd) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMember( userid );
+        if( passwordEncoder.matches(pwd, member.getPwd()) )
+            result.put("msg", "ok");
+        else
+            result.put("msg", "notok");
+        return result;
+    }
+
+
+    @PostMapping("/updateMember")      // 회원정보수정
+    public HashMap<String, Object> updateMember( @RequestBody Member member ) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("member", ms.updateMember(member));
+        return result;
+    }
+
+    @PostMapping("/updatePwd")
+    public HashMap<String, Object> updatePwd( @RequestBody Member member ) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.updatePwd(member);
+        result.put("msg", "ok");
+
+        return result;
+    }
+
+    @PostMapping("/updateAgree")
+    public HashMap<String, Object> updateAgree( @RequestParam("userid") String userid, @RequestParam("agree") String agree, @RequestParam("yn") String yn) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.updateAgree(userid, agree, yn);
+        result.put("msg", "ok");
+
+        return result;
+    }
+
+    @GetMapping("/getMember")   // userslice 수정으로 이제 로그인 유저 값이 필요하면 /getMember를 써야함
+    public HashMap<String, Object> getMember( @RequestParam("userid") String userid ) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.getMember( userid );
+        result.put("member", member);
+        return result;
+    }
+
 
     /// /////////////////// 파일업로드 /////////////////////////////
 

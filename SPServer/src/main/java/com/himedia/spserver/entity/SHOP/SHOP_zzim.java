@@ -14,9 +14,9 @@ public class SHOP_zzim {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    SHOP_post post_id;
+    SHOP_post post;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    Member member;
 }

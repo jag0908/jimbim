@@ -1,4 +1,5 @@
 package com.himedia.spserver.entity;
+import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
 import com.himedia.spserver.entity.SH.SH_post;
 import jakarta.persistence.*;
@@ -26,6 +27,9 @@ public class File {
     @JoinColumn(name = "spostId") // STYLE_post의 PK (spost_id)와 연결
     private STYLE_post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cpostId") // C_post의 PK (cpost_id)와 연결
+    private C_post cpost;
 
     @CreationTimestamp
     @Column( columnDefinition="DATETIME default now()" )

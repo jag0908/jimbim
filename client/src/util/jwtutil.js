@@ -69,6 +69,10 @@ const beforeRes= async (res)=>{
         loginUser.refreshToken = result.data.refreshToken;
         cookies.set('user', JSON.stringify({
             userid: loginUser.userid,
+            pwd: loginUser.pwd,
+            member_id: loginUser.member_id,
+            provider: loginUser.provider,
+            roleNames: loginUser.roleNames,
             accessToken: result.data.accessToken,
             refreshToken: result.data.refreshToken,
         }), { path: '/' });

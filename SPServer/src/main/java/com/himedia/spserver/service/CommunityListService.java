@@ -1,15 +1,20 @@
 package com.himedia.spserver.service;
 
 import com.himedia.spserver.entity.Community.C_post;
+import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.repository.CommunityListRepository;
+import com.himedia.spserver.repository.FileRepository;
 import com.himedia.spserver.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,19 +22,19 @@ import java.util.Optional;
 public class CommunityListService {
 
     @Autowired
+    S3UploadService sus;
+
+    @Autowired
     private CommunityListRepository cr;
 
     @Autowired
     private MemberRepository mr;
 
+    @Autowired
+    private FileRepository fr;
+
     // 게시글 저장
     public void saveCommunity(C_post cpost) {
-        if (cpost.getMember() == null) {
-            Member anonymous = new Member();
-            anonymous.setUserid("익명");
-            anonymous.setName("익명");
-            cpost.setMember(anonymous);
-        }
         cr.save(cpost);
     }
 
@@ -42,7 +47,7 @@ public class CommunityListService {
     // 게시글 수정
     public HashMap<String, Object> updateCommunity(C_post post) {
         HashMap<String, Object> result = new HashMap<>();
-        Optional<C_post> optionalPost = cr.findById(post.getCpost_id());
+        Optional<C_post> optionalPost = cr.findById(post.getCpostId());
 
         if (optionalPost.isPresent()) {
             C_post existingPost = optionalPost.get();
@@ -67,7 +72,7 @@ public class CommunityListService {
         if (categoryId == null || categoryId == 0) {
             list = cr.findAll(pageable);
         } else {
-            list = cr.findByCategoryId(categoryId, pageable);
+            list = cr.findByCategory_categoryId(categoryId, pageable);
         }
 
         result.put("communityList", list.getContent());
@@ -103,5 +108,28 @@ public class CommunityListService {
             return true;
         }
         return false;
+    }
+
+    public C_post getNewCommunity() {
+        return cr.findFirstByOrderByCpostIdDesc();
+    }
+
+    public void fileUpload(List<MultipartFile> images, String cpostId) throws IOException {
+        C_post post = cr.findById(Integer.parseInt(cpostId)).get();
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile image : images) {
+                String fileUrl = sus.saveFile(image); // S3 업로드
+
+                File postFile = new File();
+                postFile.setCpost(post);
+                postFile.setPath(fileUrl); // S3 URL 저장
+                postFile.setOriginalname(image.getOriginalFilename());
+                postFile.setSize(Long.valueOf(image.getSize())); // 파일 크기
+                postFile.setContentType(image.getContentType()); // 파일 타입
+
+                fr.save(postFile); // FileRepository로 저장
+            }
+        }
+
     }
 }

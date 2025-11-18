@@ -4,6 +4,10 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
 import '../../style/CommunityWrite.css';
+// 수정사항 : Ctrl + F '수정' 찾아가기
+
+// 수정필요 : 이미지 뜨지않음
+// 링크 클릭시 undefind로 이동됨
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -19,7 +23,12 @@ function WriteCommunity() {
     const [imgSrc, setImgSrc] = useState('');
     const [imgStyle, setImgStyle] = useState({ display: 'none' });
     const [selectedCategoryId, setSelectedCategoryId] = useState(0);
-    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState('N');
+
+    const [fileArr, setFileArr] = useState([]);
+    const [fileLength, setFileLength] = useState(0);
+    
+    const [previewUrls, setPreviewUrls] = useState([]); // 이미지 미리보기 URL 배열
 
     const navigate = useNavigate();
 
@@ -33,47 +42,115 @@ function WriteCommunity() {
         { id: 7, name: "핫딜" }
     ];
 
+    // 수정사항 : 미로그인시 쫓아냄, 
     useEffect(() => {
         if (loginUser && loginUser.userid) {
             setUserid(loginUser.userid);
+        }else{
+            alert("로그인이 필요한 서비스입니다")
+            navigate("/")
         }
     }, [loginUser]);
 
-    function onFileUpload(e) {
+    // 파일 미리보기 만들기
+    function fileupload(e) {
+        if(!e.target) {return}  // input file에서 파일을 올리지 않으면 취소됨
+
+        let newfiles = Array.from(e.target.files);  // newfiles :  input file 에서 새로 올린 파일
+
+        const allFiles = [...fileArr, ...newfiles]; // 기존 파일(allFiles)과 새 파일(newfiles) 합치기
+
+        if (allFiles.length > 10) {
+            alert("최대 10개까지 선택 가능합니다.");
+            e.target.value = null; // 단 최대개수를 초과하면 초기화
+            return;
+        };
+
+        setFileLength(allFiles.length); // 최대개수를 초과하지 않았으면 state 변수에 저장
+        setFileArr(allFiles);           // fileLength : 파일배열의 수, fileArr : 파일배열의 실제값
+
+        
+        const urls = allFiles.map(file => URL.createObjectURL(file));   // S3에 업로드하지 않고 브라우저에서 바로 미리보기 URL 생성
+        setPreviewUrls(urls);                                           // state변수 previewUrls로 url 확인가능
+
+        console.log('allfiles', allFiles, 'urls', urls)
+        e.target.value = null;      // 실제 업로드 될 내용은 이미 fileArr에 담았으므로, input file에 있는 내용은 비워버려도 됨
+        // 비우지 않을 경우 파일을 업로드 >> 업로드 취소 >> 취소한 파일 다시 업로드 할때 오류가 생김
+    };
+
+    // 파일 삭제
+    const handleRemoveFile = (index) => {
+        const newFiles = fileArr.filter((_, i) => i !== index);
+        setFileArr(newFiles);       // fileArr에서 파일 내용을 하나씩 확인하여 삭제버튼을 누른쪽의 파일을 찾아 fileArr에서 지움
+
+        // 미리보기도 같이 갱신
+        const newUrls = previewUrls.filter((_, i) => i !== index);
+        setPreviewUrls(newUrls);
+        setFileLength(fileLength-1)     // 페이지에서 n/10 형태로 표기될 파일 업로드 제한수
+    };
+
+    // 게시물 생성시 파일 S3에 업로드
+    async function createFormData(fileArr) {
+        // createFormData()는 onSubmit()의 안에서 같이 실행
+        // 즉 게시물 생성되는 시기에 이미지가 업로드 된다는 뜻
+        if(!fileArr[0].name) return;    // fileArr에 값이 없을경우 createFormData()는 실행되지 않음
+
         const formData = new FormData();
-        formData.append('image', e.target.files[0]);
-        jaxios.post(`${baseURL}/community/fileupload`, formData)
-            .then((result) => {
-                setSavefilename(result.data.savefilename);
-                setImage(result.data.image);
-                setImgSrc(`${baseURL}/images/${result.data.savefilename}`);
-                setImgStyle({ display: 'block', width: '250px' });
+        // 파일 데이터 저장
+        Object.values(fileArr).forEach((fileArr) => formData.append("imageList", fileArr));
+        // spring에서 (@RequestParam("imageList") MultipartFile[] file) 의 형태로 fileArr 값을 사용할 수 있음
+
+        try{
+            await jaxios.get("/api/communityList/getNewCommunity", formData)
+            .then((result)=> {
+                console.log(result.data);
+                formData.append("cpostId", result.data.community.cpostId);
+                // result.data 의 내용 : imageList(경로가 제외된 파일이름), savefilenameList(경로가 포함된 파일이름)
             })
-            .catch((err) => { console.error(err); })
+
+            await jaxios.post("/api/communityList/fileupload", formData)
+            .then((result)=> {
+                
+            })
+        }catch(err){
+            console.error(err)
+        }
     }
 
-    function onSubmit() {
+    async function onSubmit() {
         if (!title) return alert('제목을 입력하세요');
         if (!content) return alert('내용을 입력하세요');
         if (!selectedCategoryId) return alert('카테고리를 선택하세요');
 
-        // 익명 선택 시 userid를 '익명'으로 설정
+        
         const postData = {
-            userid: isAnonymous ? '익명' : userid,
-            pass,
+            // 수정사항 : C_post 엔티티에서 필요한건 객체데이터 Member 이기 때문에 
+            // 문자열데이터 userid 는 @RequestBody C_post cpost 로 같이 받을수 없음
+            // 객체데이터가 담겨있는 loginUser를 넘겨줌
+            member:loginUser,
             title,
             content,
-            image,
-            savefilename,
+            // pass,            <<      C_post 엔티티에 있는 데이터들만 spring에서 @RequestBody C_post cpost 로 받을수 있으며
+            // image,           <<      pass, image, savefilename은 C_post 엔티티에 없기때문에
+            // savefilename,    <<      존재 이유가 없음
+
+            // 수정전 : 익명 선택 시 userid를 '익명'으로 설정
+            // 수정후 : isAnonymous 값 자체를 입력함
+            isAnonymous,
             categoryId: selectedCategoryId
         };
 
-        axios.post(`${baseURL}/community/CommunityList`, postData)
+        await jaxios.post(`api/communityList/createCommunity`, postData)
             .then(() => {
-                alert('게시물이 작성되었습니다');
-                navigate('/communityList');
             })
             .catch((err) => { console.error(err) });
+            
+        await createFormData(fileArr)
+
+        
+        alert('게시물이 작성되었습니다');
+        navigate('/communityList');
+        
     }
 
     return (
@@ -88,7 +165,9 @@ function WriteCommunity() {
                 )}
                 <div>
                     <label>
-                        <input type='checkbox' checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} />
+                        {/* 수정전 : checkbox의 true 또는 false로 나오는 체크값(e.target.checked) 자체를 setIsAnonymous로 넣음 */}
+                        {/* 수정후 : checkbox의 체크값(e.target.checked) 이 true면 'Y' false면 'N' 을 넣음*/}
+                        <input type='checkbox' onChange={(e) => setIsAnonymous(e.target.checked ? 'Y' : 'N')} />
                         익명으로 작성
                     </label>
                 </div>
@@ -110,13 +189,21 @@ function WriteCommunity() {
                 <label>내용</label>
                 <textarea rows='10' value={content} onChange={(e) => setContent(e.currentTarget.value)}></textarea>
             </div>
-            <div className='field'>
-                <label>이미지</label>
-                <input type='file' onChange={onFileUpload} />
-            </div>
-            <div className='field'>
-                <label>이미지 미리보기</label>
-                <div><img src={imgSrc} style={imgStyle} alt="" /></div>
+            <div className='inputWrap file'>
+                <label htmlFor="dataFile">+ <span>{fileLength}/10</span></label>
+                {/* 파일업로드 인풋 */}
+                <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} multiple />
+                {/* 미리보기 이미지 */}
+                <div className="previewContainer">
+                    {previewUrls.map((url, i) => (
+                        <div className='imgBox' key={i} >
+                            <img src={url} alt={`preview-${i}`} />
+                            <div className={`removeBtn removeBtn_${i}`}onClick={()=> {
+                                handleRemoveFile(i);
+                            }}>X</div>
+                        </div>    
+                    ))}
+                </div>
             </div>
             <div className='btns'>
                 <button onClick={onSubmit}>작성완료</button>

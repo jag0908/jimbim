@@ -1,6 +1,7 @@
 package com.himedia.spserver.repository;
 
 import com.himedia.spserver.dto.CommunityViewDTO;
+import com.himedia.spserver.entity.Community.C_Category;
 import com.himedia.spserver.entity.Community.C_post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface CommunityListRepository extends JpaRepository<C_post, Integer> {
 
     @Query("SELECT new com.himedia.spserver.dto.CommunityViewDTO(" +
-            "p.cpost_id, p.title, p.content, p.c_image, p.readcount, " +
+            "p.cpostId, p.title, p.content, p.c_image, p.readcount, " +
             "c.categoryName, m.userid, p.indate) " +
             "FROM C_post p " +
             "LEFT JOIN p.category c " +
@@ -20,7 +21,7 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
     Page<CommunityViewDTO> findAllDTO(Pageable pageable);
 
     @Query("SELECT new com.himedia.spserver.dto.CommunityViewDTO(" +
-            "p.cpost_id, p.title, p.content, p.c_image, p.readcount, " +
+            "p.cpostId, p.title, p.content, p.c_image, p.readcount, " +
             "c.categoryName, m.userid, p.indate) " +
             "FROM C_post p " +
             "LEFT JOIN p.category c " +
@@ -30,5 +31,7 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
 
     long countByCategoryCategoryId(Integer categoryId);
 
-    Page<C_post> findByCategoryId(Integer categoryId, Pageable pageable);
+    Page<C_post> findByCategory_categoryId(Integer categoryId, Pageable pageable);
+
+    C_post findFirstByOrderByCpostIdDesc();
 }

@@ -2,6 +2,7 @@ package com.himedia.spserver.controller;
 
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.service.CommunityListService;
+import com.himedia.spserver.service.S3UploadService;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -54,7 +56,7 @@ public class CommunityListController {
 
     // 게시글 작성
     @PostMapping("/createCommunity")
-    public HashMap<String, Object> createCommunity(@RequestBody C_post cpost) {
+    public HashMap<String, Object> createCommunity(@RequestBody C_post cpost){
         HashMap<String, Object> result = new HashMap<>();
         try {
             cs.saveCommunity(cpost);
@@ -85,7 +87,28 @@ public class CommunityListController {
         return result;
     }
 
+    // 가장 최근 게시글 가져오기(날짜 제일 최근인 게시물)
+    @GetMapping("/getNewCommunity")
+    public HashMap<String, Object> getNewCommunity() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("community", cs.getNewCommunity());
+        return result;
+    }
+
     // 파일 업로드
+    @PostMapping("/fileupload")
+    public HashMap<String, Object> fileUpload(@RequestParam("imageList") List<MultipartFile> file, @RequestParam("cpostId") String cpostId) {
+        HashMap<String , Object> result = new HashMap<>();
+        try {
+            cs.fileUpload(file, cpostId);
+            result.put("msg", "ok");
+        } catch (IllegalStateException | IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /*
     @PostMapping("/fileupload")
     public HashMap<String, Object> uploadFile(@RequestParam("image") MultipartFile file) {
         HashMap<String, Object> result = new HashMap<>();
@@ -110,4 +133,5 @@ public class CommunityListController {
         }
         return result;
     }
+    */
 }

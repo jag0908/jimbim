@@ -20,7 +20,10 @@ function EditAddressForm(props) {
 
     // 모달창을 위한 style
     const customStyles = {
-        overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", },
+        overlay: {
+            backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", 
+            zIndex: "2000"
+        },
         content: {
             left: "0",
             margin: "auto",
@@ -73,7 +76,7 @@ function EditAddressForm(props) {
     return (
         <div>
             <div className='field'>
-                <label>저장할 이름</label>
+                <label>주소명</label>
                 <input type="text"  value={address_name} onChange={
                     (e)=>{ setAddress_name(e.currentTarget.value )}
                 }/>
@@ -83,13 +86,17 @@ function EditAddressForm(props) {
                 <input type="text" value={address_zipnum} onChange={
                     (e)=>{ setAddress_zipnum(e.currentTarget.value )}
                 } readOnly/>
-                <button onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
+                <div className='btns'>
+                    <button onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
+                </div>
             </div>
 
             <div>
                 <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
                     <DaumPostcode onComplete={completeHandler} /><br />
-                    <button onClick={()=>{ setIsOpen(false) }}>CLOSE</button>
+                    <div className='btns'>
+                        <button onClick={()=>{ setIsOpen(false) }}>CLOSE</button>
+                    </div>
                 </Modal>
             </div>
 
@@ -106,8 +113,10 @@ function EditAddressForm(props) {
                     (e)=>{ setAddress_detail(e.currentTarget.value )}
                 }/>
             </div>
-            <button onClick={()=>{onSubmit()}}>{(address_id>=1)?(<>수정</>):(<>추가</>)}</button>
-            <button onClick={()=>{setOnEditForm(address_id)}}>취소</button>
+            <div className='btns'>
+                <button onClick={()=>{onSubmit()}}>{(address_id>=1)?(<>수정</>):(<>추가</>)}</button>
+                <button onClick={()=>{setOnEditForm(address_id)}}>취소</button>
+            </div>
         </div>
     )
 }

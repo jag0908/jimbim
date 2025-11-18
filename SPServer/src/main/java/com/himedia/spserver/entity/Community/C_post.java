@@ -4,6 +4,8 @@ import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -12,15 +14,19 @@ import java.sql.Timestamp;
 public class C_post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cpost_id;
+    private Integer cpostId;
 
     private Integer cpostNum;
     private String title;
     private String content;
+    @CreationTimestamp
+    @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
     private String c_image;
     private String c_like;
     private String c_reply;
+    @ColumnDefault("'N'")
+    private String isAnonymous; // 익명글 여부, Y면 익명, N이면 익명아님
     private Integer readcount;
 
     @ManyToOne

@@ -37,6 +37,25 @@ public class MemberService {
         mr.save( member );
     }
 
+    public Member updateMember(Member member) {
+        Member updateMem = mr.findByUserid( member.getUserid());
+
+        if(!"".equals(member.getName()) && member.getName()!=null ) updateMem.setName(member.getName());
+        if(!"".equals(member.getEmail()) && member.getEmail()!=null) updateMem.setEmail(member.getEmail());
+        if(!"".equals(member.getPhone()) && member.getPhone()!=null) updateMem.setPhone(member.getPhone());
+        if(!"".equals(member.getRrn()) && member.getRrn()!=null) updateMem.setRrn(member.getRrn());
+        if(!"".equals(member.getProfileImg()) && member.getProfileImg()!=null) updateMem.setProfileImg(member.getProfileImg());
+        if(!"".equals(member.getProfileMsg()) && member.getProfileMsg()!=null) updateMem.setProfileMsg(member.getProfileMsg());
+
+        return updateMem;
+    }
+
+    public void updatePwd(Member member) {
+        Member updateMem = mr.findByUserid( member.getUserid());
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        updateMem.setPwd( pe.encode( member.getPwd()));
+    }
+
     public void kakaoIdFirstEdit(Member member) {
         Member updateMem = mr.findByUserid( member.getUserid());
 
@@ -86,5 +105,16 @@ public class MemberService {
         Member member = mr.findByUserid(userid);
         BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         member.setPwd( pe.encode( pwd));
+    }
+
+    public void updateAgree(String userid, String agree, String yn) {
+        Member member = mr.findByUserid(userid);
+        yn = yn.equals("Y")?"N":"Y";
+        if(agree.equals("terms")){
+            member.setTerms_agree(yn);
+        }
+        if(agree.equals("personal")){
+            member.setPersonal_agree(yn);
+        }
     }
 }

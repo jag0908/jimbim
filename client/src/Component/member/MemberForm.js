@@ -321,7 +321,7 @@ function MemberForm(props) {
                     </div>
                 </div>
             </div>
-            <div className="btns formBtns">
+            <div className="formBtns">
                 <button onClick={()=>{onSubmit()}}>완료</button>
                 <button onClick={()=>{navigate(back)}}>취소</button>
             </div>

@@ -4,3 +4,11 @@ article .field {display: flex;}
 article input {width: 120px; height: 22px;}
 
 article label {min-width: 120px;}
+
+#kakaobutton {
+    background:yellow; color:black; font-weight:bold; width:100%
+}
+#kakaobutton:hover {
+  background-color: #dddd00;
+  transform: translateY(-2px);
+}

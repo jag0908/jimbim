@@ -194,6 +194,7 @@ function Mypage() {
             <div style={{display:'flex'}}>
                 <SideMenu/>
                 <div className='mypage'>
+                    <div className='formtitle'>로그인 정보</div>
                     {
                         (loginUser.provider==='KAKAO')?
                         (null):
@@ -225,14 +226,14 @@ function Mypage() {
                                                 (e)=>{ setPwdChk(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <div className='btns'>
+                                        <div className='formBtns'>
                                             <button onClick={()=>{updatePwd()}}>수정</button>
                                             <button onClick={()=>{edit('')}}>취소</button>
                                         </div>
                                     </>):
                                     (<>
                                         <div>********</div>
-                                        <div className='btns'>
+                                        <div className='formBtns'>
                                             <button onClick={()=>{edit('pwd')}}>변경</button>
                                         </div>
                                     </>)
@@ -248,14 +249,14 @@ function Mypage() {
                                 <input type="text" className='inputemail' value={email} onChange={(e)=>{
                                     setEmail( e.currentTarget.value )
                                 }}/>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.email}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('email')}}>변경</button>
                                 </div>
                             </>)
@@ -277,14 +278,14 @@ function Mypage() {
                                         setPhone3( e.currentTarget.value )
                                     }}/>
                                 </div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.phone}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('phone')}}>변경</button>
                                 </div>
                             </>)
@@ -303,14 +304,14 @@ function Mypage() {
                                         setRrn2( e.currentTarget.value );
                                     }}/> * * * * * * 
                                 </div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.rrn}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('rrn')}}>변경</button>
                                 </div>
                             </>)
@@ -356,7 +357,7 @@ function Mypage() {
                             (member.indate.substring(0,10)):(null)
                         }</div>
                     </div>
-                    <div className='btns'>
+                    <div className='formBtns'>
                         <button onClick={()=>{navigate('/deleteMember')}} style={{backgroundColor:"red"}}>회원탈퇴</button>
                     </div>
                 </div>

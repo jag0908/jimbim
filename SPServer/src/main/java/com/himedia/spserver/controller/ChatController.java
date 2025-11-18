@@ -24,6 +24,10 @@ public class ChatController {
     @PostMapping("/chat/createChatRoom")
     public HashMap<String, Object>  createChatRoom(@RequestBody ChatRoomDto reqDto) {
         HashMap<String, Object> result = new HashMap<>();
+        if(reqDto.getSellerId().equals(reqDto.getBuyerId())) {
+            result.put("msg", "notKk");
+            return result;
+        }
 
         ChatRoomDto resDto = cs.createChatRoom(reqDto);
 

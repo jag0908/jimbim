@@ -102,8 +102,9 @@ function ShView() {
     // 채팅
     // oneToOneChat
     // chatRoomList
-    const [openChatState, setOpentChatState] = useState(null);
+    const [openChatState, setOpenChatState] = useState(null);
     const [chatRoomData, setChatRoomData] = useState(null);
+    const [chatListData,setChatListData] = useState(null);
     function openChat() {
         setDisplayYN({display: "flex"});
         if(window.confirm("판매자와 연락 하시겠습니까?")) {
@@ -118,7 +119,7 @@ function ShView() {
             }).then((result)=> {
                     console.log(result);
                     if(result.data.msg == "ok") {
-                        setOpentChatState("oneToOneChat");
+                        setOpenChatState("oneToOneChat");
                         setChatRoomData(result.data.resDto);
                     } else {
                         return alert("요청이 실패하였습니다.");
@@ -128,15 +129,20 @@ function ShView() {
     }
     function openChatRoomList() {
         setDisplayYN({display: "flex"});
-        jaxios.get("/api/chat/createChatRoom").then((result)=> {
+        jaxios.get("/api/chat/chatRoomList").then((result)=> {
             console.log(result);
             if(result.data.msg == "ok") {
-                setOpentChatState("chatRoomList");
-                setChatRoomData(result.data.resDto);
+                setOpenChatState("chatRoomList");
+                setChatListData(result.data.resDto);
             } else {
                 return alert("요청이 실패하였습니다.");
             }
         }).catch(err=>console.error(err));
+    }
+    function openClickChat(chatRoom) {
+        setDisplayYN({display: "flex"});
+        setChatRoomData(chatRoom);
+        setOpenChatState("oneToOneChat");
     }
 
   return (
@@ -343,7 +349,7 @@ function ShView() {
             loginUser?.accessToken &&
             postDetail &&
             openChatState &&
-            chatRoomData &&
+            
             <PopupLayer 
                 disPlayYN={disPlayYN} 
                 token={loginUser.accessToken} 
@@ -351,7 +357,10 @@ function ShView() {
                 sellerId={postDetail.member.memberId} 
                 buyerId={loginUser.member_id} 
                 openChatState={openChatState}
+                setOpenChatState={setOpenChatState}
                 chatRoomData={chatRoomData}
+                chatListData={chatListData}
+                onOpenClickChat={openClickChat}
             />
         }
     </div>
@@ -364,8 +373,7 @@ function Lodding() {
 }
 
 // 팝업창열림
-function PopupLayer({disPlayYN, openChatState, loginUser, chatRoomData}) {
-    
+function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chatRoomData, chatListData, onOpenClickChat}) {           
     return (
         <>
             <div className='popupWrap' style={disPlayYN}>
@@ -376,17 +384,15 @@ function PopupLayer({disPlayYN, openChatState, loginUser, chatRoomData}) {
                 {
                     openChatState && 
                     openChatState=="oneToOneChat" &&
-                    chatRoomData && 
                     
-                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} />
-                    
-                    
+                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser}/>
+
                 }
                 {
                     openChatState && 
                     openChatState=="chatRoomList" &&
-                    // chatRoomData && 
-                    <ChatRoomList />
+
+                    <ChatRoomList chatListData={chatListData} loginUser={loginUser} setOpenChatState={setOpenChatState} onOpenClickChat={onOpenClickChat}/>
                 }
             </div> 
         </>
@@ -394,84 +400,47 @@ function PopupLayer({disPlayYN, openChatState, loginUser, chatRoomData}) {
 }
 
 // 채팅룸 리스트
-function ChatRoomList({buyerId}) {
-    const baseURL = process.env.REACT_APP_BASE_URL;
+function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickChat}) {
 
-    useEffect(()=> {
-        jaxios.get("/api/chat/viewChatList", {params: {buyerId}})
-            .then((result)=> {
-                console.log(result);
-            }).catch(err=>console.error(err));
-    }, [])
+    // useEffect(()=> {
+    //     jaxios.get("/api/chat/chatRoomList", {params: {buyerId}})
+    //         .then((result)=> {
+    //             console.log(result);
+    //         }).catch(err=>console.error(err));
+    // }, [])
 
     return (
-        <>
-            <div className='pChatListWrap'>
-                <div className='pChatList'>
-                    <div className='chl left'>
-                        <img src={`${baseURL}/sh_img/${1}.png`} alt="이미지" />
-                    </div>
-                    <div className='chl center'>
-                        <div className='pdTitle'>
-                            포스트타이틀입니다.
-                        </div>
-                        <div className='rMsg'>
-                            최근 메세지입니다.
-                        </div>
-                    </div>
-                    <div className='chl right'>
-                        <div className='rTime'>
-                            오후 5:44
-                        </div>
-                        <div className='alram'>
-                            1
-                        </div>
-                    </div>
-                </div> 
-                <div className='pChatList'>
-                    <div className='chl left'>
-                        <img src={`${baseURL}/sh_img/${2}.png`} />
-                    </div>
-                    <div className='chl center'>
-                        <div className='pdTitle'>
-                            포스트타이틀입니다.
-                        </div>
-                        <div className='rMsg'>
-                            최근 메세지입니다.
-                        </div>
-                    </div>
-                    <div className='chl right'>
-                        <div className='rTime'>
-                            오후 5:44
-                        </div>
-                        <div className='alram'>
-                            1
-                        </div>
-                    </div>
-                </div> 
-                <div className='pChatList'>
-                    <div className='chl left'>
-                        <img src={`${baseURL}/sh_img/${3}.png`} />
-                    </div>
-                    <div className='chl center'>
-                        <div className='pdTitle'>
-                            포스트타이틀입니다.
-                        </div>
-                        <div className='rMsg'>
-                            최근 메세지입니다.
-                        </div>
-                    </div>
-                    <div className='chl right'>
-                        <div className='rTime'>
-                            오후 5:44
-                        </div>
-                        <div className='alram'>
-                            1
-                        </div>
-                    </div>
-                </div>   
-            </div>
-        </>
+        <div className='pChatListWrap'>
+                {
+                    chatListData && chatListData.map((chatRoom, i)=> {
+                        return(
+                            
+                            <div className='pChatList' key={i} onClick={()=>{onOpenClickChat(chatRoom)}}>
+                                <div className='chl left'>
+                                    <img src={chatRoom.sellerProfileImg} alt="이미지" />
+                                </div>
+                                <div className='chl center'>
+                                    <div className='pdTitle'>
+                                        {chatRoom.buyerName}
+                                    </div>
+                                    <div className='rMsg'>
+                                        최근 메세지입니다.
+                                    </div>
+                                </div>
+                                <div className='chl right'>
+                                    <div className='rTime'>
+                                        오후 5:44
+                                    </div>
+                                    <div className='alram'>
+                                        1
+                                    </div>
+                                </div>
+                            </div>  
+                            
+                        )
+                    })
+                }
+        </div>
     )
 }
 

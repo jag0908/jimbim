@@ -295,7 +295,11 @@ function MemberForm(props) {
                     </div>
                 </div>
                 {/* 파일업로드 인풋 */}
-                <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                <label htmlFor="dataFile">
+                    <div className='formBtns'>
+                        <div className='imgBtns'>다른 이미지 업로드</div>
+                    </div>
+                </label>
                 <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
             </div>
             <div className='field'>

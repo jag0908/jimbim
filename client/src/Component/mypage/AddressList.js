@@ -23,6 +23,12 @@ function AddressList() {
 
     //const [member, setMember] = useState({});
 
+    const editStyle = {
+        border: '#888888 3px double',
+        marginTop: '20px',
+        marginBottom: '20px'
+    }
+
     useEffect(
         ()=>{
             if(!loginUser.userid){
@@ -88,23 +94,26 @@ function AddressList() {
     }
     return (
         <article style={{height:'100%'}}>
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
                     <div className='formtitle'>주소록</div>
-                    <div className='formBtns'>
-                        <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
-                    </div>
                     {(address_id===-2)?
                     (<>
-                        <EditAddressForm editAddress={editAddress} />
-                    </>):(null)}
+                        <div className='addressList' >
+                            <EditAddressForm editAddress={editAddress} />
+                        </div>
+                    </>):(
+                        <div className='formBtns'>
+                            <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
+                        </div>
+                    )}
                     {
                         (addressList.length!=0)?
                         (
                             addressList.map((address, idx)=>{
                                 return (
-                                    <div key={idx} className='addressList'>
+                                    <div key={idx} className='addressList' style={(address_id===address.address_id)?editStyle:{}}>
                                         {
                                             (address_id===address.address_id)?
                                             (<>

@@ -191,7 +191,7 @@ function Mypage() {
     return (
         <article style={{height:'100%'}}>
             {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
                     <div className='formtitle'>로그인 정보</div>

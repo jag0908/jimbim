@@ -98,7 +98,7 @@ function Profile() {
     return (
         <article style={{height:'100%'}}>
             {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
                     <div className='formtitle'>프로필 관리</div>
@@ -148,7 +148,11 @@ function Profile() {
                                 </div>
                             </>)
                         }
-                        <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                        <label htmlFor="dataFile">
+                            <div className='formBtns'>
+                                <div className='imgBtns'>다른 이미지 업로드</div>
+                            </div>
+                        </label>
                         <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
                         {
                             (type==='profileImg')?

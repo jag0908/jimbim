@@ -46,8 +46,8 @@ function EditAddressForm(props) {
         setIsOpen(false);
     }
     async function onSubmit(){
-        if( !address_name ){return alert('이름을 입력하세요')}
-        if( !address_zipnum){ return alert('우편번호를 입력하세요')}
+        if( !address_name ){return alert('주소명을 입력하세요')}
+        if( !address_zipnum){ return alert('주소 검색하기 버튼을 눌러 주소를 입력하세요')}
         if( !address_detail ){return alert('상세주소를 입력하세요')}
         console.log(loginUser)
 
@@ -86,7 +86,11 @@ function EditAddressForm(props) {
             </div>
             <div className='field'>
                 <label>주소</label>
-                <div className='addressListText'>({address_zipnum}) {address_simple}</div>
+                <div className='addressListText'>
+                    {
+                        (address_zipnum)?(<>({address_zipnum}) {address_simple}</>):(<></>)
+                    }
+                </div>
                 <input type="text" className='address_detail' value={address_detail} onChange={
                     (e)=>{ setAddress_detail(e.currentTarget.value )}
                 }/>

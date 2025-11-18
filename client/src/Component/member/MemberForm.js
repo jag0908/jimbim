@@ -1,14 +1,18 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch} from 'react-redux';
 import { loginAction } from '../../store/userSlice';
 import axios from 'axios'
 import { Cookies } from 'react-cookie';
+import '../../style/memberform.css';
+
+
 function MemberForm(props) {
     
     const navigate = useNavigate()
     const cookies = new Cookies()
     const dispatch = useDispatch();
+    const fileref = useRef();
 
     const {
         userid, setUserid,
@@ -55,7 +59,7 @@ function MemberForm(props) {
             if( result.data.msg === 'ok'){
                 setMessage('사용가능')
                 setReid(userid);
-                setIdCheckMsgStyle({flex:'1', textAlign:'center', fontWeight:'bold' , color:'blue'})
+                setIdCheckMsgStyle({flex:'1', textAlign:'center', fontWeight:'bold' , color:'blue',})
             }else{
                 setMessage('사용 불가능')
                 setReid('')
@@ -74,6 +78,7 @@ function MemberForm(props) {
         const url = URL.createObjectURL(newfile);
 
         setPreview(url)
+        fileref.current.value=''
     };
 
     // 파일 삭제
@@ -108,11 +113,13 @@ function MemberForm(props) {
         }
     }
 
+    // 숫자만 입력 가능하게
     const getNumberOnly = (e) => {
         e.target.value = e.target.value.replaceAll(/\D/g, "");
     };
+
+    // 주민번호 검사
     function checkrrn(rrn1, rrn2){
-        // 주민번호 검사
         const lastRrn= (Number)(rrn2);
         let year = (Number)(rrn1.substr(0,2))
         if(lastRrn==1 || lastRrn==2){
@@ -201,28 +208,30 @@ function MemberForm(props) {
 
     return (
         <>
-            <div>{title}</div>
-            <div><span>*</span>은 필수 입력사항입니다</div>
+            <div className='formtitle'>{title}</div>
+            <div className='requireguide'><span className='requiremark'>*</span>은 필수 입력사항입니다</div>
             {
                 (type=='join')?
                 (<>
                     <div className='field'>
-                        <label><span>*</span>ID</label>
-                        <input type="text" value={userid} onChange={(e)=>{
-                            setUserid( e.currentTarget.value )
-                        }}/>
-                        <button onClick={ ()=>{idCheck()} }>ID CHECK</button>
+                        <label><span className='requiremark'>*</span>아이디</label>
+                        <div>
+                            <input type="text" value={userid} onChange={(e)=>{
+                                setUserid( e.currentTarget.value )
+                            }}/>
+                            <button className='idcheck' onClick={ ()=>{idCheck()} }>중복검사</button>
+                        </div>
                         <div style={idCheckMsgStyle}>{message}</div>
                         <input type='hidden' name='reid' value={reid} />
                     </div>
                     <div className='field'>
-                        <label><span>*</span>비밀번호</label>
+                        <label><span className='requiremark'>*</span>비밀번호</label>
                         <input type="password" value={pwd} onChange={
                             (e)=>{ setPwd(e.currentTarget.value )}
                         }/>
                     </div>
                     <div className='field'>
-                        <label><span>*</span>비밀번호 확인</label>
+                        <label><span className='requiremark'>*</span>비밀번호 확인</label>
                         <input type="password" value={pwdChk} onChange={
                             (e)=>{ setPwdChk(e.currentTarget.value )}
                         }/>
@@ -230,76 +239,89 @@ function MemberForm(props) {
                 </>):(null)
             }
             <div className='field'>
-                <label><span>*</span>이름</label>
+                <label><span className='requiremark'>*</span>이름</label>
                 <input type="text" value={name} onChange={(e)=>{
                     setName( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
-                <label><span>*</span>이메일</label>
-                <input type="text" value={email} onChange={(e)=>{
+                <label><span className='requiremark'>*</span>이메일</label>
+                <input className='inputemail' type="text" value={email} onChange={(e)=>{
                     setEmail( e.currentTarget.value )
                 }}/>
             </div>
             <div className='field'>
-                <label><span>*</span>전화번호</label>
-                <input type="text" value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
-                    setPhone1( e.currentTarget.value )
-                }}/>-
-                <input type="text" value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                    setPhone2( e.currentTarget.value )
-                }}/>-
-                <input type="text" value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                    setPhone3( e.currentTarget.value )
-                }}/>
-            </div>
-            <div className='field'>
-                <label><span>*</span>주민등록번호</label>
-                <input type="text" value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
-                    setRrn1( e.currentTarget.value )
-                }}/>-
-                <input type="text" value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
-                    setRrn2( e.currentTarget.value )
-                }}/>******
-            </div>
-            {
-                (type=='kakao')?
-                (
-                <div className='field'>
-                    <label>프로필사진</label>
-                    <div><img src={kakaoMember.profileImg}/></div>
+                <label><span className='requiremark'>*</span>전화번호</label>
+                <div>
+                    <input type="text" className='inputphone' value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
+                        setPhone1( e.currentTarget.value )
+                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                    <input type="text" className='inputphone' value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                        setPhone2( e.currentTarget.value )
+                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                    <input type="text" className='inputphone'value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                        setPhone3( e.currentTarget.value )
+                    }}/>
                 </div>
-                ):(<></>)
-            }
+            </div>
             <div className='field'>
-                {/* 파일업로드 인풋 */}
-                <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} />
+                <label><span className='requiremark'>*</span>주민등록번호</label>
+                <div>
+                    <input type="text" className='inputrrn1' value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
+                        setRrn1( e.currentTarget.value )
+                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                    <input type="text" id='inputrrn2' value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
+                        setRrn2( e.currentTarget.value )
+                    }}/> * * * * * * 
+                </div>
+            </div>
+            <div className='field'>
+                <label>프로필사진</label>
                 {/* 미리보기 이미지 */}
                 <div className="previewContainer">
+                    <div className='imgBox'>
                     {
                         (preview)?
-                        (
-                        <div className='imgBox'>
-                            <img src={preview}/>
-                            <div className='removeBtn'onClick={()=>{handleRemoveFile();}}>X</div>
-                        </div>
-                        ):
-                        (<></>)
+                        (<>
+                            <img src={preview} className='formimgpreview'/>
+                            <button className='imgcancel' onClick={()=>{handleRemoveFile()}}>취소</button>
+                        </>):
+                        ((type=='kakao')?
+                            (
+                            <img src={kakaoMember.profileImg}/>
+                            ):(<div className='noimgmsg'>프로필 사진 없음</div>)
+                        )
                     }
+                    </div>
                 </div>
+                {/* 파일업로드 인풋 */}
+                <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
             </div>
             <div className='field'>
                 <label>소개글</label>
-                <input type="text" value={profileMsg} onChange={(e)=>{
-                    setProfileMsg( e.currentTarget.value )
-                }}/>
+                <textarea onChange={(e)=>{setProfileMsg( e.currentTarget.value )}} className='formProfileMsg' maxLength={255} value={profileMsg}></textarea>
             </div>
             <div className='field'>
                 <label>동의사항(선택)</label>
-                <label>약관 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/>
-                <label>개인정보 동의</label><input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/>
+                <div className='checkboxField'>
+                    <div className='checkboxLabel'>
+                        <label>약관 동의</label>
+                    </div>
+                    <div className='agreeCheckbox'>
+                        <input type='checkbox' onChange={(e)=>agree(e.target.checked, "terms")}/>
+                    </div>
+                </div>
+                <div className='checkboxField'>
+                    <div className='checkboxLabel'>
+                        <label>개인정보 동의</label>
+                    </div>
+                    <div className='agreeCheckbox'>
+                        <input type='checkbox' onChange={(e)=>agree(e.target.checked, "personal")}/>
+                    </div>
+                </div>
             </div>
-            <div className="btns">
+            <div className="btns formBtns">
                 <button onClick={()=>{onSubmit()}}>완료</button>
                 <button onClick={()=>{navigate(back)}}>취소</button>
             </div>

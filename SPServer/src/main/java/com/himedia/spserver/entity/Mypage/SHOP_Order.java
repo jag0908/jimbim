@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,12 +19,18 @@ public class SHOP_Order {
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
     private String receiver;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    SHOP_post post_id;
+    @Column(nullable = false)
+    private String address_zipnum;
+    @Column(nullable = false)
+    private String address_detail;
+    @Column(nullable = false)
+    private String address_simple;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    Member memberId;
+
+    @OneToMany
+    @JoinColumn(name = "order_id")
+    private List<SHOP_Orderdetail> orderdetail;
 }

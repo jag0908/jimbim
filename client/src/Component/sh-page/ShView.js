@@ -46,9 +46,9 @@ function ShView() {
         // 2. 데이터 가져오기 (조회수 증가 후)
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
-            console.log(res.data.post)
+            console.log(res.data)
             setPostDetail(res.data.post);
-            setCategory(res.data.category);
+            setCategory(res.data.category.category_name);
         } catch (err) {
             console.error(err);
         }
@@ -102,11 +102,20 @@ function ShView() {
       return num.toLocaleString('ko-KR');
     }
 
+
+
+
+
+    // 채팅
+    function openChat() {
+
+    }
+
   return (
     <div className='shView'>
         <div className='viewWrap'>
             <div className='top'>
-                <div className='catetory'>[{category?category[postDetail.category].category_name:null}]</div>
+                <div className='catetory'>[{category && category}]</div>
                 <h4 className='tit'>{postDetail?postDetail.title:<Lodding />}</h4>
             </div>
 
@@ -127,9 +136,9 @@ function ShView() {
                         <div className='userProfile'>
                             <div className='profileImg'>
                             {
-                                (postDetail && postDetail.member_profileImg)
+                                (postDetail && postDetail.member.profileImg)
                                 ? 
-                                (<img src={postDetail.member_profileImg} />)
+                                (<img src={postDetail.member.profileImg} />)
                                 : 
                                 (<img src={`${baseURL}/sh_img/1.png`} />)
                             }
@@ -139,14 +148,14 @@ function ShView() {
                             <span className='nickname'>
                                 {
                                     postDetail?
-                                    postDetail.member_name:
+                                    postDetail.member.name:
                                     <Lodding/>
                                 }
                             </span>
                             <span className='etc'>
                                 {
                                     postDetail?
-                                    postDetail.member_profileMsg:
+                                    postDetail.member.profileMsg:
                                     <Lodding/>
                                 }
                             </span>
@@ -158,7 +167,7 @@ function ShView() {
                             <span>
                                 {
                                     postDetail?
-                                    postDetail.member_blacklist:
+                                    postDetail.member.blacklist:
                                     <Lodding/>
                                 }
                             </span>
@@ -222,6 +231,14 @@ function ShView() {
 
                     </div>
 
+                    <div className='eventArea'>
+                        <button className='btnEvent btnChat' onClick={()=> {openChat()}}>1:1 채팅하기</button>
+                        <button className='btnEvent btnBuy'>구매하기</button>
+                        <button className='btnEvent btnZZim'>찜</button>
+                        <button className='btnEvent btnLike'>좋</button>
+                    </div>
+
+
 
                     <div className='line'></div>
                     
@@ -245,7 +262,7 @@ function ShView() {
                             {
                                 postDetail?
                                 (
-                                    postDetail.delivery_yn === "N" ? "불가능" :
+                                    postDetail.deliveryYN === "N" ? "불가능" :
                                     "가능"
                                 ):
                                 <Lodding/>
@@ -254,7 +271,7 @@ function ShView() {
                     </div>
 
                     <div className={
-                            `dataBoxWrap ${postDetail && postDetail.delivery_yn=="N"?
+                            `dataBoxWrap ${postDetail && postDetail.deliveryYN=="N"?
                                 "display-none":
                                 "display-block"
                             }`
@@ -263,7 +280,7 @@ function ShView() {
                         <span className='dataBox price srt'>
                             {
                                 postDetail?
-                                postDetail.delivery_price:
+                                postDetail.deliveryPrice:
                                 <Lodding/>
                             }
                             원</span>
@@ -278,7 +295,7 @@ function ShView() {
         </div>
         <div className='btnWrap'>
             {
-                postDetail && postDetail.member_id == loginUser.member_id ? 
+                postDetail && postDetail.member.memberId == loginUser.member_id ? 
                 (
                     <button className='navBtn pointBtn' onClick={() => navigate(`/sh-page/sh-update/${id}`)}>
                     수정하기
@@ -289,12 +306,93 @@ function ShView() {
             
             <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
         </div>
+
+        <PopupChatRoomList />
     </div>
   )
 }
 
 function Lodding() {
     return <span style={{fontSize:"14px"}}>불러오는중...</span>
+}
+
+function PopupChatRoomList() {
+    return <>
+    
+        <div className='popupWrap'>
+            <div className='popupHeader'>
+                <h3 className='pTitle'>채팅</h3>
+                <button className='bthClose'>X</button>
+            </div>
+            
+
+            <div className='pChatListWrap'>
+                <div className='pChatList'>
+                    <div className='chl left'>
+                        <img src="" alt="이미지" />
+                    </div>
+                    <div className='chl center'>
+                        <div className='pdTitle'>
+                            포스트타이틀입니다.
+                        </div>
+                        <div className='rMsg'>
+                            최근 메세지입니다.
+                        </div>
+                    </div>
+                    <div className='chl right'>
+                        <div className='rTime'>
+                            오후 5:44
+                        </div>
+                        <div className='alram'>
+                            1
+                        </div>
+                    </div>
+                </div> 
+                <div className='pChatList'>
+                    <div className='chl left'>
+                        <img src="" alt="이미지" />
+                    </div>
+                    <div className='chl center'>
+                        <div className='pdTitle'>
+                            포스트타이틀입니다.
+                        </div>
+                        <div className='rMsg'>
+                            최근 메세지입니다.
+                        </div>
+                    </div>
+                    <div className='chl right'>
+                        <div className='rTime'>
+                            오후 5:44
+                        </div>
+                        <div className='alram'>
+                            1
+                        </div>
+                    </div>
+                </div> 
+                <div className='pChatList'>
+                    <div className='chl left'>
+                        <img src="" alt="이미지" />
+                    </div>
+                    <div className='chl center'>
+                        <div className='pdTitle'>
+                            포스트타이틀입니다.
+                        </div>
+                        <div className='rMsg'>
+                            최근 메세지입니다.
+                        </div>
+                    </div>
+                    <div className='chl right'>
+                        <div className='rTime'>
+                            오후 5:44
+                        </div>
+                        <div className='alram'>
+                            1
+                        </div>
+                    </div>
+                </div>   
+            </div>
+        </div> 
+    </>
 }
 
 export default ShView

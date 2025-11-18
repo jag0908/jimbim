@@ -1,6 +1,7 @@
 * {margin: 0; padding: 0;}
 p, span, label, h1, h2, h3, h4, h5, a {font-weight: 400; text-decoration: none; color: #000;}
 input, textarea, select, button {border: none; background: transparent; outline: none; resize: none;}
+button {cursor: pointer;}
 
 input, textarea, select {border: 1px solid #999; border-radius: 6px;}
 

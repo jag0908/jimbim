@@ -55,7 +55,7 @@ public class CustomSecurityConfig {
         http.formLogin(
                 config ->{
                     config.loginPage("/member/login");
-                    // -> security / service / CustomUserDetailServicee 안의 loadUserByUsername 메서드를 호출
+                    // -> security / service / CustomUserDetailService 안의 loadUserByUsername 메서드를 호출
                     config.successHandler( new APILoginSuccessHandler() );
                     config.failureHandler( new APILoginFailHandler() );
                 }

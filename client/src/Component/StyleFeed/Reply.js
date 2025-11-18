@@ -7,22 +7,22 @@ const Reply = ({ reply, myUserid, handleDeleteReply, setReplyParent }) => {
   const isMyComment = reply.userid === myUserid;
 
   return (
-    <div className="style-reply">
-      <div className="style-reply-header">
-        <div className="style-reply-left" onClick={() => navigate(`/styleUser/${reply.userid}`)}>
-          <img src={reply.profileImg || "/default_profile.png"} alt={reply.userid} className="style-reply-profile" />
+    <div className="style-detail-reply">
+      <div className="style-detail-reply-header">
+        <div className="style-detail-reply-left" onClick={() => navigate(`/styleUser/${reply.userid}`)}>
+          <img src={reply.profileImg || "/default_profile.png"} alt={reply.userid} className="style-detail-reply-profile" />
           <strong>{reply.userid}</strong>
         </div>
-        <div className="style-reply-right">
-          <span className="style-reply-date">{replyDate}</span>
-          {isMyComment && <button onClick={() => handleDeleteReply(reply.reply_id)}>삭제</button>}
+        <div className="style-detail-reply-right">
+          <span className="style-detail-reply-date">{replyDate}</span>
+          {isMyComment && <button className="style-detail-delete-reply-btn" onClick={() => handleDeleteReply(reply.reply_id)}>삭제</button>}
           <button onClick={() => setReplyParent(reply.reply_id)}>답글</button>
         </div>
       </div>
-      <div className="style-reply-content">{reply.content}</div>
+      <div className="style-detail-reply-content">{reply.content}</div>
 
       {/* 대댓글 렌더링 */}
-      <div className="style-reply-children">
+      <div className="style-detail-reply-children">
         {reply.children?.map(child => (
           <Reply
             key={child.reply_id}
@@ -38,3 +38,4 @@ const Reply = ({ reply, myUserid, handleDeleteReply, setReplyParent }) => {
 };
 
 export default Reply;
+

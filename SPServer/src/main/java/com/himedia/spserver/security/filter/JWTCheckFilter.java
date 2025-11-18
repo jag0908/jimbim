@@ -154,7 +154,16 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/style/posts")) return true;
         if (path.startsWith("/api/style/post/") && request.getMethod().equals("GET")) return true;
         if (path.startsWith("/api/style/fileupload")) return true;
-        if (path.startsWith("/communityList/getCommunityList/")) return true;
+
+        if (path.startsWith("/communityList/getCommunityList")) return true;
+
+
+
+        // 정진
+        if( path.startsWith("/api/sh-page")) return true;
+        if( path.startsWith("/api/sh-page/sh-category")) return true;
+        if( path.startsWith("/api/sh-page/sh-write")) return true;
+
 
         return false;
     }

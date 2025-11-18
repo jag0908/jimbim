@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import "../../style/StyleDetail.css";
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import Reply from "./Reply"; 
+import Reply from "./Reply";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -208,44 +208,49 @@ const StyleDetail = () => {
 
 
   return (
-    <div className="style-detail">
+    <div className="style-detail-detail">
       {/* 헤더 */}
-      <div className="style-header">
-        <div className="style-user-left" onClick={() => navigate(`/styleUser/${userid}`)}>
+      <div className="style-detail-header">
+        <div className="style-detail-user-left" onClick={() => navigate(`/styleUser/${userid}`)}>
           <img
             src={profileImg || "/default_profile.png"}
             alt={userid}
-            className="style-profile-large"
+            className="style-detail-profile-large"
           />
-          <div className="style-user-text-area">
-            <div className="style-userid">{userid}</div>
-            <div className="style-time">{indate ? indate.toLocaleString() : "날짜 없음"}</div>
+          <div className="style-detail-user-text-area">
+            <div className="style-detail-userid">
+              {userid}
+
+              {isMyPost ? (
+                <div className="style-detail-my-post-actions">
+                  <button
+                    className="style-detail-edit-post-btn"
+                    onClick={() => navigate(`/style/edit/${id}`)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="style-detail-delete-post-btn"
+                    onClick={handleDeletePost}
+                  >
+                    삭제
+                  </button>
+                </div>
+              ) : (
+                <button
+                className={`style-detail-follow-btn ${isFollowing ? "following" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();   // ← 부모 클릭 이벤트 막기
+                  handleFollow();
+                }}
+              >
+                {isFollowing ? "팔로잉" : "팔로우"}
+              </button>
+              )}
+              </div>
+            <div className="style-detail-time">{indate ? indate.toLocaleString() : "날짜 없음"}</div>
           </div>
         </div>
-
-        {isMyPost ? (
-          <div className="style-my-post-actions">
-            <button
-              className="style-edit-post-btn"
-              onClick={() => navigate(`/style/edit/${id}`)}
-            >
-              수정
-            </button>
-            <button
-              className="style-delete-post-btn"
-              onClick={handleDeletePost}
-            >
-              삭제
-            </button>
-          </div>
-        ) : (
-          <button
-            className={`style-follow-btn ${isFollowing ? "following" : ""}`}
-            onClick={handleFollow}
-          >
-            {isFollowing ? "팔로잉" : "팔로우"}
-          </button>
-        )}
       </div>
 
       {/* 이미지 */}
@@ -263,9 +268,9 @@ const StyleDetail = () => {
         <br/>
         {/* 해시태그 표시 */}
         {post.hashtags && post.hashtags.length > 0 && (
-          <div className="style-hashtags">
+          <div className="style-detail-hashtags">
             {post.hashtags.map((tag, index) => (
-              <span key={index} className="style-hashtag">
+              <span key={index} className="style-detail-hashtag">
                 #{tag}&nbsp;
               </span>
             ))}
@@ -274,18 +279,18 @@ const StyleDetail = () => {
       </div>
 
       {/* 좋아요/댓글/공유 */}
-      <div className="style-actions">
-        <div className="style-action-item" onClick={handleLike}>
+      <div className="style-detail-actions">
+        <div className="style-detail-action-item" onClick={handleLike}>
           {liked ? "❤️" : "🤍"} 좋아요 {likeCount}
         </div>
-        <div className="style-action-item">💬 댓글 {replies.length}</div>
-        <div className="style-action-item" onClick={handleShare}>
+        <div className="style-detail-action-item">💬 댓글 {replies.length}</div>
+        <div className="style-detail-action-item" onClick={handleShare}>
           🔗 공유
         </div>
       </div>
 
       {/* 댓글 입력창 */}
-      <div className="style-comment-section">
+      <div className="style-detail-comment-section">
         {commentParent && (
           <div style={{ marginBottom: "8px", color: "#555" }}>
             @{replies.find(r => r.reply_id === commentParent)?.userid || "사용자"} 에게 답글
@@ -302,7 +307,7 @@ const StyleDetail = () => {
       </div>
 
       {/* 댓글 목록 */}
-      <div className="style-replies">
+      <div className="style-detail-replies">
         {replies.map(reply => (
         <Reply
           key={reply.reply_id}

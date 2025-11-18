@@ -41,17 +41,22 @@ main {
 .field input[type="text"],
 .field input[type="password"],
 .field textarea,
-.field input[type="file"] {
+.field input[type="file"],
+.field select { /* select 추가 */
   padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 14px;
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
+  height: 38px;            /* input과 동일 높이 */
+  line-height: 1.4;        /* 글자 수직 중앙 맞춤 */
+  box-sizing: border-box;   /* padding 포함 높이 계산 */
 }
 
 .field input:focus,
-.field textarea:focus {
+.field textarea:focus,
+.field select:focus {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0,123,255,0.3);
 }
@@ -60,7 +65,10 @@ main {
 .field textarea {
   resize: vertical;
   min-height: 120px;
+  height: auto;
+  line-height: 1.5;
   font-family: inherit;
+  padding: 10px 12px;
 }
 
 /* 이미지 미리보기 */
@@ -113,5 +121,17 @@ main {
   .btns {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .field input[type="text"],
+  .field input[type="password"],
+  .field textarea,
+  .field input[type="file"],
+  .field select {
+    height: 36px; /* 모바일에서는 약간 줄임 */
+  }
+
+  .field textarea {
+    min-height: 100px;
   }
 }

@@ -59,7 +59,7 @@ function Join() {
         type
     }
     return (
-        <article>
+        <article style={{height:'100%'}}>
             <MemberForm form={form}/>
         </article>
     )

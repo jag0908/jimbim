@@ -9,8 +9,7 @@ import java.util.List;
 @Data
 public class ShPostUpdateReqDTO {
     private Integer postId;
-    private String categoryId;
-    private Integer memberId;
+    private Integer categoryId;
     private String title;
     private String content;
     private Integer price;
@@ -18,9 +17,9 @@ public class ShPostUpdateReqDTO {
     private String deliveryYN;
     private Integer deliveryPrice;
 
-    private Integer representFile;
-
     private List<MultipartFile> files;
     private List<Integer> rmFiles;
+
+    private Integer memberId;
 }
 

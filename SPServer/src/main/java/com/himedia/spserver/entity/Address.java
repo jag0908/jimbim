@@ -13,7 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer address_id;
+    private Integer addressId;
     @Column(nullable = false)
     private String address_name;
     @Column(nullable = false)

@@ -8,13 +8,16 @@ function EditAddressForm(props) {
     const loginUser = useSelector( state=>state.user )
 
     const {
-        address_id, setAddress_id,
+        addressId, setAddressId,
         address_name, setAddress_name,
         address_zipnum, setAddress_zipnum,
         address_simple, setAddress_simple,
         address_detail, setAddress_detail,
         isOpen, setIsOpen,
         addressList, setAddressList,
+        member, setMember,
+        paging, setPaging,
+        beginEnd, setBeginEnd,
         setOnEditForm
     } = props.editAddress
 
@@ -51,24 +54,30 @@ function EditAddressForm(props) {
         if( !address_detail ){return alert('상세주소를 입력하세요')}
         console.log(loginUser)
 
-        if(address_id==-2){
-            await jaxios.post('/api/mypage/insertAddress', {address_name, address_zipnum, address_simple, address_detail, member:loginUser})
+        if(addressId==-2){
+            await jaxios.post('/api/mypage/insertAddress', {address_name, address_zipnum, address_simple, address_detail, member:member})
             .then((result)=>{ 
                 alert('완료되었습니다.');
             } ).catch((err)=>{console.error(err)})
         }else{
-            await jaxios.post('/api/mypage/updateAddress', {address_id, address_name, address_zipnum, address_simple, address_detail, member:loginUser})
+            await jaxios.post('/api/mypage/updateAddress', {addressId, address_name, address_zipnum, address_simple, address_detail, member:member})
             .then((result)=>{ 
                 alert('완료되었습니다.');
             } ).catch((err)=>{console.error(err)})
         }
         
 
-        await jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id}})
+        await jaxios.get('/api/mypage/getAddressList', {params:{member_id:member.member_id, page:1}})
         .then((result)=>{
             console.log(result.data.addressList)
             setAddressList(result.data.addressList)
-            setAddress_id(-1)
+            setAddressId(-1)
+            setPaging( result.data.paging )
+            let arr = [];
+            for( let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
+                arr.push(i);
+            }
+            setBeginEnd( [...arr] )
         })
         .catch((err)=>{console.error(err)})
 
@@ -110,8 +119,8 @@ function EditAddressForm(props) {
                 </Modal>
             </div>
             <div className='formBtns'>
-                <button onClick={()=>{onSubmit()}}>{(address_id>=1)?(<>수정</>):(<>추가</>)}</button>
-                <button onClick={()=>{setOnEditForm(address_id)}}>취소</button>
+                <button onClick={()=>{onSubmit()}}>{(addressId>=1)?(<>수정</>):(<>추가</>)}</button>
+                <button onClick={()=>{setOnEditForm(addressId)}}>취소</button>
             </div>
         </>
     )

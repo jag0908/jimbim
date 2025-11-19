@@ -114,6 +114,7 @@ function ShView() {
                 sellerProfileImg:postDetail.member.profileImg,
                 buyerId:loginUser.member_id,
                 buyerName:loginUser.name,
+                buyerProfileImg:loginUser.profileImg,
                 postId: id,
                 postTitle: postDetail.title,
             }).then((result)=> {
@@ -143,6 +144,11 @@ function ShView() {
         setDisplayYN({display: "flex"});
         setChatRoomData(chatRoom);
         setOpenChatState("oneToOneChat");
+    }
+
+    function popupClose() {
+        setDisplayYN({disPlayYN: "none"});
+        setOpenChatState(null);
     }
 
   return (
@@ -361,6 +367,7 @@ function ShView() {
                 chatRoomData={chatRoomData}
                 chatListData={chatListData}
                 onOpenClickChat={openClickChat}
+                onPopupClose={popupClose}
             />
         }
     </div>
@@ -373,19 +380,20 @@ function Lodding() {
 }
 
 // 팝업창열림
-function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chatRoomData, chatListData, onOpenClickChat}) {           
+function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chatRoomData, chatListData, onOpenClickChat, onPopupClose}) {         
+    
     return (
         <>
             <div className='popupWrap' style={disPlayYN}>
                 <div className='popupHeader'>
                     <h3 className='pTitle'>채팅</h3>
-                    <button className='bthClose' onClick={()=>{window.location.reload();}}>X</button>
+                    <button className='bthClose' onClick={()=>{onPopupClose();}}>X</button>
                 </div>
                 {
                     openChatState && 
                     openChatState=="oneToOneChat" &&
                     
-                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser}/>
+                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} openChatState={openChatState}/>
 
                 }
                 {
@@ -402,26 +410,23 @@ function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chat
 // 채팅룸 리스트
 function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickChat}) {
 
-    // useEffect(()=> {
-    //     jaxios.get("/api/chat/chatRoomList", {params: {buyerId}})
-    //         .then((result)=> {
-    //             console.log(result);
-    //         }).catch(err=>console.error(err));
-    // }, [])
-
     return (
         <div className='pChatListWrap'>
+            {/* // 내가 판매자일 때 (chatRoom?.sellerId == loginUser.member_id);
+            // 내가 구매자일 때 (chatRoom?.buyerId == loginUser.member_id); */}
+            <div className='pcListBox'>
+                <h3 className='pcLabel'>Buyers</h3>
                 {
                     chatListData && chatListData.map((chatRoom, i)=> {
                         return(
-                            
+                            (chatRoom?.sellerId == loginUser.member_id) ? 
                             <div className='pChatList' key={i} onClick={()=>{onOpenClickChat(chatRoom)}}>
                                 <div className='chl left'>
-                                    <img src={chatRoom.sellerProfileImg} alt="이미지" />
+                                    <img src={chatRoom.buyerProfileImg} alt="이미지" />
                                 </div>
                                 <div className='chl center'>
                                     <div className='pdTitle'>
-                                        {chatRoom.buyerName}
+                                        {chatRoom.buyerName} (buyer)
                                     </div>
                                     <div className='rMsg'>
                                         최근 메세지입니다.
@@ -436,16 +441,51 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
                                     </div>
                                 </div>
                             </div>  
+                            : null
                             
                         )
                     })
                 }
+            </div>
+            <div className='pcListBox'>
+                <h3 className='pcLabel'>Sellers</h3>
+                {
+                    chatListData && chatListData.map((chatRoom, i)=> {
+                        return(
+                            (chatRoom?.buyerId == loginUser.member_id) ? 
+                            <div className='pChatList' key={i} onClick={()=>{onOpenClickChat(chatRoom)}}>
+                                <div className='chl left'>
+                                    <img src={chatRoom.sellerProfileImg} alt="이미지" />
+                                </div>
+                                <div className='chl center'>
+                                    <div className='pdTitle'>
+                                        {chatRoom.sellerName} (seller)
+                                    </div>
+                                    <div className='rMsg'>
+                                        최근 메세지입니다.
+                                    </div>
+                                </div>
+                                <div className='chl right'>
+                                    <div className='rTime'>
+                                        오후 5:44
+                                    </div>
+                                    <div className='alram'>
+                                        1
+                                    </div>
+                                </div>
+                            </div>  
+                            : null
+                            
+                        )
+                    })
+                }
+            </div>
         </div>
     )
 }
 
 // 채팅방
-function ChatRoomCP({chatRoomData, loginUser}) {
+function ChatRoomCP({chatRoomData, loginUser, openChatState}) {
     
     const [isOpen, setIsOpen] = useState(false);
     const [chatRoomInfo, setChatRoomInfo] = useState(null);
@@ -469,18 +509,31 @@ function ChatRoomCP({chatRoomData, loginUser}) {
             <div className='chatRoom'>
                 <div className='buyerInfo'>
                     <div className='imgBox'>
-                        <img src={chatRoomInfo && chatRoomInfo.sellerProfileImg} />
+                        <img src={
+                            chatRoomInfo?.sellerId == loginUser.member_id
+                                ? chatRoomInfo?.buyerProfileImg
+                                : chatRoomInfo?.buyerId == loginUser.member_id
+                                    ? chatRoomInfo?.sellerProfileImg
+                                    : "기본이미지" // fallback
+                        } alt='프로필이미지' />
                     </div>
                     <div className='buyerName'>
-                        {chatRoomInfo && chatRoomInfo.sellerName}
+                        {
+                            (chatRoomInfo?.sellerId == loginUser.member_id) && chatRoomInfo?.buyerName
+                        }
+                        {
+                            (chatRoomInfo?.buyerId == loginUser.member_id) && chatRoomInfo?.sellerName
+                        }
                     </div>
                 </div>
                 <div className='bindingChatRoom'>
-                    <span className='hello'>환영합니다.</span>
                     {/* 웹소켓 */}
                     {
-                        chatRoomInfo && isOpen &&
-                        <ChatRoom roomId={chatRoomInfo && chatRoomInfo.chatRoomId} loginUser={loginUser} />                          
+                        chatRoomInfo &&
+                        isOpen &&
+                        openChatState == "oneToOneChat" &&
+                        <ChatRoom roomId={chatRoomInfo &&
+                        chatRoomInfo.chatRoomId} loginUser={loginUser} />                          
                     }
                     {
                         !chatRoomInfo && !isOpen && <span style={{fontSize:"14px"}}>불러오는중...</span>

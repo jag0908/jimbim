@@ -1,7 +1,9 @@
 package com.himedia.spserver.controller;
 
+import com.amazonaws.Request;
 import com.himedia.spserver.dto.ChatMsgDto;
 import com.himedia.spserver.dto.ChatRoomDto;
+import com.himedia.spserver.entity.SH.ChatRoom_Msg;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
 import com.himedia.spserver.service.ChatService;
@@ -25,7 +27,7 @@ public class ChatController {
     public HashMap<String, Object>  createChatRoom(@RequestBody ChatRoomDto reqDto) {
         HashMap<String, Object> result = new HashMap<>();
         if(reqDto.getSellerId().equals(reqDto.getBuyerId())) {
-            result.put("msg", "notKk");
+            result.put("msg", "notOk");
             return result;
         }
 
@@ -63,6 +65,26 @@ public class ChatController {
         return result;
     }
 
+    @GetMapping("/chat/chatMessage")
+    public HashMap<String, Object> chatMessage(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("roomId") Integer roomId,
+            @RequestParam("loginId") Integer loginId
+    ) throws CustomJWTException {
+        HashMap<String, Object> result = new HashMap<>();
+
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+        if(claims.get("member_id") != loginId) {
+            result.put("msg", "notOk");
+            return result;
+        }
+
+        List<ChatMsgDto> resDto = cs.getAllChatMessge(roomId);
+        result.put("resDto", resDto);
+        return result;
+    }
+
 
 
 
@@ -77,9 +99,10 @@ public class ChatController {
         System.out.println(
                 "roomId:" + roomId +
                 "message: " +  message.getContent() +
-                "sender:" + message.getSender()
+                "sender:" + message.getSenderId()
         );
 
+        cs.insertMessage(roomId, message);
 
         return message;
     }

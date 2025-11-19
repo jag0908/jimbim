@@ -53,6 +53,9 @@ public class ShController {
         reqDto.setTitle(title);
         reqDto.setContent(content);
         reqDto.setPrice(price);
+        if(reqDto.getPrice() == null) {
+            reqDto.setPrice(0);
+        }
         reqDto.setCategoryId(categoryId);
         reqDto.setDirectYN(directYN);
         reqDto.setDeliveryYN(deliveryYN);

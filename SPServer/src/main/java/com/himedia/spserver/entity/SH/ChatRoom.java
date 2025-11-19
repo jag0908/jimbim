@@ -22,6 +22,7 @@ public class ChatRoom {
     @Column(nullable = false)
     private Integer buyerId;
     private String buyerName;
+    private String buyerProfileImg;
 
     private Integer postId;
     private String postTitle;

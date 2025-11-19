@@ -15,6 +15,7 @@ public class ChatRoomDto {
     // 구매자
     private Integer buyerId;
     private String buyerName;
+    private String buyerProfileImg;
 
     private Integer postId;
     private String postTitle;

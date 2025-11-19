@@ -42,20 +42,26 @@ public class MypageService {
 
     public HashMap<String, Object> getAddressList(String memberId, int page) {
         HashMap<String, Object> result = new HashMap<>();
-        Paging paging = new Paging();
-        paging.setPage(page);
-
         Member member = mr.findById(Integer.parseInt(memberId)).get();
-        int count = ar.findAllByMember(member).size();
+        int count=0;
+        Paging paging = new Paging();
 
-        paging.setTotalCount(count);
-        paging.calPaging();
+        while(true){
+            paging.setPage(page);
+            count = ar.findAllByMember(member).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
 
-        Pageable pageable = PageRequest.of( page-1 , paging.getDisplayRow() , Sort.by(Sort.Direction.DESC, "addressId"));
-        Page<Address> pageObj = ar.findAllByMember(member, pageable);
-        result.put("addressList", pageObj.getContent());
-        result.put("paging", paging);
-        return result;
+            Pageable pageable = PageRequest.of( page-1 , paging.getDisplayRow() , Sort.by(Sort.Direction.DESC, "addressId"));
+            Page<Address> pageObj = ar.findAllByMember(member, pageable);
+
+            if(!pageObj.getContent().isEmpty() || page==1) {
+                result.put("addressList", pageObj.getContent());
+                result.put("paging", paging);
+                return result;
+            }
+            else page--;
+        }
     }
 
     public void updateAddress(Address address) {

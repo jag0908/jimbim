@@ -152,12 +152,14 @@
 /* ---------------- 본문 ---------------- */
 .style-detail-post-content {
   padding: 16px;
+  gap: 10px;
 }
 
 .style-detail-post-content h2 {
   font-size: 17px;
   font-weight: 600;
   margin-bottom: 8px;
+  font-weight: bold;
 }
 
 .style-detail-post-content p {

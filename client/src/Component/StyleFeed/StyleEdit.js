@@ -28,7 +28,14 @@ function StyleEdit() {
         setContent(post.content);
         setExistingImages(post.s_images || []); // 서버 이미지
         setPreviews(post.s_images || []); // 화면용
-        setHashtags(post.hashtags?.join(' ') || '');
+        setHashtags(
+          (post.hashtags || [])
+            .map(tag => {
+              const word = typeof tag === 'string' ? tag : tag.word;
+              return `#${word}`;
+            })
+            .join(' ')
+        );
       } catch (err) {
         console.error('게시글 불러오기 오류', err);
         alert('게시글을 불러오지 못했습니다.');

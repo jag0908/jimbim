@@ -1,0 +1,43 @@
+.style-post-slider-wrapper {
+  position: relative; /* 중요! */
+  width: 100%;
+  margin: 10px 0;
+}
+
+.style-post-slider-viewport {
+  position: relative; /* absolute → relative */
+  overflow: hidden;   /* 슬라이더 내용이 넘어갈 때 숨김 */
+  width: 100%;
+}
+
+.style-post-slider-list {
+  display: flex;
+  gap: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.style-post-slider-item {
+  width: calc((100% - 30px) / 4);
+  flex-shrink: 0;
+}
+
+.style-post-slider-btn {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 100;
+  color: #4e4e4e;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 100px;
+  user-select: none;
+}
+
+.style-post-slider-btn.left {
+  left: -30px;
+}
+
+.style-post-slider-btn.right {
+  right: -30px;
+}

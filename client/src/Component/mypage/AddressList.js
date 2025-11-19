@@ -100,7 +100,7 @@ function AddressList() {
                     <div className='formtitle'>주소록</div>
                     {(address_id===-2)?
                     (<>
-                        <div className='addressList' >
+                        <div className='addressList' style={(address_id===-2)?editStyle:{}}>
                             <EditAddressForm editAddress={editAddress} />
                         </div>
                     </>):(

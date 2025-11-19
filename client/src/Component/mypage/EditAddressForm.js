@@ -88,12 +88,17 @@ function EditAddressForm(props) {
                 <label>주소</label>
                 <div className='addressListText'>
                     {
-                        (address_zipnum)?(<>({address_zipnum}) {address_simple}</>):(<></>)
+                        (address_zipnum)?(<>
+
+                            ({address_zipnum}) {address_simple}
+                            <input type="text" className='address_detail' value={address_detail} onChange={
+                                (e)=>{ setAddress_detail(e.currentTarget.value )}
+                            } placeholder="상세 주소를 입력해주세요"/>
+
+                        </>):(<div className='nozipnumMsg'>
+                        주소 검색하기 버튼을 눌러주세요</div>)
                     }
                 </div>
-                <input type="text" className='address_detail' value={address_detail} onChange={
-                    (e)=>{ setAddress_detail(e.currentTarget.value )}
-                }/>
             </div>
             <div>
                 <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >

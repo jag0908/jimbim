@@ -1,10 +1,13 @@
 package com.himedia.spserver.service;
 
+import com.himedia.spserver.dto.ChatMsgDto;
 import com.himedia.spserver.dto.ChatRoomDto;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.ChatRoom;
+import com.himedia.spserver.entity.SH.ChatRoom_Msg;
 import com.himedia.spserver.repository.ChatRepository;
 import com.himedia.spserver.repository.MemberRepository;
+import com.himedia.spserver.repository.MsgChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,8 @@ import java.util.*;
 public class ChatService {
     @Autowired
     private ChatRepository cr;
+    @Autowired
+    private MsgChatRepository mcr;
     @Autowired
     private MemberRepository mr;
 
@@ -36,6 +41,8 @@ public class ChatService {
                 room.setPostId(reqDto.getPostId());
                 room.setPostTitle(reqDto.getPostTitle());
                 room.setSellerProfileImg(reqDto.getSellerProfileImg());
+                room.setBuyerProfileImg(reqDto.getBuyerProfileImg());
+
                 cr.save(room);
                 resDto.setPostId(room.getPostId());
                 resDto.setPostTitle(room.getPostTitle());
@@ -43,6 +50,7 @@ public class ChatService {
             resDto.setChatRoomId(room.getChatRoomId());
             resDto.setBuyerId(room.getBuyerId());
             resDto.setBuyerName(room.getBuyerName());
+            resDto.setBuyerProfileImg(room.getBuyerProfileImg());
 
             resDto.setSellerId(room.getSellerId());
             resDto.setSellerName(room.getSellerName());
@@ -54,6 +62,7 @@ public class ChatService {
         ChatRoom newRoom = new ChatRoom();
         newRoom.setBuyerId(reqDto.getBuyerId());
         newRoom.setBuyerName(reqDto.getBuyerName());
+        newRoom.setBuyerProfileImg(reqDto.getBuyerProfileImg());
         newRoom.setSellerId(reqDto.getSellerId());
         newRoom.setSellerName(reqDto.getSellerName());
         newRoom.setSellerProfileImg(reqDto.getSellerProfileImg());
@@ -67,6 +76,7 @@ public class ChatService {
         resDto.setChatRoomId(savedRoom.getChatRoomId());
         resDto.setBuyerId(savedRoom.getBuyerId());
         resDto.setBuyerName(savedRoom.getBuyerName());
+        resDto.setBuyerProfileImg(savedRoom.getBuyerProfileImg());
         resDto.setSellerId(savedRoom.getSellerId());
         resDto.setSellerName(savedRoom.getSellerName());
         resDto.setSellerProfileImg(savedRoom.getSellerProfileImg());
@@ -83,11 +93,18 @@ public class ChatService {
             throw new RuntimeException("존재하지 않는 채팅방입니다.");
         }
 
+        Optional<Member> buyerInfo = mr.findById(viewChatRoomEntity.getBuyerId());
+        Optional<Member> sellerInfo = mr.findById(viewChatRoomEntity.getSellerId());
+
+        viewChatRoomEntity.setBuyerProfileImg(buyerInfo.get().getProfileImg());
+        viewChatRoomEntity.setSellerProfileImg(sellerInfo.get().getProfileImg());
+
         ChatRoomDto resDto = new ChatRoomDto();
         resDto.setChatRoomId(viewChatRoomEntity.getChatRoomId());
 
         resDto.setBuyerId(viewChatRoomEntity.getBuyerId());
         resDto.setBuyerName(viewChatRoomEntity.getBuyerName());
+        resDto.setBuyerProfileImg(viewChatRoomEntity.getBuyerProfileImg());
 
         resDto.setSellerId(viewChatRoomEntity.getSellerId());
         resDto.setSellerName(viewChatRoomEntity.getSellerName());
@@ -102,18 +119,22 @@ public class ChatService {
 
     public List<ChatRoomDto> getAllChatRoom(Map<String, Object> claims) {
 
-        ChatRoomDto reqDto = new ChatRoomDto();
-        reqDto.setSellerId((Integer) claims.get("member_id"));
-
         List<ChatRoomDto> result = new ArrayList<>();
 
-        List<ChatRoom> chatRoomList = cr.findAllBySellerId(reqDto.getSellerId());
-        System.out.println("chatRoomList size = " + chatRoomList.size());
+        List<ChatRoom> chatRoomList = cr.findAllBySellerIdOrBuyerId((Integer) claims.get("member_id"), (Integer) claims.get("member_id"));
+
         for(ChatRoom chatRoom : chatRoomList) {
+            Optional<Member> buyerInfo = mr.findById(chatRoom.getBuyerId());
+            Optional<Member> sellerInfo = mr.findById(chatRoom.getSellerId());
+
+            chatRoom.setBuyerProfileImg(buyerInfo.get().getProfileImg());
+            chatRoom.setSellerProfileImg(sellerInfo.get().getProfileImg());
+
             ChatRoomDto resDto = new ChatRoomDto();
             resDto.setChatRoomId(chatRoom.getChatRoomId());
             resDto.setBuyerId(chatRoom.getBuyerId());
             resDto.setBuyerName(chatRoom.getBuyerName());
+            resDto.setBuyerProfileImg(chatRoom.getBuyerProfileImg());
             resDto.setSellerId(chatRoom.getSellerId());
             resDto.setSellerName(chatRoom.getSellerName());
             resDto.setSellerProfileImg(chatRoom.getSellerProfileImg());
@@ -122,6 +143,48 @@ public class ChatService {
 
             result.add(resDto);
         }
+        return result;
+    }
+
+    public void insertMessage(Integer roomId, ChatMsgDto message) {
+        ChatRoom room = cr.findById(roomId).orElseThrow();
+
+        ChatRoom_Msg chatEntity = new ChatRoom_Msg();
+        chatEntity.setChatRoom(room);
+        chatEntity.setContent(message.getContent());
+        chatEntity.setSenderId(message.getSenderId());
+        mcr.save(chatEntity);
+    }
+
+    public List<ChatMsgDto> getAllChatMessge(Integer roomId) {
+        List<ChatMsgDto> result = new ArrayList<>();
+
+        List<ChatRoom_Msg> msgWidthRooms = mcr.findByChatRoomIdWithRoom(roomId);
+
+        for(ChatRoom_Msg msgWidthRoom: msgWidthRooms) {
+
+            ChatRoom room = msgWidthRoom.getChatRoom();
+
+            ChatMsgDto  resDto = new ChatMsgDto();
+
+            resDto.setContent(msgWidthRoom.getContent());
+            resDto.setSenderId(msgWidthRoom.getSenderId());
+            resDto.setIndate(msgWidthRoom.getIndate());
+
+            resDto.setChatRoomId(room.getChatRoomId());
+
+            resDto.setSellerId(room.getSellerId());
+            resDto.setSellerName(room.getSellerName());
+            resDto.setSellerProfileImg(room.getSellerProfileImg());
+            resDto.setBuyerId(room.getBuyerId());
+            resDto.setBuyerName(room.getBuyerName());
+            resDto.setBuyerProfileImg(room.getBuyerProfileImg());
+            resDto.setPostId(room.getPostId());
+            resDto.setPostTitle(room.getPostTitle());
+
+            result.add(resDto);
+        }
+
         return result;
     }
 }

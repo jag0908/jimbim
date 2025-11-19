@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import jaxios from "../../util/jwtutil";
 
 function ChatRoom({roomId, loginUser, token}) {
   const [stompClient, setStompClient] = useState(null);
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
+  const [chatMessageArr, setChatMessageArr] = useState(null);
 
   useEffect(() => {
     if (!roomId) return;
@@ -36,6 +38,7 @@ function ChatRoom({roomId, loginUser, token}) {
 
     return () => {
       client.deactivate();
+      console.log("종료됨");
     };
   }, [roomId]);
 
@@ -45,7 +48,7 @@ function ChatRoom({roomId, loginUser, token}) {
     if (stompClient && inputMessage.trim()) {
         stompClient.publish({
             destination: `/pub/send/${roomId}`,
-            body: JSON.stringify({content: inputMessage, sender: loginUser.name}),
+            body: JSON.stringify({content: inputMessage, senderId: loginUser.member_id}),
         });
 
         setInputMessage("");
@@ -60,32 +63,53 @@ function ChatRoom({roomId, loginUser, token}) {
     }
   };
 
+  useEffect(()=> {
+    jaxios.get("/api/chat/chatMessage", {params:{roomId, loginId:loginUser.member_id}})
+      .then((result)=> {
+        console.log(result.data);
+        setChatMessageArr(result.data.resDto);
+      }).catch(err=>console.error(err));
+  }, [])
+
   return (
     <div className="privateChatRoom">
-        <h2>{roomId}번 방</h2>
-        <div>
-            <ul>
-                {receivedMessages.map((msg, i) => (
-                    <li key={i}>
-                        <span className="name">{msg.sender}</span>
-                        <span className="msg">{msg.content}</span>
-                    </li>
-                ))}
-            </ul>
-        </div>
+
+        <ul className="oneToOneArea">
+            <li className="hello">
+              ({roomId}) 짐빔 채팅방에 오신걸 환영합니다.
+              <br />
+              욕설, 비방, 광고, 스팸 등 다른 이용자에게 피해를 주는 행위는 금지됩니다.
+              <br />
+              개인정보 요구·공유 및 불건전한 내용 전송은 허용되지 않습니다.
+            </li>
+            {
+              chatMessageArr && chatMessageArr.map((msg, i)=> {
+                <li key={i}>
+                    <span className="name">{msg.sender}</span>
+                    <span className="msg">{msg.content}</span>
+                </li>
+              })
+            }
+            {receivedMessages.map((msg, i) => (
+                <li key={i}>
+                    <span className="name">{msg.sender}</span>
+                    <span className="msg">{msg.content}</span>
+                </li>
+            ))}
+        </ul>
+
         <div className="eventArea">
             <input
+            className="chatInpTxt"
             type="text"
             placeholder="메시지"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.currentTarget.value)}
             />
-            <button onClick={()=> {sendMessage(roomId)}}>전송</button>
+            <button className="sendMsg" onClick={()=> {sendMessage(roomId)}}>전송</button>
         </div>
-        <button onClick={()=> {endConnection(); window.location.reload();}}>채팅방 나가기</button>
-
         
-        </div>
+    </div>
   );
 }
 

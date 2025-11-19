@@ -124,19 +124,22 @@ button {cursor: pointer;}
 
 
 /* 채팅 팝업*/
-.shView .popupWrap {display: flex; flex-direction: column; position: fixed; z-index: 2000; top: 50%; right: 50%; width: 360px; padding: 28px 12px; background-color: #fff; box-shadow: 0px 0px 7px 2px #dfdfdf; box-sizing: border-box; border-radius: 8px; overflow: hidden; transform: translate(50%, -50%);}
-.shView .popupWrap .popupHeader {display: flex; justify-content: space-between; padding: 0 12px; box-sizing: border-box;}
+.shView .popupWrap {display: flex; flex-direction: column; position: fixed; z-index: 2000; top: 50%; right: 50%; width: 360px; padding: 0px 0px 0px; background-color: #fff; box-shadow: 0px 0px 7px 2px #dfdfdf; box-sizing: border-box; border-radius: 8px; overflow: hidden; transform: translate(50%, -50%);}
+.shView .popupWrap .popupHeader {display: flex; justify-content: space-between; padding: 28px 28px 24px; box-sizing: border-box; background:#e8cccc;}
 .shView .popupWrap .pTitle {font-size: 18px; font-weight: 600; color: #555;}
 .shView .popupWrap .bthClose { font-size: 18px; font-weight: 500;}
 
 /* 채팅룸리스트 */
-.shView .popupWrap .pChatListWrap {display: flex; flex-direction: column; flex-shrink: 0; margin-top: 32px; height: 508px; overflow: auto;}
-.shView .popupWrap .pChatList {display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 0px 16px; width: 100%; height: 72px; border-bottom: 1px solid #ddd; box-sizing: border-box;}
+.shView .popupWrap .pChatListWrap {display: flex; flex-direction: column; flex-shrink: 0; margin-top: 0px; height: 568px; overflow: auto;}
+.shView .popupWrap .pcListBox {display: flex; flex-direction: column; flex-shrink: 0; padding: 22px 28px; width: 100%; height: 344px; border-radius: 8px; box-sizing: border-box; overflow: auto;}
+.shView .popupWrap .pcListBox + .pcListBox {height: 224px; background-color: #fafafa;}
+.shView .popupWrap .pcListBox .pcLabel {padding: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #999;}
+.shView .popupWrap .pChatList {display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-shrink: 0; width: 100%; height: 72px; border-bottom: 1px solid #ddd; box-sizing: border-box; cursor: pointer;}
 .shView .popupWrap .pChatList .left {flex-shrink: 0; width: 38px; height: 38px; border: 1px solid #ddd; border-radius: 36%; box-sizing: border-box; overflow: hidden;}
 .shView .popupWrap .pChatList .left > img {width: 100%; height: 100%; object-fit: cover;}
 .shView .popupWrap .pChatList .center {display: flex; flex-direction: column; gap: 2px; width: 100%; height: 42px;}
-.shView .popupWrap .pChatList .center .pdTitle {font-size: 14px; font-weight: 700; color: #555;}
-.shView .popupWrap .pChatList .center .rMsg {font-size: 14px; font-weight: 500; color: #bbb;}
+.shView .popupWrap .pChatList .center .pdTitle {max-width: 164px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 700; color: #555;}
+.shView .popupWrap .pChatList .center .rMsg {max-width: 164px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 500; color: #bbb;}
 .shView .popupWrap .pChatList .right {display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; gap: 4px; height: 42px;}
 .shView .popupWrap .pChatList .right .rTime {font-size: 12px; font-weight: 500; color: #bbb;}
 .shView .popupWrap .pChatList .right .alram {display: flex; justify-content: center; align-items: center; width: 18px; height: 18px; background: rgb(250, 86, 86); border-radius: 50%; font-size: 12px; color: #f8f8f8; font-weight: 500; overflow: hidden;}
@@ -144,13 +147,17 @@ button {cursor: pointer;}
 .shView .popupWrap .sendChat:hover {border: 1px solid #bbb; background: #bbb; color: #fff;}
 
 /* 채팅창 */
-.shView .popupWrap .chatRoom {display: flex; flex-direction: column; margin-top: 16px; padding: 0 12px; width: 100%; box-sizing: border-box;}
+.shView .popupWrap .chatRoom {display: flex; flex-direction: column; padding: 16px 12px; width: 100%; box-sizing: border-box;}
 .shView .popupWrap .chatRoom .buyerInfo {display: flex; align-items: center; gap: 8px;}
 .shView .popupWrap .chatRoom .buyerInfo .imgBox {width: 62px; height: 62px; border-radius: 36%; overflow: hidden;}
 .shView .popupWrap .chatRoom .buyerInfo .imgBox > img {width: 100%; height: 100%; object-fit: cover;}
 .shView .popupWrap .chatRoom .buyerInfo .buyerName {font-size: 20px; font-weight: 700; color: #555;}
 .shView .popupWrap .chatRoom .buyerInfo .buyerName > span {font-size: 20px; font-weight: 500; color: #666;}
 
-.privateChatRoom {display: flex; flex-direction: column
-    ;}
-.privateChatRoom .eventArea {display: flex;}
+/* 소켓방 */
+.privateChatRoom {display: flex; flex-direction: column; gap: 8px;}
+.privateChatRoom .oneToOneArea {padding: 16px 12px 0 12px; height: 100%; min-height: 460px; box-sizing: border-box; overflow-y: auto;}
+.privateChatRoom .oneToOneArea .hello {line-height: 20px; text-align: center; font-size: 12px; font-weight: 500; color: #999;}
+.privateChatRoom .eventArea {display: flex; gap: 8px; width: 100%;}
+.privateChatRoom .eventArea .chatInpTxt {padding: 0 12px; width: 100%; box-sizing: border-box;}
+.privateChatRoom .eventArea .sendMsg {display: flex; justify-content: center; align-items: center; flex-shrink: 0; padding: 0 18px; height: 42px; background: #e48d8d; border-radius: 6px; font-size: 16px; font-weight: 600; color: #fff;}

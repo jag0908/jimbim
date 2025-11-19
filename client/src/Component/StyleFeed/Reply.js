@@ -5,6 +5,7 @@ const Reply = ({ reply, myUserid, handleDeleteReply, setReplyParent }) => {
   const navigate = useNavigate();
   const replyDate = reply.indate ? new Date(reply.indate).toLocaleString() : "시간 없음";
   const isMyComment = reply.userid === myUserid;
+  
 
   return (
     <div className="style-detail-reply">

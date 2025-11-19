@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import "../../style/StyleDetail.css";
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import Reply from "./Reply"; 
+import Reply from "./Reply";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -79,6 +79,16 @@ const StyleDetail = () => {
         alert("로그인 후 이용 가능합니다");
       }
     }
+  };
+
+  const getCommentCount = (repliesArray) => {
+    let count = repliesArray.length;
+    repliesArray.forEach(r => {
+      if (r.children && r.children.length > 0) {
+        count += getCommentCount(r.children); // 재귀로 대댓글까지 포함
+      }
+    });
+    return count;
   };
 
   // 댓글 작성
@@ -220,18 +230,18 @@ const StyleDetail = () => {
           <div className="style-detail-user-text-area">
             <div className="style-detail-userid">
               {userid}
-              
+
               {isMyPost ? (
                 <div className="style-detail-my-post-actions">
                   <button
                     className="style-detail-edit-post-btn"
-                    onClick={() => navigate(`/style/edit/${id}`)}
+                    onClick={(e) => {e.stopPropagation(); navigate(`/style/edit/${id}`)}}
                   >
                     수정
                   </button>
                   <button
                     className="style-detail-delete-post-btn"
-                    onClick={handleDeletePost}
+                    onClick={(e)=>{e.stopPropagation(); handleDeletePost();}}
                   >
                     삭제
                   </button>
@@ -283,7 +293,7 @@ const StyleDetail = () => {
         <div className="style-detail-action-item" onClick={handleLike}>
           {liked ? "❤️" : "🤍"} 좋아요 {likeCount}
         </div>
-        <div className="style-detail-action-item">💬 댓글 {replies.length}</div>
+        <div className="style-detail-action-item">💬 댓글 {getCommentCount(replies)}</div>
         <div className="style-detail-action-item" onClick={handleShare}>
           🔗 공유
         </div>

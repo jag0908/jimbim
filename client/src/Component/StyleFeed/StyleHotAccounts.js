@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../style/StyleHotAccounts.css';
 import { useNavigate } from 'react-router-dom';
 import jaxios from '../../util/jwtutil';
+import StylePostSlider from './StylePostSlider';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -36,6 +37,8 @@ function StyleHotAccounts() {
     try {
       const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
       setFollowStatus(prev => ({ ...prev, [userid]: res.data.followed }));
+      // 메시지 출력 추가
+      alert(res.data.message);
     } catch (err) {
       alert("로그인이 필요합니다.");
     }
@@ -74,27 +77,24 @@ function StyleHotAccounts() {
           </div>
 
           {/* 게시물 영역 = Feed 카드 UI */}
-          <div className="style-hot-feed-grid">
-            {user.posts?.slice(0, 4).map(post => (
-              <div key={post.spost_id} className="style-hot-feed-card">
-
-                <div
-                  className="style-hot-image-wrapper"
-                  onClick={() => navigate(`/style/${post.spost_id}`)}
-                >
-                  <img src={post.s_images[0]} className="style-hot-post-img" />
-                  {post.s_images.length > 1 && (
-                    <div className="style-hot-multiple-count">
-                      +{post.s_images.length}
+            {user.posts && user.posts.length > 0 && (
+              user.posts.length <= 4 ? (
+                <div className="style-hot-feed-grid">
+                  {user.posts.map((post) => (
+                    <div key={post.spost_id} className="style-hot-feed-card">
+                      <div className="style-hot-image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
+                        <img src={post.s_images[0]} className="style-hot-post-img" />
+                        {post.s_images.length > 1 && (
+                          <div className="style-hot-multiple-count">+{post.s_images.length}</div>
+                        )}
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
-
-                <p className="style-hot-post-content">{post.content}</p>
-              </div>
-            ))}
-          </div>
-
+              ) : (
+                <StylePostSlider posts={user.posts} />
+              )
+            )}
         </div>
       ))}
     </div>

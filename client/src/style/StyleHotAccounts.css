@@ -88,21 +88,7 @@
   margin-bottom: 20px;
 }
 
-/* ---------------- StyleFeed 카드 개별 ---------------- */
-.style-hot-feed-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 15px;
-  transition: 0.2s;
-}
 
-.style-hot-feed-card:hover {
-  box-shadow: 0 6px 16px rgb(0 0 0 / 0.15);
-}
 
 /* 이미지 래퍼 */
 .style-hot-image-wrapper {
@@ -110,7 +96,7 @@
   width: 100%;
   padding-top: 100%; /* 1:1 비율 */
   overflow: hidden;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
 }
 
 .style-hot-post-img {
@@ -134,13 +120,6 @@
   font-weight: 600;
 }
 
-/* 카드 내부 내용 */
-.style-hot-post-content {
-  padding: 8px 10px;
-  font-size: 14px;
-  color: #333;
-  flex-grow: 1;
-}
 
 /* 유저 정보 + 좋아요 영역 */
 .style-hot-feed-info {

@@ -235,21 +235,6 @@ public class StyleService {
                 });
     }
 
-    // ✅ 팔로워 목록
-    public List<String> getFollowers(String userid) {
-        Member member = memberRepository.findByUserid(userid);
-        return followRepository.findByEndMember(member).stream()
-                .map(f -> f.getStartMember().getUserid())
-                .collect(Collectors.toList());
-    }
-
-    // ✅ 팔로잉 목록
-    public List<String> getFollowing(String userid) {
-        Member member = memberRepository.findByUserid(userid);
-        return followRepository.findByStartMember(member).stream()
-                .map(f -> f.getEndMember().getUserid())
-                .collect(Collectors.toList());
-    }
 
     // ✅ 팔로우 상태 확인
     public boolean isFollowing(String startUserid, String endUserid) {
@@ -477,7 +462,7 @@ public class StyleService {
             List<STYLE_post> posts = postRepository.findPostsByTag(tagName);
 
             List<Map<String, Object>> postDtos = posts.stream()
-                    .limit(4)
+                    .limit(10)
                     .map(post -> {
                         Map<String, Object> p = new HashMap<>();
                         p.put("spost_id", post.getSpostId());
@@ -515,7 +500,7 @@ public class StyleService {
                     // 유저 게시물 4개
                     List<STYLE_post> posts = postRepository
                             .findAllByMember_UseridOrderByIndateDesc(member.getUserid())
-                            .stream().limit(4).toList();
+                            .stream().limit(10).toList();
 
                     List<Map<String, Object>> postDto = posts.stream()
                             .map(p -> Map.of(

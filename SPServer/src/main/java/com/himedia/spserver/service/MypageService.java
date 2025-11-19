@@ -35,7 +35,7 @@ public class MypageService {
     }
 
     public List<Address> getAddressList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return ar.findAllByMember(member);
     }
 
@@ -52,32 +52,32 @@ public class MypageService {
     }
 
     public List<SH_Orderdetail> getShBuyingList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shodr.findAllByMemberId(member);
     }
 
     public List<SHOP_Order> getShopBuyingList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shopor.findAllByMemberId(member);
     }
 
     public List<SH_post> getShSellingList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shpr.findAllByMember(member);
     }
 
     public List<SHOP_post> getShopSellingList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shoppr.findAllByMember(member);
     }
 
     public List<SH_zzim> getShZzimList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shzr.findAllByMember(member);
     }
 
     public List<SHOP_zzim> getShopZzimList(String memberId) {
-        Member member = mr.findById(memberId).get();
+        Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shopzr.findAllByMember(member);
     }
 }

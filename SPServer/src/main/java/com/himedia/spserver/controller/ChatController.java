@@ -102,8 +102,9 @@ public class ChatController {
                 "sender:" + message.getSenderId()
         );
 
-        cs.insertMessage(roomId, message);
+        ChatMsgDto resDto = cs.insertMessage(roomId, message);
 
-        return message;
+
+        return resDto;
     }
 }

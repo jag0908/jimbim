@@ -75,6 +75,7 @@ public class MemberService {
     }
 
     // 이메일 전송주체
+
     @Value("${spring.mail.username}")
     private static String senderEmail;
     private final JavaMailSender JMSender;

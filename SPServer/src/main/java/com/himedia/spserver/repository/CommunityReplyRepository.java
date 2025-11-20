@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface CommunityReplyRepository extends JpaRepository<C_Reply, Integer> {
 
-//    List<C_Reply> findByCpostidOrderByReplyIdDesc(int cpostid);
-//    C_Reply findByReplyId(int replyId);
+    List<C_Reply> findByCpostCpostIdOrderByReplyId(int cpostId);
+
+    C_Reply findByReplyId(int replyId);
 }

@@ -1,0 +1,113 @@
+.AdminForm{
+    width:600px;
+    height:300px;
+    margin: 0 auto;
+    border:1px solid black;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    padding:20px;
+    margin-top: 50px;
+}
+
+.field{
+    width:100%;
+    padding:10px;
+    box-sizing: border-box;
+    display: flex;
+}
+
+label{
+    flex:1;
+    font-weight: bold;
+}
+
+input{
+    flex:3;
+    padding:5px;
+}
+
+.btns button{
+    background: blueviolet;
+    color:white;
+    font-weight: bold;
+}
+
+
+.adminContainer{
+    width:800px;
+    margin:0 auto;
+    border:1px dotted red;
+    display: flex;
+    flex-direction: column;
+}
+.adminmenu{
+    width:100%;
+    background-color: blueviolet;
+    padding:10px;
+    display: flex;
+    justify-content: space-around;
+    box-sizing: border-box;
+    margin:20px 0;
+}
+.adminmenu a{
+    text-decoration: none;
+    color:white;
+    font-weight: bold;
+    padding:5px;
+}
+.productTable{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.productTable .row{
+    display: flex;
+}
+.productTable .row .col{
+    flex:1;
+    padding:23px 0;
+    text-align: center;
+    border:1px dotted blueviolet;
+    margin: 1px;
+}
+
+.productTable .row .col:nth-child(2){
+    flex:2;
+}
+
+.productTable .row:first-child .col{
+    background-color: rgb(182, 142, 219);
+    color:white;
+    font-weight: bold;
+}
+
+.productTable .field{
+    width:100%;
+    padding:5px;
+    display: flex;
+    border:1px dotted blue;
+    box-sizing: border-box;
+}
+
+.productTable .field label{
+    flex:1;
+    padding:3px;
+}
+.productTable .field input{
+    flex:5;
+    padding:3px;
+}
+.productTable .field div{
+    flex:5;
+}
+
+.btns{
+    display: flex;
+}
+.btns button{
+    flex:1;
+    padding:5px;
+    margin:2px;
+}

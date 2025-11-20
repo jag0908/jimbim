@@ -19,18 +19,20 @@ function DeleteMember() {
             if(!loginUser.userid){
                 alert("로그인이 필요한 서비스입니다")
                 navigate("/")
+            }else{
+                navigate("/mypage")
             }
         },[]
     )
 
     return (
-        <div>
-            <div>회원탈퇴 추가예정</div>
-            <div className='btns'>
+      	<article style={{height:'100%'}}>
+            <div>회원탈퇴시 </div>
+            <div className='formBtns' style={{width:'300px'}}>
                 <button onClick={()=>{deleteMember()}} style={{backgroundColor:"red"}}>회원탈퇴</button>
                 <button onClick={()=>{navigate('/mypage')}}>돌아가기</button>
             </div>
-        </div>
+        </article>
     )
 }
 

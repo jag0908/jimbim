@@ -12,12 +12,17 @@ import java.util.Optional;
 
 public interface STYLE_LikeRepository extends JpaRepository<STYLE_Like, Integer> {
 
-    int countBySpost(STYLE_post post);
-
     Optional<STYLE_Like> findByMemberidAndSpost(Member member, STYLE_post post);
+
+    int countBySpost(STYLE_post post);
 
     void deleteAllBySpost(STYLE_post post);
 
-    @Query("SELECT l.spost.spostId, COUNT(l) FROM STYLE_Like l WHERE l.spost.spostId IN :ids GROUP BY l.spost.spostId")
-    List<Object[]> countLikesByPostIds(@Param("ids") List<Integer> ids);
+    List<STYLE_Like> findBySpost_SpostIdIn(List<Integer> spostIds);
+
+    @Query("select l from STYLE_Like l where l.spost.spostId in :postIds")
+    List<STYLE_Like> findByPostIds(@Param("postIds") List<Integer> postIds);
+
+    @Query("select count(l) from STYLE_Like l where l.spost = :post")
+    Long countByPost(@Param("post") STYLE_post post);
 }

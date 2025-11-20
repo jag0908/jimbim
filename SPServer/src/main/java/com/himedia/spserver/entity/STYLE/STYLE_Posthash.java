@@ -13,9 +13,10 @@ public class STYLE_Posthash {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    STYLE_post postId;
+    private STYLE_post postId;
 
     @ManyToOne
     @JoinColumn(name = "tag_id")
-    STYLE_Hashtag tagId;
+    private STYLE_Hashtag tagId;
 }
+

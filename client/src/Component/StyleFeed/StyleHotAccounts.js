@@ -17,30 +17,28 @@ function StyleHotAccounts() {
   const [followStatus, setFollowStatus] = useState({});
 
   useEffect(() => {
-  const loadHotUsers = async () => {
-    try {
-      const res = await jaxios.get(`${baseURL}/style/hot-users`);
-      setAccounts(res.data);
+    const loadHotUsers = async () => {
+      try {
+        const res = await jaxios.get(`${baseURL}/style/hot-users`);
+        setAccounts(res.data);
 
-      if (!myUserid) return; // 로그인 안 했으면 팔로우 체크 X
+        // 로그인 안 했으면 종료
+        if (!myUserid) return;
 
-      const followResults = await Promise.all(
-        res.data.map((u) => jaxios.get(`${baseURL}/style/follow/${u.userid}`))
-      );
+        // 서버에서 이미 isFollowing 제공함 → 여기서 바로 followStatus 채워주면 됨
+        const temp = {};
+        res.data.forEach(u => {
+          temp[u.userid] = u.isFollowing;   // 🔥 추가 API 호출 없음
+        });
+        setFollowStatus(temp);
 
-      const temp = {};
-      res.data.forEach((u, i) => {
-        temp[u.userid] = followResults[i].data.followed;
-      });
+      } catch (err) {
+        console.error("HOT 계정 불러오기 오류", err);
+      }
+    };
 
-      setFollowStatus(temp);
-    } catch (err) {
-      console.error("HOT 계정 불러오기 오류", err);
-    }
-  };
-
-  loadHotUsers();
-}, [myUserid]);
+    loadHotUsers();
+  }, [myUserid]);
 
   const toggleFollow = async (userid) => {
     try {

@@ -7,31 +7,29 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
 public class STYLE_post {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer spostId;
 
     private String title;
     private String content;
-    @Column( columnDefinition="DATETIME default now()" )
+
+    @Column(columnDefinition = "DATETIME default now()")
     private Timestamp indate;
+
     @Column(nullable = false)
     private int viewCount = 0;
 
-    @OneToMany(mappedBy = "spost", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<STYLE_Like> likes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<File> files;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-
 }
+

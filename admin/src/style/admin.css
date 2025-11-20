@@ -35,29 +35,37 @@ input{
 
 
 .adminContainer{
-    width:800px;
     margin:0 auto;
-    border:1px dotted red;
     display: flex;
-    flex-direction: column;
+}
+.loginadminarea{
+    color: white;
+    background-color: blue;
+    padding: 15px;
+    border-radius: 5px;
 }
 .adminmenu{
-    width:100%;
+    width:500px;
     background-color: blueviolet;
     padding:10px;
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    justify-content: flex-start;
     box-sizing: border-box;
-    margin:20px 0;
 }
 .adminmenu a{
     text-decoration: none;
     color:white;
     font-weight: bold;
-    padding:5px;
+    padding: 15px;
+}
+.title{
+    display: flex;
+    justify-content: center;
+    padding: 15px;
 }
 .productTable{
-    width:100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
 }

@@ -73,11 +73,8 @@ function MemberList() {
     return (
         <div className='adminContainer'>
             <SubMenu />
-            <div className='btns' style={{display:"flex", margin:"5px"}}>
-                <input type="text" value={key} onChange={(e)=>{setKey(e.currentTarget.value)}} />
-                <button style={{marginLeft:"auto"}} onClick={()=>{ onPageMove(1) }}>검색</button>
-            </div>
             <div className='productTable'>
+                <div className='title'>회원목록</div>
                 <div className='row'>
                     <div className='col'>관리자/일반유저</div>
                     <div className='col' style={{flex:"1"}}>User ID</div>
@@ -114,35 +111,36 @@ function MemberList() {
                         })
                     ):(<span>loading...</span>)
                 }
+                <div id="paging" style={{textAlign:"center", padding:"10px"}}>
+                {
+                    (paging.prev)?(
+                        <span style={{cursor:"pointer"}} onClick={ ()=>{ onPageMove( paging.beginPage-1 ) } } > ◀ </span>
+                    ):(<span></span>)
+                }
+                {
+                    (beginEnd)?(
+                        beginEnd.map((page, idx)=>{
+                            return (
+                                <span style={{cursor:"pointer"}} key={idx} onClick={
+                                    ()=>{ onPageMove( page ) }
+                                }>&nbsp;{page}&nbsp;</span>
+                            )
+                        })
+                    ):(<></>)
+                }
+                {
+                    (paging.next)?(
+                        <span style={{cursor:"pointer"}} onClick={
+                            ()=>{ onPageMove( paging.endPage+1 ) }
+                        }>&nbsp;▶&nbsp;</span>
+                    ):(<></>)
+                }
+                </div>
+                <div className='btns' style={{display:"flex", margin:"5px"}}>
+                    <input type="text" value={key} onChange={(e)=>{setKey(e.currentTarget.value)}} />
+                    <button style={{marginLeft:"auto"}} onClick={()=>{ onPageMove(1) }}>검색</button>
+                </div>    
             </div>
-
-
-            <div id="paging" style={{textAlign:"center", padding:"10px"}}>
-            {
-                (paging.prev)?(
-                    <span style={{cursor:"pointer"}} onClick={ ()=>{ onPageMove( paging.beginPage-1 ) } } > ◀ </span>
-                ):(<span></span>)
-            }
-            {
-                (beginEnd)?(
-                    beginEnd.map((page, idx)=>{
-                        return (
-                            <span style={{cursor:"pointer"}} key={idx} onClick={
-                                ()=>{ onPageMove( page ) }
-                            }>&nbsp;{page}&nbsp;</span>
-                        )
-                    })
-                ):(<></>)
-            }
-            {
-                (paging.next)?(
-                    <span style={{cursor:"pointer"}} onClick={
-                        ()=>{ onPageMove( paging.endPage+1 ) }
-                    }>&nbsp;▶&nbsp;</span>
-                ):(<></>)
-            }
-            </div>    
-        
         </div>
     )
 }

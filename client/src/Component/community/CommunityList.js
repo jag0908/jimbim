@@ -77,14 +77,14 @@ function CommunityList() {
         fetchCommunityList(p, selectedCategoryId);
     }
 
-    function onCommunityView(cpost_id) {
+    function onCommunityView(cpostId) { //수정
         const request = loginUser?.accessToken 
-            ? jaxios.post(`${baseURL}/communityList/addReadCount`, null, { params: { num: cpost_id } })
-            : axios.post(`${baseURL}/communityList/addReadCount`, null, { params: { num: cpost_id } });
+            ? jaxios.post(`${baseURL}/communityList/addReadCount`, null, { params: { num: cpostId } }) //수정
+            : axios.post(`${baseURL}/communityList/addReadCount`, null, { params: { num: cpostId } }); //수정
 
         request
             .catch(err => console.error(err))
-            .finally(() => navigate(`/communityView/${cpost_id}`));
+            .finally(() => navigate(`/communityView/${cpostId}`)); //수정
     }
 
     function onCategoryClick(categoryId) {
@@ -138,7 +138,7 @@ function CommunityList() {
                     ) : (
                         communityList.map((community, idx) => (
                             <div className='row' key={idx}>
-                                <div className='col' onClick={() => onCommunityView(community.cpost_id)}>
+                                <div className='col' onClick={() => onCommunityView(community.cpostId)}> {/*수정*/}
                                     {community.title}
                                 </div>
                                 <div className='col'>{community.userid || community.member?.userid}</div>

@@ -1,38 +1,46 @@
 package com.himedia.spserver.controller;
 
-import com.himedia.spserver.entity.Community.C_Reply;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.himedia.spserver.dto.CommunityReplyDTO;
+import com.himedia.spserver.dto.CommunityReplyResponseDTO;
+import com.himedia.spserver.service.CommunityReplyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/communityReply")
 public class CommunityReplyController {
 
-    @Autowired
-    com.himedia.spserver.service.CommunityReplyService crs;
+    private final CommunityReplyService crs; //수정: 생성자 주입
 
-//    @GetMapping("/getReply/{reply_id}")
-//    public HashMap<String, Object> getReply(@PathVariable("reply_id") int reply_id){
-//        HashMap<String, Object> result = new HashMap<>();
-//        result.put("replyList", crs.getReplyList(reply_id));
-//        return result;
-//    }
-//
-//    @PostMapping("/addReply")
-//    public HashMap<String, Object> addReply(@RequestBody C_Reply creply){
-//        HashMap<String, Object> result = new HashMap<>();
-//        crs.addReply( creply );
-//        result.put("msg", "ok");
-//        return result;
-//    }
-//
-//    @DeleteMapping("/deleteReply/{reply_id}")
-//    public HashMap<String, Object> deleteReply(@PathVariable("reply_id") int reply_id){
-//        HashMap<String, Object> result = new HashMap<>();
-//        crs.deleteReply(reply_id);
-//        result.put("msg", "ok");
-//        return result;
-//    }
+    // 댓글 리스트 조회
+    @GetMapping("/getReply/{cpostId}")
+    public Map<String, Object> getReply(@PathVariable int cpostId) {
+        List<CommunityReplyResponseDTO> replyList = crs.getReplyList(cpostId); //수정: DTO 반환
+        Map<String, Object> result = new HashMap<>();
+        result.put("replyList", replyList);
+        return result;
+    }
+
+    // 댓글 추가
+    @PostMapping("/addReply")
+    public Map<String, String> addReply(@RequestBody CommunityReplyDTO dto) {
+        crs.addReply(dto); //수정: DTO 사용
+        Map<String, String> result = new HashMap<>();
+        result.put("status", "success");
+        return result;
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("/deleteReply/{replyId}")
+    public Map<String, String> deleteReply(@PathVariable int replyId) {
+        crs.deleteReply(replyId);
+        Map<String, String> result = new HashMap<>();
+        result.put("status", "deleted");
+        return result;
+    }
 }

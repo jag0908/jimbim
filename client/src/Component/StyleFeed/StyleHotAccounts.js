@@ -65,12 +65,7 @@ function StyleHotAccounts() {
       )
     );
 
-    alert(res.data.message);
-
-      const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
-      setFollowStatus(prev => ({ ...prev, [userid]: res.data.followed }));
-      // 메시지 출력 추가
-      alert(res.data.message);
+    alert(res.data.message);    
     } catch (err) {
       console.error("팔로우 토글 실패", err);
     }

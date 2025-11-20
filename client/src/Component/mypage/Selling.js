@@ -31,10 +31,11 @@ function Selling() {
 	return (
 		<article style={{height:'100%'}}>
             {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
-					<div style={{width:'700px'}}>
+                    <div className='formtitle'>판매 내역</div>
+					<div className='shoparea'>
 						<h3>중고마을</h3>
 						{
 							(shSellingList.length!=0)?
@@ -54,10 +55,10 @@ function Selling() {
 									)
 								})
 							):
-							(<div>아직 판매내역이 없습니다</div>)
+							(<div>아직 판매 내역이 없습니다</div>)
 						}
 					</div>
-					<div>
+					<div className='shoparea'>
 						<h3>SHOP</h3>
 						{
 							(shopSellingList.length!=0)?
@@ -77,7 +78,7 @@ function Selling() {
 									)
 								})
 							):
-							(<div>아직 판매내역이 없습니다</div>)
+							(<div>아직 판매 내역이 없습니다</div>)
 						}
 					</div>
 				</div>

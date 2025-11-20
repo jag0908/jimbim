@@ -98,9 +98,10 @@ function Profile() {
     return (
         <article style={{height:'100%'}}>
             {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
+                    <div className='formtitle'>프로필 관리</div>
                     <div className='field'>
                         <label>이름</label>
                         {
@@ -109,14 +110,14 @@ function Profile() {
                                 <input type="text" value={name} onChange={(e)=>{
                                     setName( e.currentTarget.value )
                                 }}/>
-                                <div className='btns formBtns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.name}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('name')}}>변경</button>
                                 </div>
                             </>)
@@ -132,7 +133,7 @@ function Profile() {
                                         (preview)?
                                         (
                                         <div className='imgBox'>
-                                            <img src={preview} alt=''/>
+                                            <img src={preview} alt='' className='formimgpreview'/>
                                         </div>
                                         ):
                                         (<></>)
@@ -142,17 +143,21 @@ function Profile() {
                             (<>
                                 <div className="previewContainer">
                                     <div className='imgBox'>
-                                        <img src={member.profileImg} alt=''/>
+                                        <img src={member.profileImg} alt='' className='formimgpreview'/>
                                     </div>
                                 </div>
                             </>)
                         }
-                        <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                        <label htmlFor="dataFile">
+                            <div className='formBtns'>
+                                <div className='imgBtns'>다른 이미지 업로드</div>
+                            </div>
+                        </label>
                         <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
                         {
                             (type==='profileImg')?
                             (
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
@@ -169,14 +174,14 @@ function Profile() {
                                 <textarea value={profileMsg} onChange={(e)=>{
                                     setProfileMsg( e.currentTarget.value )
                                 }}/>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.profileMsg}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('profileMsg')}}>변경</button>
                                 </div>
                             </>)

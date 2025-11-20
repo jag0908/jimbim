@@ -191,9 +191,10 @@ function Mypage() {
     return (
         <article style={{height:'100%'}}>
             {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
+                    <div className='formtitle'>로그인 정보</div>
                     {
                         (loginUser.provider==='KAKAO')?
                         (null):
@@ -207,32 +208,32 @@ function Mypage() {
                                 {
                                     (type==='pwd')?
                                     (<>
-                                        <div className='field'>
+                                        <div className='field subLabel'>
                                             <label>현재 비밀번호</label>
                                             <input type="password" value={prePwd} onChange={
                                                 (e)=>{ setPrePwd(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <div className='field'>
+                                        <div className='field subLabel'>
                                             <label>새 비밀번호</label>
                                             <input type="password" value={pwd} onChange={
                                                 (e)=>{ setPwd(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <div className='field'>
+                                        <div className='field subLabel'>
                                             <label>비밀번호 확인</label>
                                             <input type="password" value={pwdChk} onChange={
                                                 (e)=>{ setPwdChk(e.currentTarget.value )}
                                             }/>
                                         </div>
-                                        <div className='btns'>
+                                        <div className='formBtns'>
                                             <button onClick={()=>{updatePwd()}}>수정</button>
                                             <button onClick={()=>{edit('')}}>취소</button>
                                         </div>
                                     </>):
                                     (<>
                                         <div>********</div>
-                                        <div className='btns'>
+                                        <div className='formBtns'>
                                             <button onClick={()=>{edit('pwd')}}>변경</button>
                                         </div>
                                     </>)
@@ -248,14 +249,14 @@ function Mypage() {
                                 <input type="text" className='inputemail' value={email} onChange={(e)=>{
                                     setEmail( e.currentTarget.value )
                                 }}/>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.email}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('email')}}>변경</button>
                                 </div>
                             </>)
@@ -277,14 +278,14 @@ function Mypage() {
                                         setPhone3( e.currentTarget.value )
                                     }}/>
                                 </div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.phone}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('phone')}}>변경</button>
                                 </div>
                             </>)
@@ -303,14 +304,14 @@ function Mypage() {
                                         setRrn2( e.currentTarget.value );
                                     }}/> * * * * * * 
                                 </div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{onSubmit()}}>수정</button>
                                     <button onClick={()=>{edit('')}}>취소</button>
                                 </div>
                             </>):
                             (<>
                                 <div>{member.rrn}</div>
-                                <div className='btns'>
+                                <div className='formBtns'>
                                     <button onClick={()=>{edit('rrn')}}>변경</button>
                                 </div>
                             </>)
@@ -319,7 +320,7 @@ function Mypage() {
                     <div className='field'>
                         <label>동의사항(선택)</label>
                         <div className='checkboxField'>
-                            <div className='checkboxLabel'>
+                            <div className='subLabel'>
                                 <label>약관 동의</label>
                             </div>
                             <div className='agreeCheckbox'>
@@ -334,7 +335,7 @@ function Mypage() {
                             </div>
                         </div> 
                         <div className='checkboxField'>
-                            <div className='checkboxLabel'>
+                            <div className='subLabel'>
                                 <label>개인정보 동의</label>
                             </div>
                             <div className='agreeCheckbox'>
@@ -356,7 +357,7 @@ function Mypage() {
                             (member.indate.substring(0,10)):(null)
                         }</div>
                     </div>
-                    <div className='btns'>
+                    <div className='formBtns'>
                         <button onClick={()=>{navigate('/deleteMember')}} style={{backgroundColor:"red"}}>회원탈퇴</button>
                     </div>
                 </div>

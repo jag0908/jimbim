@@ -206,6 +206,22 @@ public class StyleService {
                 });
     }
 
+    // ✅ 팔로워 목록
+    public List<String> getFollowers(String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        return followRepository.findByEndMember(member).stream()
+                .map(f -> f.getStartMember().getUserid())
+                .collect(Collectors.toList());
+    }
+
+    // ✅ 팔로잉 목록
+    public List<String> getFollowing(String userid) {
+        Member member = memberRepository.findByUserid(userid);
+        return followRepository.findByStartMember(member).stream()
+                .map(f -> f.getEndMember().getUserid())
+                .collect(Collectors.toList());
+    }
+
     // ✅ 팔로우 상태 확인
     public boolean isFollowing(String startUserid, String endUserid) {
         Member startMember = memberRepository.findByUserid(startUserid);
@@ -261,14 +277,6 @@ public class StyleService {
         reply.setMemberid(member);
         reply.setContent(content);
         reply.setIndate(new Timestamp(System.currentTimeMillis()));
-
-        // parentId가 있으면 부모 댓글 연결
-        if (parentId != null) {
-            STYLE_Reply parentReply = replyRepository.findById(parentId)
-                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글 없음"));
-            reply.setParent(parentReply);
-        }
-
         replyRepository.save(reply);
 
         // 새로 추가한 댓글만 반환
@@ -278,7 +286,6 @@ public class StyleService {
         result.put("profileImg", reply.getMemberid().getProfileImg());
         result.put("content", reply.getContent());
         result.put("indate", reply.getIndate());
-        result.put("parent_id", parentId);
 
         return result;
     }

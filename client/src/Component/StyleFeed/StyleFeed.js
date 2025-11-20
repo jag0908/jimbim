@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import jaxios from '../../util/jwtutil';
 import StyleHotAccounts from "./StyleHotAccounts";
 import StyleHotTags from "./StyleHotTags";
+import Masonry from 'react-masonry-css';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -31,6 +32,14 @@ function StyleFeed() {
 
     fetchPosts();
   }, [category]);
+
+  const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1
+  };
+
 
   const toggleLike = async (postId) => {
     try {
@@ -77,52 +86,68 @@ function StyleFeed() {
       {/* 🔥 HOT 태그 */}
       {category === "tags" && <StyleHotTags />}
 
+
       {/* 🔥 기본 Feed */}
       {(category !== "tags" && category !== "accounts") && (
+
+        
         <div className="style-feed-grid">
           {!Array.isArray(posts) || posts.length === 0 ? (
             <div className="style-feed-no-posts">
               😢 아직 등록된 스타일이 없습니다. 첫 번째 스타일을 공유해보세요!
             </div>
           ) : (
-            posts.map(post => (
-              <div key={post.spost_id} className="style-feed-card">
-                <div className="style-feed-image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
-                  {Array.isArray(post.s_images) ? (
-                    <>
-                      <img src={post.s_images[0]} alt="post" className="style-feed-post-img" />
-                      {post.s_images.length > 1 && (
-                        <div className="style-feed-multiple-count">+{post.s_images.length}</div>
-                      )}
-                    </>
-                  ) : (
-                    <img src={post.s_images} alt="post" className="style-feed-post-img" />
-                  )}
-                </div>
-
-                <div className="style-feed-info">
-                  <img
-                    src={post.profileImg || '/default_profile.png'}
-                    alt="profile"
-                    className="style-feed-profile-img"
-                    onClick={() => navigate(`/styleUser/${post.userid}`)}
-                  />
-                  <div className="style-feed-user-info" onClick={() => navigate(`/styleUser/${post.userid}`)}>
-                    <span className="style-feed-nickname">{post.userid}</span>
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="my-masonry-grid"
+              columnClassName="my-masonry-grid_column"
+            >
+              {posts.map(post => (
+                <div key={post.spost_id} className="style-feed-card">
+                  <div
+                    className="style-feed-image-wrapper"
+                    onClick={() => navigate(`/style/${post.spost_id}`)}
+                  >
+                    {Array.isArray(post.s_images) ? (
+                      <>
+                        <img src={post.s_images[0]} alt="post" className="style-feed-post-img" />
+                        {post.s_images.length > 1 && (
+                          <div className="style-feed-multiple-count">+{post.s_images.length}</div>
+                        )}
+                      </>
+                    ) : (
+                      <img src={post.s_images} alt="post" className="style-feed-post-img" />
+                    )}
                   </div>
 
-                  <button
-                    className={`style-feed-like-btn ${post.liked ? "liked" : ""}`}
-                    onClick={() => toggleLike(post.spost_id)}
-                  >
-                    {post.liked ? "❤️" : "🤍"} {post.likeCount}
-                  </button>
-                </div>
+                  <div className="style-feed-info">
+                    <img
+                      src={post.profileImg || '/default_profile.png'}
+                      alt="profile"
+                      className="style-feed-profile-img"
+                      onClick={() => navigate(`/styleUser/${post.userid}`)}
+                    />
+                    <div
+                      className="style-feed-user-info"
+                      onClick={() => navigate(`/styleUser/${post.userid}`)}
+                    >
+                      <span className="style-feed-nickname">{post.userid}</span>
+                    </div>
 
-                <p className="style-feed-post-title">{post.title}</p>
-              </div>
-            ))
-          )}
+                    <button
+                      className={`style-feed-like-btn ${post.liked ? "liked" : ""}`}
+                      onClick={() => toggleLike(post.spost_id)}
+                    >
+                      {post.liked ? "❤️" : "🤍"} {post.likeCount}
+                    </button>
+                  </div>
+
+                  <p className="style-feed-post-title">{post.title}</p>
+                </div>
+              ))}
+            </Masonry>
+          )
+        }
         </div>
       )}
     </div>

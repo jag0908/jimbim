@@ -22,7 +22,7 @@
   padding: 8px 15px;
   font-size: 14px;
   cursor: pointer;
-  background-color: #0077ff;
+  background-color: #888;
   color: white;
   border: none;
   border-radius: 5px;
@@ -30,14 +30,7 @@
 }
 
 .style-feed-write-btn:hover {
-  background-color: #005bb5;
-}
-
-.style-feed-grid {
-  column-count: 4;              /* 한 줄 4개 */
-  column-gap: 20px;             /* 가로 간격 */
-  width: 100%;
-  margin-top: 20px;
+  background-color: #888;
 }
 
 .style-feed-card {
@@ -85,7 +78,7 @@
   height: 42px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #0077ff;
+  border: 2px solid #888;
 }
 
 .style-feed-user-info {
@@ -173,4 +166,19 @@
   color: #000;
   border-bottom: 2px solid #000;
   padding-bottom: 4px;
+}
+
+.my-masonry-grid {
+  display: flex;
+  margin-left: -20px; /* column간 간격 */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 20px;
+  background-clip: padding-box;
+}
+
+.style-feed-card {
+  margin-bottom: 20px;
 }

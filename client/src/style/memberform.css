@@ -22,6 +22,10 @@
     font-size: 14px;
     margin-left: 10px;
 }
+.idcheck:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
 .inputemail{
     width: 200px;
 }
@@ -45,7 +49,10 @@
 }
 
 .noimgmsg{
-    margin-bottom: 6px;
+    margin-left: 5px;
+    margin-bottom: 8px;
+    font-style: italic;
+    font-size: 90%;
 }
 
 .imgcancel{
@@ -57,6 +64,11 @@
     font-size: 14px;
     margin: 6px;
 }
+.imgcancel:hover {
+  background-color: #495057;
+  transform: translateY(-2px);
+}
+
 .imgBtns{
     background-color: #007bff;
     color: #fff;
@@ -68,6 +80,12 @@
     transition: background-color 0.2s, transform 0.1s;
     text-align: center;
     width: 120px;
+    font-weight: normal;
+}
+
+.imgBtns:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 .formimgpreview{
@@ -80,12 +98,45 @@
 
 .checkboxField{
     display: flex;
-    margin: 6px;
 }
-.checkboxLabel{
+.subLabel{
     width: 120px;
 }
-.formBtns{
-    margin-top: 0px;
-    margin-bottom: 15px;
+.subLabel label{
+    font-size: 95%;
+    padding: 3px;
+}
+/* 버튼 그룹 */
+.formBtns {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 200px;
+}
+
+.formBtns button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.formBtns button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* 이전 버튼 별도 스타일 */
+.formBtns button:nth-child(2) {
+  background-color: #6c757d;
+}
+
+.formBtns button:nth-child(2):hover {
+  background-color: #495057;
 }

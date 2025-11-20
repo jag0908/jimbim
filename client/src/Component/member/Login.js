@@ -16,9 +16,6 @@ function Login() {
     const dispatch = useDispatch()
     const baseURL = process.env.REACT_APP_BASE_URL;
 
-    const kakaobuttonstyle = {
-        background:'yellow', color:'black', fontWeight:'bold', width:'100%'
-    }
     useEffect(
         ()=>{
             if( loginUser && loginUser.userid ){
@@ -67,7 +64,7 @@ function Login() {
                         <button onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>
                     </div>
                     <div className="btns">
-                        <button style={kakaobuttonstyle} onClick={
+                        <button id="kakaobutton" onClick={
                             ()=>{window.location.href=`${baseURL}/member/kakaostart`}
                         }>KAKAO</button>
                     </div>

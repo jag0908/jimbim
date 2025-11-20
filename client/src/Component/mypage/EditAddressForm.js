@@ -46,8 +46,8 @@ function EditAddressForm(props) {
         setIsOpen(false);
     }
     async function onSubmit(){
-        if( !address_name ){return alert('이름을 입력하세요')}
-        if( !address_zipnum){ return alert('우편번호를 입력하세요')}
+        if( !address_name ){return alert('주소명을 입력하세요')}
+        if( !address_zipnum){ return alert('주소 검색하기 버튼을 눌러 주소를 입력하세요')}
         if( !address_detail ){return alert('상세주소를 입력하세요')}
         console.log(loginUser)
 
@@ -74,50 +74,41 @@ function EditAddressForm(props) {
 
     }
     return (
-        <div>
+        <>
             <div className='field'>
                 <label>주소명</label>
                 <input type="text"  value={address_name} onChange={
                     (e)=>{ setAddress_name(e.currentTarget.value )}
                 }/>
             </div>
-            <div className='field'>
-                <label>우편번호</label>
-                <input type="text" value={address_zipnum} onChange={
-                    (e)=>{ setAddress_zipnum(e.currentTarget.value )}
-                } readOnly/>
-                <div className='btns'>
-                    <button onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
-                </div>
+            <div className='formBtns'>
+                <button onClick={ ()=>{ setIsOpen( !isOpen ) }}>주소 검색하기</button>
             </div>
-
+            <div className='field'>
+                <label>주소</label>
+                <div className='addressListText'>
+                    {
+                        (address_zipnum)?(<>({address_zipnum}) {address_simple}</>):(<></>)
+                    }
+                </div>
+                <input type="text" className='address_detail' value={address_detail} onChange={
+                    (e)=>{ setAddress_detail(e.currentTarget.value )}
+                }/>
+            </div>
             <div>
                 <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
                     <DaumPostcode onComplete={completeHandler} /><br />
                     <div className='btns'>
-                        <button onClick={()=>{ setIsOpen(false) }}>CLOSE</button>
+                        <button style={{display:'none'}}></button>{/* css적용을위한 더미버튼 */}
+                        <button className='imgcancel' onClick={()=>{ setIsOpen(false) }}>닫기</button>
                     </div>
                 </Modal>
             </div>
-
-            <div className='field'>
-                <label>주소</label>
-                <input type="text" value={address_simple} onChange={
-                    (e)=>{ setAddress_simple(e.currentTarget.value )}
-                } readOnly/>
-            </div>
-
-            <div className='field'>
-                <label>상세주소</label>
-                <input type="text"  value={address_detail} onChange={
-                    (e)=>{ setAddress_detail(e.currentTarget.value )}
-                }/>
-            </div>
-            <div className='btns'>
+            <div className='formBtns'>
                 <button onClick={()=>{onSubmit()}}>{(address_id>=1)?(<>수정</>):(<>추가</>)}</button>
                 <button onClick={()=>{setOnEditForm(address_id)}}>취소</button>
             </div>
-        </div>
+        </>
     )
 }
 

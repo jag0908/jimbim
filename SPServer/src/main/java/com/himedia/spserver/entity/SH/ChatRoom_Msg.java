@@ -3,6 +3,7 @@ package com.himedia.spserver.entity.SH;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -15,15 +16,11 @@ public class ChatRoom_Msg {
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
-    private ChatRoom chat_room_id;
+    private ChatRoom chatRoom;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member sender;
-
-    @Column(nullable = false)
     private String content;
+    private Integer senderId;
 
-    @Column( columnDefinition="DATETIME default now()" )
+    @CreationTimestamp
     private Timestamp indate;
 }

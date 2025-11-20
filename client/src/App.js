@@ -34,6 +34,7 @@ import CommunityView from './Component/community/CommunityView'
 import ShUpdate from './Component/sh-page/ShUpdate';
 
 import UpdateCommunity from './Component/community/UpdateCommunity'
+import ChatRoom from './Component/chat/ChatRoom';
 
 
 

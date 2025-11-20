@@ -288,14 +288,18 @@ function MemberForm(props) {
                         </>):
                         ((type=='kakao')?
                             (
-                            <img src={kakaoMember.profileImg}/>
+                            <img src={kakaoMember.profileImg} className='formimgpreview'/>
                             ):(<div className='noimgmsg'>프로필 사진 없음</div>)
                         )
                     }
                     </div>
                 </div>
                 {/* 파일업로드 인풋 */}
-                <label htmlFor="dataFile"><div className='imgBtns'>다른 이미지 업로드</div></label>
+                <label htmlFor="dataFile">
+                    <div className='formBtns'>
+                        <div className='imgBtns'>다른 이미지 업로드</div>
+                    </div>
+                </label>
                 <input id='dataFile' ref={fileref} name="file" type='file' className='inpFile' onChange={(e)=>{fileupload(e);}} style={{display:'none'}}/>
             </div>
             <div className='field'>
@@ -305,7 +309,7 @@ function MemberForm(props) {
             <div className='field'>
                 <label>동의사항(선택)</label>
                 <div className='checkboxField'>
-                    <div className='checkboxLabel'>
+                    <div className='subLabel'>
                         <label>약관 동의</label>
                     </div>
                     <div className='agreeCheckbox'>
@@ -313,7 +317,7 @@ function MemberForm(props) {
                     </div>
                 </div>
                 <div className='checkboxField'>
-                    <div className='checkboxLabel'>
+                    <div className='subLabel'>
                         <label>개인정보 동의</label>
                     </div>
                     <div className='agreeCheckbox'>
@@ -321,7 +325,7 @@ function MemberForm(props) {
                     </div>
                 </div>
             </div>
-            <div className="btns formBtns">
+            <div className="formBtns">
                 <button onClick={()=>{onSubmit()}}>완료</button>
                 <button onClick={()=>{navigate(back)}}>취소</button>
             </div>

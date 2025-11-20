@@ -6,6 +6,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useSelector } from 'react-redux';
+import ChatRoom from '../chat/ChatRoom';
 
 
 
@@ -21,7 +22,7 @@ const settings = {
 function ShView() {
     const baseURL = process.env.REACT_APP_BASE_URL;
 
-    const loginUser = useSelector(state=>state.user);
+    const  loginUser = useSelector(state=>state.user);
 
     const {id} = useParams();
     const navigate = useNavigate();
@@ -29,20 +30,15 @@ function ShView() {
     const [postDetail, setPostDetail] = useState(null);
     const [category, setCategory] = useState(null);
 
-
+    const [disPlayYN, setDisplayYN] = useState({display: "none"}); 
 
     async function viewed() {
-
-
         // 1. 조회수 증가
         try {
             await jaxios.post(`/api/sh-page/sh-view-count`, { postId: id, memberId: loginUser.member_id });
-            console.log("조회수 증가 완료");
         } catch (err) {
             console.error(err);
         }
-        
-
         // 2. 데이터 가져오기 (조회수 증가 후)
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
@@ -53,7 +49,6 @@ function ShView() {
             console.error(err);
         }
     }
-
 
     useEffect(()=> {
         viewed();
@@ -104,11 +99,58 @@ function ShView() {
 
 
 
-
-
     // 채팅
+    // oneToOneChat
+    // chatRoomList
+    const [openChatState, setOpenChatState] = useState(null);
+    const [chatRoomData, setChatRoomData] = useState(null);
+    const [chatListData,setChatListData] = useState(null);
     function openChat() {
+        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+        setDisplayYN({display: "flex"});
+        if(window.confirm("판매자와 연락 하시겠습니까?")) {
+            jaxios.post("/api/chat/createChatRoom", {
+                sellerId:postDetail.member.memberId, 
+                sellerName:postDetail.member.name,
+                sellerProfileImg:postDetail.member.profileImg,
+                buyerId:loginUser.member_id,
+                buyerName:loginUser.name,
+                buyerProfileImg:loginUser.profileImg,
+                postId: id,
+                postTitle: postDetail.title,
+            }).then((result)=> {
+                    console.log(result);
+                    if(result.data.msg == "ok") {
+                        setOpenChatState("oneToOneChat");
+                        setChatRoomData(result.data.resDto);
+                    } else {
+                        return alert("요청이 실패하였습니다.");
+                    }
+                }).catch(err=>console.error(err));
+        }
+    }
+    function openChatRoomList() {
+        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+        setDisplayYN({display: "flex"});
+        jaxios.get("/api/chat/chatRoomList").then((result)=> {
+            console.log(result);
+            if(result.data.msg == "ok") {
+                setOpenChatState("chatRoomList");
+                setChatListData(result.data.resDto);
+            } else {
+                return alert("요청이 실패하였습니다.");
+            }
+        }).catch(err=>console.error(err));
+    }
+    function openClickChat(chatRoom) {
+        setDisplayYN({display: "flex"});
+        setChatRoomData(chatRoom);
+        setOpenChatState("oneToOneChat");
+    }
 
+    function popupClose() {
+        setDisplayYN({disPlayYN: "none"});
+        setOpenChatState(null);
     }
 
   return (
@@ -186,8 +228,8 @@ function ShView() {
                         </h2>
                     </div>
                     <div className='dataBoxWrap dobule'>
-                        <div className='catetory'></div>
-                        <div className='date'>{}</div>
+                        <div className='catetory'>[{category && category}]</div>
+                        <div className='date'>{postDetail && formatDateTime(postDetail.indate)}</div>
                     </div>
                     <div className='dataBoxWrap'>
                         <span className='dataBox price'>
@@ -232,13 +274,21 @@ function ShView() {
                     </div>
 
                     <div className='eventArea'>
-                        <button className='btnEvent btnChat' onClick={()=> {openChat()}}>1:1 채팅하기</button>
+                        {
+                            postDetail &&
+                            postDetail.member.memberId == loginUser.member_id &&
+                            <button className='btnEvent btnChat' onClick={()=> {openChatRoomList()}}>내 채팅 보기</button>
+                        }
+                        {
+                            postDetail &&
+                            postDetail.member.memberId != loginUser.member_id &&
+                            <button className='btnEvent btnChat' onClick={()=> {openChat()}}>1:1 채팅하기</button>
+                        }
+                        
                         <button className='btnEvent btnBuy'>구매하기</button>
                         <button className='btnEvent btnZZim'>찜</button>
                         <button className='btnEvent btnLike'>좋</button>
                     </div>
-
-
 
                     <div className='line'></div>
                     
@@ -280,7 +330,7 @@ function ShView() {
                         <span className='dataBox price srt'>
                             {
                                 postDetail?
-                                postDetail.deliveryPrice:
+                                formatPrice(postDetail.deliveryPrice):
                                 <Lodding/>
                             }
                             원</span>
@@ -288,111 +338,215 @@ function ShView() {
                 </div>
             </div>
             
-             
-
-            
-            
         </div>
         <div className='btnWrap'>
             {
-                postDetail && postDetail.member.memberId == loginUser.member_id ? 
-                (
-                    <button className='navBtn pointBtn' onClick={() => navigate(`/sh-page/sh-update/${id}`)}>
-                    수정하기
-                    </button>
-                ):
-                null
+                postDetail &&
+                postDetail.member.memberId == loginUser.member_id &&
+                <button className='navBtn pointBtn' onClick={() => navigate(`/sh-page/sh-update/${id}`)}>
+                수정하기
+                </button>
+                
             }
             
             <button className='navBtn' onClick={()=> {navigate(-1);}}>취소</button>
         </div>
 
-        <PopupChatRoomList />
+        {
+            loginUser &&
+            loginUser?.accessToken &&
+            postDetail &&
+            openChatState &&
+            
+            <PopupLayer 
+                disPlayYN={disPlayYN} 
+                token={loginUser.accessToken} 
+                loginUser={loginUser}
+                sellerId={postDetail.member.memberId} 
+                buyerId={loginUser.member_id} 
+                openChatState={openChatState}
+                setOpenChatState={setOpenChatState}
+                chatRoomData={chatRoomData}
+                chatListData={chatListData}
+                onOpenClickChat={openClickChat}
+                onPopupClose={popupClose}
+            />
+        }
     </div>
   )
 }
 
+// 로딩
 function Lodding() {
     return <span style={{fontSize:"14px"}}>불러오는중...</span>
 }
 
-function PopupChatRoomList() {
-    return <>
+// 팝업창열림
+function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chatRoomData, chatListData, onOpenClickChat, onPopupClose}) {         
     
-        <div className='popupWrap'>
-            <div className='popupHeader'>
-                <h3 className='pTitle'>채팅</h3>
-                <button className='bthClose'>X</button>
-            </div>
-            
+    return (
+        <>
+            <div className='popupWrap' style={disPlayYN}>
+                <div className='popupHeader'>
+                    <h3 className='pTitle'>채팅</h3>
+                    <button className='bthClose' onClick={()=>{onPopupClose();}}>X</button>
+                </div>
+                {
+                    openChatState && 
+                    openChatState=="oneToOneChat" &&
+                    
+                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} openChatState={openChatState}/>
 
-            <div className='pChatListWrap'>
-                <div className='pChatList'>
-                    <div className='chl left'>
-                        <img src="" alt="이미지" />
-                    </div>
-                    <div className='chl center'>
-                        <div className='pdTitle'>
-                            포스트타이틀입니다.
-                        </div>
-                        <div className='rMsg'>
-                            최근 메세지입니다.
-                        </div>
-                    </div>
-                    <div className='chl right'>
-                        <div className='rTime'>
-                            오후 5:44
-                        </div>
-                        <div className='alram'>
-                            1
-                        </div>
-                    </div>
-                </div> 
-                <div className='pChatList'>
-                    <div className='chl left'>
-                        <img src="" alt="이미지" />
-                    </div>
-                    <div className='chl center'>
-                        <div className='pdTitle'>
-                            포스트타이틀입니다.
-                        </div>
-                        <div className='rMsg'>
-                            최근 메세지입니다.
-                        </div>
-                    </div>
-                    <div className='chl right'>
-                        <div className='rTime'>
-                            오후 5:44
-                        </div>
-                        <div className='alram'>
-                            1
-                        </div>
-                    </div>
-                </div> 
-                <div className='pChatList'>
-                    <div className='chl left'>
-                        <img src="" alt="이미지" />
-                    </div>
-                    <div className='chl center'>
-                        <div className='pdTitle'>
-                            포스트타이틀입니다.
-                        </div>
-                        <div className='rMsg'>
-                            최근 메세지입니다.
-                        </div>
-                    </div>
-                    <div className='chl right'>
-                        <div className='rTime'>
-                            오후 5:44
-                        </div>
-                        <div className='alram'>
-                            1
-                        </div>
-                    </div>
-                </div>   
+                }
+                {
+                    openChatState && 
+                    openChatState=="chatRoomList" &&
+
+                    <ChatRoomList chatListData={chatListData} loginUser={loginUser} setOpenChatState={setOpenChatState} onOpenClickChat={onOpenClickChat}/>
+                }
+            </div> 
+        </>
+    )
+}
+
+// 채팅룸 리스트
+function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickChat}) {
+
+    return (
+        <div className='pChatListWrap'>
+            {/* // 내가 판매자일 때 (chatRoom?.sellerId == loginUser.member_id);
+            // 내가 구매자일 때 (chatRoom?.buyerId == loginUser.member_id); */}
+            <div className='pcListBox'>
+                <h3 className='pcLabel'>Buyers</h3>
+                {
+                    chatListData && chatListData.map((chatRoom, i)=> {
+                        return(
+                            (chatRoom?.sellerId == loginUser.member_id) ? 
+                            <div className='pChatList' key={i} onClick={()=>{onOpenClickChat(chatRoom)}}>
+                                <div className='chl left'>
+                                    <img src={chatRoom.buyerProfileImg} alt="이미지" />
+                                </div>
+                                <div className='chl center'>
+                                    <div className='pdTitle'>
+                                        {chatRoom.buyerName} (buyer)
+                                    </div>
+                                    <div className='rMsg'>
+                                        최근 메세지입니다.
+                                    </div>
+                                </div>
+                                <div className='chl right'>
+                                    <div className='rTime'>
+                                        오후 5:44
+                                    </div>
+                                    <div className='alram'>
+                                        1
+                                    </div>
+                                </div>
+                            </div>  
+                            : null
+                            
+                        )
+                    })
+                }
             </div>
-        </div> 
-    </>
+            <div className='pcListBox'>
+                <h3 className='pcLabel'>Sellers</h3>
+                {
+                    chatListData && chatListData.map((chatRoom, i)=> {
+                        return(
+                            (chatRoom?.buyerId == loginUser.member_id) ? 
+                            <div className='pChatList' key={i} onClick={()=>{onOpenClickChat(chatRoom)}}>
+                                <div className='chl left'>
+                                    <img src={chatRoom.sellerProfileImg} alt="이미지" />
+                                </div>
+                                <div className='chl center'>
+                                    <div className='pdTitle'>
+                                        {chatRoom.sellerName} (seller)
+                                    </div>
+                                    <div className='rMsg'>
+                                        최근 메세지입니다.
+                                    </div>
+                                </div>
+                                <div className='chl right'>
+                                    <div className='rTime'>
+                                        오후 5:44
+                                    </div>
+                                    <div className='alram'>
+                                        1
+                                    </div>
+                                </div>
+                            </div>  
+                            : null
+                            
+                        )
+                    })
+                }
+            </div>
+        </div>
+    )
+}
+
+// 채팅방
+function ChatRoomCP({chatRoomData, loginUser, openChatState}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [chatRoomInfo, setChatRoomInfo] = useState(null);
+
+    useEffect(()=> {
+        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+        jaxios.get(`/api/chat/detailChatRoom/${chatRoomData.chatRoomId}`)
+            .then((result)=> {
+                console.log(result);
+                if(result.data.msg == "ok") {
+                    setIsOpen(true);
+                    setChatRoomInfo(result.data.resDto);
+                } else {
+                    alert("요청이 실패했습니다.");
+                }
+            
+            }).catch(err=>console.error(err));
+    }, [])
+
+    return (
+        <>
+            <div className='chatRoom'>
+                <div className='buyerInfo'>
+                    <div className='imgBox'>
+                        <img src={
+                            chatRoomInfo?.sellerId == loginUser.member_id
+                                ? chatRoomInfo?.buyerProfileImg
+                                : chatRoomInfo?.buyerId == loginUser.member_id
+                                    ? chatRoomInfo?.sellerProfileImg
+                                    : "기본이미지" // fallback
+                        } alt='프로필이미지' />
+                    </div>
+                    <div className='buyerName'>
+                        {
+                            (chatRoomInfo?.sellerId == loginUser.member_id) && chatRoomInfo?.buyerName
+                        }
+                        {
+                            (chatRoomInfo?.buyerId == loginUser.member_id) && chatRoomInfo?.sellerName
+                        }
+                    </div>
+                </div>
+                <div className='bindingChatRoom'>
+                    {/* 웹소켓 */}
+                    {
+                        chatRoomInfo &&
+                        isOpen &&
+                        openChatState == "oneToOneChat" &&
+                        <ChatRoom roomId={chatRoomInfo &&
+                        chatRoomInfo.chatRoomId} loginUser={loginUser} />                          
+                    }
+                    {
+                        !chatRoomInfo && !isOpen && <span style={{fontSize:"14px"}}>불러오는중...</span>
+                    }
+                </div>
+                <div className='util'>
+
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default ShView

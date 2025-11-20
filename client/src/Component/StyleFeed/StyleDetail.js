@@ -81,6 +81,16 @@ const StyleDetail = () => {
     }
   };
 
+  const getCommentCount = (repliesArray) => {
+    let count = repliesArray.length;
+    repliesArray.forEach(r => {
+      if (r.children && r.children.length > 0) {
+        count += getCommentCount(r.children); // 재귀로 대댓글까지 포함
+      }
+    });
+    return count;
+  };
+
   // 댓글 작성
   const handleCommentSubmit = async (parentId = null) => {
   if (!comment.trim()) return;
@@ -225,13 +235,13 @@ const StyleDetail = () => {
                 <div className="style-detail-my-post-actions">
                   <button
                     className="style-detail-edit-post-btn"
-                    onClick={() => navigate(`/style/edit/${id}`)}
+                    onClick={(e) => {e.stopPropagation(); navigate(`/style/edit/${id}`)}}
                   >
                     수정
                   </button>
                   <button
                     className="style-detail-delete-post-btn"
-                    onClick={handleDeletePost}
+                    onClick={(e)=>{e.stopPropagation(); handleDeletePost();}}
                   >
                     삭제
                   </button>
@@ -283,7 +293,7 @@ const StyleDetail = () => {
         <div className="style-detail-action-item" onClick={handleLike}>
           {liked ? "❤️" : "🤍"} 좋아요 {likeCount}
         </div>
-        <div className="style-detail-action-item">💬 댓글 {replies.length}</div>
+        <div className="style-detail-action-item">💬 댓글 {getCommentCount(replies)}</div>
         <div className="style-detail-action-item" onClick={handleShare}>
           🔗 공유
         </div>

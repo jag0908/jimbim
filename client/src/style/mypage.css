@@ -1,3 +1,39 @@
+.mypagebody{
+    display:flex;
+    width: 100%;
+}
 .mypage{
-    padding: 30px;
+    padding: 30px; padding-top: 0;
+    width: calc(100% - 200px);
+}
+
+.addressList{
+    border: #eeeeee 3px double;
+    padding: 15px;
+    margin: 3px 0;
+    width: 100%;
+    transition: border 0.4s, margin 0.2s;
+}
+
+.addressListText{
+    margin-left: 3px;
+    font-size: 95%;
+    color: #111111;
+}
+
+.address_detail{
+    width: 250px;
+    margin: 10px;
+    margin-bottom: 0px;
+}
+
+.shoparea{
+    border: #eeeeee 3px double;
+    padding: 20px;
+    width: 100%;
+}
+.shoparea h3{
+    font-size: 140%;
+    font-weight: bold;
+    margin-bottom: 20px;
 }

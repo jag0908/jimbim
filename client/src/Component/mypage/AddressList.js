@@ -23,6 +23,12 @@ function AddressList() {
 
     //const [member, setMember] = useState({});
 
+    const editStyle = {
+        border: '#888888 3px double',
+        marginTop: '20px',
+        marginBottom: '20px'
+    }
+
     useEffect(
         ()=>{
             if(!loginUser.userid){
@@ -88,45 +94,42 @@ function AddressList() {
     }
     return (
         <article style={{height:'100%'}}>
-            <div style={{display:'flex'}}>
+            <div className='mypagebody'>
                 <SideMenu/>
                 <div className='mypage'>
-                    <div className='btns'>
-                        <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
-                    </div>
+                    <div className='formtitle'>주소록</div>
                     {(address_id===-2)?
                     (<>
-                        <EditAddressForm editAddress={editAddress} />
-                    </>):(null)}
+                        <div className='addressList' >
+                            <EditAddressForm editAddress={editAddress} />
+                        </div>
+                    </>):(
+                        <div className='formBtns'>
+                            <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
+                        </div>
+                    )}
                     {
                         (addressList.length!=0)?
                         (
                             addressList.map((address, idx)=>{
                                 return (
-                                    <div key={idx}>
+                                    <div key={idx} className='addressList' style={(address_id===address.address_id)?editStyle:{}}>
                                         {
                                             (address_id===address.address_id)?
                                             (<>
                                                 <EditAddressForm editAddress={editAddress} />
                                             </>):(
                                                 <>
-                                                    <div>
-                                                        <div className=''>주소명</div>
-                                                        <div>{address.address_name}</div>
+                                                    <div className='field'>
+                                                        <label>주소명</label>
+                                                        <div className='addressListText'>{address.address_name}</div>
                                                     </div>
-                                                    <div>
-                                                        <div className=''>우편번호</div>
-                                                        <div>{address.address_zipnum}</div>
+                                                    <div className='field'>
+                                                        <label>주소</label>
+                                                        <div className='addressListText'>({address.address_zipnum}) {address.address_simple}</div>
+                                                        <div className='addressListText'>{address.address_detail}</div>
                                                     </div>
-                                                    <div>
-                                                        <div className=''>도로명주소</div>
-                                                        <div>{address.address_simple}</div>
-                                                    </div>
-                                                    <div>
-                                                        <div className=''>상세주소</div>
-                                                        <div>{address.address_detail}</div>
-                                                    </div>
-                                                    <div className='btns'>
+                                                    <div className='formBtns'>
                                                         <button onClick={()=>{setOnEditForm(address)}}>수정</button>
                                                         <button onClick={()=>{deleteAddress(address.address_id)}}>삭제</button>
                                                     </div>

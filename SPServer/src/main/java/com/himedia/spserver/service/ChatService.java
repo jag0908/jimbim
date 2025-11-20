@@ -146,14 +146,33 @@ public class ChatService {
         return result;
     }
 
-    public void insertMessage(Integer roomId, ChatMsgDto message) {
-        ChatRoom room = cr.findById(roomId).orElseThrow();
+    public ChatMsgDto insertMessage(Integer roomId, ChatMsgDto message) {
+        ChatRoom room = cr.findById(roomId).orElseThrow(() -> new RuntimeException("방 없음"));
 
         ChatRoom_Msg chatEntity = new ChatRoom_Msg();
         chatEntity.setChatRoom(room);
         chatEntity.setContent(message.getContent());
         chatEntity.setSenderId(message.getSenderId());
-        mcr.save(chatEntity);
+        ChatRoom_Msg saved = mcr.save(chatEntity);
+
+        // 3. 저장한 메시지 + 룸 정보 DTO 변환
+        ChatMsgDto resDto = new ChatMsgDto();
+        resDto.setChatRoomId(room.getChatRoomId());
+        resDto.setContent(saved.getContent());
+        resDto.setSenderId(saved.getSenderId());
+        resDto.setIndate(saved.getIndate());
+
+        // 룸 정보
+        resDto.setSellerId(room.getSellerId());
+        resDto.setSellerName(room.getSellerName());
+        resDto.setSellerProfileImg(room.getSellerProfileImg());
+        resDto.setBuyerId(room.getBuyerId());
+        resDto.setBuyerName(room.getBuyerName());
+        resDto.setBuyerProfileImg(room.getBuyerProfileImg());
+        resDto.setPostId(room.getPostId());
+        resDto.setPostTitle(room.getPostTitle());
+
+        return resDto;
     }
 
     public List<ChatMsgDto> getAllChatMessge(Integer roomId) {

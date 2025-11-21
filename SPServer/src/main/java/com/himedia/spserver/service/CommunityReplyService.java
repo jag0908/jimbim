@@ -32,7 +32,8 @@ public class CommunityReplyService {
                 .map(r -> new CommunityReplyResponseDTO(
                         r.getReplyId(),
                         r.getContent(),
-                        r.getMember().getUserid() // Lazy 문제 방지, 필요시 FetchType EAGER로 변경
+                        r.getMember().getUserid(),
+                        r.getMember().getMember_id()
                 ))
                 .toList();
     }

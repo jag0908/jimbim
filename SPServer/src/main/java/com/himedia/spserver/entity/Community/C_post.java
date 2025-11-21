@@ -23,7 +23,8 @@ public class C_post {
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
     private String c_image;
-    private String c_like;
+    @ColumnDefault("0")
+    private Integer c_like = 0;
     private String c_reply;
     @ColumnDefault("'N'")
     private String isAnonymous; // 익명글 여부, Y면 익명, N이면 익명아님

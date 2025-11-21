@@ -132,4 +132,23 @@ public class CommunityListService {
         }
 
     }
+
+    public int incrementLike(int cpostId) {
+        // 1) 해당 게시글 가져오기
+        C_post post = cr.findById(cpostId)
+                .orElseThrow(() -> new RuntimeException("게시글 없음: " + cpostId));
+
+        // 2) 추천 수 +1
+        Integer current = post.getC_like();
+        if (current == null) {
+            current = 0;
+        }
+        post.setC_like(current + 1);
+
+        // 3) 저장
+        cr.save(post);
+
+        // 새 추천 수 리턴
+        return post.getC_like();
+    }
 }

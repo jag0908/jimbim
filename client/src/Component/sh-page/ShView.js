@@ -106,6 +106,7 @@ function ShView() {
     const [chatRoomData, setChatRoomData] = useState(null);
     const [chatListData,setChatListData] = useState(null);
     function openChat() {
+        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
         setDisplayYN({display: "flex"});
         if(window.confirm("판매자와 연락 하시겠습니까?")) {
             jaxios.post("/api/chat/createChatRoom", {
@@ -129,6 +130,7 @@ function ShView() {
         }
     }
     function openChatRoomList() {
+        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
         setDisplayYN({display: "flex"});
         jaxios.get("/api/chat/chatRoomList").then((result)=> {
             console.log(result);
@@ -328,7 +330,7 @@ function ShView() {
                         <span className='dataBox price srt'>
                             {
                                 postDetail?
-                                postDetail.deliveryPrice:
+                                formatPrice(postDetail.deliveryPrice):
                                 <Lodding/>
                             }
                             원</span>
@@ -486,11 +488,11 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
 
 // 채팅방
 function ChatRoomCP({chatRoomData, loginUser, openChatState}) {
-    
     const [isOpen, setIsOpen] = useState(false);
     const [chatRoomInfo, setChatRoomInfo] = useState(null);
 
     useEffect(()=> {
+        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
         jaxios.get(`/api/chat/detailChatRoom/${chatRoomData.chatRoomId}`)
             .then((result)=> {
                 console.log(result);

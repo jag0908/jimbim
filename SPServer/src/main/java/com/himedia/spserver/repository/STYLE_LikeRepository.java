@@ -27,6 +27,5 @@ public interface STYLE_LikeRepository extends JpaRepository<STYLE_Like, Integer>
     @Query("select count(l) from STYLE_Like l where l.spost = :post")
     Long countByPost(@Param("post") STYLE_post post);
 
-    @Query("SELECT l FROM STYLE_Like l WHERE l.spost.spostId IN :ids")
-    List<STYLE_Like> findAllBySpostIds(@Param("ids") List<Integer> ids);
+    Collection<Object> findAllBySpostIds(List<Integer> postIds);
 }

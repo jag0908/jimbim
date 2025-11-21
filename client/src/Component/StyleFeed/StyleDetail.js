@@ -324,7 +324,7 @@ const StyleDetail = () => {
       )}
 
       {/* 본문 */}
-      <div className="style-detail-post-content">
+      <div className="style-post-content">
         <h2>{title}</h2>
         <p>{content}</p>
 

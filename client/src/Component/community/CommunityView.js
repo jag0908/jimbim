@@ -9,67 +9,75 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 
 function CommunityView() {
     const loginUser = useSelector(state => state.user);
-    const [community, setCommunity] = useState({}); // 초기값을 빈 객체로
+    const [community, setCommunity] = useState({});
+    const [replyList, setReplyList] = useState([]);
+    const [rContent, setRContent] = useState('');
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { num } = useParams();
-    const [rContent, setRContent] = useState('');
-    const [replyList, setReplyList] = useState([]);
 
     useEffect(() => {
-        async function fetchData() {
+        const fetchCommunityData = async () => {
+            setLoading(true);
             try {
-                // 게시물 조회
-                const communityResult = await axios.get(`${baseURL}/communityList/getCommunity/${num}`);
-                setCommunity(communityResult.data.community || {}); // 데이터 없으면 빈 객체
+                const [communityRes, replyRes] = await Promise.all([
+                    axios.get(`${baseURL}/communityList/getCommunity/${num}`),
+                    axios.get(`${baseURL}/communityReply/getReply/${num}`)
+                ]);
 
-                // 댓글 조회
-                const replyResult = await axios.get(`${baseURL}/reply/getReply/${num}`);
-                setReplyList(replyResult.data.replyList || []);
+                setCommunity(communityRes.data.community || {});
+                setReplyList(replyRes.data.replyList || []);
             } catch (err) {
-                console.error(err);
+                console.error('데이터 로딩 실패:', err);
+            } finally {
+                setLoading(false);
             }
-        }
-        fetchData();
+        };
+
+        fetchCommunityData();
     }, [num]);
 
-    async function addReply() {
+    // 댓글 추가
+    const addReply = async () => {
         if (!rContent.trim()) return alert('댓글을 입력해주세요.');
+
         try {
-            await jaxios.post(`${baseURL}/api/reply/addReply`, {
-                memberId: loginUser.member_id,
+            await jaxios.post(`${baseURL}/communityReply/addReply`, { //수정
                 content: rContent,
-                cpostId: num
+                memberId: loginUser.member_id, //수정
+                cpostId: Number(num) //수정
             });
-            const result = await jaxios.get(`${baseURL}/api/reply/getReply/${num}`);
+
+            const result = await axios.get(`${baseURL}/communityReply/getReply/${num}`);
             setReplyList(result.data.replyList || []);
             setRContent('');
         } catch (err) {
-            console.error(err);
+            console.error('댓글 작성 실패:', err);
         }
-    }
+    };
 
-    async function deleteReply(replyId) {
-        if (window.confirm('해당 댓글을 삭제하시겠습니까?')) {
-            try {
-                await jaxios.delete(`${baseURL}/api/reply/deleteReply/${replyId}`);
-                const result = await jaxios.get(`${baseURL}/api/reply/getReply/${num}`);
-                setReplyList(result.data.replyList || []);
-            } catch (err) {
-                console.error(err);
-            }
+    const deleteReply = async (replyId) => {
+        if (!window.confirm('해당 댓글을 삭제하시겠습니까?')) return;
+        try {
+            await jaxios.delete(`${baseURL}/communityReply/deleteReply/${replyId}`);
+            setReplyList(prev => prev.filter(reply => reply.replyId !== replyId));
+        } catch (err) {
+            console.error('댓글 삭제 실패:', err);
         }
-    }
+    };
 
-    function onDeleteCommunity() {
-        if (window.confirm('게시물을 삭제하시겠습니까?')) {
-            jaxios.delete(`${baseURL}/api/community/deleteCommunity/${num}`)
-                .then(() => {
-                    alert('게시물이 삭제 되었습니다');
-                    navigate('/communityList');
-                })
-                .catch((err) => console.error(err));
+    const deleteCommunity = async () => {
+        if (!window.confirm('게시물을 삭제하시겠습니까?')) return;
+        try {
+            await jaxios.delete(`${baseURL}/communityList/deleteCommunity/${num}`); //수정
+            alert('게시물이 삭제 되었습니다');
+            navigate('/communityList');
+        } catch (err) {
+            console.error('게시물 삭제 실패:', err);
         }
-    }
+    };
+
+    if (loading) return <div>로딩 중...</div>;
 
     return (
         <div className='communityView'>
@@ -95,19 +103,13 @@ function CommunityView() {
             {community.c_image && (
                 <div className='field'>
                     <label>이미지</label>
-                    <div>
-                        <img
-                            src={`${baseURL}/images/${community.c_image}`}
-                            alt="community"
-                            className="view-image"
-                        />
-                    </div>
+                    <img src={`${baseURL}/images/${community.c_image}`} alt="community" className="view-image" />
                 </div>
             )}
 
             <div className='btns'>
                 <button onClick={() => navigate(`/updateCommunity/${num}`)}>수정</button>
-                <button onClick={onDeleteCommunity}>삭제</button>
+                <button onClick={deleteCommunity}>삭제</button>
                 <button onClick={() => navigate('/communityList')}>이전</button>
             </div>
 
@@ -117,18 +119,25 @@ function CommunityView() {
                     <textarea
                         rows="3"
                         value={rContent}
-                        onChange={(e) => setRContent(e.currentTarget.value)}
+                        onChange={(e) => setRContent(e.target.value)}
                         placeholder="댓글을 입력하세요."
-                    ></textarea>
+                    />
                     <button onClick={addReply}>작성</button>
                 </div>
+
                 <div className="reply-list">
                     {replyList.map((reply) => (
-                        <div key={reply.reply_id} className="reply-item">
-                            <span className="reply-user">{reply.member?.userid || '알수없음'}</span> : 
+                        <div key={reply.replyId} className="reply-item">
+                            <span className="reply-user">{reply.userid || '알수없음'}</span> : {/*수정*/}
                             <span className="reply-content">{reply.content}</span>
-                            {reply.member?.member_id === loginUser.member_id && (
-                                <button className="reply-delete" onClick={() => deleteReply(reply.reply_id)}>삭제</button>
+
+                            {reply.memberId === loginUser.member_id && ( /*수정*/
+                                <button
+                                    className="reply-delete"
+                                    onClick={() => deleteReply(reply.replyId)}
+                                >
+                                    삭제
+                                </button>
                             )}
                         </div>
                     ))}

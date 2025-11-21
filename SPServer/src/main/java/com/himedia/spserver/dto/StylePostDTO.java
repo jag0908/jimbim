@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Map;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -30,4 +31,6 @@ public class StylePostDTO {
     private Boolean followed;  // 로그인한 사용자의 팔로우 여부
 
     private List<String> hashtags = new ArrayList<>();
+
+    private List<Map<String, Object>> replies = new ArrayList<>();
 }

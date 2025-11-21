@@ -8,3 +8,4 @@ import java.util.Optional;
 public interface STYLE_HashtagRepository extends JpaRepository<STYLE_Hashtag, Integer> {
     Optional<STYLE_Hashtag> findByWord(String word);
 }
+

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Reply from "./Reply";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-
+const getOpenRepliesKey = (postId) => `style_post_${postId}_openReplies`;
 
 const StyleDetail = () => {
   const { id } = useParams();
@@ -18,38 +18,70 @@ const StyleDetail = () => {
   const [replies, setReplies] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [commentParent, setCommentParent] = useState(null);
+  const [openReplies, setOpenReplies] = useState({});
 
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.user);
-  const myUserid = currentUser?.userid;
+  const myUserid = useSelector(state => state.user?.userid);
 
-  const fetchPost = async () => {
-  try {
-    const res = await jaxios.get(`${baseURL}/style/post/${id}`);
-    const postData = res.data; // 데이터를 변수에 저장
+  const buildReplyTree = (list) => {
+    const map = {};
+    const roots = [];
 
-    setPost(postData);
-    setLikeCount(postData.likesCount || 0);
-    setReplies(Array.isArray(postData.replies) ? postData.replies : []);
-    // 서버에서 받아온 liked 상태 사용 (아래 서버 수정 필요)
-    setLiked(postData.liked || false);
+    list.forEach(r => {
+      map[r.reply_id] = { ...r, children: [] };
+    });
 
-      // ✅ 로그인 상태 & 내 글이 아닐 때 팔로우 여부 확인
-      if (myUserid && postData.userid !== myUserid) {
-        const followRes = await jaxios.get(`${baseURL}/style/follow/${postData.userid}`);
-        setIsFollowing(followRes.data.followed);
+    list.forEach(r => {
+      if (r.parent_id) {
+        map[r.parent_id].children.push(map[r.reply_id]);
+      } else {
+        roots.push(map[r.reply_id]);
       }
-    } catch (err) {
-      console.error("게시글 로드 오류", err);
-      if (err.response?.data?.error === 'REQUIRE_LOGIN') {
-        alert("로그인이 필요합니다.");
-      }
-    }
+    });
+
+    return roots;
   };
 
-  useEffect(() => {
-    fetchPost();
-  }, [id, myUserid]);
+  const toggleReplyVisibility = (replyId) => {
+    setOpenReplies(prev => {
+      const updated = { ...prev, [replyId]: !prev[replyId] };
+      // localStorage에 저장
+      localStorage.setItem(getOpenRepliesKey(id), JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // 모든 댓글(대댓글 포함)에 isOpen:false를 심는 함수
+  const addIsOpenRecursive = (list) => {
+    return list.map(r => ({
+      ...r,
+      isOpen: false
+    }));
+  };
+
+
+  const fetchPost = async () => {
+  const res = await jaxios.get(`${baseURL}/style/post/${id}`);
+  const postData = res.data;
+
+  setPost(postData);
+
+  // 댓글 트리 생성
+  const replyTree = buildReplyTree(postData.replies);
+  setReplies(replyTree);
+
+  // openReplies 복원
+  const savedOpen = JSON.parse(localStorage.getItem(getOpenRepliesKey(id))) || {};
+  
+  const initialOpen = {};
+  postData.replies.forEach(r => {
+    initialOpen[r.reply_id] = savedOpen[r.reply_id] || false;
+  });
+  
+  setOpenReplies(initialOpen);
+};
+
+  useEffect(() => { fetchPost(); }, [id]);
 
   if (!post) return <div>로딩 중...</div>;
 
@@ -91,44 +123,65 @@ const StyleDetail = () => {
     return count;
   };
 
-  // 댓글 작성
-  const handleCommentSubmit = async (parentId = null) => {
-  if (!comment.trim()) return;
-
-  try {
-    let contentToSend = comment;
-
-    if (parentId) {
-      // 부모 댓글 작성자 찾기
-      const parent = replies.find(r => r.reply_id === parentId);
-      if (parent) {
-        contentToSend = `@${parent.userid} ${comment}`; // 자동으로 @ 붙이기
+  // 트리 전체에서 특정 reply_id를 찾는 재귀 함수
+  const findReplyById = (list, replyId) => {
+    for (let r of list) {
+      if (r.reply_id === replyId) return r;
+      if (r.children && r.children.length > 0) {
+        const found = findReplyById(r.children, replyId);
+        if (found) return found;
       }
     }
+    return null;
+  };
 
-    const res = await jaxios.post(`${baseURL}/style/reply/${id}`, {
-      content: contentToSend,
-      parentId: parentId
-    });
+  // 댓글 작성
+  const handleCommentSubmit = async (parentId = null) => {
+    if (!comment.trim()) return;
 
-    const newReply = res.data.reply;
+    try {
+      let contentToSend = comment;
 
-    if (parentId) {
-      setReplies(prev => prev.map(r =>
-        r.reply_id === parentId
-          ? { ...r, children: [...(r.children || []), newReply] }
-          : r
-      ));
-    } else {
-      setReplies(prev => [...prev, newReply]);
+      if (parentId) {
+        // 부모 댓글을 트리 전체에서 검색
+        const parent = findReplyById(replies, parentId);
+        if (parent) {
+          contentToSend = `@${parent.userid} ${comment}`;
+        }
+      }
+
+      const res = await jaxios.post(`${baseURL}/style/reply/${id}`, {
+        content: contentToSend,
+        parentId
+      });
+
+      const newReply = {
+        ...res.data.reply,
+        children: []
+      };
+
+      const addChildReply = (list) => {
+        return list.map(r => {
+          if (r.reply_id === parentId) {
+            return { ...r, children: [...r.children, newReply] };
+          }
+          return { ...r, children: addChildReply(r.children) };
+        });
+      };
+
+      if (parentId) {
+        setReplies(prev => addChildReply(prev));
+      } else {
+        setReplies(prev => [...prev, newReply]);
+      }
+
+      setComment("");
+      setCommentParent(null);
+
+    } catch (err) {
+      console.error("댓글 작성 오류", err);
     }
-
-    setComment("");
-    setCommentParent(null); // 답글 완료 후 입력창 초기화
-  } catch (err) {
-    console.error("댓글 작성 오류", err);
-  }
-};
+  };
 
 
   // 공유 버튼
@@ -319,14 +372,18 @@ const StyleDetail = () => {
       {/* 댓글 목록 */}
       <div className="style-detail-replies">
         {replies.map(reply => (
-        <Reply
-          key={reply.reply_id}
-          reply={reply}
-          myUserid={myUserid}
-          handleDeleteReply={handleDeleteReply}
-          setReplyParent={(parentId) => setCommentParent(parentId)} //답글용
-        />
+          <Reply
+            key={reply.reply_id}
+            reply={reply}
+            myUserid={myUserid}
+            toggleReplyVisibility={toggleReplyVisibility}
+            isOpen={openReplies[reply.reply_id] || false}
+            openReplies={openReplies}
+            setReplyParent={setCommentParent}
+            handleDeleteReply={handleDeleteReply}
+          />
         ))}
+
       </div>
     </div>
   );

@@ -9,4 +9,5 @@ public class CommunityReplyResponseDTO {
     private Integer replyId;
     private String content;
     private String userid;
+    private Integer memberId;
 }

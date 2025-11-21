@@ -15,4 +15,8 @@ public interface MsgChatRepository extends JpaRepository<ChatRoom_Msg, Long> {
             "WHERE r.chatRoomId = :roomId " +
             "ORDER BY m.indate ASC")
     List<ChatRoom_Msg> findByChatRoomIdWithRoom(@Param("roomId") Integer roomId);
+
+    List<ChatRoom_Msg> findAllByChatRoom_ChatRoomIdAndSellerReadMsg(Integer chatRoomId, int i);
+
+    List<ChatRoom_Msg> findAllByChatRoom_ChatRoomIdAndBuyerReadMsg(Integer chatRoomId, int i);
 }

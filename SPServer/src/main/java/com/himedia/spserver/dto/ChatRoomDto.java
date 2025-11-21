@@ -1,6 +1,10 @@
 package com.himedia.spserver.dto;
 
+import com.himedia.spserver.entity.SH.ChatRoom_Msg;
 import lombok.Data;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 
 @Data
@@ -19,4 +23,11 @@ public class ChatRoomDto {
 
     private Integer postId;
     private String postTitle;
+
+    // 마지막 채팅
+    private String lastChatContent;
+    private Timestamp date;
+
+    private List<Integer> sellerReadMsg;
+    private List<Integer> buyerReadMsg;
 }

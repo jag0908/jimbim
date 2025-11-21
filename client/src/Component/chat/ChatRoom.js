@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import jaxios from "../../util/jwtutil";
+import { useNavigate } from "react-router-dom";
 
 function ChatRoom({roomId, loginUser, token}) {
   const [stompClient, setStompClient] = useState(null);
@@ -9,10 +10,14 @@ function ChatRoom({roomId, loginUser, token}) {
   const [inputMessage, setInputMessage] = useState("");
   const [chatMessageArr, setChatMessageArr] = useState(null);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!roomId) return;
-    if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+    if (!loginUser.userid) {
+        alert("로그인이 필요한 서비스입니다."); 
+        return navigate("/login");
+    }
 
     const socket = new SockJS("http://192.168.0.223:8070/ws");
 

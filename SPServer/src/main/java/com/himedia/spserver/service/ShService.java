@@ -3,11 +3,9 @@ package com.himedia.spserver.service;
 import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SH.SH_Category;
-import com.himedia.spserver.entity.SH.SH_File;
-import com.himedia.spserver.entity.SH.SH_post;
-import com.himedia.spserver.entity.SH.ShViewHistory;
+import com.himedia.spserver.entity.SH.*;
 import com.himedia.spserver.mapper.ShPostMapper;
+import com.himedia.spserver.mapper.ShSuggestMapper;
 import com.himedia.spserver.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,9 @@ public class ShService {
     private final S3UploadService sus;
     private final ShFileRepository sfr;
     private final ShViewRepository svr;
-    private final ShMemberRepository smr;
+    private final ShSuggestRepository ssr;
+    private final ShSuggestMapper ssm;
+
 
 
     private final ShPostMapper spm;
@@ -189,5 +189,22 @@ public class ShService {
 
         result.put("msg", "notOk");
         return result;
+    }
+
+    public ShSuggestDto insertSuggest(Map<String, Object> claims, ShSuggestDto reqDto) {
+
+        reqDto = ssm.toReqDto(claims, reqDto);
+
+        SH_Suggest suggest = new SH_Suggest();
+        suggest.setMemberId(reqDto.getMemberId());
+        suggest.setUserId(reqDto.getUserId());
+        suggest.setMemberName(reqDto.getMemberName());
+        suggest.setMemberProfileImg(reqDto.getMemberProfileImg());
+
+        suggest.setPostId(reqDto.getPostId());
+        suggest.setSuggest_price(reqDto.getSuggest_price());
+        ssr.save(suggest);
+
+        return ssm.toResDto(suggest);
     }
 }

@@ -157,4 +157,19 @@ public class ShController {
     }
 
 
+    @PostMapping("/suggest")
+    public HashMap<String, Object> insertSuggest(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody ShSuggestDto reqDto
+    ) throws CustomJWTException {
+        HashMap<String, Object> result = new HashMap<>();
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+
+        ShSuggestDto resDto = ss.insertSuggest(claims, reqDto);
+
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+        return result;
+    }
 }

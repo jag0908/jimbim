@@ -1,18 +1,10 @@
-package com.himedia.spserver.entity.SH;
+package com.himedia.spserver.dto;
 
-import com.himedia.spserver.entity.Member;
-import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.sql.Timestamp;
 
-@Entity
 @Data
-public class SH_Suggest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ShSuggestDto {
     private Integer suggest_id;
     private Integer suggest_price;
 
@@ -22,9 +14,7 @@ public class SH_Suggest {
     private String memberName;
     private String memberProfileImg;
 
-    @CreationTimestamp
     private Timestamp indate;
-    @UpdateTimestamp
     private Timestamp uptime;
 
     private Integer approved = 0;

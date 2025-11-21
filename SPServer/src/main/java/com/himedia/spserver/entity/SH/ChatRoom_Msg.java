@@ -21,6 +21,9 @@ public class ChatRoom_Msg {
     private String content;
     private Integer senderId;
 
+    private Integer buyerReadMsg = 0;
+    private Integer sellerReadMsg = 0;
+
     @CreationTimestamp
     private Timestamp indate;
 }

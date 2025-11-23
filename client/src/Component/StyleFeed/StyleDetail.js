@@ -51,35 +51,33 @@ const StyleDetail = () => {
     });
   };
 
-  // 모든 댓글(대댓글 포함)에 isOpen:false를 심는 함수
-  const addIsOpenRecursive = (list) => {
-    return list.map(r => ({
-      ...r,
-      isOpen: false
-    }));
-  };
-
 
   const fetchPost = async () => {
-  const res = await jaxios.get(`${baseURL}/style/post/${id}`);
-  const postData = res.data;
+    const res = await jaxios.get(`${baseURL}/style/post/${id}`);
+    const postData = res.data;
 
-  setPost(postData);
+    postData.replies.forEach(r => {
+      if (r.parent_id === undefined) {
+        console.warn(`댓글 ${r.reply_id}에 parent_id가 없습니다.`);
+      }
+    });
 
-  // 댓글 트리 생성
-  const replyTree = buildReplyTree(postData.replies);
-  setReplies(replyTree);
+    console.log("서버에서 받은 댓글 리스트:", postData.replies);  // 여기서 댓글 배열 확인
 
-  // openReplies 복원
-  const savedOpen = JSON.parse(localStorage.getItem(getOpenRepliesKey(id))) || {};
-  
-  const initialOpen = {};
-  postData.replies.forEach(r => {
-    initialOpen[r.reply_id] = savedOpen[r.reply_id] || false;
-  });
-  
-  setOpenReplies(initialOpen);
-};
+    setPost(postData);
+
+    // 댓글 트리 생성 (중요!)
+    const replyTree = buildReplyTree(postData.replies);
+    setReplies(replyTree);
+
+    // openReplies 복원 (대댓글 펼침 여부)
+    const savedOpen = JSON.parse(localStorage.getItem(getOpenRepliesKey(id))) || {};
+    const initialOpen = {};
+    postData.replies.forEach(r => {
+      initialOpen[r.reply_id] = savedOpen[r.reply_id] || false;
+    });
+    setOpenReplies(initialOpen);
+  };
 
   useEffect(() => { fetchPost(); }, [id]);
 
@@ -137,6 +135,7 @@ const StyleDetail = () => {
 
   // 댓글 작성
   const handleCommentSubmit = async (parentId = null) => {
+    console.log("댓글 작성 요청, parentId:", parentId);  // 부모 댓글 id 확인
     if (!comment.trim()) return;
 
     try {
@@ -150,10 +149,13 @@ const StyleDetail = () => {
         }
       }
 
+      // 서버가 기대하는 key는 parent_id
       const res = await jaxios.post(`${baseURL}/style/reply/${id}`, {
         content: contentToSend,
-        parentId
+        parent_id: parentId
       });
+
+      console.log("서버가 응답한 새 댓글 데이터:", res.data.reply);
 
       const newReply = {
         ...res.data.reply,
@@ -182,6 +184,7 @@ const StyleDetail = () => {
       console.error("댓글 작성 오류", err);
     }
   };
+
 
 
   // 공유 버튼

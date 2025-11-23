@@ -41,7 +41,7 @@ function StyleHotAccounts() {
   }, [myUserid]);
 
   const toggleFollow = async (userid) => {
-    try {
+  try {
     const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
 
     setFollowStatus(prev => ({
@@ -49,25 +49,27 @@ function StyleHotAccounts() {
       [userid]: res.data.followed
     }));
 
-    // 🔥 팔로워 수 UI도 즉시 갱신
+    // 팔로워 수 즉시 업데이트 + 순서 재정렬
     setAccounts(prev =>
-      prev.map(acc =>
-        acc.userid === userid
-          ? {
-              ...acc,
-              followerCount: res.data.followed
-                ? acc.followerCount + 1
-                : acc.followerCount - 1
-            }
-          : acc
-      )
+      prev
+        .map(acc =>
+          acc.userid === userid
+            ? {
+                ...acc,
+                followerCount: res.data.followed
+                  ? acc.followerCount + 1
+                  : acc.followerCount - 1
+              }
+            : acc
+        )
+        .sort((a, b) => b.followerCount - a.followerCount) // 내림차순 정렬
     );
 
     alert(res.data.message);    
-    } catch (err) {
-      console.error("팔로우 토글 실패", err);
-    }
-  };
+  } catch (err) {
+    console.error("팔로우 토글 실패", err);
+  }
+};
 
   return (
     <>

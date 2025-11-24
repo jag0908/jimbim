@@ -201,41 +201,6 @@ public class StyleController {
         return ResponseEntity.ok(Map.of("followed", followed));
     }
 
-    @PostMapping("/reply/{spostId}")
-    public ResponseEntity<?> addReply(
-            @PathVariable Integer spostId,
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal MemberDTO memberDTO
-    ) {
-        if (memberDTO == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Access token expired", "code", "TOKEN_EXPIRED"));
-        }
-
-        try {
-            Integer parentId = body.get("parentId") != null ? Integer.valueOf(body.get("parentId")) : null;
-            Map<String, Object> reply = styleService.addReply(spostId, memberDTO.getUserid(), body.get("content"), parentId);
-            return ResponseEntity.ok(Map.of("reply", reply));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록 실패");
-        }
-    }
-
-    @DeleteMapping("/reply/{replyId}")
-    public ResponseEntity<?> deleteReply(@PathVariable Integer replyId,
-                                         @AuthenticationPrincipal MemberDTO memberDTO) {
-        try {
-            if (memberDTO == null) {
-                throw new IllegalStateException("로그인이 필요합니다.");
-            }
-            styleService.deleteReply(replyId, memberDTO.getUserid());
-            return ResponseEntity.ok(Map.of("message", "댓글이 삭제되었습니다."));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
 
     @DeleteMapping("/post/{spostId}")
     public ResponseEntity<?> deletePost(@PathVariable Integer spostId,

@@ -14,15 +14,21 @@ public interface STYLE_PostRepository extends JpaRepository<STYLE_post, Integer>
     List<STYLE_post> findAllByMember_UseridOrderByIndateDesc(String userid);
 
     @Query("""
-        SELECT p
-        FROM STYLE_post p
+        SELECT p FROM STYLE_post p
+        JOIN FETCH p.member m
         LEFT JOIN STYLE_Like l ON l.spost = p
         GROUP BY p
         ORDER BY COUNT(l) DESC
     """)
     List<STYLE_post> findAllOrderByLikeCountDesc();
 
-    @Query("SELECT p FROM STYLE_post p ORDER BY p.viewCount DESC")
+
+
+    @Query("""
+        SELECT p FROM STYLE_post p
+        JOIN FETCH p.member m
+        ORDER BY p.viewCount DESC
+    """)
     List<STYLE_post> findAllOrderByViewCountDesc();
 
     @Query("""
@@ -55,4 +61,13 @@ public interface STYLE_PostRepository extends JpaRepository<STYLE_post, Integer>
     // 회원 리스트에 해당하는 게시글 + 파일 한 번에 가져오기
     @Query("SELECT DISTINCT p FROM STYLE_post p LEFT JOIN FETCH p.member m WHERE m.member_id IN :memberIds")
     List<STYLE_post> findAllWithMemberByMemberIds(@Param("memberIds") List<Integer> memberIds);
+
+    @Query("SELECT p FROM STYLE_post p " +
+            "JOIN FETCH p.member m " +
+            "ORDER BY p.indate DESC")
+    List<STYLE_post> findAllWithMemberOrderByIndateDesc();
+
+
+
+
 }

@@ -32,6 +32,10 @@ function ShView() {
 
     const [disPlayYN, setDisplayYN] = useState({display: "none"}); 
 
+    const [sModal, setSModal] = useState(false);
+    const [suggestPrice, setSuggestPrice] = useState(0);
+    const [suggestInfo, setSuggestInfo] = useState([]);
+
     async function viewed() {
         // 1. 조회수 증가
         try {
@@ -42,9 +46,21 @@ function ShView() {
         // 2. 데이터 가져오기 (조회수 증가 후)
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
-            console.log(res.data)
+            console.log(res.data);
             setPostDetail(res.data.post);
             setCategory(res.data.category.category_name);
+        } catch (err) {
+            console.error(err);
+        }
+        try {
+            const res = await jaxios.get(`/api/sh-page/suggest`, {params :{postId:id}});
+            console.log(res.data);
+            if(res.data.msg == "ok") {
+                setSuggestInfo([...res.data.resDto]);
+            } else {
+                return alert("요청이 실패하였습니다.");
+            }
+            
         } catch (err) {
             console.error(err);
         }
@@ -99,9 +115,6 @@ function ShView() {
 
 
     // 가격 제안하기
-    const [sModal, setSModal] = useState(false);
-    const [suggestPrice, setSuggestPrice] = useState(0);
-    const [suggestInfo, setSuggestInfo] = useState([]);
     function suggest() {
         if(loginUser.userid) {
             setSModal(true);
@@ -111,7 +124,41 @@ function ShView() {
         }
     }
     
+    // 가격 제안 수락
+    async function approvalChat(mid, mname, mimg, sid) {
+        let isConfirm = window.confirm("가격 제안을 수락하시겠습니까?");
+        if(isConfirm) {
+            if (!loginUser.userid) {
+                alert("로그인이 필요한 서비스입니다."); 
+                return navigate("/login");
+            }
 
+            await jaxios.post("/api/sh-page/appSuggest", null, {params:{sid}})
+                .then((res)=> {
+                    console.log(res);
+                }).catch(err=>console.error(err));
+
+            setDisplayYN({display: "flex"});
+            await jaxios.post("/api/chat/createChatRoom", {
+                sellerId:postDetail.member.memberId, 
+                sellerName:postDetail.member.name,
+                sellerProfileImg:postDetail.member.profileImg,
+                buyerId:mid,
+                buyerName:mname,
+                buyerProfileImg:mimg,
+                postId: id,
+                postTitle: postDetail.title,
+            }).then((result)=> {
+                    console.log(result);
+                    if(result.data.msg == "ok") {
+                        setOpenChatState("oneToOneChat");
+                        setChatRoomData(result.data.resDto);
+                    } else {
+                        return alert("요청이 실패하였습니다.");
+                    }
+                }).catch(err=>console.error(err));
+        }
+    }
 
 
 
@@ -241,17 +288,45 @@ function ShView() {
                         {
                             suggestInfo && suggestInfo.map((a, i)=> {
                                 return(
-                                    <div className='suggestList'>
-                                    <span className='img'>
-                                        <img src={a.memberProfileImg} />
-                                    </span>
-                                    <span className='name'>"{a.userId}"</span> 
-                                    님이 
-                                    <span className='price'>
-                                        "{a.suggest_price}"   
-                                    </span>
-                                    원으로 가격을 제안하셨습니다.
-                                </div>
+                                    a.approved == 0 ?
+                                    <div 
+                                        key={i} 
+                                        className='suggestList' 
+                                        style={
+                                            postDetail && postDetail.member.memberId === loginUser.member_id 
+                                            ? { cursor: "pointer" } 
+                                            : {}}
+                                        onClick={()=>{
+                                            postDetail &&
+                                            postDetail.member.memberId == loginUser.member_id &&
+                                        approvalChat(a.memberId, a.memberName, a.memberProfileImg, a.suggest_id);
+                                    }}>
+                                        <span className='img'>
+                                            <img src={a.memberProfileImg} />
+                                        </span>
+                                        <span className='name'>"{a.userId}"</span> 
+                                        님이 
+                                    
+                                        <span className='price'>
+                                            "{a.suggest_price}"   
+                                        </span>
+                                        원으로 가격을 제안하셨습니다.
+                                        <span className='date'>({formatDateTime(a.uptime)})</span>
+                                    </div>
+                                    :
+                                    <div key={i} className='suggestList active'>
+                                        <span className='img'>
+                                            <img src={a.memberProfileImg} />
+                                        </span>
+                                        <span className='name'>"{a.userId}"</span> 
+                                        님이 
+                                    
+                                        <span className='price'>
+                                            "{a.suggest_price}"   
+                                        </span>
+                                        원으로 가격을 제안하셨습니다.
+                                        <span className='date'>({formatDateTime(a.uptime)})</span>
+                                    </div>
                                 )
                             })
                                 
@@ -326,8 +401,16 @@ function ShView() {
                             postDetail.member.memberId != loginUser.member_id &&
                             <>
                             <button className='btnEvent btnChat' onClick={()=> {openChat()}}>1:1 채팅하기</button>
-                            <button className='btnEvent btnBuy' onClick={()=>{suggest();}}>가격 제안하기 </button>
+                            
+                            {
+                                suggestInfo.some(item => 
+                                    item.memberId == loginUser.member_id && item.approved === 1
+                                ) ? null 
+                                : 
+                                <button className='btnEvent btnBuy' onClick={()=>{suggest();}}>가격 제안하기 </button>
+                            }
                             </>
+                            
                         }
                         
                         
@@ -542,9 +625,8 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
                                     </div>
                                 </div>
                             </div>  
-                            : <span className='bulsang'>구매를 원하는 채팅이 없습니다.</span>
-                            
-                        )
+                            : null
+                        ) 
                     })
                 }
             </div>
@@ -575,7 +657,7 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
                                     </div>
                                 </div>
                             </div>  
-                            : <span className='bulsang'>판매를 원하는 채팅이 없습니다.</span>
+                            : null
                             
                         )
                     })

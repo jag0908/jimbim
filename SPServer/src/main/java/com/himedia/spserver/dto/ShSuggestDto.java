@@ -17,5 +17,5 @@ public class ShSuggestDto {
     private Timestamp indate;
     private Timestamp uptime;
 
-    private Integer approved = 0;
+    private Integer approved;
 }

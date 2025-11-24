@@ -27,7 +27,9 @@ public class ShSuggestMapper {
         resDto.setPostId(suggest.getPostId());
         resDto.setSuggest_id(suggest.getSuggest_id());
         resDto.setSuggest_price(suggest.getSuggest_price());
-
+        resDto.setIndate(suggest.getIndate());
+        resDto.setUptime(suggest.getUptime());
+        resDto.setApproved(suggest.getApproved());
         return resDto;
     }
 }

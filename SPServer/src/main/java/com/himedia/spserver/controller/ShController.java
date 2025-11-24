@@ -71,10 +71,10 @@ public class ShController {
         return result;
     }
 
-    @GetMapping("/sh-list")
-    public HashMap<String, Object> shList() {
+    @GetMapping("/sh-list/{page}")
+    public HashMap<String, Object> shList(@PathVariable("page") int page) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("postList", ss.getPostList());
+        result.put("postList", ss.getPostList(page));
 
         return result;
     }
@@ -170,6 +170,22 @@ public class ShController {
 
         result.put("msg", "ok");
         result.put("resDto", resDto);
+        return result;
+    }
+
+    @GetMapping("/suggest")
+    public HashMap<String, Object> getSuggest(@RequestParam("postId") Integer postId) {
+        HashMap<String, Object> result = new HashMap<>();
+        List<ShSuggestDto> resDto = ss.getSuggests(postId);
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+        return result;
+    }
+
+    @PostMapping("/appSuggest")
+    public HashMap<String, Object> appSuggest(@RequestParam("sid") Integer sid) {
+        HashMap<String, Object> result = new HashMap<>();
+        ss.appSuggest(sid);
         return result;
     }
 }

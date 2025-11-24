@@ -1,9 +1,12 @@
 package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.Paging;
+import com.himedia.spserver.dto.ShPostDto;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.MemberRole;
+import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.repository.MemberRepository;
+import com.himedia.spserver.repository.SH_postRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,7 @@ import java.util.List;
 public class AdminService {
 
     private final MemberRepository mr;
+    private final SH_postRepository spr;
 
     public HashMap<String, Object> getMemberList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -49,6 +53,36 @@ public class AdminService {
         return result;
     }
 
+    public HashMap<String, Object> getShList(int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = spr.findAll().size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "postId"));
+            Page<SH_post> list = spr.findAll( pageable ); /// 문제발생
+            result.put("shList", list.getContent());
+        }else{
+            int count = spr.findByTitleContaining(key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
+            Page<SH_post> list = spr.findByTitleContaining( key, pageable );
+            result.put("shList", list.getContent());
+        }
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
+    }
+
+
+    /// ///////////////////////
+
     public void changeRoleAdmin(String userid) {
         Member member = mr.findByUserid(userid);
 
@@ -65,4 +99,5 @@ public class AdminService {
         roleList.add(MemberRole.valueOf("USER"));
         member.setMemberRoleList( roleList );
     }
+
 }

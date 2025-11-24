@@ -22,6 +22,13 @@ public class AdminController {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getShList")
+    public HashMap<String, Object> getShList(@RequestParam("page") int page,
+                                                 @RequestParam(value="key", required = false, defaultValue = "") String key){
+        HashMap<String, Object> result = as.getShList(page, key);
+        return result;
+    }
 
 
     @PreAuthorize("hasRole('ADMIN')")

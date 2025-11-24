@@ -7,24 +7,26 @@ import jaxios from '../../util/jwtutil';
 import '../../style/admin.css'
 
 
-function MemberList() {
+function ShList() {
     const loginUser = useSelector( state=>state.user)
-    const [memberList, setMemberList] = useState([]);
+    const [shList, setShList] = useState([]);
     const [paging, setPaging]=useState({});
     const navigate = useNavigate();
     const [beginEnd, setBeginEnd] = useState();
     const [key, setKey] = useState('')
-    const type = 'member'
+    const type = 'sh'
 
     useEffect(
         ()=>{
+            console.log(loginUser)
             if( !loginUser.userid ||  !loginUser.roleNames.includes('ADMIN') ){ 
                 alert('권한이 없습니다')
                 navigate('/')
             }
-            jaxios.get('/api/admin/getMemberList', {params:{page:1, key}})
+            jaxios.get('/api/admin/getShList', {params:{page:1, key}})
             .then((result)=>{ 
-                setMemberList(result.data.memberList) 
+                console.log(result)
+                setShList(result.data.shList) 
                 setPaging( result.data.paging )
                 setKey( result.data.key)
 
@@ -39,9 +41,9 @@ function MemberList() {
     )
 
     function onPageMove(p){ 
-        jaxios.get('/api/admin/getMemberList', {params:{page:p, key}})
+        jaxios.get('/api/admin/getShList', {params:{page:p, key}})
         .then((result)=>{ 
-            setMemberList(result.data.memberList) 
+            setShList(result.data.shList) 
             setPaging( result.data.paging )
             setKey( result.data.key)
             let arr = [];
@@ -53,60 +55,28 @@ function MemberList() {
         .catch((err)=>{console.error(err)})
     }
 
-    function changeAdmin( userid, checked){
-        if( checked ){
-             jaxios.post('/api/admin/changeRoleAdmin', null, {params:{userid}})
-            .then((result)=>{
-                if( result.data.msg==='ok'){
-                    alert(userid + '님이 관리자로 선정되셨습니다')
-                }
-            })
-        }else{
-            jaxios.post('/api/admin/changeRoleUser', null, {params:{userid}})
-            .then((result)=>{
-                if( result.data.msg==='ok'){
-                    alert(userid + '님의 등급이 일반유저로 변경되었습니다')
-                }
-            })
-        }
-    }
-
     return (
         <div className='adminContainer'>
             <SubMenu type={type}/>
             <div className='productTable'>
-                <div className='title'>회원목록</div>
+                <div className='title'>상품목록(중고마을)</div>
                 <div className='row'>
-                    <div className='col'>관리자/일반유저</div>
-                    <div className='col'>User ID</div>
-                    <div className='col'>이름</div>
-                    <div className='col'>블랙리스트 등급</div>
-                    <div className='col'>탈퇴유저 여부</div>
-                    <div className='col'>가입일</div>
+                    <div className='col'>카테고리</div>
+                    <div className='col'>상품명</div>
+                    <div className='col'>가격</div>
+                    <div className='col'>게시자 ID</div>
+                    <div className='col'>게시일</div>
                 </div>
                 {
-                    (memberList)?(
-                        memberList.map((member, idx)=>{
+                    (shList)?(
+                        shList.map((sh, idx)=>{
                             return (
                                 <div className='row'>
-                                    <div className='col'>
-                                        {
-                                            (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?(
-                                                <input type="checkbox" value={member.userid} onChange={(e)=>{
-                                                    changeAdmin( member.userid, e.currentTarget.checked )
-                                                }} checked/>
-                                            ):(
-                                                <input type="checkbox" value={member.userid} onChange={(e)=>{
-                                                    changeAdmin( member.userid, e.currentTarget.checked )
-                                                }} />
-                                            )
-                                        }
-                                    </div>
-                                    <div className='col'>{member.userid} {(member.provider)?(<>({member.provider})</>):(<></>)}</div>
-                                    <div className='col'>{member.name}</div>
-                                    <div className='col'>{member.blacklist}</div>
-                                    <div className='col'>{member.deleteyn}</div>
-                                    <div className='col'>{member.indate.substring(0, 10)}</div>
+                                    <div className='col'>{sh.categoryId}</div>
+                                    <div className='col'>{sh.title}</div>
+                                    <div className='col'>{sh.price}</div>
+                                    <div className='col'>{sh.member.userid}</div>
+                                    <div className='col'>{sh.indate.substring(0, 10)}</div>
                                 </div>
                             )
                         })
@@ -146,4 +116,4 @@ function MemberList() {
     )
 }
 
-export default MemberList
+export default ShList

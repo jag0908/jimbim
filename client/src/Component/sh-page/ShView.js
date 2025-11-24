@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import jaxios from '../../util/jwtutil'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ const settings = {
 function ShView() {
     const baseURL = process.env.REACT_APP_BASE_URL;
 
-    const  loginUser = useSelector(state=>state.user);
+    const loginUser = useSelector(state=>state.user);
 
     const {id} = useParams();
     const navigate = useNavigate();
@@ -31,6 +31,10 @@ function ShView() {
     const [category, setCategory] = useState(null);
 
     const [disPlayYN, setDisplayYN] = useState({display: "none"}); 
+
+    const [sModal, setSModal] = useState(false);
+    const [suggestPrice, setSuggestPrice] = useState(0);
+    const [suggestInfo, setSuggestInfo] = useState([]);
 
     async function viewed() {
         // 1. 조회수 증가
@@ -42,9 +46,21 @@ function ShView() {
         // 2. 데이터 가져오기 (조회수 증가 후)
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
-            console.log(res.data)
+            console.log(res.data);
             setPostDetail(res.data.post);
             setCategory(res.data.category.category_name);
+        } catch (err) {
+            console.error(err);
+        }
+        try {
+            const res = await jaxios.get(`/api/sh-page/suggest`, {params :{postId:id}});
+            console.log(res.data);
+            if(res.data.msg == "ok") {
+                setSuggestInfo([...res.data.resDto]);
+            } else {
+                return alert("요청이 실패하였습니다.");
+            }
+            
         } catch (err) {
             console.error(err);
         }
@@ -98,6 +114,53 @@ function ShView() {
     }
 
 
+    // 가격 제안하기
+    function suggest() {
+        if(loginUser.userid) {
+            setSModal(true);
+        } else {
+            alert("로그인이 필요한 서비스입니다.");
+            return navigate("/login");
+        }
+    }
+    
+    // 가격 제안 수락
+    async function approvalChat(mid, mname, mimg, sid) {
+        let isConfirm = window.confirm("가격 제안을 수락하시겠습니까?");
+        if(isConfirm) {
+            if (!loginUser.userid) {
+                alert("로그인이 필요한 서비스입니다."); 
+                return navigate("/login");
+            }
+
+            await jaxios.post("/api/sh-page/appSuggest", null, {params:{sid}})
+                .then((res)=> {
+                    console.log(res);
+                }).catch(err=>console.error(err));
+
+            setDisplayYN({display: "flex"});
+            await jaxios.post("/api/chat/createChatRoom", {
+                sellerId:postDetail.member.memberId, 
+                sellerName:postDetail.member.name,
+                sellerProfileImg:postDetail.member.profileImg,
+                buyerId:mid,
+                buyerName:mname,
+                buyerProfileImg:mimg,
+                postId: id,
+                postTitle: postDetail.title,
+            }).then((result)=> {
+                    console.log(result);
+                    if(result.data.msg == "ok") {
+                        setOpenChatState("oneToOneChat");
+                        setChatRoomData(result.data.resDto);
+                    } else {
+                        return alert("요청이 실패하였습니다.");
+                    }
+                }).catch(err=>console.error(err));
+        }
+    }
+
+
 
     // 채팅
     // oneToOneChat
@@ -106,7 +169,10 @@ function ShView() {
     const [chatRoomData, setChatRoomData] = useState(null);
     const [chatListData,setChatListData] = useState(null);
     function openChat() {
-        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+        if (!loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다."); 
+            return navigate("/login");
+        }
         setDisplayYN({display: "flex"});
         if(window.confirm("판매자와 연락 하시겠습니까?")) {
             jaxios.post("/api/chat/createChatRoom", {
@@ -130,7 +196,10 @@ function ShView() {
         }
     }
     function openChatRoomList() {
-        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+        if (!loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다."); 
+            return navigate("/login");
+        }
         setDisplayYN({display: "flex"});
         jaxios.get("/api/chat/chatRoomList").then((result)=> {
             console.log(result);
@@ -215,6 +284,54 @@ function ShView() {
                             </span>
                         </div>
                     </div>
+                    <div className='suggestWrap'>
+                        {
+                            suggestInfo && suggestInfo.map((a, i)=> {
+                                return(
+                                    a.approved == 0 ?
+                                    <div 
+                                        key={i} 
+                                        className='suggestList' 
+                                        style={
+                                            postDetail && postDetail.member.memberId === loginUser.member_id 
+                                            ? { cursor: "pointer" } 
+                                            : {}}
+                                        onClick={()=>{
+                                            postDetail &&
+                                            postDetail.member.memberId == loginUser.member_id &&
+                                        approvalChat(a.memberId, a.memberName, a.memberProfileImg, a.suggest_id);
+                                    }}>
+                                        <span className='img'>
+                                            <img src={a.memberProfileImg} />
+                                        </span>
+                                        <span className='name'>"{a.userId}"</span> 
+                                        님이 
+                                    
+                                        <span className='price'>
+                                            "{a.suggest_price}"   
+                                        </span>
+                                        원으로 가격을 제안하셨습니다.
+                                        <span className='date'>({formatDateTime(a.uptime)})</span>
+                                    </div>
+                                    :
+                                    <div key={i} className='suggestList active'>
+                                        <span className='img'>
+                                            <img src={a.memberProfileImg} />
+                                        </span>
+                                        <span className='name'>"{a.userId}"</span> 
+                                        님이 
+                                    
+                                        <span className='price'>
+                                            "{a.suggest_price}"   
+                                        </span>
+                                        원으로 가격을 제안하셨습니다.
+                                        <span className='date'>({formatDateTime(a.uptime)})</span>
+                                    </div>
+                                )
+                            })
+                                
+                        }
+                    </div>
 
                 </div>
                 <div className='rightBox'>
@@ -282,10 +399,21 @@ function ShView() {
                         {
                             postDetail &&
                             postDetail.member.memberId != loginUser.member_id &&
+                            <>
                             <button className='btnEvent btnChat' onClick={()=> {openChat()}}>1:1 채팅하기</button>
+                            
+                            {
+                                suggestInfo.some(item => 
+                                    item.memberId == loginUser.member_id && item.approved === 1
+                                ) ? null 
+                                : 
+                                <button className='btnEvent btnBuy' onClick={()=>{suggest();}}>가격 제안하기 </button>
+                            }
+                            </>
+                            
                         }
                         
-                        <button className='btnEvent btnBuy'>구매하기</button>
+                        
                         <button className='btnEvent btnZZim'>찜</button>
                         <button className='btnEvent btnLike'>좋</button>
                     </div>
@@ -372,6 +500,22 @@ function ShView() {
                 onPopupClose={popupClose}
             />
         }
+
+        
+        {   
+            sModal ?
+            <SuggestCP 
+                setSModal={setSModal} 
+                suggestPrice={suggestPrice} 
+                setSuggestPrice={setSuggestPrice} 
+                formatPrice={formatPrice}
+                postDetail={postDetail}
+
+                setSuggestInfo={setSuggestInfo}
+            />
+            : null
+        }
+        
     </div>
   )
 }
@@ -412,6 +556,44 @@ function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chat
 // 채팅룸 리스트
 function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickChat}) {
 
+    function formatDateTime(indate) {
+        const date = new Date(indate);
+        const now = new Date();
+
+        // 시간 제외하고 날짜만 비교하기 위해 00:00 기준으로 변환
+        const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const diffMs = now - date;
+        const diffMinutes = Math.floor(diffMs / 1000 / 60);
+        const diffHours = Math.floor(diffMinutes / 60);
+
+        const diffDays = Math.floor((startOfNow - startOfDate) / (1000 * 60 * 60 * 24));
+
+        // 오늘일 경우
+        if (diffDays === 0) {
+            if (diffHours > 0) return `${diffHours}시간 전`;
+            if (diffMinutes > 0) return `${diffMinutes}분 전`;
+            return `방금 전`;
+        }
+
+        // 1달(30일) 미만
+        if (diffDays < 30) {
+            return `${diffDays}일 전`;
+        }
+
+        const diffMonths = Math.floor(diffDays / 30);
+        if (diffMonths < 12) {
+            return `${diffMonths}달 전`;
+        }
+
+        // 1년 이상은 날짜 출력
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     return (
         <div className='pChatListWrap'>
             {/* // 내가 판매자일 때 (chatRoom?.sellerId == loginUser.member_id);
@@ -431,21 +613,20 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
                                         {chatRoom.buyerName} (buyer)
                                     </div>
                                     <div className='rMsg'>
-                                        최근 메세지입니다.
+                                        {chatRoom.lastChatContent}
                                     </div>
                                 </div>
                                 <div className='chl right'>
                                     <div className='rTime'>
-                                        오후 5:44
+                                         {formatDateTime(chatRoom.date)}
                                     </div>
-                                    <div className='alram'>
-                                        1
+                                    <div className={chatRoom.sellerReadMsg?.length === 0 ? "alram none" : "alram"}>
+                                    {chatRoom.sellerReadMsg?.length}
                                     </div>
                                 </div>
                             </div>  
                             : null
-                            
-                        )
+                        ) 
                     })
                 }
             </div>
@@ -464,15 +645,15 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
                                         {chatRoom.sellerName} (seller)
                                     </div>
                                     <div className='rMsg'>
-                                        최근 메세지입니다.
+                                        {chatRoom.lastChatContent}
                                     </div>
                                 </div>
                                 <div className='chl right'>
                                     <div className='rTime'>
-                                        오후 5:44
+                                        {formatDateTime(chatRoom.date)}
                                     </div>
-                                    <div className='alram'>
-                                        1
+                                    <div className={chatRoom.buyerReadMsg?.length === 0 ? "alram none" : "alram"}>
+                                    {chatRoom.buyerReadMsg?.length}
                                     </div>
                                 </div>
                             </div>  
@@ -490,9 +671,13 @@ function ChatRoomList({chatListData, loginUser, setOpenChatState, onOpenClickCha
 function ChatRoomCP({chatRoomData, loginUser, openChatState}) {
     const [isOpen, setIsOpen] = useState(false);
     const [chatRoomInfo, setChatRoomInfo] = useState(null);
-
+    const navigate = useNavigate();
+    
     useEffect(()=> {
-        if (!loginUser.userid) return alert("로그인이 필요한 서비스입니다.");
+        if (!loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다."); 
+            return navigate("/login");
+        }
         jaxios.get(`/api/chat/detailChatRoom/${chatRoomData.chatRoomId}`)
             .then((result)=> {
                 console.log(result);
@@ -546,6 +731,91 @@ function ChatRoomCP({chatRoomData, loginUser, openChatState}) {
                 </div>
             </div>
         </>
+    )
+}
+
+function SuggestCP({setSModal, suggestPrice, setSuggestPrice, formatPrice, postDetail, setSuggestInfo}) {
+    const [vMsg, setVMsg] = useState(null);
+
+    useEffect(()=> {setSuggestPrice(postDetail.price)}, [])
+
+    const handlePriceChange = (e) => {
+        const value = e.target.value;
+
+        // 숫자가 아닌 문자가 포함되어 있으면
+        if (!/^\d*$/.test(value)) {  
+            alert("숫자만 입력하세요.");
+            setSuggestPrice(0);
+
+            return;
+        }
+
+        const minPrice = postDetail.price * 0.7;   // -30%
+        const maxPrice = postDetail.price * 1.3;   // +30%
+        if (value < minPrice || value > maxPrice) {
+            setVMsg(`* 현재가격 "${formatPrice(postDetail.price)}"원의
+             30% 범위인 ${formatPrice(minPrice)}원 ~ ${formatPrice(maxPrice)}원 내에서 
+             입력해야 합니다.`)
+        } else {
+            setVMsg(null);
+        }
+
+        setSuggestPrice(value);
+    };
+    
+    function suggestSend() {
+        // ±30% 벗어나는지 체크
+        const minPrice = postDetail.price * 0.7;   // -30%
+        const maxPrice = postDetail.price * 1.3;   // +30%
+
+        if (suggestPrice < minPrice || suggestPrice > maxPrice) {
+            setVMsg(`* 현재가격 "${formatPrice(postDetail.price)}"원의
+             30% 범위인 ${formatPrice(minPrice)}원 ~ ${formatPrice(maxPrice)}원 내에서 
+             입력해야 합니다.`)
+            setSuggestPrice(0);
+            return;
+        }
+
+        jaxios.post("/api/sh-page/suggest", {
+            postId: postDetail.postId, 
+            suggest_price: suggestPrice
+        }).then((res)=> {
+            console.log(res.data);
+            if(res.data.msg == "ok") {
+                setSuggestInfo(prev => [...prev, res.data.resDto]);
+                alert("가격을 제안했습니다.");
+                setSModal(false);
+            } else {
+                alert("요청이 실패했습니다.");
+            }
+        }).catch(err=>console.error(err));
+    }
+    return (
+    <>
+    <div className='modelSuggest'>
+        <h3 className='title'>가격 제안하기</h3>
+        <div className='eventArea'>
+            <div className='currentPrice'>
+                <label>현재 가격 : </label>
+                <span>{formatPrice(postDetail.price)}</span>
+                <span>원</span>
+            </div>
+            <div className='suggestPrice'>
+                <label>제안 가격 : </label>
+                <input type='text' value={suggestPrice} onChange={handlePriceChange} />
+                <span>원</span>
+            </div>
+            <div className='vMsg'>
+                {vMsg}
+            </div>
+            <div className='mBtnWrap'>
+                <button onClick={()=> {suggestSend();}}>제안하기</button>
+                <button onClick={()=> {setSModal(false)}}>취소</button>
+            </div>
+        </div>
+    </div>
+    <div className='dimm' onClick={()=> {setSModal(false)}}></div>
+    </>
     )
 }
 

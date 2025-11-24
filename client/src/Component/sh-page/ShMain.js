@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import jaxios from '../../util/jwtutil';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -13,6 +13,8 @@ function ShMain() {
     const [shPostArr, setShPostArr] = useState([]);
     const [categoryArr, setCategoryArr] = useState([]);
     const navigate = useNavigate();
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState();
 
     useEffect(()=> {
        
@@ -21,10 +23,11 @@ function ShMain() {
     }, []);
 
     async function startApi() {
-      await axios.get("/api/sh-page/sh-list")
+      await axios.get(`/api/sh-page/sh-list/${page}`)
         .then((result) => {
-            console.log([...result.data.postList]);
-            setShPostArr([...result.data.postList]);
+            // console.log([...result.data.postList]);
+            setShPostArr([...result.data.postList.listArr]);
+            setTotalPage(Number(result.data.postList.totalPages));
         }).catch((err) => {
             console.error(err);
         });
@@ -38,11 +41,47 @@ function ShMain() {
 
     }
 
+
+
+    useEffect(()=>{
+        window.addEventListener('scroll', handleScroll );
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        }
+    },[])
+    const handleScroll=()=>{
+        const scrollHeight = document.documentElement.scrollHeight - 5; 
+        const scrollTop = document.documentElement.scrollTop;  
+        const clientHeight = document.documentElement.clientHeight; 
+        if( scrollTop + clientHeight >= scrollHeight ) {
+            if( Number(page) >= Number(totalPage)){return}
+            onPageMove( Number(page) + 1 );
+        }
+    }
+    function onPageMove(page) {
+      axios.get(`/api/sh-page/sh-list/${page}`)
+        .then((result) => {
+            setShPostArr(prev => [...prev, ...result.data.postList.listArr]);
+
+        }).catch((err) => {
+            console.error(err);
+        });
+    }
+
+
+
+
+
+
     function postWrite() {
       navigate("./sh-write");
     };
 
+      
     
+
+
+
 
     function formatDateTime(indate) {
       const date = new Date(indate);

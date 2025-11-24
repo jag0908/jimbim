@@ -82,6 +82,7 @@ public class ShController {
     @PostMapping("/sh-view-count")
     public HashMap<String, Object> shViewCount(@RequestBody ShViewCountDTO shViewCountDTO) {
         HashMap<String, Object> result = new HashMap<>();
+
         ss.viewCount(shViewCountDTO);
         return  result;
     }
@@ -156,5 +157,16 @@ public class ShController {
         return msg;
     }
 
+
+    //이삭 수정
+    @GetMapping("/user-sell-list/{memberId}")
+    public HashMap<String, Object> getUserSellPosts(@PathVariable("memberId") Integer memberId) {
+        System.out.println("memberId: " + memberId);
+        HashMap<String, Object> result = new HashMap<>();
+        List<ShPostResDto> posts = ss.getPostsByMemberId(memberId);
+        System.out.println("posts.size(): " + posts.size());
+        result.put("sellPosts", posts);
+        return result;
+    }
 
 }

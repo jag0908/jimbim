@@ -89,7 +89,7 @@ public class StyleController {
     }
 
     @GetMapping("/post/{id}")
-    public ResponseEntity<?> getPost(@PathVariable Integer id) {
+    public ResponseEntity<?> getPost(@PathVariable Integer id, @AuthenticationPrincipal MemberDTO memberDTO) {
         STYLE_post post = styleService.findBySpostId(id);
 
         post.setViewCount(post.getViewCount() + 1);
@@ -97,13 +97,20 @@ public class StyleController {
 
         List<String> imageUrls = styleService.getAllImageUrls(post);
 
+        boolean liked = false; // 기본값 false
+        if (memberDTO != null) {
+            // 로그인한 경우 좋아요 여부 확인
+            liked = styleService.isLikedByUser(id, memberDTO.getUserid());
+        }
+
         Map<String, Object> result = new HashMap<>();
         result.put("title", post.getTitle());
         result.put("content", post.getContent());
         result.put("userid", post.getMember().getUserid());
         result.put("profileImg", post.getMember().getProfileImg());
         result.put("s_images", imageUrls);
-        result.put("likesCount", styleService.countLikes(id));
+        result.put("liked", liked);
+        result.put("likeCount", styleService.countLikes(id));
         result.put("replies", styleService.findReplies(id));
         result.put("hashtags", styleService.findHashtags(id));
         result.put("indate", post.getIndate());

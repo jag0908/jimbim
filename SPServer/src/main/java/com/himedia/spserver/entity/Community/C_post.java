@@ -28,6 +28,8 @@ public class C_post {
     private String c_reply;
     @ColumnDefault("'N'")
     private String isAnonymous; // 익명글 여부, Y면 익명, N이면 익명아님
+    @Column(nullable = false)
+    @ColumnDefault("0")
     private Integer readcount;
 
     @ManyToOne

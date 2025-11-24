@@ -71,26 +71,33 @@ public class StyleService {
     }
 
     public List<StylePostDTO> getAllPosts() {
-
-        // 1. 게시글 + 멤버 한 번에 조회 (Q1: 1 query - Fetch Join 사용)
+        // 1. 전체 post + member 조회
         List<STYLE_post> posts = postRepository.findAllWithMemberOrderByIndateDesc();
 
-        // 2. 관련 데이터 한 번에 조회 (Q2-Q5: 4 queries - IN 절 Batch Loading)
-        List<Integer> allIds = posts.stream()
+        if (posts.isEmpty()) return List.of();
+
+        List<Integer> postIds = posts.stream()
                 .map(STYLE_post::getSpostId)
                 .toList();
 
-        if (allIds.isEmpty()) {
-            return List.of();
-        }
+        // 2. 현재 로그인한 사용자가 좋아요한 postId set 조회
+        Integer currentMemberId = getCurrentMemberId();
 
-        // 3. 관련 데이터 한 번에 조회
-        List<STYLE_Like> allLikes = likeRepository.findBySpost_SpostIdIn(allIds);
-        List<STYLE_Reply> allReplies = replyRepository.findBySpost_SpostIdIn(allIds);
-        List<StylePostHashtagDTO> postHashtagDTOs = posthashRepository.findHashtagsByPostIds(allIds);
-        List<File> allFiles = fileRepository.findByPost_SpostIdIn(allIds);
+        System.out.println("[DEBUG] currentMemberId = " + currentMemberId);
 
-        // 4. Map으로 매핑
+        final Set<Integer> likedSet = currentMemberId != null
+                ? new HashSet<>(likeRepository.findLikedPostIds(currentMemberId, postIds))
+                : Set.of();
+
+        System.out.println("[DEBUG] likedSet = " + likedSet);
+
+        // 3. 기타 데이터 조회
+        List<STYLE_Like> allLikes = likeRepository.findBySpost_SpostIdIn(postIds);
+        List<STYLE_Reply> allReplies = replyRepository.findBySpost_SpostIdIn(postIds);
+        List<StylePostHashtagDTO> postHashtagDTOs = posthashRepository.findHashtagsByPostIds(postIds);
+        List<File> allFiles = fileRepository.findByPost_SpostIdIn(postIds);
+
+        // 4. 매핑
         Map<Integer, Long> likeCountMap = allLikes.stream()
                 .collect(Collectors.groupingBy(l -> l.getSpost().getSpostId(), Collectors.counting()));
 
@@ -110,19 +117,21 @@ public class StyleService {
                 ));
 
         // 5. DTO 변환
-        return posts.stream().map(post -> StylePostDTO.builder()
-                .spost_id(post.getSpostId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .s_images(fileMap.getOrDefault(post.getSpostId(), List.of()))
-                .hashtags(hashtagMap.getOrDefault(post.getSpostId(), List.of()))
-                .indate(post.getIndate())
-                .likeCount(likeCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
-                .replyCount(replyCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
-                .userid(post.getMember().getUserid())
-                .profileImg(post.getMember().getProfileImg())
-                .build()
-        ).toList();
+        return posts.stream()
+                .map(post -> StylePostDTO.builder()
+                        .spost_id(post.getSpostId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .s_images(fileMap.getOrDefault(post.getSpostId(), List.of()))
+                        .hashtags(hashtagMap.getOrDefault(post.getSpostId(), List.of()))
+                        .indate(post.getIndate())
+                        .likeCount(likeCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
+                        .replyCount(replyCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
+                        .userid(post.getMember().getUserid())
+                        .profileImg(post.getMember().getProfileImg())
+                        .liked(likedSet.contains(post.getSpostId()))
+                        .build()
+                ).toList();
     }
 
 
@@ -247,6 +256,10 @@ public class StyleService {
         return likeRepository.countBySpost(post);
     }
 
+    public boolean isLikedByUser(Integer spostId, String userid) {
+        return likeRepository.existsBySpost_SpostIdAndMemberid_Userid(spostId, userid);
+    }
+
     public List<Map<String, Object>> findReplies(Integer id) {
         STYLE_post post = findBySpostId(id);
 
@@ -369,149 +382,130 @@ public class StyleService {
 
     public List<StylePostDTO> getAllPostsOrderByLikesDTO() {
 
-        // 1) 인기순 게시글 목록 조회 (N+1 발생 X)
-        List<STYLE_post> posts = postRepository.findAllOrderByLikeCountDesc();
-        if (posts.isEmpty()) return Collections.emptyList();
+        // 1. 게시글 + 멤버 조회 (좋아요 많은 순)
+        List<STYLE_post> posts = postRepository.findAllOrderByLikesDesc();
 
-        // 포스트 ID 목록 추출
         List<Integer> postIds = posts.stream()
                 .map(STYLE_post::getSpostId)
                 .toList();
 
-        // 2) 좋아요 한꺼번에 가져오기
-        Map<Integer, List<STYLE_Like>> likeMap =
-                likeRepository.findBySpost_SpostIdIn(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(l -> l.getSpost().getSpostId()));
+        if (postIds.isEmpty()) return List.of();
 
-        // 3) 댓글 한꺼번에 가져오기
-        Map<Integer, List<STYLE_Reply>> replyMap =
-                replyRepository.findAllBySpostIds(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(r -> r.getSpost().getSpostId()));
+        // 2. 현재 로그인한 사용자가 좋아요한 게시글 ID 조회 → likedSet
+        Integer currentMemberId = getCurrentMemberId();
 
-        // 4) 파일 한꺼번에 가져오기
-        Map<Integer, List<File>> fileMap =
-                fileRepository.findByPost_SpostIdIn(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(f -> f.getPost().getSpostId()));
+        System.out.println("[DEBUG] currentMemberId = " + currentMemberId);
 
-        // 5) 해시태그 한꺼번에 가져오기
-        Map<Integer, List<StylePostHashtagDTO>> hashtagMap =
-                posthashRepository.findHashtagsByPostIds(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(StylePostHashtagDTO::postId));
+        final Set<Integer> likedSet =
+                currentMemberId != null
+                        ? new HashSet<>(likeRepository.findLikedPostIds(currentMemberId, postIds))
+                        : Set.of();
 
-        // 6) 한번에 DTO 변환
-        return posts.stream()
-                .map(post -> {
-                    List<STYLE_Like> likes = likeMap.getOrDefault(post.getSpostId(), List.of());
-                    List<STYLE_Reply> replies = replyMap.getOrDefault(post.getSpostId(), List.of());
-                    List<File> files = fileMap.getOrDefault(post.getSpostId(), List.of());
-                    List<StylePostHashtagDTO> hashtags = hashtagMap.getOrDefault(post.getSpostId(), List.of());
+        System.out.println("[DEBUG] likedSet = " + likedSet);
 
-                    return StyleConvertToDTO(post, likes, replies, files, hashtags);
-                })
-                .toList();
+        // 3. 게시글 관련 데이터 전체 조회
+        List<STYLE_Like> allLikes = likeRepository.findBySpost_SpostIdIn(postIds);
+        List<STYLE_Reply> allReplies = replyRepository.findBySpost_SpostIdIn(postIds);
+        List<File> allFiles = fileRepository.findByPost_SpostIdIn(postIds);
+        List<StylePostHashtagDTO> postHashtagDTOs = posthashRepository.findHashtagsByPostIds(postIds);
+
+        // 4. 매핑
+        Map<Integer, Long> likeCountMap = allLikes.stream()
+                .collect(Collectors.groupingBy(l -> l.getSpost().getSpostId(), Collectors.counting()));
+
+        Map<Integer, Long> replyCountMap = allReplies.stream()
+                .collect(Collectors.groupingBy(r -> r.getSpost().getSpostId(), Collectors.counting()));
+
+        Map<Integer, List<String>> fileMap = allFiles.stream()
+                .collect(Collectors.groupingBy(
+                        f -> f.getPost().getSpostId(),
+                        Collectors.mapping(File::getPath, Collectors.toList())
+                ));
+
+        Map<Integer, List<String>> hashtagMap = postHashtagDTOs.stream()
+                .collect(Collectors.groupingBy(
+                        StylePostHashtagDTO::postId,
+                        Collectors.mapping(StylePostHashtagDTO::word, Collectors.toList())
+                ));
+
+        // 5. DTO 반환
+        return posts.stream().map(post -> StylePostDTO.builder()
+                .spost_id(post.getSpostId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .s_images(fileMap.getOrDefault(post.getSpostId(), List.of()))
+                .hashtags(hashtagMap.getOrDefault(post.getSpostId(), List.of()))
+                .indate(post.getIndate())
+                .likeCount(likeCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
+                .replyCount(replyCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
+                .userid(post.getMember().getUserid())
+                .profileImg(post.getMember().getProfileImg())
+                .liked(likedSet.contains(post.getSpostId()))
+                .build()
+        ).toList();
     }
 
     public List<StylePostDTO> getAllPostsOrderByViewsDTO() {
 
-        // 1) 조회수순 포스트 목록 조회
-        List<STYLE_post> posts = postRepository.findAllOrderByViewCountDesc();
-        if (posts.isEmpty()) {
-            return Collections.emptyList();
-        }
+        // 1. 조회수 많은 순 정렬
+        List<STYLE_post> posts = postRepository.findAllOrderByViewsDesc();
 
-        // 포스트 ID 목록
         List<Integer> postIds = posts.stream()
                 .map(STYLE_post::getSpostId)
                 .toList();
 
-        // 2) 좋아요 한 번에 조회(IN)
-        Map<Integer, List<STYLE_Like>> likeMap =
-                likeRepository.findBySpost_SpostIdIn(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(l -> l.getSpost().getSpostId()));
+        if (postIds.isEmpty()) return List.of();
 
-        // 3) 댓글 한 번에 조회(IN)
-        Map<Integer, List<STYLE_Reply>> replyMap =
-                replyRepository.findAllBySpostIds(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(r -> r.getSpost().getSpostId()));
+        // 2. 로그인한 사용자가 좋아요한 게시글 목록 가져오기
+        Integer currentMemberId = getCurrentMemberId();
 
-        // 4) 파일 한 번에 조회(IN)
-        Map<Integer, List<File>> fileMap =
-                fileRepository.findByPost_SpostIdIn(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(f -> f.getPost().getSpostId()));
+        final Set<Integer> likedSet =
+                currentMemberId != null
+                        ? new HashSet<>(likeRepository.findLikedPostIds(currentMemberId, postIds))
+                        : Set.of();
 
-        // 5) 해시태그 한 번에 조회(IN + tag JOIN FETCH)
-        Map<Integer, List<StylePostHashtagDTO>> hashtagMap =
-                posthashRepository.findHashtagsByPostIds(postIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(StylePostHashtagDTO::postId));
+        // 3. 관련 데이터 조회
+        List<STYLE_Like> allLikes = likeRepository.findBySpost_SpostIdIn(postIds);
+        List<STYLE_Reply> allReplies = replyRepository.findBySpost_SpostIdIn(postIds);
+        List<File> allFiles = fileRepository.findByPost_SpostIdIn(postIds);
+        List<StylePostHashtagDTO> postHashtagDTOs = posthashRepository.findHashtagsByPostIds(postIds);
 
-        // 6) DTO 변환
-        return posts.stream()
-                .map(post -> {
+        // 4. Map 매핑
+        Map<Integer, Long> likeCountMap = allLikes.stream()
+                .collect(Collectors.groupingBy(l -> l.getSpost().getSpostId(), Collectors.counting()));
 
-                    List<STYLE_Like> likes = likeMap.getOrDefault(post.getSpostId(), List.of());
-                    List<STYLE_Reply> replies = replyMap.getOrDefault(post.getSpostId(), List.of());
-                    List<File> files = fileMap.getOrDefault(post.getSpostId(), List.of());
-                    List<StylePostHashtagDTO> hashtags = hashtagMap.getOrDefault(post.getSpostId(), List.of());
+        Map<Integer, Long> replyCountMap = allReplies.stream()
+                .collect(Collectors.groupingBy(r -> r.getSpost().getSpostId(), Collectors.counting()));
 
-                    return StyleConvertToDTO(post, likes, replies, files, hashtags);
+        Map<Integer, List<String>> fileMap = allFiles.stream()
+                .collect(Collectors.groupingBy(
+                        f -> f.getPost().getSpostId(),
+                        Collectors.mapping(File::getPath, Collectors.toList())
+                ));
 
-                })
-                .toList();
-    }
+        Map<Integer, List<String>> hashtagMap = postHashtagDTOs.stream()
+                .collect(Collectors.groupingBy(
+                        StylePostHashtagDTO::postId,
+                        Collectors.mapping(StylePostHashtagDTO::word, Collectors.toList())
+                ));
 
-    private StylePostDTO StyleConvertToDTO(
-            STYLE_post post,
-            List<STYLE_Like> likes,
-            List<STYLE_Reply> replies,
-            List<File> files,
-            List<StylePostHashtagDTO> hashtags
-    ) {
-
-        return StylePostDTO.builder()
+        // 5. DTO 변환
+        return posts.stream().map(post -> StylePostDTO.builder()
                 .spost_id(post.getSpostId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .s_images(fileMap.getOrDefault(post.getSpostId(), List.of()))
+                .hashtags(hashtagMap.getOrDefault(post.getSpostId(), List.of()))
                 .indate(post.getIndate())
-                .viewCount(post.getViewCount())
-
-                // 이미지 파일 path 리스트
-                .s_images(
-                        files.stream()
-                                .map(File::getPath)      // 이미지 경로
-                                .toList()
-                )
-
-                // 좋아요 개수
-                .likeCount(likes.size())
-
-                // 댓글 개수
-                .replyCount(replies.size())
-
-                // 작성자 정보
+                .likeCount(likeCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
+                .replyCount(replyCountMap.getOrDefault(post.getSpostId(), 0L).intValue())
                 .userid(post.getMember().getUserid())
                 .profileImg(post.getMember().getProfileImg())
-
-                // 로그인 정보가 없으므로 기본값 설정 (추후 로그인 서비스 연동 시 변경)
-                .liked(false)
-                .followed(false)
-
-                // 해시태그 문자열 리스트
-                .hashtags(
-                        hashtags.stream()
-                                .map(StylePostHashtagDTO::word)
-                                .toList()
-                )
-
-                .build();
+                .liked(likedSet.contains(post.getSpostId()))
+                .build()
+        ).toList();
     }
+
 
 
     public List<Map<String, Object>> getHotTags() {

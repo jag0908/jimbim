@@ -18,4 +18,9 @@ public interface ShPostRepository extends JpaRepository<SH_post, Integer> {
 
     @Query("SELECT p FROM SH_post p JOIN FETCH p.member WHERE p.postId = :postId")
     Optional<SH_post> findByIdWithMember(Integer postId);
+
+
+    //이삭 수정
+    @Query(value = "SELECT * FROM SH_post WHERE memberid = :memberId", nativeQuery = true)
+    List<SH_post> findByMemberId(Integer memberId);
 }

@@ -14,6 +14,7 @@ function StyleFeed() {
   const [category, setCategory] = useState("default");
 
   useEffect(() => {
+    
     if (category === "accounts" || category === "tags") return;
 
     const fetchPosts = async () => {
@@ -24,7 +25,12 @@ function StyleFeed() {
 
       try {
         const res = await jaxios.get(url);
-        setPosts(res.data);
+        console.log("[DEBUG] fetchPosts res.data:", res.data);
+        setPosts(res.data.map(post => ({
+              ...post,
+              liked: post.liked ?? false,
+              likeCount: post.likeCount ?? 0
+          })));
       } catch (err) {
         console.error("게시글 불러오기 실패:", err);
       }
@@ -46,11 +52,15 @@ function StyleFeed() {
       const res = await jaxios.post(`${baseURL}/style/like/${postId}`);
       const { liked, likeCount } = res.data;
 
-      setPosts(posts.map(post =>
-        post.spost_id === postId
-          ? { ...post, liked, likeCount }
-          : post
-      ));
+      console.log(`[좋아요 토글] Post ID: ${postId}, 응답 liked: ${liked}, 응답 likeCount: ${likeCount}`); // ⬅️ 이 부분을 추가
+
+      setPosts(prev =>
+        prev.map(post =>
+          post.spost_id === postId
+            ? { ...post, liked, likeCount }
+            : post
+        )
+      );
     } catch (err) {
       console.error("좋아요 오류", err);
       if (err.response?.data?.error === 'REQUIRE_LOGIN') {

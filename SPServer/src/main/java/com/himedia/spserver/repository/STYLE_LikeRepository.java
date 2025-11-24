@@ -24,13 +24,14 @@ public interface STYLE_LikeRepository extends JpaRepository<STYLE_Like, Integer>
     @Query("select l from STYLE_Like l where l.spost.spostId in :postIds")
     List<STYLE_Like> findByPostIds(@Param("postIds") List<Integer> postIds);
 
-    @Query("select count(l) from STYLE_Like l where l.spost = :post")
-    Long countByPost(@Param("post") STYLE_post post);
+    @Query("""
+        SELECT l.spost.spostId
+        FROM STYLE_Like l
+        WHERE l.memberid.member_id = :memberId
+          AND l.spost.spostId IN :postIds
+    """)
+    List<Integer> findLikedPostIds(@Param("memberId") Integer memberId,
+                                   @Param("postIds") List<Integer> postIds);
 
-//    Collection<Object> findAllBySpostIds(List<Integer> postIds);
-
-
-
-
-
+    boolean existsBySpost_SpostIdAndMemberid_Userid(Integer spostId, String userId);
 }

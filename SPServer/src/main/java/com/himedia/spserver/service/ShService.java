@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -210,6 +211,32 @@ public class ShService {
         result.put("msg", "notOk");
         return result;
     }
+
+
+
+    //이삭 수정
+    public List<ShPostResDto> getPostsByMemberId(Integer memberId) {
+        // 해당 회원의 게시글 조회
+        List<SH_post> posts = spr.findByMemberId(memberId);
+
+        List<ShPostResDto> dtos = new ArrayList<>();
+
+        for (SH_post post : posts) {
+            ShPostResDto dto = new ShPostResDto();
+            dto.setPostId(post.getPostId());
+            dto.setTitle(post.getTitle());
+            dto.setPrice(post.getPrice());
+
+            // 파일 중 첫 번째 이미지 조회
+            List<SH_File> files = sfr.findTop1ByPostOrderByFileIdAsc(post);
+            if (!files.isEmpty()) {
+                dto.setFirstFilePath(files.get(0).getPath()); // DTO 기존 필드 사용
+            }
+
+            dtos.add(dto);
+        }
+
+        return dtos;
 
     public ShSuggestDto insertSuggest(Map<String, Object> claims, ShSuggestDto reqDto) {
 

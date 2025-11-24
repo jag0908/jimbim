@@ -6,16 +6,17 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "c_like") // 테이블명 명확히 지정
 public class C_Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer like_id;
+    private Integer likenum;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    Member member;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    @ManyToOne
-    @JoinColumn(name = "cpost_id")
-    C_post cpost;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cpost_id", nullable = false)
+    private C_post cpost;
 }

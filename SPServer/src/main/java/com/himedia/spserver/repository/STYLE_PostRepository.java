@@ -11,37 +11,63 @@ import java.util.Optional;
 
 public interface STYLE_PostRepository extends JpaRepository<STYLE_post, Integer> {
 
-    Optional<STYLE_post> findBySpostId(Integer id);
-
     List<STYLE_post> findAllByMember_UseridOrderByIndateDesc(String userid);
 
-    // 좋아요 기준 정렬
-    @Query("SELECT p FROM STYLE_post p LEFT JOIN p.likes l GROUP BY p ORDER BY COUNT(l) DESC, p.indate DESC")
+    @Query("""
+        SELECT p FROM STYLE_post p
+        JOIN FETCH p.member m
+        LEFT JOIN STYLE_Like l ON l.spost = p
+        GROUP BY p
+        ORDER BY COUNT(l) DESC
+    """)
     List<STYLE_post> findAllOrderByLikeCountDesc();
 
-    // 조회수 기준 정렬
-    @Query("SELECT p FROM STYLE_post p ORDER BY p.viewCount DESC, p.indate DESC")
+
+
+    @Query("""
+        SELECT p FROM STYLE_post p
+        JOIN FETCH p.member m
+        ORDER BY p.viewCount DESC
+    """)
     List<STYLE_post> findAllOrderByViewCountDesc();
 
-    // 태그별 포스트 조회
-    @Query("SELECT ph.postId FROM STYLE_Posthash ph WHERE ph.tagId.word = :tagName")
+    @Query("""
+        SELECT ph.postId
+        FROM STYLE_Posthash ph
+        JOIN ph.tagId t
+        WHERE t.word = :tagName
+    """)
     List<STYLE_post> findPostsByTag(@Param("tagName") String tagName);
 
-    // 모든 포스트 ID 최신순
-    @Query("SELECT p FROM STYLE_post p ORDER BY p.indate DESC")
-    List<STYLE_post> findAllByOrderByIndateDesc();
+    Optional<STYLE_post> findBySpostId(Integer id);
 
-    // =============================================
-    // N+1 문제 해결용: 모든 연관 엔티티 한 번에 fetch
-    @EntityGraph(attributePaths = {"likes", "replies", "files", "member", "hashtags"})
-    @Query("SELECT p FROM STYLE_post p ORDER BY p.indate DESC")
-    List<STYLE_post> findAllPostsWithDetails();
+    // Member와 함께 포스트 조회 (N+1 방지)
+    @Query("SELECT p FROM STYLE_post p JOIN FETCH p.member WHERE p.spostId IN :ids")
+    List<STYLE_post> findAllWithMemberByIds(@Param("ids") List<Integer> ids);
 
-    @EntityGraph(attributePaths = {"likes", "replies", "files", "member", "hashtags"})
-    @Query("SELECT p FROM STYLE_post p LEFT JOIN p.likes l GROUP BY p ORDER BY COUNT(l) DESC, p.indate DESC")
-    List<STYLE_post> findAllPostsWithDetailsOrderByLikeCountDesc();
+    // 포스트 ID 목록 조회
+    @Query("SELECT p.spostId FROM STYLE_post p ORDER BY p.indate DESC")
+    List<Integer> findAllIds();
 
-    @EntityGraph(attributePaths = {"likes", "replies", "files", "member", "hashtags"})
-    @Query("SELECT p FROM STYLE_post p ORDER BY p.viewCount DESC, p.indate DESC")
-    List<STYLE_post> findAllPostsWithDetailsOrderByViewCountDesc();
+    @Query("""
+        SELECT p
+        FROM STYLE_post p
+        JOIN FETCH p.member m
+        WHERE m.member_id IN :memberIds
+        ORDER BY p.indate DESC
+    """)
+    List<STYLE_post> findAllWithMemberByIdsForMembers(@Param("memberIds") List<Integer> memberIds);
+
+    // 회원 리스트에 해당하는 게시글 + 파일 한 번에 가져오기
+    @Query("SELECT DISTINCT p FROM STYLE_post p LEFT JOIN FETCH p.member m WHERE m.member_id IN :memberIds")
+    List<STYLE_post> findAllWithMemberByMemberIds(@Param("memberIds") List<Integer> memberIds);
+
+    @Query("SELECT p FROM STYLE_post p " +
+            "JOIN FETCH p.member m " +
+            "ORDER BY p.indate DESC")
+    List<STYLE_post> findAllWithMemberOrderByIndateDesc();
+
+
+
+
 }

@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import '../../style/StyleHotAccounts.css';
 import { useNavigate } from 'react-router-dom';
 import jaxios from '../../util/jwtutil';
+import { useSelector } from "react-redux";
+import StylePostSlider from './StylePostSlider';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function StyleHotAccounts() {
   const [accounts, setAccounts] = useState([]);
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user);
+  const myUserid = currentUser?.userid;
+  const [message, setMessage] = useState("");
 
   const [followStatus, setFollowStatus] = useState({});
 
@@ -17,31 +22,63 @@ function StyleHotAccounts() {
         const res = await jaxios.get(`${baseURL}/style/hot-users`);
         setAccounts(res.data);
 
-        // 팔로우 상태도 불러오기
+        // 로그인 안 했으면 종료
+        if (!myUserid) return;
+
+        // 서버에서 이미 isFollowing 제공함 → 여기서 바로 followStatus 채워주면 됨
         const temp = {};
-        for (let u of res.data) {
-          const r = await jaxios.get(`${baseURL}/style/follow/${u.userid}`);
-          temp[u.userid] = r.data.followed;
-        }
+        res.data.forEach(u => {
+          temp[u.userid] = u.isFollowing;   // 🔥 추가 API 호출 없음
+        });
         setFollowStatus(temp);
 
       } catch (err) {
         console.error("HOT 계정 불러오기 오류", err);
       }
     };
+
     loadHotUsers();
-  }, []);
+  }, [myUserid]);
 
   const toggleFollow = async (userid) => {
-    try {
-      const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
-      setFollowStatus(prev => ({ ...prev, [userid]: res.data.followed }));
-    } catch (err) {
-      alert("로그인이 필요합니다.");
-    }
-  };
+  try {
+    const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
+
+    setFollowStatus(prev => ({
+      ...prev,
+      [userid]: res.data.followed
+    }));
+
+    // 팔로워 수 즉시 업데이트 + 순서 재정렬
+    setAccounts(prev =>
+      prev
+        .map(acc =>
+          acc.userid === userid
+            ? {
+                ...acc,
+                followerCount: res.data.followed
+                  ? acc.followerCount + 1
+                  : acc.followerCount - 1
+              }
+            : acc
+        )
+        .sort((a, b) => b.followerCount - a.followerCount) // 내림차순 정렬
+    );
+
+    alert(res.data.message);    
+  } catch (err) {
+    console.error("팔로우 토글 실패", err);
+  }
+};
 
   return (
+    <>
+    {message && (
+      <div className="follow-message">
+        {message}
+      </div>
+    )}
+
     <div className="hot-accounts-container">
       {accounts.map((user, index) => (
         <div key={user.userid} className="hot-account-box">
@@ -65,39 +102,39 @@ function StyleHotAccounts() {
 
             <span className="follow-count">팔로워 {user.followerCount}</span>
 
-            <button
-              className={`follow-btn ${followStatus[user.userid] ? "following" : ""}`}
-              onClick={() => toggleFollow(user.userid)}
-            >
-              {followStatus[user.userid] ? "팔로잉" : "팔로우"}
-            </button>
+            {myUserid && myUserid !== user.userid && (
+              <button
+                className={`follow-btn ${followStatus[user.userid] ? "following" : ""}`}
+                onClick={() => toggleFollow(user.userid)}
+              >
+                {followStatus[user.userid] ? "팔로잉" : "팔로우"}
+              </button>
+            )}
           </div>
 
           {/* 게시물 영역 = Feed 카드 UI */}
-          <div className="style-hot-feed-grid">
-            {user.posts?.slice(0, 4).map(post => (
-              <div key={post.spost_id} className="style-hot-feed-card">
-
-                <div
-                  className="style-hot-image-wrapper"
-                  onClick={() => navigate(`/style/${post.spost_id}`)}
-                >
-                  <img src={post.s_images[0]} className="style-hot-post-img" />
-                  {post.s_images.length > 1 && (
-                    <div className="style-hot-multiple-count">
-                      +{post.s_images.length}
+            {user.posts && user.posts.length > 0 && (
+              user.posts.length <= 4 ? (
+                <div className="style-hot-feed-grid">
+                  {user.posts.map((post) => (
+                    <div key={post.spost_id} className="style-hot-feed-card">
+                      <div className="style-hot-image-wrapper" onClick={() => navigate(`/style/${post.spost_id}`)}>
+                        <img src={post.s_images[0]} className="style-hot-post-img" />
+                        {post.s_images.length > 1 && (
+                          <div className="style-hot-multiple-count">+{post.s_images.length}</div>
+                        )}
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
-
-                <p className="style-hot-post-content">{post.content}</p>
-              </div>
-            ))}
-          </div>
-
+              ) : (
+                <StylePostSlider posts={user.posts} />
+              )
+            )}
         </div>
       ))}
     </div>
+  </>
   );
 }
 

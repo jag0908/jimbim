@@ -18,4 +18,5 @@ public interface FileRepository extends JpaRepository<File,Integer> {
         @Query("SELECT f.post.spostId, f.path FROM File f WHERE f.post.spostId IN :ids ORDER BY f.post.spostId, f.file_id")
         List<Object[]> findPathsByPostIds(@Param("ids") List<Integer> postIds);
 
+        List<File> findByPost_SpostIdIn(List<Integer> postIds);
 }

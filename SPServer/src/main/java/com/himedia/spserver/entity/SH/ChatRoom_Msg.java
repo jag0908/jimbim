@@ -19,6 +19,7 @@ public class ChatRoom_Msg {
     private ChatRoom chatRoom;
 
     private String content;
+    private Integer senderId;
 
     @CreationTimestamp
     private Timestamp indate;

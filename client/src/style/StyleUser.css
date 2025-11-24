@@ -138,3 +138,28 @@
   font-size: 14px;
   color: #e0245e;
 }
+
+/* Masonry Grid */
+.style-masonry-grid {
+  display: flex;
+  margin-left: -20px;
+  width: auto;
+}
+
+.style-masonry-grid-column {
+  padding-left: 20px;
+  background-clip: padding-box;
+}
+
+/* Masonry 내부 카드 */
+.style-masonry-grid-column > .style-post-card {
+  margin-bottom: 20px;
+}
+
+/* 게시글 없음 표시 */
+.style-no-posts {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 16px;
+  color: #777;
+}

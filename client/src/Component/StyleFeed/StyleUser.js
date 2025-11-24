@@ -4,6 +4,7 @@ import jaxios from "../../util/jwtutil";
 import "../../style/StyleUser.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
+import Masonry from "react-masonry-css";
 
 
 const baseURL = process.env.REACT_APP_BASE_URL;
@@ -72,6 +73,13 @@ function StyleUser() {
 
   const isMyProfile = myUserid === userid;
 
+  const breakpointColumns = {
+    default: 4,
+    1200: 3,
+    768: 2,
+    480: 1
+  };
+
   return (
     <div className="style-user-page">
       {/* ✅ 헤더 */}
@@ -111,17 +119,22 @@ function StyleUser() {
         {posts.length === 0 ? (
           <div className="style-no-posts">아직 게시글이 없습니다.</div>
         ) : (
-          <div className="style-post-grid">
+          <Masonry
+            breakpointCols={breakpointColumns}
+            className="style-masonry-grid"
+            columnClassName="style-masonry-grid-column"
+          >
             {posts.map((post) => (
               <div key={post.spost_id} className="style-post-card">
                 <div className="style-post-image" onClick={() => navigate(`/style/${post.spost_id}`)}>
                   <img
-                        src={Array.isArray(post.s_images) ? post.s_images[0] : post.s_images}
-                        alt="post"
-                    />
-                  <div className="style-view-count">👁 {post.viewCount ?? 0}</div>  {/* 👈 조회수 표시 */}
+                    src={Array.isArray(post.s_images) ? post.s_images[0] : post.s_images}
+                    alt="post"
+                  />
+                  <div className="style-view-count">👁 {post.viewCount ?? 0}</div>
                 </div>
-                <div className="style-post-info" >
+
+                <div className="style-post-info">
                   <div className="style-user-mini">
                     <img
                       src={post.profileImg || "/default_profile.png"}
@@ -134,7 +147,7 @@ function StyleUser() {
                 </div>
               </div>
             ))}
-          </div>
+          </Masonry>
         )}
       </div>
     </div>

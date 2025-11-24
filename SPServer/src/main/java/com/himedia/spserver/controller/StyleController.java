@@ -38,7 +38,6 @@ public class StyleController {
         return styleService.getAllPosts();
     }
 
-    // 🔥 요즘 트렌드 (좋아요 많은 순)
     @GetMapping("/trending")
     public ResponseEntity<List<StylePostDTO>> getTrendingPosts() {
         return ResponseEntity.ok(styleService.getAllPostsOrderByLikesDTO());
@@ -49,18 +48,15 @@ public class StyleController {
         return ResponseEntity.ok(styleService.getAllPostsOrderByViewsDTO());
     }
 
-    // 🔥 인기 해시태그
     @GetMapping("/hot-tags")
     public ResponseEntity<?> getHotTags() {
         return ResponseEntity.ok(styleService.getHotTags());
     }
 
-    // 🔥 인기 계정(팔로워 많은 순)
     @GetMapping("/hot-users")
     public ResponseEntity<?> getHotUsers() {
         return ResponseEntity.ok(styleService.getHotUsers());
     }
-
 
     @GetMapping("/posts/{userid}")
     public ResponseEntity<?> getUserPosts(@PathVariable String userid) {
@@ -86,28 +82,20 @@ public class StyleController {
         result.put("profileImg", member.getProfileImg());
         result.put("intro", member.getProfileMsg());
 
-        // 팔로워/팔로잉 수
         result.put("followers", followRepository.findByEndMember(member).size());
         result.put("following", followRepository.findByStartMember(member).size());
 
         return ResponseEntity.ok(result);
     }
 
-
     @GetMapping("/post/{id}")
     public ResponseEntity<?> getPost(@PathVariable Integer id) {
         STYLE_post post = styleService.findBySpostId(id);
 
-        // ✅ 조회수 증가 로직 추가
         post.setViewCount(post.getViewCount() + 1);
-        styleService.save(post); // DB에 반영 (StyleService에 save 메서드 있어야 함)
+        styleService.save(post);
 
-
-        // File 엔티티 리스트 → 이미지 URL 리스트로 변환
-        List<String> imageUrls = post.getFiles().stream()
-                .map(file -> file.getPath()) // ✅ 실제 접근 경로로 변경
-                .toList();
-
+        List<String> imageUrls = styleService.getAllImageUrls(post);
 
         Map<String, Object> result = new HashMap<>();
         result.put("title", post.getTitle());
@@ -131,7 +119,6 @@ public class StyleController {
             @RequestParam(value = "image", required = false) List<MultipartFile> images,
             @RequestParam(value = "hashtags", required = false) List<String> hashtags,
             @AuthenticationPrincipal MemberDTO memberDTO
-
     ) {
         if (images != null && images.size() > 10) {
             return ResponseEntity.badRequest().body("이미지는 최대 10장까지 업로드 가능합니다.");
@@ -144,10 +131,7 @@ public class StyleController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 등록 실패");
         }
-
     }
-
-
 
     @PostMapping("/fileupload")
     public HashMap<String, Object> fileUpload(@RequestParam("image") MultipartFile file) {
@@ -159,15 +143,11 @@ public class StyleController {
         }
 
         try {
-            // S3 업로드 후 URL 반환
-            String fileUrl = sus.saveFile(file); // 이미 URL 리턴
-
-            // 클라이언트에게 반환할 데이터 구성
-            result.put("image", fileUrl);   // S3 URL
+            String fileUrl = sus.saveFile(file);
+            result.put("image", fileUrl);
             result.put("filename", file.getOriginalFilename());
             result.put("size", file.getSize());
             result.put("contentType", file.getContentType());
-
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
             result.put("error", "파일 업로드 실패: " + e.getMessage());
@@ -185,15 +165,13 @@ public class StyleController {
 
         try {
             Map<String, Object> response = styleService.toggleLike(spostId, memberDTO.getUserid());
-            return ResponseEntity.ok(response); // { liked: true/false, likeCount: n }
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 처리 실패");
         }
     }
 
-
-    // ✅ 팔로우 / 언팔로우 토글
     @PostMapping("/follow")
     public ResponseEntity<?> toggleFollow(
             @RequestBody Map<String, String> body,
@@ -212,7 +190,6 @@ public class StyleController {
         ));
     }
 
-    // ✅ 팔로우 상태 확인
     @GetMapping("/follow/{targetUserid}")
     public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
                                          @AuthenticationPrincipal MemberDTO memberDTO) {
@@ -224,41 +201,6 @@ public class StyleController {
         return ResponseEntity.ok(Map.of("followed", followed));
     }
 
-    @PostMapping("/reply/{spostId}")
-    public ResponseEntity<?> addReply(
-            @PathVariable Integer spostId,
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal MemberDTO memberDTO
-    ) {
-        if (memberDTO == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Access token expired", "code", "TOKEN_EXPIRED"));
-        }
-
-        try {
-            Integer parentId = body.get("parentId") != null ? Integer.valueOf(body.get("parentId")) : null;
-            Map<String, Object> reply = styleService.addReply(spostId, memberDTO.getUserid(), body.get("content"), parentId);
-            return ResponseEntity.ok(Map.of("reply", reply));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록 실패");
-        }
-    }
-
-    @DeleteMapping("/reply/{replyId}")
-    public ResponseEntity<?> deleteReply(@PathVariable Integer replyId,
-                                         @AuthenticationPrincipal MemberDTO memberDTO) {
-        try {
-            if (memberDTO == null) {
-                throw new IllegalStateException("로그인이 필요합니다.");
-            }
-            styleService.deleteReply(replyId, memberDTO.getUserid());
-            return ResponseEntity.ok(Map.of("message", "댓글이 삭제되었습니다."));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
 
     @DeleteMapping("/post/{spostId}")
     public ResponseEntity<?> deletePost(@PathVariable Integer spostId,
@@ -276,7 +218,7 @@ public class StyleController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-    // 게시글 수정
+
     @PutMapping("/post/{spostId}")
     public ResponseEntity<?> editPost(
             @PathVariable Integer spostId,
@@ -299,5 +241,5 @@ public class StyleController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-
 }
+

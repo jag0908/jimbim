@@ -13,9 +13,10 @@ public class STYLE_Like {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member memberid;
+    private Member memberid;
 
     @ManyToOne
     @JoinColumn(name = "spost_id")
-    STYLE_post spost;
+    private STYLE_post spost;
 }
+

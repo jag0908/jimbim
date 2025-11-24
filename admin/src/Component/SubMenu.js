@@ -31,8 +31,10 @@ function SubMenu(props) {
             </div>
             <div className='menutitle' style={(type=='member')?(currentStyle):({})}><Link to='/memberList'>회원목록</Link></div>
             <div className='menutitle' style={(type=='sh')?(currentStyle):({})}><Link to='/shList'>상품목록(중고마을)</Link></div>
+            <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>상품목록(SHOP)</Link></div>
             <div className='menutitle' style={(type=='order')?(currentStyle):({})}><Link to='/orderList'>거래내역</Link></div>
             <div className='menutitle' style={(type=='qna')?(currentStyle):({})}><Link to='/qnaList'>Q & A</Link></div>
+            <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>요청내역</Link></div>
         </div>
     )
 }

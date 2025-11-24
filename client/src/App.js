@@ -14,6 +14,9 @@ import Buying from './Component/mypage/Buying'
 import Selling from './Component/mypage/Selling'
 import Zzim from './Component/mypage/Zzim'
 
+import Map from './Component/customer/Map'
+import Qna from './Component/customer/Qna'
+
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
@@ -60,6 +63,8 @@ function App() {
 				<Route path="/mypage/buying" element={<Buying />} />
 				<Route path="/mypage/selling" element={<Selling />} />
 				<Route path="/mypage/zzim" element={<Zzim />} />
+				<Route path="/customer/map" element={<Map />} />
+				<Route path="/customer/qna" element={<Qna />} />
 
 				{/* 이삭 */}
 				<Route path="/style" element={<StyleFeed />} />

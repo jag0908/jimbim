@@ -26,6 +26,6 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member;
+    private Member member;
 
 }

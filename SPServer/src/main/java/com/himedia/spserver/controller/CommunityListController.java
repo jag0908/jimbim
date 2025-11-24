@@ -13,10 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/communityList")
@@ -69,8 +66,10 @@ public class CommunityListController {
     public HashMap<String, Object> createCommunity(@RequestBody C_post cpost){
         HashMap<String, Object> result = new HashMap<>();
         try {
-            cs.saveCommunity(cpost);
+            C_post savedPost = cs.saveCommunity(cpost);
             result.put("msg", "ok");
+            result.put("cpostId", savedPost.getCpostId());
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("error", "failed");
@@ -123,45 +122,32 @@ public class CommunityListController {
     // 추천 토글 (한 계정당 한 번만 추천 가능)
     @PostMapping("/toggleLike")
     public HashMap<String, Object> toggleLike(@RequestParam Integer cpostId,
-                                              @RequestParam Integer memberId) {
+                                          @RequestParam Integer memberId) {
         HashMap<String, Object> result = new HashMap<>();
 
-        // 게시물 조회
-        Optional<C_post> optionalPost = cs.getCommunityById(cpostId);
-        if (!optionalPost.isPresent()) {
-            result.put("error", "게시물이 없습니다.");
-            return result;
-        }
-        C_post cpost = optionalPost.get();
+        C_post post = cs.getCommunityById(cpostId)
+                .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
+        Member member = mr.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
 
-        // 유저 조회
-        Optional<Member> optionalMember = mr.findById(memberId);
-        if (!optionalMember.isPresent()) {
-            result.put("error", "유저 정보가 없습니다.");
-            return result;
-        }
-        Member member = optionalMember.get();
-
-        // 기존 추천 체크
-        Optional<C_Like> existingLike = cr.findByMemberAndCpost(member, cpost);
+        Optional<C_Like> existingLike = cr.findByMemberAndCpost(member, post);
 
         if (existingLike.isPresent()) {
-            // 추천 취소
             cr.delete(existingLike.get());
             result.put("liked", false);
         } else {
-            // 추천 추가
             C_Like newLike = new C_Like();
             newLike.setMember(member);
-            newLike.setCpost(cpost);
+            newLike.setCpost(post);
             cr.save(newLike);
             result.put("liked", true);
         }
 
-        // 현재 추천 수
-        long likeCount = cr.countByCpost(cpost);
+        long likeCount = cr.countByCpost(post);
+        post.setC_like((int) likeCount);
         result.put("likeCount", likeCount);
 
         return result;
     }
+
 }

@@ -3,14 +3,15 @@ package com.himedia.spserver.service;
 import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SH.SH_Category;
-import com.himedia.spserver.entity.SH.SH_File;
-import com.himedia.spserver.entity.SH.SH_post;
-import com.himedia.spserver.entity.SH.ShViewHistory;
+import com.himedia.spserver.entity.SH.*;
 import com.himedia.spserver.mapper.ShPostMapper;
+import com.himedia.spserver.mapper.ShSuggestMapper;
 import com.himedia.spserver.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +29,9 @@ public class ShService {
     private final S3UploadService sus;
     private final ShFileRepository sfr;
     private final ShViewRepository svr;
-    private final ShMemberRepository smr;
+    private final ShSuggestRepository ssr;
+    private final ShSuggestMapper ssm;
+
 
 
     private final ShPostMapper spm;
@@ -83,9 +86,23 @@ public class ShService {
         }
     }
 
-    public List<ShPostResDto> getPostList() {
-        List<SH_post> posts = spr.findAllByOrderByIndateDesc();
-        List<ShPostResDto> result = new ArrayList<>();
+//    public List<ShPostResDto> getPostList(int page) {
+    public HashMap<String, Object> getPostList(int page) {
+
+        Pageable pageable = PageRequest.of(page-1, 5);
+
+        Page<SH_post> postsPage = spr.findAllByOrderByIndateDesc(pageable);
+        List<SH_post> posts = postsPage.getContent();;
+        long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
+        int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수
+        System.out.println("@@@totalElements : " + totalElements);
+        System.out.println("@@@totalPages : " + totalPages);
+        HashMap<String, Object> result = new HashMap<>();
+
+
+
+//        List<SH_post> posts = spr.findAllByOrderByIndateDesc();
+        List<ShPostResDto> resultArr = new ArrayList<>();
 
         for (SH_post post : posts) {
 
@@ -97,8 +114,11 @@ public class ShService {
                 mapper.setFirstFilePath(firstFile.getPath());
             }
 
-            result.add(mapper);
+            resultArr.add(mapper);
         }
+
+        result.put("totalPages", totalPages);
+        result.put("listArr", resultArr);
         return result;
     }
 
@@ -193,6 +213,7 @@ public class ShService {
     }
 
 
+
     //이삭 수정
     public List<ShPostResDto> getPostsByMemberId(Integer memberId) {
         // 해당 회원의 게시글 조회
@@ -216,5 +237,44 @@ public class ShService {
         }
 
         return dtos;
+
+    public ShSuggestDto insertSuggest(Map<String, Object> claims, ShSuggestDto reqDto) {
+
+        reqDto = ssm.toReqDto(claims, reqDto);
+
+//        Optional<SH_Suggest> isSuggest = ssr.findByMemberIdAndPostId(reqDto.getMemberId(), reqDto.getPostId());
+//        if(isSuggest.isPresent()) {
+//            isSuggest.get().setSuggest_price(reqDto.getSuggest_price());
+//
+//            return ssm.toResDto(isSuggest.get());
+//        } else  {
+            SH_Suggest suggest = new SH_Suggest();
+            suggest.setMemberId(reqDto.getMemberId());
+            suggest.setUserId(reqDto.getUserId());
+            suggest.setMemberName(reqDto.getMemberName());
+            suggest.setMemberProfileImg(reqDto.getMemberProfileImg());
+            suggest.setPostId(reqDto.getPostId());
+            suggest.setSuggest_price(reqDto.getSuggest_price());
+            ssr.save(suggest);
+
+            return ssm.toResDto(suggest);
+//        }
+    }
+
+    public List<ShSuggestDto> getSuggests(Integer postId) {
+        List<SH_Suggest> suggests = ssr.findAllByPostId(postId);
+
+        List<ShSuggestDto> result = new ArrayList<>();
+        for(SH_Suggest suggest:suggests) {
+            result.add(ssm.toResDto(suggest));
+        }
+
+        return result;
+
+    }
+
+    public void appSuggest(Integer sid) {
+        Optional<SH_Suggest> suggestEntity = ssr.findById(sid);
+        suggestEntity.get().setApproved(1);
     }
 }

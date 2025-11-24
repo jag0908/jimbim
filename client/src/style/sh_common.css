@@ -90,14 +90,26 @@ button {cursor: pointer;}
 .shView .rayoutWrap .leftBox .slick-dots li.slick-active {background-color: #555;}
 .shView .rayoutWrap .leftBox .slick-dots li button::before {display: none;}
 
-.shView .userWrap {display: flex; justify-content: space-between; align-items: center;}
-.shView .userProfile {display: flex; gap: 4px;}
-.shView .userProfile .profileImg {width: 62px; height: 62px; border-radius: 50%; overflow: hidden;}
-.shView .userProfile .profileImg > img {width: 100%; height: 100%; object-fit: cover;}
-.shView .profileInfo {display: flex; flex-direction: column; justify-content: center; gap: 6px;}
-.shView .profileInfo .nickname {font-size: 18px; font-weight: 600; color: #555;}
-.shView .userState {display: flex; align-items: center; font-size: 16px; font-weight: 600; color: #555;}
-.shView .userState > span {padding-left: 6px; font-size: 20px;}
+.shView .leftBox .userWrap {display: flex; justify-content: space-between; align-items: center;}
+.shView .leftBox .userProfile {display: flex; gap: 4px;}
+.shView .leftBox .userProfile .profileImg {width: 62px; height: 62px; border-radius: 50%; overflow: hidden;}
+.shView .leftBox .userProfile .profileImg > img {width: 100%; height: 100%; object-fit: cover;}
+.shView .leftBox .profileInfo {display: flex; flex-direction: column; justify-content: center; gap: 6px;}
+.shView .leftBox .profileInfo .nickname {font-size: 18px; font-weight: 600; color: #555;}
+.shView .leftBox .userState {display: flex; align-items: center; font-size: 16px; font-weight: 600; color: #555;}
+.shView .leftBox .userState > span {padding-left: 6px; font-size: 20px;}
+
+.shView .leftBox .suggestWrap {display: flex; flex-direction: column; gap: 12px; margin-top: 10px; max-height: 230px; overflow: auto;}
+.shView .leftBox .suggestWrap .suggestList {display: flex; justify-content: flex-end; align-items: center; gap: 6px; position: relative; padding: 10px; background-color: #ededed; border-radius: 10px; box-sizing: border-box; font-size: 14px; font-weight: 600; color: #555;}
+.shView .leftBox .suggestWrap .suggestList:after {content: "가격제안 요청이 수락됨"; display: none; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: hsla(0, 1%, 21%, 0.6); font-size: 20px; font-weight: 500; color: #fff;}
+.shView .leftBox .suggestWrap .suggestList.active {pointer-events: none;}
+.shView .leftBox .suggestWrap .suggestList.active:after {display: flex;}
+.shView .leftBox .suggestWrap .suggestList .img {width: 48px; height: 48px; border-radius: 4px; overflow: hidden;}
+.shView .leftBox .suggestWrap .suggestList .img > img {width: 100%; height: 100%; object-fit: cover;}
+.shView .leftBox .suggestWrap .suggestList .name {font-size: 14px; font-weight: 600; color: #555;}
+.shView .leftBox .suggestWrap .suggestList .price {font-size: 20px; font-weight: 700; color: #121212;}
+.shView .leftBox .suggestWrap .suggestList .date {font-size: 12px; font-weight: 500; color: #555;}
+
 
 .shView .rayoutWrap .rightBox {display: flex; flex-direction: column; gap: 10px; width: 50%;}
 .shView .rayoutWrap .rightBox .dataBoxWrap {display: flex; gap: 8px;}
@@ -145,10 +157,12 @@ button {cursor: pointer;}
 .shView .popupWrap .pChatList .center .pdTitle {max-width: 164px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 700; color: #555;}
 .shView .popupWrap .pChatList .center .rMsg {max-width: 164px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 500; color: #bbb;}
 .shView .popupWrap .pChatList .right {display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; gap: 4px; height: 42px;}
-.shView .popupWrap .pChatList .right .rTime {font-size: 12px; font-weight: 500; color: #bbb;}
+.shView .popupWrap .pChatList .right .rTime {font-size: 12px; font-weight: 500; color: #999;}
 .shView .popupWrap .pChatList .right .alram {display: flex; justify-content: center; align-items: center; width: 18px; height: 18px; background: rgb(250, 86, 86); border-radius: 50%; font-size: 12px; color: #f8f8f8; font-weight: 500; overflow: hidden;}
+.shView .popupWrap .pChatList .right .alram.none {background: #fff; color: #fff;}
 .shView .popupWrap .sendChat {display: flex; justify-content: center; align-items: center; margin: 0 auto; padding: 6px 18px; border: 1px solid #999; border-radius: 4px; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #999; overflow: hidden; transition: all 0.18s;}
 .shView .popupWrap .sendChat:hover {border: 1px solid #bbb; background: #bbb; color: #fff;}
+.bulsang {display: flex; justify-content: center; align-items: center; height: 100%; font-size: 14px; color: #555;}
 
 /* 채팅창 */
 .shView .popupWrap .chatRoom {display: flex; flex-direction: column; padding: 16px 12px; width: 100%; box-sizing: border-box;}
@@ -160,7 +174,7 @@ button {cursor: pointer;}
 
 /* 소켓방 */
 .privateChatRoom {display: flex; flex-direction: column; gap: 8px;}
-.privateChatRoom .oneToOneArea {margin-top: 16px; padding: 0px 12px 0 12px; height: 100%; max-height: 340px; box-sizing: border-box; overflow-y: auto;}
+.privateChatRoom .oneToOneArea {margin-top: 16px; padding: 0px 12px 0 12px; height: 340px; box-sizing: border-box; overflow-y: auto;}
 .privateChatRoom .oneToOneArea::-webkit-scrollbar {width: 8px;}
 .privateChatRoom .oneToOneArea::-webkit-scrollbar-button {display: none;}
 .privateChatRoom .oneToOneArea::-webkit-scrollbar-thumb {background: #e48d8d; border-radius: 20px; overflow: hidden;}
@@ -178,3 +192,22 @@ button {cursor: pointer;}
 .privateChatRoom .eventArea {display: flex; flex-direction: column; align-items: flex-end; border: 1px solid #999; border-radius: 8px; height: 128px;}
 .privateChatRoom .eventArea .chatInpTxt {padding:6px 12px; width: 100%; height: 100%; border:none !important; box-sizing: border-box;}
 .privateChatRoom .eventArea .sendMsg {display: flex; justify-content: center; align-items: center; flex-shrink: 0; margin: 8px; width: 52px; height: 32px; background: #e48d8d; border-radius: 6px; font-size: 14px; font-weight: 500; color: #fff;}
+
+
+
+/* 가격제안 */
+.shView .dimm {position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); cursor: pointer;}
+.shView .modelSuggest {display: flex; flex-direction: column; gap: 28px; position: fixed; z-index: 1000; top: 50%; left: 50%; padding: 40px 30px; width: 360px; border-radius: 8px; box-sizing: border-box; background: #fff; transform: translate(-50%, -50%); overflow: hidden;}
+.shView .modelSuggest .title {font-size: 24px; font-weight: 600; color: #555;}
+.shView .modelSuggest .eventArea {display: flex; flex-direction: column; gap: 22px;}
+.shView .modelSuggest .currentPrice {display: flex; align-items: center; gap: 6px; margin-left: 10px;}
+.shView .modelSuggest .suggestPrice {display: flex; align-items: center; gap: 6px; margin-left: 10px;}
+.shView .modelSuggest .currentPrice > label {font-size: 16px; font-weight: 700; color: #555;}
+.shView .modelSuggest .suggestPrice > label {font-size: 16px; font-weight: 700; color: #555;}
+.shView .modelSuggest .currentPrice > span {font-size: 22px; font-weight: 500; color: #555;}
+.shView .modelSuggest .currentPrice > span + span {font-size: 16px; font-weight: 700; color: #555;}
+.shView .modelSuggest .suggestPrice > input {padding: 0 8px; width: 160px; height: 36px; box-sizing: border-box; text-align: right; font-size: 22px; font-weight: 500; color: #555;}
+.shView .modelSuggest .suggestPrice > span {font-size: 16px; font-weight: 700; color: #555;}
+.shView .modelSuggest .vMsg {margin-left: 10px; font-size: 12px; font-weight: 500; color: red;  white-space: pre-line;}
+.shView .modelSuggest .mBtnWrap {display: flex; justify-content: center; gap: 16px;}
+.shView .modelSuggest .mBtnWrap > button {margin-top: 30px; width: 88px; height: 32px; border: 1px solid #555; border-radius: 4px; font-size: 14px; font-weight:700; color: #555;}

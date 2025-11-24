@@ -34,14 +34,19 @@ public class CommunityListService {
     private FileRepository fr;
 
     // 게시글 저장
-    public void saveCommunity(C_post cpost) {
-        cr.save(cpost);
+    public C_post saveCommunity(C_post cpost) {
+        // JpaRepository의 save() 메서드는 저장된 엔티티를 반환합니다.
+        return cr.save(cpost);
     }
 
     // 조회수 증가
     public void addReadCount(int cpost_id) {
         Optional<C_post> optionalPost = cr.findById(cpost_id);
-        optionalPost.ifPresent(post -> post.setReadcount(post.getReadcount() + 1));
+        optionalPost.ifPresent(post -> {
+            // readcount가 null이면 0으로 간주하고 1을 더합니다.
+            int currentCount = post.getReadcount() == null ? 0 : post.getReadcount();
+            post.setReadcount(currentCount + 1);
+        });
     }
 
     // 게시글 수정
@@ -124,13 +129,12 @@ public class CommunityListService {
                 postFile.setCpost(post);
                 postFile.setPath(fileUrl); // S3 URL 저장
                 postFile.setOriginalname(image.getOriginalFilename());
-                postFile.setSize(Long.valueOf(image.getSize())); // 파일 크기
-                postFile.setContentType(image.getContentType()); // 파일 타입
+                postFile.setSize(image.getSize()); // Long.valueOf() 대신 기본형 Long 사용
+                postFile.setContentType(image.getContentType());
 
                 fr.save(postFile); // FileRepository로 저장
             }
         }
-
     }
 
     public int incrementLike(int cpostId) {

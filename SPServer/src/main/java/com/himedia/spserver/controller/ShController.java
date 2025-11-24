@@ -71,10 +71,10 @@ public class ShController {
         return result;
     }
 
-    @GetMapping("/sh-list")
-    public HashMap<String, Object> shList() {
+    @GetMapping("/sh-list/{page}")
+    public HashMap<String, Object> shList(@PathVariable("page") int page) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("postList", ss.getPostList());
+        result.put("postList", ss.getPostList(page));
 
         return result;
     }
@@ -158,6 +158,7 @@ public class ShController {
     }
 
 
+
     //이삭 수정
     @GetMapping("/user-sell-list/{memberId}")
     public HashMap<String, Object> getUserSellPosts(@PathVariable("memberId") Integer memberId) {
@@ -169,4 +170,36 @@ public class ShController {
         return result;
     }
 
+
+    @PostMapping("/suggest")
+    public HashMap<String, Object> insertSuggest(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody ShSuggestDto reqDto
+    ) throws CustomJWTException {
+        HashMap<String, Object> result = new HashMap<>();
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+
+        ShSuggestDto resDto = ss.insertSuggest(claims, reqDto);
+
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+        return result;
+    }
+
+    @GetMapping("/suggest")
+    public HashMap<String, Object> getSuggest(@RequestParam("postId") Integer postId) {
+        HashMap<String, Object> result = new HashMap<>();
+        List<ShSuggestDto> resDto = ss.getSuggests(postId);
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+        return result;
+    }
+
+    @PostMapping("/appSuggest")
+    public HashMap<String, Object> appSuggest(@RequestParam("sid") Integer sid) {
+        HashMap<String, Object> result = new HashMap<>();
+        ss.appSuggest(sid);
+        return result;
+    }
 }

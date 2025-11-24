@@ -91,7 +91,6 @@ public class ChatController {
 
 
 
-
     @MessageMapping("/send/{roomId}")
     //@MessageMapping으로 처리한 후 메서드의 반환값을 특정 목적지로 보내도록 지정합니다.
     @SendTo("/sub/messages/{roomId}")

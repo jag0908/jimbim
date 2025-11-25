@@ -33,8 +33,6 @@ public class ShService {
     private final MemberRepository mr;
 
 
-    private final MemberRepository mr; //이삭 수정
-
 
     private final ShPostMapper spm;
 

@@ -3,10 +3,7 @@ package com.himedia.spserver.controller;
 import com.himedia.spserver.entity.customer.Qna;
 import com.himedia.spserver.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -17,9 +14,15 @@ public class CustomerController {
     CustomerService cs;
 
     @GetMapping("/getQnaList")
-    public HashMap<String, Object> getQnaList(@RequestParam("memberId") String memberId){
+    public HashMap<String, Object> getQnaList(@RequestParam("userid") String userid, int page){
+        return cs.getQnaList(userid, page);
+    }
+
+    @PostMapping("/writeQna")
+    public HashMap<String, Object> writeQna(@RequestBody Qna qna){
         HashMap<String, Object> result = new HashMap<>();
-        result.put("qnaList", cs.getQnaList(memberId));
+        cs.writeQna(qna);
+        result.put("msg", "ok");
         return result;
     }
 }

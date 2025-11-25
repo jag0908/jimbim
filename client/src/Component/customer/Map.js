@@ -1,5 +1,7 @@
 import React, {useEffect} from 'react'
 import SideMenu from './SideMenu';
+import '../../style/customer.css';
+
 const {kakao} = window;
 
 function Map() {
@@ -14,7 +16,7 @@ function Map() {
         },[]
     )
     return (
-        <div style={{display:'flex'}}>
+        <div className='customercontainer'>
             <SideMenu/>
             <div>
                 <div className='formtitle'>찾아오시는 길</div>

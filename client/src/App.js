@@ -16,6 +16,7 @@ import Zzim from './Component/mypage/Zzim'
 
 import Map from './Component/customer/Map'
 import Qna from './Component/customer/Qna'
+import WriteQna from './Component/customer/WriteQna'
 
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
@@ -65,6 +66,7 @@ function App() {
 				<Route path="/mypage/zzim" element={<Zzim />} />
 				<Route path="/customer/map" element={<Map />} />
 				<Route path="/customer/qna" element={<Qna />} />
+				<Route path="/customer/writeqna" element={<WriteQna />} />
 
 				{/* 이삭 */}
 				<Route path="/style" element={<StyleFeed />} />

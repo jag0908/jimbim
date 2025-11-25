@@ -36,7 +36,7 @@ function Header() {
                 )
             }
             
-            <Link to={"/customer/map"}>고객센터</Link>
+            <Link to={"/customer/qna"}>고객센터</Link>
             <Link to={"/"}>알림</Link>
         </div>
         <div className='inner'>

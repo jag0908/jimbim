@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -8,18 +8,16 @@ import '../../style/Community.css';
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function CommunityList() {
+
     const [communityList, setCommunityList] = useState([]);
-    const [paging, setPaging] = useState({
-        page: 1,
-        prev: false,
-        next: false,
-        beginPage: 1,
-        endPage: 1
-    });
+    const [paging, setPaging] = useState({ page: 1, prev: false, next: false, beginPage: 1, endPage: 1 });
     const [pages, setPages] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState(0);
-    const navigate = useNavigate();
+    const [searchCategoryId, setSearchCategoryId] = useState(0);
+    const [searchKeyword, setSearchKeyword] = useState("");
+
     const loginUser = useSelector(state => state.user);
+    const navigate = useNavigate();
 
     const categories = [
         { id: 0, name: "전체게시판" },
@@ -32,134 +30,169 @@ function CommunityList() {
         { id: 7, name: "핫딜" }
     ];
 
-    useEffect(() => {
-        fetchCommunityList(1, selectedCategoryId);
-    }, [selectedCategoryId]);
-
-    function fetchCommunityList(page, categoryId) {
-        const url = categoryId === 0
-            ? `${baseURL}/communityList/getCommunityList/${page}`
-            : `${baseURL}/communityList/getCommunityList/${page}?categoryId=${categoryId}`;
+    const fetchCommunityList = useCallback((page, categoryId, keyword = "") => {
+        // 항상 선택한 categoryId와 keyword 그대로 전달
+        let url = `${baseURL}/communityList/getCommunityList/${page}?title=${encodeURIComponent(keyword)}&categoryId=${categoryId}`;
 
         axios.get(url)
-            .then(result => {
-                if(result.data.error) {
-                    console.error(result.data.error);
-                    return;
-                }
-                const sortedList = (result.data.communityList || []).sort((a,b) => new Date(b.indate) - new Date(a.indate));
-                setCommunityList(sortedList);
+            .then(res => {
+                const list = res.data.communityList || [];
+                setCommunityList(list.sort((a,b)=> new Date(b.indate) - new Date(a.indate)));
 
-                const newPaging = result.data.paging || {};
-                setPaging({
-                    page: newPaging.page || 1,
-                    prev: newPaging.prev || false,
-                    next: newPaging.next || false,
-                    beginPage: newPaging.beginPage || 1,
-                    endPage: newPaging.endPage || 1
-                });
+                const pg = res.data.paging;
+                setPaging(pg);
 
-                const pageArr = [];
-                const begin = newPaging.beginPage || 1;
-                const end = newPaging.endPage || 1;
-                for(let i = begin; i <= end; i++) {
-                    pageArr.push(i);
+                const pArr = [];
+                for(let i = pg.beginPage; i <= pg.endPage; i++){
+                    pArr.push(i);
                 }
-                setPages(pageArr);
+                setPages(pArr);
             })
-            .catch(err => {
+            .catch(err=>{
                 console.error(err);
-                alert('게시글 불러오기 실패');
+                alert("게시글 로딩 실패");
             });
-    }
+    }, []);
 
-    function onPageMove(p) {
-        fetchCommunityList(p, selectedCategoryId);
-    }
 
-    function onCommunityView(cpostId) { //수정
-        const request = loginUser?.accessToken 
-            ? jaxios.post(`${baseURL}/communityList/addReadCount`, null, { params: { num: cpostId } }) //수정
-            : axios.post(`${baseURL}/communityList/addReadCount`, null, { params: { num: cpostId } }); //수정
 
-        request
-            .catch(err => console.error(err))
-            .finally(() => navigate(`/communityView/${cpostId}`)); //수정
-    }
+    // 초기 로딩
+    useEffect(() => {
+    // 사이드바 카테고리가 바뀔 때, 해당 카테고리로 리스트를 다시 불러옵니다.
+    // 검색어는 초기화되었기 때문에 빈 문자열로 전달됩니다.
+    fetchCommunityList(1, selectedCategoryId); 
+}, [fetchCommunityList, selectedCategoryId]);
 
-    function onCategoryClick(categoryId) {
-        setSelectedCategoryId(categoryId);
-    }
+    const onSearch = () => {
+        // 검색 시, 검색 select에서 선택된 카테고리(searchCategoryId)와 키워드를 사용합니다.
+        // 검색 후 사이드바 선택 상태도 검색된 카테고리로 업데이트 (선택 사항)
+        setSelectedCategoryId(searchCategoryId); // 사이드바 상태를 검색 카테고리로 동기화
+        fetchCommunityList(1, searchCategoryId, searchKeyword.trim());
+    };
 
-    function onWriteClick() {
-        if(!loginUser || !loginUser.userid) {
-            alert("로그인이 필요한 서비스입니다.");
-            navigate("/login");
-        } else {
-            navigate("/writeCommunity");
+    // 페이지 이동
+    const onPageMove = (page) => {
+    // 현재 (사이드바에 반영된) 카테고리 기준으로 검색어를 포함하여 페이지 이동
+    fetchCommunityList(page, selectedCategoryId, searchKeyword.trim());
+};
+
+    // 글 클릭
+    const onCommunityView = (id) => {
+        jaxios.post(`${baseURL}/communityList/addReadCount?num=${id}`).catch(()=>{});
+        navigate(`/communityView/${id}`);
+    };
+
+    // 글 삭제
+    const onDelete = async (id) => {
+        if(!window.confirm("정말 삭제하시겠습니까?")) return;
+
+        try {
+            await jaxios.delete(`${baseURL}/communityList/deleteCommunity/${id}`);
+            alert("삭제되었습니다.");
+            onPageMove(paging.page);
+        } catch(e){
+            console.error(e);
+            alert("삭제 실패");
         }
-    }
+    };
+
+    // 글쓰기
+    const onWrite = () => {
+        if(!loginUser?.userid){
+            alert("로그인이 필요합니다");
+            navigate("/login");
+            return;
+        }
+        navigate("/writeCommunity");
+    };
 
     return (
         <>
-            {/* 글쓰기 버튼 항상 상단 */}
-            <div className="writeBtnArea top">
-                <button className="writeBtn" onClick={onWriteClick}>
-                    글쓰기
-                </button>
+            <div className="writeBtnArea top" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {/* 검색 영역 */}
+                <div className="searchArea" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <select 
+                        value={searchCategoryId} 
+                        onChange={(e) => setSearchCategoryId(Number(e.target.value))}
+                    >
+                        {categories.map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+
+                    <input 
+                        type="text"
+                        placeholder="검색어를 입력하세요"
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                        onKeyDown={(e) => { if(e.key === "Enter") onSearch(); }}
+                    />
+
+                    <button onClick={onSearch}>검색</button>
+                </div>
+
+                <button className="writeBtn" onClick={onWrite}>글쓰기</button>
             </div>
 
             <div className='community'>
+                {/* 사이드바 */}
                 <div className="sidebar">
                     <h3>카테고리</h3>
                     <ul>
-                        {categories.map(cat => (
-                            <li
-                                key={cat.id}
-                                onClick={() => onCategoryClick(cat.id)}
-                                className={selectedCategoryId === cat.id ? "active" : ""}
+                        {categories.map(c => (
+                            <li key={c.id}
+                                className={selectedCategoryId === c.id ? "active" : ""}
+                                onClick={() => {
+                                    setSelectedCategoryId(c.id);
+                                    setSearchKeyword("");      // 검색어 초기화
+                                    setSearchCategoryId(0);    // 검색 select 초기화
+                                }}
                             >
-                                {cat.name}
+                                {c.name}
                             </li>
                         ))}
                     </ul>
                 </div>
 
+                {/* 게시글 리스트 */}
                 <div className='communityList'>
                     <div className='titlerow'>
-                        <div className='titlecol'>제목</div>
-                        <div className='titlecol'>작성자</div>
-                        <div className='titlecol'>작성일</div>
-                        <div className='titlecol'>조회수</div>
+                        <div className='titlecol title'>제목</div>
+                        <div className='titlecol author'>작성자</div>
+                        <div className='titlecol date'>작성일</div>
+                        <div className='titlecol count'>조회수</div>
                     </div>
 
                     {communityList.length === 0 ? (
-                        <div className='noPosts'>작성된 게시물이 없습니다</div>
-                    ) : (
-                        communityList.map((community, idx) => (
-                            <div className='row' key={idx}>
-                                <div className='col' onClick={() => onCommunityView(community.cpostId)}> {/*수정*/}
-                                    {community.title}
-                                </div>
-                                <div className='col'>{community.userid || community.member?.userid}</div>
-                                <div className='col'>{community.indate?.substring(0, 10) || ""}</div>
-                                <div className='col'>{community.readcount}</div>
+                        <div className='noPosts'>게시물이 없습니다.</div>
+                    ) : communityList.map(post => (
+                        <div className='row' key={post.cpostId}>
+                            <div className='col' onClick={() => onCommunityView(post.cpostId)}>
+                                {post.title}
                             </div>
-                        ))
-                    )}
+                            <div className='col'>
+                                {post.isAnonymous === 'Y'
+                                    ? "익명"
+                                    : post.member?.userid || post.userid || "알수없음"}
+                            </div>
+                            <div className='col'>{post.indate?.substring(0,10)}</div>
+                            <div className='col'>{post.readcount ?? post.readCount ?? 0}</div>
+                        </div>
+                    ))}
 
+                    {/* 페이징 */}
                     <div id='paging'>
-                        {paging.prev && <span onClick={() => onPageMove(paging.beginPage - 1)}>◀</span>}
-                        {pages.map((page, idx) => (
+                        {paging.prev && <span onClick={() => onPageMove(Math.max(1, paging.page - 1))}>◀</span>}
+                        {pages.map(p => (
                             <span
-                                key={idx}
-                                onClick={() => onPageMove(page)}
-                                className={page === paging.page ? "active" : ""}
+                                key={p}
+                                onClick={() => onPageMove(p)}
+                                className={p === paging.page ? "active" : ""}
                             >
-                                {page}
+                                {p}
                             </span>
                         ))}
-                        {paging.next && <span onClick={() => onPageMove(paging.endPage + 1)}>▶</span>}
+                        {paging.next && <span onClick={() => onPageMove(Math.min(paging.endPage, paging.page + 1))}>▶</span>}
                     </div>
                 </div>
             </div>

@@ -13,15 +13,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors; //수정: 스트림 변환
 
 @Service
 @RequiredArgsConstructor
 public class CommunityReplyService {
 
-    private final CommunityReplyRepository crr; //수정: @Autowired 제거, 생성자 주입
-    private final MemberRepository mr;           //수정
-    private final CommunityListRepository cr;   //수정
+    private final CommunityReplyRepository crr;
+
+    private final MemberRepository mr;
+
+    private final CommunityListRepository cr;
 
     // 댓글 리스트 조회
     @Transactional(readOnly = true)

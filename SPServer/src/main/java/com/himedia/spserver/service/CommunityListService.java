@@ -1,11 +1,9 @@
 package com.himedia.spserver.service;
 
+import com.himedia.spserver.entity.Community.C_File;
 import com.himedia.spserver.entity.Community.C_post;
-import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.repository.CommunityListRepository;
-import com.himedia.spserver.repository.FileRepository;
-import com.himedia.spserver.repository.MemberRepository;
+import com.himedia.spserver.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -22,34 +20,41 @@ import java.util.Optional;
 public class CommunityListService {
 
     @Autowired
-    S3UploadService sus;
+    private S3UploadService sus;
 
     @Autowired
     private CommunityListRepository cr;
 
     @Autowired
+    private CommunityLikeRepository clr;
+
+    @Autowired
+    private CommunityReplyRepository crr;
+
+    @Autowired
     private MemberRepository mr;
 
     @Autowired
-    private FileRepository fr;
+    private CommunityFileRepository cfr;
 
-    // 게시글 저장
+    @Autowired
+    private CommunityFileService cfs;
+
+    // ---------------- 게시글 저장 ----------------
     public C_post saveCommunity(C_post cpost) {
-        // JpaRepository의 save() 메서드는 저장된 엔티티를 반환합니다.
         return cr.save(cpost);
     }
 
-    // 조회수 증가
-    public void addReadCount(int cpost_id) {
-        Optional<C_post> optionalPost = cr.findById(cpost_id);
+    // ---------------- 조회수 증가 ----------------
+    public void addReadCount(int cpostId) {
+        Optional<C_post> optionalPost = cr.findById(cpostId);
         optionalPost.ifPresent(post -> {
-            // readcount가 null이면 0으로 간주하고 1을 더합니다.
             int currentCount = post.getReadcount() == null ? 0 : post.getReadcount();
             post.setReadcount(currentCount + 1);
         });
     }
 
-    // 게시글 수정
+    // ---------------- 게시글 수정 ----------------
     public HashMap<String, Object> updateCommunity(C_post post) {
         HashMap<String, Object> result = new HashMap<>();
         Optional<C_post> optionalPost = cr.findById(post.getCpostId());
@@ -59,30 +64,94 @@ public class CommunityListService {
             existingPost.setTitle(post.getTitle());
             existingPost.setContent(post.getContent());
             existingPost.setC_image(post.getC_image());
-            existingPost.setFile(post.getFile());
+
+            // 파일 리스트 수정 시
+            if (post.getFileList() != null && !post.getFileList().isEmpty()) {
+                for (C_File file : post.getFileList()) {
+                    file.setCpost(existingPost); // 게시글 연결
+                    cfr.save(file);
+                }
+                existingPost.setFileList(post.getFileList());
+            }
+
+            cr.save(existingPost);
             result.put("msg", "ok");
         } else {
             result.put("msg", "notok");
         }
-
         return result;
     }
 
-    // 게시글 리스트 조회
-    public HashMap<String, Object> getCommunityList(int page, Integer categoryId) {
+    // ---------------- 게시글 상세조회 ----------------
+    public Optional<C_post> getCommunityById(int id) {
+        return cr.findById(id);
+    }
+
+    // ---------------- 게시글 삭제 ----------------
+    public void deleteCommunity(Integer cpostId) {
+        crr.deleteByCpost_CpostId(cpostId); // 댓글 삭제
+        clr.deleteByCpost_CpostId(cpostId); // 좋아요 삭제
+        cr.deleteById(cpostId); // 게시글 삭제
+    }
+
+    // ---------------- 최신 게시글 ----------------
+    public C_post getNewCommunity() {
+        return cr.findFirstByOrderByCpostIdDesc();
+    }
+
+    // ---------------- 파일 업로드 ----------------
+    public void fileUpload(List<MultipartFile> images, String cpostId) throws IOException {
+        C_post post = cr.findById(Integer.parseInt(cpostId))
+                .orElseThrow(() -> new RuntimeException("게시글 없음"));
+
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile image : images) {
+                String fileUrl = sus.saveFile(image); // S3 업로드
+
+                C_File cfile = new C_File();
+                cfile.setCpost(post);
+                cfile.setPath(fileUrl);
+                cfile.setOriginalname(image.getOriginalFilename());
+                cfile.setSize(image.getSize());
+                cfile.setContentType(image.getContentType());
+
+                cfr.save(cfile);
+
+                // 게시글 파일 리스트에 추가
+                if (post.getFileList() != null) {
+                    post.getFileList().add(cfile);
+                }
+            }
+            cr.save(post);
+        }
+    }
+
+    // ---------------- 추천 증가 ----------------
+    public int incrementLike(int cpostId) {
+        C_post post = cr.findById(cpostId)
+                .orElseThrow(() -> new RuntimeException("게시글 없음: " + cpostId));
+
+        Integer current = post.getC_like();
+        if (current == null) current = 0;
+        post.setC_like(current + 1);
+
+        cr.save(post);
+        return post.getC_like();
+    }
+
+    // ---------------- 게시글 리스트 조회 ----------------
+    public HashMap<String, Object> getCommunityList(int page, Integer categoryId, String title) {
         HashMap<String, Object> result = new HashMap<>();
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "indate"));
-        Page<C_post> list;
 
-        if (categoryId == null || categoryId == 0) {
-            list = cr.findAll(pageable);
-        } else {
-            list = cr.findByCategory_categoryId(categoryId, pageable);
-        }
+        Page<C_post> list = cr.searchByTitleAndCategory(
+                (title == null || title.isEmpty()) ? null : title,
+                (categoryId == null || categoryId == 0) ? null : categoryId,
+                pageable
+        );
 
         result.put("communityList", list.getContent());
 
-        // 페이징 정보
         int totalPages = list.getTotalPages();
         int currentPage = page;
         int beginPage = Math.max(1, currentPage - 2);
@@ -96,63 +165,35 @@ public class CommunityListService {
         paging.put("endPage", endPage);
 
         result.put("paging", paging);
-
         return result;
     }
 
-    // 게시글 상세조회
-    public Optional<C_post> getCommunityById(int id) {
-        return cr.findById(id);
-    }
+    public boolean updateCommunity(Integer cpostId, String title, String content, String pass, MultipartFile image) throws IOException {
+        // 1. 게시글 조회
+        Optional<C_post> postOpt = cr.findById(cpostId);
+        if (postOpt.isEmpty()) return false;
 
-    // 게시글 삭제
-    public boolean deleteCommunity(int id) {
-        Optional<C_post> optionalPost = cr.findById(id);
-        if (optionalPost.isPresent()) {
-            cr.deleteById(id);
-            return true;
+        C_post post = postOpt.get();
+        Member writer = post.getMember();
+
+        // 2. 비밀번호 체크
+        if (!writer.getPwd().equals(pass)) {
+            return false; // 비밀번호 불일치 시 false 반환
         }
-        return false;
-    }
 
-    public C_post getNewCommunity() {
-        return cr.findFirstByOrderByCpostIdDesc();
-    }
+        // 3. 게시글 내용 수정
+        post.setTitle(title);
+        post.setContent(content);
 
-    public void fileUpload(List<MultipartFile> images, String cpostId) throws IOException {
-        C_post post = cr.findById(Integer.parseInt(cpostId)).get();
-        if (images != null && !images.isEmpty()) {
-            for (MultipartFile image : images) {
-                String fileUrl = sus.saveFile(image); // S3 업로드
-
-                File postFile = new File();
-                postFile.setCpost(post);
-                postFile.setPath(fileUrl); // S3 URL 저장
-                postFile.setOriginalname(image.getOriginalFilename());
-                postFile.setSize(image.getSize()); // Long.valueOf() 대신 기본형 Long 사용
-                postFile.setContentType(image.getContentType());
-
-                fr.save(postFile); // FileRepository로 저장
-            }
+        // 4. 이미지가 있으면 업데이트
+        if (image != null && !image.isEmpty()) {
+            String saveFilename = sus.saveFile(image); // S3 업로드 서비스 사용
+            post.setC_image(saveFilename);
         }
-    }
 
-    public int incrementLike(int cpostId) {
-        // 1) 해당 게시글 가져오기
-        C_post post = cr.findById(cpostId)
-                .orElseThrow(() -> new RuntimeException("게시글 없음: " + cpostId));
-
-        // 2) 추천 수 +1
-        Integer current = post.getC_like();
-        if (current == null) {
-            current = 0;
-        }
-        post.setC_like(current + 1);
-
-        // 3) 저장
+        // 5. 수정 완료 후 저장
         cr.save(post);
 
-        // 새 추천 수 리턴
-        return post.getC_like();
+        return true; // 수정 성공
     }
 }

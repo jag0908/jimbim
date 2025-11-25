@@ -1,7 +1,6 @@
 package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.*;
-import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.*;
 import com.himedia.spserver.mapper.ShPostMapper;
@@ -17,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,6 +29,8 @@ public class ShService {
     private final ShViewRepository svr;
     private final ShSuggestRepository ssr;
     private final ShSuggestMapper ssm;
+    private final ShZzimRepository szr;
+    private final MemberRepository mr;
 
 
     private final MemberRepository mr; //이삭 수정
@@ -95,14 +95,12 @@ public class ShService {
 //    public List<ShPostResDto> getPostList(int page) {
     public HashMap<String, Object> getPostList(int page) {
 
-        Pageable pageable = PageRequest.of(page-1, 5);
+        Pageable pageable = PageRequest.of(page-1, 10);
 
         Page<SH_post> postsPage = spr.findAllByOrderByIndateDesc(pageable);
         List<SH_post> posts = postsPage.getContent();;
         long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
         int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수
-        System.out.println("@@@totalElements : " + totalElements);
-        System.out.println("@@@totalPages : " + totalPages);
         HashMap<String, Object> result = new HashMap<>();
 
 
@@ -284,4 +282,58 @@ public class ShService {
         Optional<SH_Suggest> suggestEntity = ssr.findById(sid);
         suggestEntity.get().setApproved(1);
     }
+
+    public boolean insertZzim(ShZzimDto reqDto) {
+        Member memberEntity = mr.findById(reqDto.getMemberId())
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        SH_post postEntity = spr.findById(reqDto.getPostId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Optional<SH_zzim> optionalZzim = szr.findByPostAndMember(postEntity, memberEntity);
+
+        if (optionalZzim.isPresent()) {
+            // 이미 찜 존재
+            szr.delete(optionalZzim.get());
+            return false; // 이미 존재 → ok
+        } else {
+            // 없으면 새로 생성
+            SH_zzim newZzim = new SH_zzim();
+            newZzim.setPost(postEntity);
+            newZzim.setMember(memberEntity);
+            szr.save(newZzim);
+
+            return true; // 새로 생성 → notOk
+        }
+    }
+
+    public boolean getZzim(Integer postId, Integer memberId) {
+        Member memberEntity = mr.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        SH_post postEntity = spr.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Optional<SH_zzim> optionalZzim = szr.findByPostAndMember(postEntity, memberEntity);
+
+        if (optionalZzim.isPresent()) {
+            // 이미 찜 존재
+            return true; // 이미 존재 → ok
+        } else {
+            // 없으면 새로 생성
+            SH_zzim newZzim = new SH_zzim();
+            newZzim.setPost(postEntity);
+            newZzim.setMember(memberEntity);
+            szr.save(newZzim);
+
+            return false; // 새로 생성 → notOk
+        }
+    }
+
+    public Integer getZzimCount(Integer postId) {
+        SH_post postEntity = spr.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        List<SH_zzim> zzimCount = szr.findAllByPost(postEntity);
+
+        return zzimCount.size();
+    }
 }
+

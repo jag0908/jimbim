@@ -11,4 +11,6 @@ public interface CommunityLikeRepository extends JpaRepository<C_Like, Integer> 
     long countByCpost(C_post cpost);
 
     Optional<C_Like> findByMemberAndCpost(Member member, C_post cpost);
+
+    void deleteByCpost_CpostId(Integer cpostId);
 }

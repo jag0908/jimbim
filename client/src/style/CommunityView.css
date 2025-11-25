@@ -1,5 +1,5 @@
 /* ---------- 전체 레이아웃 컨테이너 ---------- */
-.communityView {
+.communityView-container {
   width: 80%;
   max-width: 1200px;
   margin: 40px auto;
@@ -14,7 +14,7 @@
 }
 
 /* ---------- 정보 행 ---------- */
-.field.horizontal-info {
+.communityView-info.horizontal-info {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
@@ -23,19 +23,19 @@
 }
 
 /* ---------- 각 필드 레이아웃 ---------- */
-.communityView .field {
+.communityView-field {
   display: flex;
   margin-bottom: 15px;
   align-items: flex-start;
 }
 
-.communityView .field label {
+.communityView-field label {
   width: 100px;
   font-weight: 600;
   color: #555;
 }
 
-.communityView .field div {
+.communityView-field div {
   flex: 1;
   color: #333;
   line-height: 1.8;
@@ -47,37 +47,40 @@
 }
 
 /* ---------- 제목/내용 ---------- */
-.view-title-content {
+.communityView-title-content {
   text-align: center;
   font-weight: 700;
   font-size: 18px;
   color: #34495e;
 }
 
-.view-content {
+.communityView-content {
   white-space: pre-wrap;
   font-size: 15px;
 }
 
 /* ---------- 이미지 ---------- */
-.communityView .field img {
+.communityView-img {
   display: block;
-  max-width: 100%;
+  max-width: 400px;    /* 최대 가로 */
+  max-height: 300px;   /* 최대 세로 */
+  width: auto;
   height: auto;
+  object-fit: cover;   /* 비율 유지하며 박스 안에 맞춤 */
   border-radius: 8px;
   margin-top: 8px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 /* ---------- 버튼 영역 ---------- */
-.communityView .btns {
+.communityView-btns {
   display: flex;
   justify-content: center;
   gap: 12px;
   margin-top: 25px;
 }
 
-.communityView .btns button {
+.communityView-btns button {
   padding: 10px 20px;
   border-radius: 6px;
   border: none;
@@ -88,22 +91,22 @@
   transition: all 0.2s ease;
 }
 
-.communityView .btns button:hover {
+.communityView-btns button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 
 /* 삭제 버튼 강조 */
-.communityView .btns button.delete {
+.communityView-btns button.delete {
   background-color: #e74c3c;
 }
 
-.communityView .btns button.delete:hover {
+.communityView-btns button.delete:hover {
   background-color: #c0392b;
 }
 
 /* ---------- 댓글 영역 ---------- */
-.reply-section {
+.communityView-reply-section {
   margin-top: 30px;
   padding: 15px;
   border-radius: 8px;
@@ -114,12 +117,12 @@
 }
 
 /* 댓글 입력 영역 */
-.reply-input {
+.communityView-reply-input {
   display: flex;
   gap: 10px;
 }
 
-.reply-input textarea {
+.communityView-reply-input textarea {
   flex: 1;
   padding: 10px;
   border-radius: 6px;
@@ -128,7 +131,7 @@
   font-size: 14px;
 }
 
-.reply-input button {
+.communityView-reply-input button {
   padding: 8px 16px;
   border-radius: 6px;
   border: none;
@@ -139,13 +142,13 @@
   transition: all 0.2s ease;
 }
 
-.reply-input button:hover {
+.communityView-reply-input button:hover {
   background-color: #218838;
   transform: translateY(-1px);
 }
 
 /* 댓글 리스트 */
-.reply-list .reply-item {
+.communityView-reply-list .reply-item {
   border-bottom: 1px solid #eee;
   padding: 10px 8px;
   position: relative;
@@ -158,24 +161,24 @@
 }
 
 /* 댓글 헤더: 작성자 아이디 + 시간 */
-.reply-list .reply-item .reply-header {
+.communityView-reply-list .reply-header {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.reply-user {
+.communityView-reply-user {
   font-weight: 700;
   color: #34495e;
 }
 
-.reply-time {
+.communityView-reply-time {
   font-size: 12px;
   color: #999;
 }
 
 /* 댓글 내용 */
-.reply-content {
+.communityView-reply-content {
   font-size: 14px;
   color: #555;
   white-space: pre-wrap;
@@ -183,7 +186,7 @@
 }
 
 /* 댓글 삭제 버튼 위치 조절 */
-.reply-delete {
+.communityView-reply-delete {
   position: absolute;
   right: 8px;
   top: 10px;
@@ -197,13 +200,13 @@
   transition: all 0.2s ease;
 }
 
-.reply-delete:hover {
+.communityView-reply-delete:hover {
   background-color: #c0392b;
   transform: scale(1.05);
 }
 
 /* ---------- 로그인 안내 ---------- */
-.login-warning {
+.communityView-login-warning {
   color: #c0392b;
   font-size: 13px;
   text-align: center;
@@ -211,22 +214,22 @@
 
 /* ---------- 반응형 ---------- */
 @media (max-width: 768px) {
-  .communityView {
+  .communityView-container {
     width: 95%;
     padding: 20px;
   }
   
-  .reply-input {
+  .communityView-reply-input {
     flex-direction: column;
   }
 
-  .reply-input button {
+  .communityView-reply-input button {
     width: 100%;
   }
 }
 
 /* ---------- 타이틀 영역 (추천수, 댓글수 등) ---------- */
-.view-title-row {
+.communityView-title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -237,14 +240,14 @@
   border-bottom: 1px solid #ddd;
 }
 
-.view-title-row .title {
+.communityView-title-row .title {
   flex: 1;
   font-weight: 700;
   font-size: 18px;
   color: #222;
 }
 
-.view-title-row .info-group {
+.communityView-title-row .info-group {
   font-weight: 400;
   font-size: 13px;
   color: #666;
@@ -253,7 +256,7 @@
   white-space: nowrap;
 }
 
-.view-title-row .info-group .count {
+.communityView-title-row .info-group .count {
   font-weight: 600;
   color: #444;
 }

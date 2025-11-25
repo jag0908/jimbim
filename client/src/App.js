@@ -71,20 +71,21 @@ function App() {
 				<Route path="/styleUser/:userid" element={<StyleUser />} />
 				<Route path="/style/edit/:id" element={<StyleEdit />} />
 
-				
+
 
 				{/* 정진 */}
 				<Route path="/sh-page" element={<ShMain />} />
 				<Route path='/sh-page/sh-write' element={<ShWrite />} />
 				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 				<Route path='/sh-page/sh-update/:id' element={<ShUpdate />} />
-				
+
+
 
 				{/* 은지 */}
 				<Route path="/communityList" element={<CommunityList />} />
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
 				<Route path="/communityView/:num" element={<CommunityView />} />
-				<Route path="/updateCommunity" element={<UpdateCommunity />} />
+				<Route path="/updateCommunity/:num" element={<UpdateCommunity />} />
 
 			</Routes>
 		</div>

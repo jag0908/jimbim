@@ -1,11 +1,9 @@
 package com.himedia.spserver.controller;
 import com.himedia.spserver.dto.*;
-import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
-import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -202,4 +200,31 @@ public class ShController {
         ss.appSuggest(sid);
         return result;
     }
+
+    @PostMapping("/zzim")
+    public HashMap<String, Object> zzim(@RequestBody ShZzimDto reqDto) {
+        HashMap<String, Object> result = new HashMap<>();
+        boolean exists = ss.insertZzim(reqDto);
+        result.put("msg", exists ? true : false);
+
+        return result;
+    }
+
+    @GetMapping("/zzim")
+    public HashMap<String, Object> getZzim(@RequestParam("postId") Integer postId, @RequestParam("memberId") Integer memberId) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("msg", ss.getZzim(postId, memberId));
+
+        return result;
+    }
+
+    @GetMapping("/zzimCount")
+    public HashMap<String, Object> getZzimCount(@RequestParam("postId") Integer postId) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("zzimCount", ss.getZzimCount(postId));
+        return result;
+    }
+
+
 }

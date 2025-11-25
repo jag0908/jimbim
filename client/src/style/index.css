@@ -21,7 +21,7 @@
 
 #main-index .hero-visual {flex: 1; position: relative; min-height: 320px;}
 #main-index .hero-circle {position: absolute; border-radius: 50%; opacity: 0.9;}
-#main-index .hero-circle.large {width: 320px; height: 320px; background: #ffe3cf; top: 20px; right: 40px;}
+#main-index .hero-circle.large {width: 320px; height: 320px; background: #fde4d2; top: 20px; right: 40px;}
 #main-index .hero-circle.medium {width: 220px; height: 220px; background: #ffd2a8; top: 60px; right: 140px;}
 #main-index .hero-circle.small {width: 140px; height: 140px; background: #ffb97a; top: 130px; right: 40px;}
 #main-index .hero-card {position: absolute; bottom: 0; left: 0; padding: 24px; width: 240px; border-radius: 24px; background: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 6px;}

@@ -33,6 +33,8 @@ public class ShService {
     private final MemberRepository mr;
 
 
+    private final MemberRepository mr; //이삭 수정
+
 
     private final ShPostMapper spm;
 
@@ -43,8 +45,12 @@ public class ShService {
 
 
     public SH_post insertPost(ShPostWriteReqDto reqDto) {
-        Member member = new Member();
-        member.setMember_id(reqDto.getMemberId());
+//        Member member = new Member();
+//        member.setMember_id(reqDto.getMemberId());
+
+
+        Member member = mr.findById(reqDto.getMemberId())
+                .orElseThrow(() -> new RuntimeException("Member not found")); //이삭 수정
 
         SH_post shPost = new SH_post();
         shPost.setMember(member);

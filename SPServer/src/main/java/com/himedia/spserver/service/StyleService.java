@@ -211,38 +211,7 @@ public class StyleService {
         return Map.of("liked", liked, "likeCount", likeCount);
     }
 
-    public boolean toggleFollow(String startUserid, String endUserid) {
-        Member startMember = memberRepository.findByUserid(startUserid);
-        Member endMember = memberRepository.findByUserid(endUserid);
 
-        if (startMember == null || endMember == null) {
-            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
-        }
-
-        return followRepository.findByStartMemberAndEndMember(startMember, endMember)
-                .map(existing -> {
-                    followRepository.delete(existing);
-                    return false;
-                })
-                .orElseGet(() -> {
-                    Follow newFollow = new Follow();
-                    newFollow.setStartMember(startMember);
-                    newFollow.setEndMember(endMember);
-                    followRepository.save(newFollow);
-                    return true;
-                });
-    }
-
-
-    public boolean isFollowing(String startUserid, String endUserid) {
-        Member startMember = memberRepository.findByUserid(startUserid);
-        Member endMember = memberRepository.findByUserid(endUserid);
-
-        if (startMember == null || endMember == null)
-            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
-
-        return followRepository.findByStartMemberAndEndMember(startMember, endMember).isPresent();
-    }
 
 
     public STYLE_post findBySpostId(Integer id) {

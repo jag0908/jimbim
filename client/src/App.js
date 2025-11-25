@@ -14,11 +14,14 @@ import Buying from './Component/mypage/Buying'
 import Selling from './Component/mypage/Selling'
 import Zzim from './Component/mypage/Zzim'
 
+
+
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
 import StyleUser from './Component/StyleFeed/StyleUser'
 import StyleEdit from './Component/StyleFeed/StyleEdit'
+
 
 import ShMain from './Component/sh-page/ShMain'
 import Header from './Component/Header'
@@ -68,19 +71,20 @@ function App() {
 				<Route path="/styleUser/:userid" element={<StyleUser />} />
 				<Route path="/style/edit/:id" element={<StyleEdit />} />
 
+				
+
 				{/* 정진 */}
 				<Route path="/sh-page" element={<ShMain />} />
 				<Route path='/sh-page/sh-write' element={<ShWrite />} />
 				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 				<Route path='/sh-page/sh-update/:id' element={<ShUpdate />} />
-
+				
 
 				{/* 은지 */}
 				<Route path="/communityList" element={<CommunityList />} />
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
 				<Route path="/communityView/:num" element={<CommunityView />} />
 				<Route path="/updateCommunity" element={<UpdateCommunity />} />
-
 
 			</Routes>
 		</div>

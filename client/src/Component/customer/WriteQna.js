@@ -7,6 +7,7 @@ function WriteQna() {
     const loginUser = useSelector( state=>state.user )
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+    const [member, setMember] = useState({})
     const navigate = useNavigate();
 
     useEffect(
@@ -14,6 +15,11 @@ function WriteQna() {
             if(!loginUser.userid){
                 alert("로그인이 필요한 서비스입니다")
                 navigate("/login")
+            }else{
+                jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
+                .then((result)=>{
+                    setMember(result.data.member)
+                }).catch((err)=>{ console.error(err);  })
             }
         },[]
     )
@@ -22,7 +28,7 @@ function WriteQna() {
         if(!title){ return alert('제목을 입력하세요')}
         if(!content ){return alert('내용을 입력하세요')}
 
-        jaxios.post('/api/customer/writeQna', {title, content, memberId:loginUser.member_id})
+        jaxios.post('/api/customer/writeQna', {title, content, member})
         .then(()=>{ 
             alert('문의가 완료되었습니다.');
             navigate('/customer/qna')

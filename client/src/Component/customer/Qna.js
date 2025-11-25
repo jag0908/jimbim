@@ -10,18 +10,38 @@ function Qna() {
     const navigate = useNavigate();
 
     const [qnaList, setQnaList] = useState([]);
+    const [paging, setPaging]=useState({});
+    const [beginEnd, setBeginEnd]=useState([])
 
     useEffect(
         ()=>{
             if(loginUser.userid){
                 jaxios.get(`/api/customer/getQnaList`, {params:{userid:loginUser.userid, page:1}} )
                 .then((result)=>{
-                    console.log(result.data)
+                    console.log( loginUser.userid, result.data)
                     setQnaList(result.data.qnaList)
+                    setPaging( result.data.paging )
+                    let arr = [];
+                    for( let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
+                        arr.push(i);
+                    }
+                    setBeginEnd( [...arr] )
                 }).catch((err)=>{ console.error(err);  })
             }
         },[]
     )
+    function onPageMove(page){
+        jaxios.get(`/api/customer/getQnaList`, {params:{userid:loginUser.userid, page}})
+        .then((result)=>{
+            setQnaList(result.data.qnaList)
+            setPaging( result.data.paging )
+            const pageArr = [];
+            for(let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
+                pageArr.push(i);
+            }
+            setBeginEnd( [...pageArr] );
+        }).catch((err)=>{console.error(err)})
+    }
     return (
         <div className='customercontainer'>
             <SideMenu/>
@@ -59,6 +79,35 @@ function Qna() {
                         (<div>로그인 후 사용 가능합니다</div>)
                     )
                 }
+                {
+                        
+                        (qnaList.length!=0)?
+                        (<div id="paging" style={{textAlign:"center", padding:"10px"}}>
+                            {
+                                (paging.prev)?(
+                                    <span style={{cursor:"pointer"}} onClick={ ()=>{ onPageMove( paging.beginPage-1 ) } } > ◀ </span>
+                                ):(<span></span>)
+                            }
+                            {
+                                (beginEnd)?(
+                                    beginEnd.map((page, idx)=>{
+                                        return (
+                                            <span style={(page==paging.page)?{fontWeight:'bold', cursor:"pointer"}:{cursor:"pointer"}} key={idx} onClick={
+                                                ()=>{ onPageMove( page ) }
+                                            }>&nbsp;{page}&nbsp;</span>
+                                        )
+                                    })
+                                ):(<></>)
+                            }
+                            {
+                                (paging.next)?(
+                                    <span style={{cursor:"pointer"}} onClick={
+                                        ()=>{ onPageMove( paging.endPage+1 ) }
+                                    }>&nbsp;▶&nbsp;</span>
+                                ):(<></>)
+                            }
+                        </div>):(<></>)
+                    }
                 </div>
             </div>
         </div>

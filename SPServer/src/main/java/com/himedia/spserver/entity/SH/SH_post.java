@@ -4,6 +4,7 @@ import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -45,6 +46,9 @@ public class SH_post {  // second hand
 
     @Column(nullable = false)
     private Integer viewCount = 0;
+
+    @Comment("0= 판매중, 1= 예약중, 2=판매완료")
+    private Integer sellEx = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberid")

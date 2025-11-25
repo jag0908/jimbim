@@ -60,7 +60,7 @@ function ShMain() {
         const clientHeight = document.documentElement.clientHeight; 
         
         // 스크롤이 거의 바닥에 도달했을 때 (10px 여유)
-        if( scrollTop + clientHeight >= scrollHeight - 10 ) {
+        if( scrollTop + clientHeight >= scrollHeight - 700 ) {
             const nextPage = page + 1;
             
             // nextPage를 직접 체크하여 마지막 페이지 초과 방지
@@ -172,9 +172,9 @@ function ShMain() {
         <div className='shPostWrap'>
             
           {
-            shPostArr.map((ShPost)=> {
+            shPostArr.map((ShPost, i)=> {
               return (
-                <div className='list' key={ShPost.postId}>
+                <div className={"list" + ` state${ShPost.sellEx}` } key={i}>
                   <Link to={`/sh-page/sh-view/${ShPost.postId}`}>
                       <div className='imgBox'>
                         <img src={ShPost.firstFilePath && ShPost.firstFilePath} alt={ShPost.title} />

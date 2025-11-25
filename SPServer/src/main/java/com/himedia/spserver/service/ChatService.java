@@ -274,4 +274,9 @@ public class ChatService {
         return result;
     }
 
+    public Integer getChatRoomCount(Integer postId) {
+       List<ChatRoom> room = cr.findAllByPostId(postId);
+
+        return room.size();
+    }
 }

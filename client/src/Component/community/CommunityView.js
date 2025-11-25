@@ -13,26 +13,22 @@ function CommunityView() {
     const [replyList, setReplyList] = useState([]);
     const [rContent, setRContent] = useState('');
     const [loading, setLoading] = useState(true);
-    const [liked, setLiked] = useState(false); // 이미 추천했는지 상태
+    const [liked, setLiked] = useState(false);
     const navigate = useNavigate();
     const { num } = useParams();
 
-    // 게시글 + 댓글 불러오기 및 추천 상태 확인
     useEffect(() => {
         const fetchCommunityData = async () => {
             setLoading(true);
             try {
-                // 서버에서 'liked' 여부를 반환하도록 API가 설계되었다고 가정합니다.
                 const [communityRes, replyRes] = await Promise.all([
                     axios.get(`${baseURL}/communityList/getCommunity/${num}`, {
-                        // 로그인된 유저가 있다면 memberId를 보내서 추천 상태를 확인 (서버 설계에 따름)
                         params: { memberId: loginUser?.member_id } 
                     }),
                     axios.get(`${baseURL}/communityReply/getReply/${num}`)
                 ]);
 
                 setCommunity(communityRes.data.community || {});
-                // 서버 응답에서 liked 상태를 가져와 설정
                 setLiked(communityRes.data.liked || false); 
                 setReplyList(replyRes.data.replyList || []);
             } catch (err) {
@@ -46,7 +42,6 @@ function CommunityView() {
         fetchCommunityData();
     }, [num, loginUser?.member_id]);
 
-    // 댓글 추가
     const addReply = async () => {
         if (!loginUser?.member_id) return alert('로그인이 필요한 서비스입니다.');
         if (!rContent.trim()) return alert('댓글을 입력해주세요.');
@@ -58,7 +53,6 @@ function CommunityView() {
                 cpostId: Number(num)
             });
 
-            // 댓글 목록 새로고침
             const result = await axios.get(`${baseURL}/communityReply/getReply/${num}`);
             setReplyList(result.data.replyList || []);
             setRContent('');
@@ -68,7 +62,6 @@ function CommunityView() {
         }
     };
 
-    // 댓글 삭제
     const deleteReply = async (replyId) => {
         if (!window.confirm('해당 댓글을 삭제하시겠습니까?')) return;
         try {
@@ -81,7 +74,6 @@ function CommunityView() {
         }
     };
 
-    // 게시글 삭제
     const deleteCommunity = async () => {
         if (!window.confirm('게시물을 삭제하시겠습니까?')) return;
         try {
@@ -94,24 +86,17 @@ function CommunityView() {
         }
     };
 
-    // 📢 수정된 추천 기능: 토글 가능하도록 로직 변경
     const handleLike = async () => {
         if (!loginUser?.member_id) return alert('로그인이 필요합니다.');
 
         try {
-            // 서버의 toggleLike API를 호출합니다. (서버가 추천/취소를 알아서 처리)
             const res = await jaxios.post(`${baseURL}/communityList/toggleLike`, null, {
                 params: { cpostId: Number(num), memberId: loginUser.member_id }
             });
 
-            // 서버 응답(res.data.liked)에 따라 liked 상태를 토글합니다.
             setLiked(res.data.liked); 
-            
-            // 추천수를 서버 응답의 likeCount로 업데이트합니다.
             setCommunity(prev => ({ ...prev, c_like: res.data.likeCount }));
-
             alert(res.data.liked ? '게시물을 추천했습니다! 👍' : '추천을 취소했습니다. 👎'); 
-
         } catch (err) {
             console.error('추천 처리 실패:', err);
             alert('추천 처리 중 오류가 발생했습니다.');
@@ -119,15 +104,13 @@ function CommunityView() {
     };
 
     if (loading) return <div>로딩 중...</div>;
-    // 게시글이 존재하지 않을 경우 처리
     if (!community.cpostId && !loading) return <div>존재하지 않는 게시물입니다.</div>;
 
-
     return (
-        <div className='communityView'>
+        <div className='communityView-container'>
             <h2>COMMUNITY VIEW</h2>
 
-            <div className="view-title-row">
+            <div className="communityView-title-row">
                 <div className="title">{community.title || '제목 없음'}</div>
                 <div className="info-group">
                     <div>작성자: {community.member?.userid || '알수없음'}</div>
@@ -138,38 +121,42 @@ function CommunityView() {
                 </div>
             </div>
 
-            <div className='field'>
+            <div className='communityView-field'>
                 <label>내용</label>
-                <div className="view-content">{community.content || ''}</div>
+                <div className="communityView-content">{community.content || ''}</div>
             </div>
 
-            {/* 🚨 이미지를 복수 처리하려면 c_image 대신 c_image_list 같은 배열로 처리해야 함 */}
-            {community.c_image && (
-                <div className='field'>
+            {community.fileList && community.fileList.length > 0 && (
+                <div className='communityView-field'>
                     <label>이미지</label>
-                    <img src={`${baseURL}/images/${community.c_image}`} alt="community" className="view-image" />
+                    <div className="communityView-image-list">
+                        {community.fileList.map((file, idx) => (
+                            <img
+                                key={idx}
+                                src={file.path}
+                                alt={file.originalname}
+                                className="communityView-img"
+                            />
+                        ))}
+                    </div>
                 </div>
             )}
 
-            <div className='btns'>
-                {/* 현재 로그인 유저의 member_id와 게시글 작성자의 member_id가 일치할 때만 수정/삭제 버튼 표시 */}
+            <div className='communityView-btns'>
                 {Number(loginUser?.member_id) === Number(community.member?.member_id) && (
                     <>
                         <button onClick={() => navigate(`/updateCommunity/${num}`)}>수정</button>
-                        <button onClick={deleteCommunity}>삭제</button>
+                        <button onClick={deleteCommunity} className="delete">삭제</button>
                     </>
                 )}
                 <button onClick={() => navigate('/communityList')}>이전</button>
-                {/* 📢 버튼 문구를 liked 상태에 따라 변경 */}
-                <button onClick={handleLike}>
-                    {liked ? '추천 취소 👎' : '추천 👍'}
-                </button>
+                <button onClick={handleLike}>추천 👍</button>
             </div>
 
-            <div className="reply-section">
+            <div className="communityView-reply-section">
                 <h3>댓글</h3>
 
-                <div className="reply-input">
+                <div className="communityView-reply-input">
                     <textarea
                         rows="3"
                         value={rContent}
@@ -180,18 +167,16 @@ function CommunityView() {
                     <button onClick={addReply} disabled={!loginUser?.member_id}>작성</button>
                 </div>
 
-                <div className="reply-list">
+                <div className="communityView-reply-list">
                     {replyList.map((reply) => (
                         <div key={reply.replyId} className="reply-item">
-                            <div className="reply-header">
-                                {/* 작성자 표시 (userid 또는 member.userid) */}
-                                <span className="reply-user">{reply.userid || reply.member?.userid || '알수없음'}</span>
-                                <span className="reply-time">{/* 작성 시간이 있다면 표시 */}</span>
+                            <div className="communityView-reply-header">
+                                <span className="communityView-reply-user">{reply.userid || reply.member?.userid || '알수없음'}</span>
+                                <span className="communityView-reply-time">{/* 작성 시간 */}</span>
                             </div>
-                            <div className="reply-content">{reply.content}</div>
-                            {/* 댓글 작성자의 memberId와 로그인 유저의 member_id가 일치할 때만 삭제 버튼 표시 */}
+                            <div className="communityView-reply-content">{reply.content}</div>
                             {Number(reply.memberId) === Number(loginUser?.member_id) && (
-                                <button className="reply-delete" onClick={() => deleteReply(reply.replyId)}>삭제</button>
+                                <button className="communityView-reply-delete" onClick={() => deleteReply(reply.replyId)}>삭제</button>
                             )}
                         </div>
                     ))}

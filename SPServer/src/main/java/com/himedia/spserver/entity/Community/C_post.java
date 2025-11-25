@@ -1,5 +1,6 @@
 package com.himedia.spserver.entity.Community;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Data
@@ -29,12 +31,11 @@ public class C_post {
     @ColumnDefault("'N'")
     private String isAnonymous; // 익명글 여부, Y면 익명, N이면 익명아님
     @Column(nullable = false)
-    @ColumnDefault("0")
-    private Integer readcount;
+    private Integer readcount = 0;
 
-    @ManyToOne
-    @JoinColumn(name = "file_id")
-    File file;
+    @OneToMany(mappedBy = "cpost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<C_File> fileList;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

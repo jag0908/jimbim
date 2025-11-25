@@ -34,8 +34,11 @@ function ShView() {
 
     const [sModal, setSModal] = useState(false);
     const [suggestPrice, setSuggestPrice] = useState(0);
+    const [isZzim, setIsZzim] = useState("false");
     const [suggestInfo, setSuggestInfo] = useState([]);
-
+    const [zzimCount, setZzimCount] = useState(0);
+    const [chatRoomCount, setChatRoomCount] = useState(0);
+    
     async function viewed() {
         // 1. 조회수 증가
         try {
@@ -52,6 +55,7 @@ function ShView() {
         } catch (err) {
             console.error(err);
         }
+        // 3. 제안 데이터 가져오가
         try {
             const res = await jaxios.get(`/api/sh-page/suggest`, {params :{postId:id}});
             console.log(res.data);
@@ -61,6 +65,30 @@ function ShView() {
                 return alert("요청이 실패하였습니다.");
             }
             
+        } catch (err) {
+            console.error(err);
+        }
+        // 4. 찜 개수
+        try {
+            const res = await jaxios.get(`/api/sh-page/zzimCount`, {params :{postId:id}});
+                console.log(res.data);
+                setZzimCount(res.data.zzimCount);
+        } catch (err) {
+            console.error(err);
+        }
+        // 5. 개인 찜 되어있는지 확인
+        try {
+            const res = await jaxios.get(`/api/sh-page/zzim`, {params :{postId:id, memberId:loginUser.member_id}});
+                console.log(res.data);
+                setIsZzim(res.data.msg);
+        } catch (err) {
+            console.error(err);
+        }
+        // 6. 내게 온 채팅 수 
+        try {
+            const res = await jaxios.get(`/api/chat/chatCount`, {params :{postId:id}});
+            console.log(res.data);
+            setChatRoomCount(res.data.chatRoomCount);
         } catch (err) {
             console.error(err);
         }
@@ -134,8 +162,17 @@ function ShView() {
             }
 
             await jaxios.post("/api/sh-page/appSuggest", null, {params:{sid}})
-                .then((res)=> {
-                    console.log(res);
+                .then((result)=> {
+                    console.log(result);
+                    jaxios.get(`/api/sh-page/suggest`, {params :{postId:id}})
+                        .then((res)=> {
+                            console.log(res.data);
+                            if(res.data.msg == "ok") {
+                                setSuggestInfo([...res.data.resDto]);
+                            } else {
+                                return alert("요청이 실패하였습니다.");
+                            }
+                        })
                 }).catch(err=>console.error(err));
 
             setDisplayYN({display: "flex"});
@@ -189,6 +226,7 @@ function ShView() {
                     if(result.data.msg == "ok") {
                         setOpenChatState("oneToOneChat");
                         setChatRoomData(result.data.resDto);
+                        setChatRoomCount(prev => prev = prev + 1)
                     } else {
                         return alert("요청이 실패하였습니다.");
                     }
@@ -220,6 +258,28 @@ function ShView() {
     function popupClose() {
         setDisplayYN({disPlayYN: "none"});
         setOpenChatState(null);
+    }
+
+    function eventZzim() {
+        if (!loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다."); 
+            return navigate("/login");
+        }
+        if( isZzim ? window.confirm("찜을 해지하시겠습니까?") : window.confirm("찜 하시겠습니까?")) {
+            jaxios.post("/api/sh-page/zzim", {postId:id, memberId: loginUser.member_id})
+                .then((res)=> {
+                    console.log(res);
+                    if(res.data.msg) {
+                        setZzimCount(pev => pev = pev + 1);
+                    } else {
+                        setZzimCount(pev => pev = pev -1);
+                    }
+                    setIsZzim(res.data.msg);
+                }).catch((err)=> {console.error(err)});
+        } else {
+            return;
+        }
+        
     }
 
   return (
@@ -371,11 +431,11 @@ function ShView() {
                     <div className='dataBoxWrap'>
                         <div className='util'>
                             <span className='tit'>채팅</span>
-                            <span className='dataBox srt'>0</span>
+                            <span className='dataBox srt'>{chatRoomCount}</span>
                         </div>
                         <div className='util'>
-                            <span className='tit'>관심</span>
-                            <span className='dataBox srt'>0</span>
+                            <span className='tit'>찜</span>
+                            <span className='dataBox srt'>{zzimCount}</span>
                         </div>
                         <div className='util'>
                             <span className='tit'>조회수</span>
@@ -413,9 +473,18 @@ function ShView() {
                             
                         }
                         
+                        {
+                            postDetail &&
+                            postDetail.member.memberId != loginUser.member_id && 
+                            <button className='btnEvent btnZZim' style={isZzim? {backgroundColor: "#f17575", color : "#fff"} : null} onClick={()=> {eventZzim();}}>찜</button>
+                        }
                         
-                        <button className='btnEvent btnZZim'>찜</button>
-                        <button className='btnEvent btnLike'>좋</button>
+                        {
+                            postDetail &&
+                            postDetail.member.memberId != loginUser.member_id &&
+                            <button className='btnEvent btnLike'>좋</button>
+                        }
+                       
                     </div>
 
                     <div className='line'></div>

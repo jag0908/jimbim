@@ -1,6 +1,7 @@
 package com.himedia.spserver.controller;
 
 import com.himedia.spserver.entity.Community.C_Like;
+import com.himedia.spserver.entity.Community.C_File;
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.repository.CommunityLikeRepository;
@@ -11,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/communityList")
@@ -31,14 +33,16 @@ public class CommunityListController {
     @Autowired
     ServletContext sc;
 
-    // 게시글 리스트 조회
+    // ---------------- 게시글 리스트 조회 ----------------
     @GetMapping("/getCommunityList/{page}")
-    public HashMap<String, Object> getCommunityList(@PathVariable int page,
-                                                    @RequestParam(required = false) Integer categoryId) {
-        return cs.getCommunityList(page, categoryId);
+    public HashMap<String, Object> getCommunityList(
+            @PathVariable int page,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String title) {
+        return cs.getCommunityList(page, categoryId, title);
     }
 
-    // 게시글 상세조회
+    // ---------------- 게시글 상세조회 ----------------
     @GetMapping("/getCommunity/{id}")
     public HashMap<String, Object> getCommunity(@PathVariable int id) {
         HashMap<String, Object> result = new HashMap<>();
@@ -51,8 +55,7 @@ public class CommunityListController {
         return result;
     }
 
-
-    // 조회수 증가
+    // ---------------- 조회수 증가 ----------------
     @PostMapping("/addReadCount")
     public HashMap<String, Object> addReadCount(@RequestParam("num") int cpost_id) {
         cs.addReadCount(cpost_id);
@@ -61,15 +64,14 @@ public class CommunityListController {
         return result;
     }
 
-    // 게시글 작성
+    // ---------------- 게시글 작성 ----------------
     @PostMapping("/createCommunity")
     public HashMap<String, Object> createCommunity(@RequestBody C_post cpost){
         HashMap<String, Object> result = new HashMap<>();
         try {
             C_post savedPost = cs.saveCommunity(cpost);
             result.put("msg", "ok");
-            result.put("cpostId", savedPost.getCpostId());
-
+            result.put("cpostId", savedPost.getCpostId()); // React에서 파일 업로드용으로 ID 필요
         } catch (Exception e) {
             e.printStackTrace();
             result.put("error", "failed");
@@ -77,26 +79,47 @@ public class CommunityListController {
         return result;
     }
 
-    // 게시글 수정
+    // ---------------- 게시글 수정 ----------------
     @PostMapping("/updateCommunity")
-    public HashMap<String, Object> updateCommunity(@RequestBody C_post cpost) {
-        return cs.updateCommunity(cpost);
+    public HashMap<String, Object> updateCommunity(
+            @RequestParam("cpostId") Integer cpostId,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("pass") String pass,
+            @RequestParam(value = "image", required = false) MultipartFile image
+    ) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        try {
+            boolean updated = cs.updateCommunity(cpostId, title, content, pass, image);
+            if (!updated) {
+                result.put("msg", "wrong_pass");
+            } else {
+                result.put("msg", "ok");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("msg", "failed");
+        }
+
+        return result;
     }
 
-    // 게시글 삭제
+    // ---------------- 게시글 삭제 ----------------
     @DeleteMapping("/deleteCommunity/{id}")
-    public HashMap<String, Object> deleteCommunity(@PathVariable int id) {
+    public HashMap<String, Object> deleteCommunity(@PathVariable Integer id) {
         HashMap<String, Object> result = new HashMap<>();
         try {
             cs.deleteCommunity(id);
             result.put("msg", "deleted");
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("error", "failed");
         }
         return result;
     }
 
-    // 가장 최근 게시글 가져오기
+    // ---------------- 가장 최근 게시글 ----------------
     @GetMapping("/getNewCommunity")
     public HashMap<String, Object> getNewCommunity() {
         HashMap<String, Object> result = new HashMap<>();
@@ -104,25 +127,33 @@ public class CommunityListController {
         return result;
     }
 
-    // 파일 업로드
+    // ---------------- 파일 업로드 ----------------
     @PostMapping("/fileupload")
-    public HashMap<String, Object> fileUpload(@RequestParam("imageList") List<MultipartFile> file,
-                                              @RequestParam("cpostId") String cpostId) {
-        HashMap<String , Object> result = new HashMap<>();
+    public HashMap<String, Object> fileUpload(
+            @RequestParam("imageList") List<MultipartFile> images,
+            @RequestParam("cpostId") String cpostId) {
+
+        HashMap<String, Object> result = new HashMap<>();
         try {
-            cs.fileUpload(file, cpostId);
+            if (images == null || images.isEmpty()) {
+                result.put("error", "no files uploaded");
+                return result;
+            }
+
+            cs.fileUpload(images, cpostId); // C_File 기반으로 처리됨
             result.put("msg", "ok");
-        } catch (IllegalStateException | IOException e) {
+
+        } catch (IOException e) {
             e.printStackTrace();
             result.put("error", "failed");
         }
         return result;
     }
 
-    // 추천 토글 (한 계정당 한 번만 추천 가능)
+    // ---------------- 추천 토글 ----------------
     @PostMapping("/toggleLike")
     public HashMap<String, Object> toggleLike(@RequestParam Integer cpostId,
-                                          @RequestParam Integer memberId) {
+                                              @RequestParam Integer memberId) {
         HashMap<String, Object> result = new HashMap<>();
 
         C_post post = cs.getCommunityById(cpostId)
@@ -145,9 +176,10 @@ public class CommunityListController {
 
         long likeCount = cr.countByCpost(post);
         post.setC_like((int) likeCount);
+        cs.saveCommunity(post);
+
         result.put("likeCount", likeCount);
 
         return result;
     }
-
 }

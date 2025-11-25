@@ -315,15 +315,8 @@ public class ShService {
         if (optionalZzim.isPresent()) {
             // 이미 찜 존재
             return true; // 이미 존재 → ok
-        } else {
-            // 없으면 새로 생성
-            SH_zzim newZzim = new SH_zzim();
-            newZzim.setPost(postEntity);
-            newZzim.setMember(memberEntity);
-            szr.save(newZzim);
-
-            return false; // 새로 생성 → notOk
         }
+        return false;
     }
 
     public Integer getZzimCount(Integer postId) {

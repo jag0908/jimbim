@@ -23,6 +23,7 @@ public class ShPostMapper {
         resDto.setViewCount(post.getViewCount());
         resDto.setIndate(post.getIndate());
         resDto.setUpdateDate(post.getUpdateDate());
+        resDto.setSellEx(post.getSellEx());
 
         return resDto;
     }

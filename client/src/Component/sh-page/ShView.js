@@ -478,12 +478,7 @@ function ShView() {
                             postDetail.member.memberId != loginUser.member_id && 
                             <button className='btnEvent btnZZim' style={isZzim? {backgroundColor: "#f17575", color : "#fff"} : null} onClick={()=> {eventZzim();}}>찜</button>
                         }
-                        
-                        {
-                            postDetail &&
-                            postDetail.member.memberId != loginUser.member_id &&
-                            <button className='btnEvent btnLike'>좋</button>
-                        }
+
                        
                     </div>
 

@@ -15,4 +15,7 @@ public interface ChatRepository extends JpaRepository<ChatRoom, Integer> {
     List<ChatRoom> findAllBySellerIdOrBuyerId(Integer memberId, Integer memberId1);
 
     ChatRoom findByPostIdAndSellerIdAndBuyerId(Integer postId, Integer sellerId, Integer buyerId);
+
+
+    List<ChatRoom> findAllByPostId(Integer postId);
 }

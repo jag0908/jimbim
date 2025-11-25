@@ -15,6 +15,7 @@ function ShMain() {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState();
+    const isLoadingRef = useRef(false); // 동기적으로 로딩 상태 추적
 
     useEffect(()=> {
        
@@ -48,24 +49,44 @@ function ShMain() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         }
-    },[])
+    },[page, totalPage])
+    
     const handleScroll=()=>{
-        const scrollHeight = document.documentElement.scrollHeight - 5; 
+        // useRef로 동기적으로 로딩 상태 체크 (비동기 상태 업데이트 지연 문제 해결)
+        if (isLoadingRef.current) return; // 로딩 중이면 중복 호출 방지
+        
+        const scrollHeight = document.documentElement.scrollHeight; 
         const scrollTop = document.documentElement.scrollTop;  
         const clientHeight = document.documentElement.clientHeight; 
-        if( scrollTop + clientHeight >= scrollHeight ) {
-            if( Number(page) >= Number(totalPage)){return}
-            onPageMove( Number(page) + 1 );
+        
+        // 스크롤이 거의 바닥에 도달했을 때 (10px 여유)
+        if( scrollTop + clientHeight >= scrollHeight - 10 ) {
+            const nextPage = page + 1;
+            
+            // nextPage를 직접 체크하여 마지막 페이지 초과 방지
+            if( nextPage > totalPage || !totalPage ){ return; } // 마지막 페이지 초과면 리턴
+            
+            onPageMove( nextPage );
         }
     }
-    function onPageMove(page) {
-      axios.get(`/api/sh-page/sh-list/${page}`)
-        .then((result) => {
-            setShPostArr(prev => [...prev, ...result.data.postList.listArr]);
-
-        }).catch((err) => {
-            console.error(err);
-        });
+    
+    function onPageMove(nextPage) {
+        // 이미 로딩 중이거나 마지막 페이지를 초과하면 리턴
+        if (isLoadingRef.current || nextPage > totalPage) return;
+        
+        // 동기적으로 로딩 상태 설정 (다른 handleScroll 호출이 즉시 감지 가능)
+        isLoadingRef.current = true;
+        
+        axios.get(`/api/sh-page/sh-list/${nextPage}`)
+            .then((result) => {
+                setShPostArr(prev => [...prev, ...result.data.postList.listArr]);
+                setPage(nextPage); // 페이지 상태 업데이트
+            }).catch((err) => {
+                console.error(err);
+            }).finally(() => {
+                // 로딩 완료 시 ref와 state 모두 업데이트
+                isLoadingRef.current = false;
+            });
     }
 
 
@@ -135,7 +156,7 @@ function ShMain() {
           {
             categoryArr.map((category, i)=> {
               return (
-                <div className='list' key={i}>
+                <div className='list' key={category.category_id || i}>
                       <Link  to={`/sh-page/${category.category_id}`}>
                         <img src={`${baseURL}/sh_img/${i}.png`} alt={category.category_name} />
                         <span className='tit'>{category.category_name}</span>
@@ -151,12 +172,12 @@ function ShMain() {
         <div className='shPostWrap'>
             
           {
-            shPostArr.map((ShPost, i)=> {
+            shPostArr.map((ShPost)=> {
               return (
-                <div className='list' key={i}>
+                <div className='list' key={ShPost.postId}>
                   <Link to={`/sh-page/sh-view/${ShPost.postId}`}>
                       <div className='imgBox'>
-                        <img key={i} src={ShPost.firstFilePath && ShPost.firstFilePath} />
+                        <img src={ShPost.firstFilePath && ShPost.firstFilePath} alt={ShPost.title} />
                       </div>
             
                       <h3 className='data title'>{ShPost.title}</h3>

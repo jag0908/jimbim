@@ -5,7 +5,9 @@ import com.himedia.spserver.dto.ShPostDto;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.MemberRole;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.customer.Qna;
 import com.himedia.spserver.repository.MemberRepository;
+import com.himedia.spserver.repository.QnaRepository;
 import com.himedia.spserver.repository.SH_postRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ public class AdminService {
 
     private final MemberRepository mr;
     private final SH_postRepository spr;
+    private final QnaRepository qr;
 
     public HashMap<String, Object> getMemberList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -80,6 +83,31 @@ public class AdminService {
         return result;
     }
 
+    public HashMap<String, Object> getQnaList(int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = qr.findAll().size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "qnaId"));
+            Page<Qna> list = qr.findAll( pageable );
+            result.put("qnaList", list.getContent());
+        }else{
+            int count = qr.findAllByTitleContaining(key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "qnaId"));
+            Page<Qna> list = qr.findAllByTitleContaining( key, pageable );
+            result.put("qnaList", list.getContent());
+        }
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
+    }
 
     /// ///////////////////////
 

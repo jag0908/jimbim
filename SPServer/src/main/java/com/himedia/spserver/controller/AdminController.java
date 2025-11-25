@@ -49,4 +49,11 @@ public class AdminController {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getQnaList")
+    public HashMap<String, Object> getQnaList(@RequestParam("page") int page,
+                                              @RequestParam(value="key", required = false, defaultValue = "") String key){
+        return as.getQnaList(page, key);
+    }
+
 }

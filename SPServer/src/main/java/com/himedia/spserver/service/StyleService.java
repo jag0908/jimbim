@@ -1,12 +1,12 @@
 package com.himedia.spserver.service;
 
-import com.himedia.spserver.dto.MemberDTO;
-import com.himedia.spserver.dto.StyleFollowerCountDTO;
-import com.himedia.spserver.dto.StylePostDTO;
-import com.himedia.spserver.dto.StylePostHashtagDTO;
+import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Follow;
 import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.entity.SH.SH_File;
+import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.SH.SH_zzim;
 import com.himedia.spserver.entity.STYLE.*;
 import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,10 @@ public class StyleService {
     private final MemberRepository memberRepository;
     private final FileRepository fileRepository;
     private final FollowRepository followRepository;
+    private final ShZzimRepository shzzimRepository;
+    private final ShFileRepository shFileRepository;
     private final S3UploadService s3UploadService;
+
 
     public List<String> getAllImageUrls(STYLE_post post) {
         return fileRepository.findByPost(post)
@@ -619,6 +622,37 @@ public class StyleService {
                 .sorted((a, b) -> Long.compare((Long) b.get("followerCount"), (Long) a.get("followerCount")))
                 .limit(10)
                 .toList();
+    }
+
+    public List<SH_post> getZzimList(Integer memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        List<SH_zzim> zzimList = shzzimRepository.findAllByMember(member);
+
+        return zzimList.stream()
+                .map(SH_zzim::getPost)
+                .collect(Collectors.toList());
+    }
+
+    public List<ShPostResDto> getZzimPostsWithFirstImage(Integer memberId) {
+        List<SH_post> zzimPosts = getZzimList(memberId);
+
+        return zzimPosts.stream().map(post -> {
+            ShPostResDto dto = new ShPostResDto();
+            dto.setPostId(post.getPostId());
+            dto.setTitle(post.getTitle());
+            dto.setPrice(post.getPrice());
+
+            // SH_FileRepository에서 첫 번째 이미지 가져오기
+            List<SH_File> files = shFileRepository.findTop1ByPostOrderByFileIdAsc(post);
+            if (!files.isEmpty()) {
+                dto.setFirstFilePath(files.get(0).getPath());
+            } else {
+                dto.setFirstFilePath("/default_image.png");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 

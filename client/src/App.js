@@ -19,13 +19,16 @@ import Qna from './Component/customer/Qna'
 import WriteQna from './Component/customer/WriteQna'
 import QnaDetail from './Component/customer/QnaDetail'
 
+
 import StyleFeed from './Component/StyleFeed/StyleFeed'
 import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
 import StyleUser from './Component/StyleFeed/StyleUser'
 import StyleEdit from './Component/StyleFeed/StyleEdit'
 
+
 import ShMain from './Component/sh-page/ShMain'
+import ShMainCt from './Component/sh-page/ShMainCt'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
 import ShWrite from './Component/sh-page/ShWrite'
@@ -77,19 +80,22 @@ function App() {
 				<Route path="/styleUser/:userid" element={<StyleUser />} />
 				<Route path="/style/edit/:id" element={<StyleEdit />} />
 
+
+
 				{/* 정진 */}
 				<Route path="/sh-page" element={<ShMain />} />
+				<Route path="/sh-page/ct/:id" element={<ShMainCt />} />
 				<Route path='/sh-page/sh-write' element={<ShWrite />} />
 				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 				<Route path='/sh-page/sh-update/:id' element={<ShUpdate />} />
+
 
 
 				{/* 은지 */}
 				<Route path="/communityList" element={<CommunityList />} />
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
 				<Route path="/communityView/:num" element={<CommunityView />} />
-				<Route path="/updateCommunity" element={<UpdateCommunity />} />
-
+				<Route path="/updateCommunity/:num" element={<UpdateCommunity />} />
 
 			</Routes>
 		</div>

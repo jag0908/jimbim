@@ -1,11 +1,9 @@
 package com.himedia.spserver.controller;
 import com.himedia.spserver.dto.*;
-import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
-import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -71,17 +69,25 @@ public class ShController {
         return result;
     }
 
-    @GetMapping("/sh-list")
-    public HashMap<String, Object> shList() {
+    @GetMapping("/sh-list/{page}")
+    public HashMap<String, Object> shList(@PathVariable("page") int page, @RequestParam("searchVal") String searchVal) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("postList", ss.getPostList());
+        result.put("postList", ss.getPostList(page, searchVal));
 
+        return result;
+    }
+
+    @GetMapping("/sh-list/ct/{id}/{page}")
+    public HashMap<String, Object> ct(@PathVariable("id") Integer id, @PathVariable("page") Integer page , @RequestParam("searchVal") String searchVal) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("postList", ss.getCtPostList(id, page, searchVal));
         return result;
     }
 
     @PostMapping("/sh-view-count")
     public HashMap<String, Object> shViewCount(@RequestBody ShViewCountDTO shViewCountDTO) {
         HashMap<String, Object> result = new HashMap<>();
+
         ss.viewCount(shViewCountDTO);
         return  result;
     }
@@ -90,9 +96,9 @@ public class ShController {
     public HashMap<String, Object> shView(@PathVariable("id") Integer id) {
         HashMap<String, Object> result = new HashMap<>();
         ShPostResDto postData = ss.getPost(id);
-        SH_Category categoryName = ss.getCategoryList().get(postData.getCategoryId());
+        List<SH_Category> categoryArr = ss.getCategoryList();
         result.put("post", postData);
-        result.put("category", categoryName);
+        result.put("categoryArr", categoryArr);
 
         return result;
     }
@@ -111,7 +117,8 @@ public class ShController {
             @RequestParam("directYN") String directYN,
             @RequestParam("deliveryYN") String deliveryYN,
             @RequestParam(value = "deliveryPrice", required = false) Integer deliveryPrice,
-            @RequestParam("pMemnerId") Integer pMemnerId
+            @RequestParam("pMemnerId") Integer pMemnerId,
+            @RequestParam("sellEx") Integer sellEx
     ) throws CustomJWTException, IOException {
         HashMap<String, Object> result = new HashMap<>();
 
@@ -133,6 +140,7 @@ public class ShController {
         reqDto.setDeliveryYN(deliveryYN);
         reqDto.setDeliveryPrice(deliveryPrice);
         reqDto.setRmFiles(rmFiles);
+        reqDto.setSellEx(sellEx);
 
         SH_post post = ss.updatePost(reqDto);
         if (files == null || files.isEmpty()) {
@@ -154,6 +162,77 @@ public class ShController {
         HashMap<String, Object> msg = ss.deletePost(postId, claims);
 
         return msg;
+    }
+
+
+
+    //이삭 수정
+    @GetMapping("/user-sell-list/{memberId}")
+    public HashMap<String, Object> getUserSellPosts(@PathVariable("memberId") Integer memberId) {
+        System.out.println("memberId: " + memberId);
+        HashMap<String, Object> result = new HashMap<>();
+        List<ShPostResDto> posts = ss.getPostsByMemberId(memberId);
+        System.out.println("posts.size(): " + posts.size());
+        result.put("sellPosts", posts);
+        return result;
+    }
+
+
+    @PostMapping("/suggest")
+    public HashMap<String, Object> insertSuggest(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody ShSuggestDto reqDto
+    ) throws CustomJWTException {
+        HashMap<String, Object> result = new HashMap<>();
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+
+        ShSuggestDto resDto = ss.insertSuggest(claims, reqDto);
+
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+        return result;
+    }
+
+    @GetMapping("/suggest")
+    public HashMap<String, Object> getSuggest(@RequestParam("postId") Integer postId) {
+        HashMap<String, Object> result = new HashMap<>();
+        List<ShSuggestDto> resDto = ss.getSuggests(postId);
+        result.put("msg", "ok");
+        result.put("resDto", resDto);
+        return result;
+    }
+
+    @PostMapping("/appSuggest")
+    public HashMap<String, Object> appSuggest(@RequestParam("sid") Integer sid) {
+        HashMap<String, Object> result = new HashMap<>();
+        ss.appSuggest(sid);
+        return result;
+    }
+
+    @PostMapping("/zzim")
+    public HashMap<String, Object> zzim(@RequestBody ShZzimDto reqDto) {
+        HashMap<String, Object> result = new HashMap<>();
+        boolean exists = ss.insertZzim(reqDto);
+        result.put("msg", exists ? true : false);
+
+        return result;
+    }
+
+    @GetMapping("/zzim")
+    public HashMap<String, Object> getZzim(@RequestParam("postId") Integer postId, @RequestParam("memberId") Integer memberId) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("msg", ss.getZzim(postId, memberId));
+
+        return result;
+    }
+
+    @GetMapping("/zzimCount")
+    public HashMap<String, Object> getZzimCount(@RequestParam("postId") Integer postId) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("zzimCount", ss.getZzimCount(postId));
+        return result;
     }
 
 

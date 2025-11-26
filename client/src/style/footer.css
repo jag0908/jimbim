@@ -1,1 +1,39 @@
-#footer {height: 160px; background: #999;}
+#footer {background: #fafafa; border-top: 1px solid #ececec; color: #222; font-family: 'Noto Sans KR', sans-serif;}
+#footer .footer-inner {max-width: 1200px; margin: 0 auto; padding: 60px 40px; display: flex; flex-direction: column; gap: 32px;}
+
+#footer .footer-top {display: flex; gap: 60px; justify-content: space-between;}
+#footer .footer-column {flex: 1; min-width: 180px;}
+#footer .footer-column h4 {margin-bottom: 16px; font-size: 16px; font-weight: 600;}
+#footer .footer-column ul {list-style: none; display: flex; flex-direction: column; gap: 10px; color: #666; font-size: 14px;}
+
+#footer .footer-support {flex: 1.3; display: flex; flex-direction: column; gap: 6px; text-align: right;}
+#footer .footer-support .support-label {font-size: 14px; color: #777;}
+#footer .footer-support .support-number {font-size: 26px; font-weight: 600;}
+#footer .footer-support p {font-size: 13px; color: #777;}
+#footer .footer-support small {font-size: 12px; color: #999;}
+#footer .footer-support button {align-self: flex-end; margin-top: 8px; padding: 10px 26px; border: 1px solid #222; border-radius: 4px; background: #222; color: #fff; font-size: 14px; cursor: pointer;}
+
+#footer .footer-divider {width: 100%; height: 1px; background: #eee;}
+
+#footer .footer-links {display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: #666;}
+#footer .footer-links a {color: inherit;}
+#footer .footer-links .bold {font-weight: 600; color: #111;}
+
+#footer .footer-company p {font-size: 13px; color: #666; line-height: 1.6;}
+
+#footer .footer-notice {font-size: 12px; color: #777; line-height: 1.6;}
+#footer .footer-notice strong {display: block; margin-bottom: 6px; color: #444;}
+
+#footer .footer-disclaimer {font-size: 12px; color: #999; line-height: 1.7;}
+
+#footer .footer-bottom {display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #aaa;}
+#footer .sns-icons {display: flex; gap: 12px;}
+#footer .sns-icons span {width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666;}
+
+@media (max-width: 768px) {
+  #footer .footer-inner {padding: 40px 20px;}
+  #footer .footer-top {flex-direction: column; gap: 32px;}
+  #footer .footer-support {text-align: left;}
+  #footer .footer-support button {align-self: flex-start;}
+  #footer .footer-bottom {flex-direction: column; gap: 12px;}
+}

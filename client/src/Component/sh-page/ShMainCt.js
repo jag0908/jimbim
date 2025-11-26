@@ -19,15 +19,16 @@ function ShMain() {
     const isLoadingRef = useRef(false); // 동기적으로 로딩 상태 추적
 
     useEffect(()=> {
+      console.log("아이디변경")
       setPage(1);
       selSearchVal("");
       startApi();
         
-    }, []);
+    }, [id]);
 
     async function startApi() {
-      
-      await axios.get(`/api/sh-page/sh-list/1`, {params:{searchVal: ""}})
+
+      await axios.get(`/api/sh-page/sh-list/ct/${id}/1` , {params:{searchVal: ""}})
         .then((result) => {
             // console.log([...result.data.postList]);
             setShPostArr([...result.data.postList.listArr]);
@@ -46,16 +47,17 @@ function ShMain() {
     }
 
     async function searchPost() {
-      setPage(1);  // 페이지 초기화
-      await axios.get(`/api/sh-page/sh-list/${page}`, {params:{searchVal}})
-        .then((result) => {
-            // console.log([...result.data.postList]);
-            setShPostArr([...result.data.postList.listArr]);
-            setTotalPage(Number(result.data.postList.totalPages));
-        }).catch((err) => {
-            console.error(err);
-        });
+        setPage(1);  // 페이지 초기화
+        await axios.get(`/api/sh-page/sh-list/ct/${id}/${page}`, {params:{searchVal}})
+          .then((result) => {
+              // console.log([...result.data.postList]);
+              setShPostArr([...result.data.postList.listArr]);
+              setTotalPage(Number(result.data.postList.totalPages));
+          }).catch((err) => {
+              console.error(err);
+          });
     }
+
 
 
     useEffect(()=>{
@@ -63,7 +65,7 @@ function ShMain() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         }
-    },[page, totalPage])
+    },[id, page, totalPage])
     
     const handleScroll=()=>{
         // useRef로 동기적으로 로딩 상태 체크 (비동기 상태 업데이트 지연 문제 해결)
@@ -91,7 +93,7 @@ function ShMain() {
         // 동기적으로 로딩 상태 설정 (다른 handleScroll 호출이 즉시 감지 가능)
         isLoadingRef.current = true;
         
-        axios.get(`/api/sh-page/sh-list/${nextPage}`, {params:{searchVal}})
+        axios.get(`/api/sh-page/sh-list/ct/${id}/${nextPage}` , {params:{searchVal}})
             .then((result) => {
                 setShPostArr(prev => [...prev, ...result.data.postList.listArr]);
                 setPage(nextPage); // 페이지 상태 업데이트
@@ -165,18 +167,18 @@ function ShMain() {
   return (
     <div className='shMain'>
 
-      <div className="search-bar"><input placeholder="중고물품을 검색해보세요" aria-label="메인 검색" type="text" value={searchVal} onChange={(e)=> {selSearchVal(e.currentTarget.value)}}/>
+        <div className="search-bar"><input placeholder="중고물품을 검색해보세요" aria-label="메인 검색" type="text" value={searchVal} onChange={(e)=> {selSearchVal(e.currentTarget.value)}}/>
           <button type="button" onClick={()=> {searchPost();}}>검색</button>
       </div>
  
 
         <div className='menuWrap'>
-            <div className='list'>
-                  <Link to={`/sh-page`}>
-                    <img src={`${baseURL}/sh_img/1.png`} alt={"전체"} />
-                    <span className='tit'>전체</span>
-                  </Link>
-            </div>
+           <div className='list'>
+                <Link to={`/sh-page`}>
+                  <img src={`${baseURL}/sh_img/1.png`} alt={"전체"} />
+                  <span className='tit'>전체</span>
+                </Link>
+          </div>
           {
             categoryArr.map((category, i)=> {
               return (

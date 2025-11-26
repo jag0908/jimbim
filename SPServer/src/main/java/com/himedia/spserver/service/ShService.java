@@ -1,16 +1,16 @@
 package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.*;
-import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SH.SH_Category;
-import com.himedia.spserver.entity.SH.SH_File;
-import com.himedia.spserver.entity.SH.SH_post;
-import com.himedia.spserver.entity.SH.ShViewHistory;
+import com.himedia.spserver.entity.SH.*;
 import com.himedia.spserver.mapper.ShPostMapper;
+import com.himedia.spserver.mapper.ShSuggestMapper;
 import com.himedia.spserver.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +27,11 @@ public class ShService {
     private final S3UploadService sus;
     private final ShFileRepository sfr;
     private final ShViewRepository svr;
-    private final ShMemberRepository smr;
+    private final ShSuggestRepository ssr;
+    private final ShSuggestMapper ssm;
+    private final ShZzimRepository szr;
+    private final MemberRepository mr;
+
 
 
     private final ShPostMapper spm;
@@ -39,8 +43,12 @@ public class ShService {
 
 
     public SH_post insertPost(ShPostWriteReqDto reqDto) {
-        Member member = new Member();
-        member.setMember_id(reqDto.getMemberId());
+//        Member member = new Member();
+//        member.setMember_id(reqDto.getMemberId());
+
+
+        Member member = mr.findById(reqDto.getMemberId())
+                .orElseThrow(() -> new RuntimeException("Member not found")); //이삭 수정
 
         SH_post shPost = new SH_post();
         shPost.setMember(member);
@@ -82,9 +90,26 @@ public class ShService {
         }
     }
 
-    public List<ShPostResDto> getPostList() {
-        List<SH_post> posts = spr.findAllByOrderByIndateDesc();
-        List<ShPostResDto> result = new ArrayList<>();
+//    public List<ShPostResDto> getPostList(int page) {
+    public HashMap<String, Object> getPostList(int page, String searchVal) {
+
+        Pageable pageable = PageRequest.of(page-1, 10);
+        Page<SH_post> postsPage;
+        if (searchVal == null || searchVal.isEmpty()) {
+            postsPage = spr.findAllByOrderByIndateDesc(pageable);
+
+        } else  {
+            postsPage = spr.findByTitleContainingOrContentContainingOrderByIndateDesc(searchVal, searchVal, pageable);
+        }
+        List<SH_post> posts = postsPage.getContent();;
+        long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
+        int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수
+        HashMap<String, Object> result = new HashMap<>();
+
+
+
+//        List<SH_post> posts = spr.findAllByOrderByIndateDesc();
+        List<ShPostResDto> resultArr = new ArrayList<>();
 
         for (SH_post post : posts) {
 
@@ -96,8 +121,47 @@ public class ShService {
                 mapper.setFirstFilePath(firstFile.getPath());
             }
 
-            result.add(mapper);
+            resultArr.add(mapper);
         }
+
+        result.put("totalPages", totalPages);
+        result.put("listArr", resultArr);
+        return result;
+    }
+
+
+    public Object getCtPostList(Integer id, Integer page,  String searchVal) {
+        Pageable pageable = PageRequest.of(page-1, 10);
+
+        Page<SH_post> postsPage;
+        if (searchVal == null || searchVal.isEmpty()) {
+
+            postsPage = spr.findAllByCategoryIdOrderByIndateDesc(id, pageable);
+        } else  {
+            postsPage = spr.findByCategoryIdAndTitleContainingOrCategoryIdAndContentContainingOrderByIndateDesc(id, searchVal, id, searchVal, pageable);
+        }
+        List<SH_post> posts = postsPage.getContent();;
+        long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
+        int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수
+        HashMap<String, Object> result = new HashMap<>();
+
+        List<ShPostResDto> resultArr = new ArrayList<>();
+
+        for (SH_post post : posts) {
+
+            ShPostResDto mapper = spm.toResDto(post);
+
+            // 파일 최신 1개만 조회
+            SH_File firstFile = sfr.findTop1ByPost_PostIdOrderByIndateAsc(mapper.getPostId());
+            if (firstFile != null) {
+                mapper.setFirstFilePath(firstFile.getPath());
+            }
+
+            resultArr.add(mapper);
+        }
+
+        result.put("totalPages", totalPages);
+        result.put("listArr", resultArr);
         return result;
     }
 
@@ -157,6 +221,7 @@ public class ShService {
         post.setDirectYN(reqDto.getDirectYN());
         post.setDeliveryYN(reqDto.getDeliveryYN());
         post.setDeliveryPrice(reqDto.getDeliveryPrice());
+        post.setSellEx(reqDto.getSellEx());
         if (reqDto.getDeliveryPrice() == null) {
             post.setDeliveryPrice(0);
         }
@@ -190,4 +255,120 @@ public class ShService {
         result.put("msg", "notOk");
         return result;
     }
+
+
+
+    //이삭 수정
+    public List<ShPostResDto> getPostsByMemberId(Integer memberId) {
+        // 해당 회원의 게시글 조회
+        List<SH_post> posts = spr.findByMemberId(memberId);
+
+        List<ShPostResDto> dtos = new ArrayList<>();
+
+        for (SH_post post : posts) {
+            ShPostResDto dto = new ShPostResDto();
+            dto.setPostId(post.getPostId());
+            dto.setTitle(post.getTitle());
+            dto.setPrice(post.getPrice());
+
+            // 파일 중 첫 번째 이미지 조회
+            List<SH_File> files = sfr.findTop1ByPostOrderByFileIdAsc(post);
+            if (!files.isEmpty()) {
+                dto.setFirstFilePath(files.get(0).getPath()); // DTO 기존 필드 사용
+            }
+
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
+    public ShSuggestDto insertSuggest(Map<String, Object> claims, ShSuggestDto reqDto) {
+
+        reqDto = ssm.toReqDto(claims, reqDto);
+
+//        Optional<SH_Suggest> isSuggest = ssr.findByMemberIdAndPostId(reqDto.getMemberId(), reqDto.getPostId());
+//        if(isSuggest.isPresent()) {
+//            isSuggest.get().setSuggest_price(reqDto.getSuggest_price());
+//
+//            return ssm.toResDto(isSuggest.get());
+//        } else  {
+            SH_Suggest suggest = new SH_Suggest();
+            suggest.setMemberId(reqDto.getMemberId());
+            suggest.setUserId(reqDto.getUserId());
+            suggest.setMemberName(reqDto.getMemberName());
+            suggest.setMemberProfileImg(reqDto.getMemberProfileImg());
+            suggest.setPostId(reqDto.getPostId());
+            suggest.setSuggest_price(reqDto.getSuggest_price());
+            ssr.save(suggest);
+
+            return ssm.toResDto(suggest);
+//        }
+    }
+
+    public List<ShSuggestDto> getSuggests(Integer postId) {
+        List<SH_Suggest> suggests = ssr.findAllByPostId(postId);
+
+        List<ShSuggestDto> result = new ArrayList<>();
+        for(SH_Suggest suggest:suggests) {
+            result.add(ssm.toResDto(suggest));
+        }
+
+        return result;
+
+    }
+
+    public void appSuggest(Integer sid) {
+        Optional<SH_Suggest> suggestEntity = ssr.findById(sid);
+        suggestEntity.get().setApproved(1);
+    }
+
+    public boolean insertZzim(ShZzimDto reqDto) {
+        Member memberEntity = mr.findById(reqDto.getMemberId())
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        SH_post postEntity = spr.findById(reqDto.getPostId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Optional<SH_zzim> optionalZzim = szr.findByPostAndMember(postEntity, memberEntity);
+
+        if (optionalZzim.isPresent()) {
+            // 이미 찜 존재
+            szr.delete(optionalZzim.get());
+            return false; // 이미 존재 → ok
+        } else {
+            // 없으면 새로 생성
+            SH_zzim newZzim = new SH_zzim();
+            newZzim.setPost(postEntity);
+            newZzim.setMember(memberEntity);
+            szr.save(newZzim);
+
+            return true; // 새로 생성 → notOk
+        }
+    }
+
+    public boolean getZzim(Integer postId, Integer memberId) {
+        Member memberEntity = mr.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        SH_post postEntity = spr.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Optional<SH_zzim> optionalZzim = szr.findByPostAndMember(postEntity, memberEntity);
+
+        if (optionalZzim.isPresent()) {
+            // 이미 찜 존재
+            return true; // 이미 존재 → ok
+        }
+        return false;
+    }
+
+    public Integer getZzimCount(Integer postId) {
+        SH_post postEntity = spr.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        List<SH_zzim> zzimCount = szr.findAllByPost(postEntity);
+
+        return zzimCount.size();
+    }
+
+
 }
+

@@ -19,6 +19,7 @@ public class ShPostResDto {
     private Integer viewCount;
     private Timestamp indate;
     private Timestamp updateDate;
+    private Integer sellEx;
 
     private List<ShFileDto> files;
     private String firstFilePath;

@@ -19,25 +19,44 @@ import java.util.List;
 public class CommunityReplyService {
 
     private final CommunityReplyRepository crr;
-
     private final MemberRepository mr;
-
     private final CommunityListRepository cr;
 
     // 댓글 리스트 조회
     @Transactional(readOnly = true)
     public List<CommunityReplyResponseDTO> getReplyList(int cpostId) {
         List<C_Reply> replies = crr.findByCpostCpostIdOrderByReplyId(cpostId);
-        // 엔티티 → DTO 변환
-        return replies.stream()
-                .map(r -> new CommunityReplyResponseDTO(
-                        r.getReplyId(),
-                        r.getContent(),
-                        r.getMember().getUserid(),
-                        r.getMember().getMember_id()
-                ))
+
+        // 부모 댓글만 가져오기
+        List<C_Reply> parentReplies = replies.stream()
+                .filter(r -> r.getParentReply() == null)
+                .toList();
+
+        return parentReplies.stream()
+                .map(this::mapToDTO)
                 .toList();
     }
+
+    private CommunityReplyResponseDTO mapToDTO(C_Reply reply) {
+        List<CommunityReplyResponseDTO> children = reply.getChildReplies().stream()
+                .map(this::mapToDTO)
+                .toList();
+
+        // null-safe 익명 처리
+        boolean isAnonymous = Boolean.TRUE.equals(reply.getAnonymous());
+
+        return new CommunityReplyResponseDTO(
+                reply.getReplyId(),
+                reply.getContent(),
+                isAnonymous ? "익명" : reply.getMember().getUserid(),
+                reply.getMember().getMember_id(),
+                reply.getIndate().toString(),
+                reply.getParentReply() != null ? reply.getParentReply().getReplyId() : null,
+                children,
+                isAnonymous // DTO에 익명 여부 포함
+        );
+    }
+
 
     // 댓글 추가
     @Transactional
@@ -53,15 +72,34 @@ public class CommunityReplyService {
         reply.setMember(member);
         reply.setCpost(post);
 
-        crr.saveAndFlush(reply); //수정: saveAndFlush로 즉시 DB 반영
+        // ★ 익명 여부 세팅
+        reply.setAnonymous(dto.getAnonymous() != null && dto.getAnonymous());
+
+        if (dto.getParentReplyId() != null) {
+            C_Reply parent = crr.findById(dto.getParentReplyId())
+                    .orElseThrow(() -> new RuntimeException("부모 댓글 없음"));
+            reply.setParentReply(parent);
+        }
+
+        crr.saveAndFlush(reply);
     }
 
     // 댓글 삭제
     @Transactional
     public void deleteReply(int replyId) {
         C_Reply reply = crr.findByReplyId(replyId);
-        if(reply != null) {
-            crr.delete(reply);
+        if (reply != null) {
+            deleteReplyRecursively(reply);
         }
     }
+
+    private void deleteReplyRecursively(C_Reply reply) {
+        if (reply.getChildReplies() != null) {
+            for (C_Reply child : reply.getChildReplies()) {
+                deleteReplyRecursively(child);
+            }
+        }
+        crr.delete(reply);
+    }
+
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -11,11 +11,14 @@ function CommunityView() {
     const loginUser = useSelector(state => state.user);
     const [community, setCommunity] = useState({});
     const [replyList, setReplyList] = useState([]);
-    const [rContent, setRContent] = useState('');
+    const [rContent, setRContent] = useState(''); // 최상위 댓글
+    const [replyInputs, setReplyInputs] = useState({}); // 답글용 입력창
+    const replyRefs = useRef({}); // 답글 입력창 ref
     const [loading, setLoading] = useState(true);
     const [liked, setLiked] = useState(false);
     const navigate = useNavigate();
     const { num } = useParams();
+    const [anonymousTop, setAnonymousTop] = useState(false); // 최상위 댓글 익명
 
     useEffect(() => {
         const fetchCommunityData = async () => {
@@ -42,6 +45,7 @@ function CommunityView() {
         fetchCommunityData();
     }, [num, loginUser?.member_id]);
 
+    // 최상위 댓글 작성
     const addReply = async () => {
         if (!loginUser?.member_id) return alert('로그인이 필요한 서비스입니다.');
         if (!rContent.trim()) return alert('댓글을 입력해주세요.');
@@ -50,23 +54,90 @@ function CommunityView() {
             await jaxios.post(`${baseURL}/communityReply/addReply`, {
                 content: rContent,
                 memberId: loginUser.member_id,
-                cpostId: Number(num)
+                cpostId: Number(num),
+                parentReplyId: null,
+                anonymous: anonymousTop
             });
 
             const result = await axios.get(`${baseURL}/communityReply/getReply/${num}`);
             setReplyList(result.data.replyList || []);
             setRContent('');
+            setAnonymousTop(false); // 체크박스 초기화
         } catch (err) {
             console.error('댓글 작성 실패:', err);
             alert('댓글 작성에 실패했습니다.');
         }
     };
 
+    const handleReplyInputChange = (parentId, value) => {
+        setReplyInputs(prev => ({ ...prev, [parentId]: value }));
+    };
+
+    const openReplyInput = (parentId) => {
+        setReplyInputs(prev => ({ ...prev, [parentId]: prev[parentId] ?? { content: '', anonymous: false } }));
+        setTimeout(() => {
+            replyRefs.current[parentId]?.focus();
+        }, 0);
+    };
+
+    // 답글 제출
+    const submitReply = async (parentId) => {
+        const input = replyInputs[parentId];
+        const content = input.content;
+        const anonymous = input.anonymous;
+
+        if (!loginUser?.member_id) return alert('로그인이 필요한 서비스입니다.');
+        if (!content || !content.trim()) return alert('댓글을 입력해주세요.');
+
+        try {
+            await jaxios.post(`${baseURL}/communityReply/addReply`, {
+                content,
+                memberId: loginUser.member_id,
+                cpostId: Number(num),
+                parentReplyId: parentId,
+                anonymous
+            });
+
+            const result = await axios.get(`${baseURL}/communityReply/getReply/${num}`);
+            setReplyList(result.data.replyList || []);
+
+            setReplyInputs(prev => {
+                const updated = { ...prev };
+                delete updated[parentId];
+                return updated;
+            });
+        } catch (err) {
+            console.error('댓글 작성 실패:', err);
+            alert('댓글 작성에 실패했습니다.');
+        }
+    };
+
+    const cancelReply = (parentId) => {
+        setReplyInputs(prev => {
+            const updated = { ...prev };
+            delete updated[parentId];
+            return updated;
+        });
+    };
+
+    // 댓글 삭제 (재귀적으로 자식 댓글도 처리)
     const deleteReply = async (replyId) => {
         if (!window.confirm('해당 댓글을 삭제하시겠습니까?')) return;
+
         try {
             await jaxios.delete(`${baseURL}/communityReply/deleteReply/${replyId}`);
-            setReplyList(prev => prev.filter(reply => reply.replyId !== replyId));
+
+            const removeReplyRecursively = (replies, id) => {
+                return replies
+                    .filter(r => r.replyId !== id)
+                    .map(r => ({
+                        ...r,
+                        children: r.children ? removeReplyRecursively(r.children, id) : []
+                    }));
+            };
+
+            setReplyList(prev => removeReplyRecursively(prev, replyId));
+
             alert('댓글이 삭제되었습니다.');
         } catch (err) {
             console.error('댓글 삭제 실패:', err);
@@ -103,6 +174,79 @@ function CommunityView() {
         }
     };
 
+    const formatDateTime = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        const ss = String(date.getSeconds()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+    };
+
+    const renderReplies = (replies, level = 0) => {
+        return replies.map(reply => (
+            <div key={reply.replyId} className="reply-item" style={{ marginLeft: level * 20 }}>
+                <div className="communityView-reply-header">
+                    <span className="communityView-reply-user">{reply.anonymous ? '익명' : reply.userid}</span>
+                    <span className="communityView-reply-time">{formatDateTime(reply.indate)}</span>
+                </div>
+                <div className="communityView-reply-content">
+                    {level === 0 
+                        ? reply.content 
+                        : `@${reply.anonymous ? '익명' : reply.userid} ${reply.content}`}
+                </div>
+                <div className="communityView-reply-actions">
+                    {loginUser?.member_id && (
+                        <button onClick={() => openReplyInput(reply.replyId)}>답글</button>
+                    )}
+                    {Number(reply.memberId) === Number(loginUser?.member_id) && (
+                        <button onClick={() => deleteReply(reply.replyId)}>삭제</button>
+                    )}
+                </div>
+
+                {replyInputs[reply.replyId] !== undefined && (
+                    <div className="communityView-reply-input" style={{ marginTop: 6 }}>
+                        <span className="fixed-user">@{loginUser.userid}</span>
+                        <textarea
+                            ref={el => replyRefs.current[reply.replyId] = el}
+                            rows="2"
+                            value={replyInputs[reply.replyId]?.content || ''}
+                            onChange={(e) => handleReplyInputChange(reply.replyId, {
+                                ...replyInputs[reply.replyId],
+                                content: e.target.value
+                            })}
+                            placeholder="댓글을 입력하세요."
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    submitReply(reply.replyId);
+                                }
+                            }}
+                        />
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={replyInputs[reply.replyId]?.anonymous || false}
+                                onChange={() => handleReplyInputChange(reply.replyId, {
+                                    ...replyInputs[reply.replyId],
+                                    anonymous: !(replyInputs[reply.replyId]?.anonymous || false)
+                                })}
+                            />
+                            익명
+                        </label>
+                        <button onClick={() => submitReply(reply.replyId)}>작성</button>
+                        <button onClick={() => cancelReply(reply.replyId)} className="cancel">취소</button>
+                    </div>
+                )}
+
+                {reply.children && reply.children.length > 0 && renderReplies(reply.children, level + 1)}
+            </div>
+        ));
+    };
+
     if (loading) return <div>로딩 중...</div>;
     if (!community.cpostId && !loading) return <div>존재하지 않는 게시물입니다.</div>;
 
@@ -114,14 +258,14 @@ function CommunityView() {
                 <div className="title">{community.title || '제목 없음'}</div>
                 <div className="info-group">
                     <div>작성자: {community.member?.userid || '알수없음'}</div>
-                    <div>{community.indate ? community.indate.substring(0, 10) : ''}</div>
+                    <div>{formatDateTime(community.indate)}</div>
                     <div>조회수: <span className="count">{community.readcount || 0}</span></div>
                     <div>추천수: <span className="count">{community.c_like || 0}</span></div>
                     <div>댓글수: <span className="count">{replyList.length}</span></div>
                 </div>
             </div>
 
-            <div className='communityView-field'>
+            <div className="communityView-field">
                 <label>내용</label>
                 <div className="communityView-content">{community.content || ''}</div>
             </div>
@@ -163,23 +307,26 @@ function CommunityView() {
                         onChange={(e) => setRContent(e.target.value)}
                         placeholder={loginUser?.member_id ? "댓글을 입력하세요." : "※ 댓글 작성은 로그인 후 이용 가능합니다."}
                         disabled={!loginUser?.member_id}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                addReply();
+                            }
+                        }}
                     />
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={anonymousTop}
+                            onChange={() => setAnonymousTop(!anonymousTop)}
+                        />
+                        익명
+                    </label>
                     <button onClick={addReply} disabled={!loginUser?.member_id}>작성</button>
                 </div>
 
                 <div className="communityView-reply-list">
-                    {replyList.map((reply) => (
-                        <div key={reply.replyId} className="reply-item">
-                            <div className="communityView-reply-header">
-                                <span className="communityView-reply-user">{reply.userid || reply.member?.userid || '알수없음'}</span>
-                                <span className="communityView-reply-time">{/* 작성 시간 */}</span>
-                            </div>
-                            <div className="communityView-reply-content">{reply.content}</div>
-                            {Number(reply.memberId) === Number(loginUser?.member_id) && (
-                                <button className="communityView-reply-delete" onClick={() => deleteReply(reply.replyId)}>삭제</button>
-                            )}
-                        </div>
-                    ))}
+                    {renderReplies(replyList)}
                 </div>
             </div>
         </div>

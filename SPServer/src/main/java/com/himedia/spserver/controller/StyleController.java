@@ -5,6 +5,8 @@ import com.himedia.spserver.dto.MemberDTO;
 import com.himedia.spserver.dto.ShPostResDto;
 import com.himedia.spserver.dto.StylePostDTO;
 import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.entity.SH.SH_File;
+import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
 import com.himedia.spserver.repository.FollowRepository;
 import com.himedia.spserver.repository.MemberRepository;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/style")
@@ -188,34 +191,6 @@ public class StyleController {
         }
     }
 
-//    @PostMapping("/follow")
-//    public ResponseEntity<?> toggleFollow(
-//            @RequestBody Map<String, String> body,
-//            @AuthenticationPrincipal MemberDTO memberDTO) {
-//
-//        if (memberDTO == null) {
-//            return ResponseEntity.status(401).body(Map.of("error", "REQUIRE_LOGIN"));
-//        }
-//
-//        String targetUserid = body.get("targetUserid");
-//        boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
-//
-//        return ResponseEntity.ok(Map.of(
-//                "followed", followed,
-//                "message", followed ? "팔로우 성공" : "팔로우 취소"
-//        ));
-//    }
-//
-//    @GetMapping("/follow/{targetUserid}")
-//    public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
-//                                         @AuthenticationPrincipal MemberDTO memberDTO) {
-//        if (memberDTO == null) {
-//            return ResponseEntity.ok(Map.of("followed", false));
-//        }
-//
-//        boolean followed = styleService.isFollowing(memberDTO.getUserid(), targetUserid);
-//        return ResponseEntity.ok(Map.of("followed", followed));
-//    }
 
 
     @DeleteMapping("/post/{spostId}")
@@ -257,5 +232,12 @@ public class StyleController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
+
+    @GetMapping("/zzim-list/{memberId}")
+    public List<ShPostResDto> getZzimList(@PathVariable Integer memberId) {
+        return styleService.getZzimPostsWithFirstImage(memberId);
+    }
+
+
 }
 

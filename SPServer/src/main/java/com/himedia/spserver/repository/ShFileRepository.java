@@ -21,4 +21,6 @@ public interface ShFileRepository extends JpaRepository<SH_File, Integer> {
 
     //이삭 수정
     List<SH_File> findTop1ByPostOrderByFileIdAsc(SH_post post);
+
+
 }

@@ -91,11 +91,16 @@ public class ShService {
     }
 
 //    public List<ShPostResDto> getPostList(int page) {
-    public HashMap<String, Object> getPostList(int page) {
+    public HashMap<String, Object> getPostList(int page, String searchVal) {
 
         Pageable pageable = PageRequest.of(page-1, 10);
+        Page<SH_post> postsPage;
+        if (searchVal == null || searchVal.isEmpty()) {
+            postsPage = spr.findAllByOrderByIndateDesc(pageable);
 
-        Page<SH_post> postsPage = spr.findAllByOrderByIndateDesc(pageable);
+        } else  {
+            postsPage = spr.findByTitleContainingOrContentContainingOrderByIndateDesc(searchVal, searchVal, pageable);
+        }
         List<SH_post> posts = postsPage.getContent();;
         long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
         int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수
@@ -124,10 +129,17 @@ public class ShService {
         return result;
     }
 
-    public Object getCtPostList(Integer id, Integer page) {
+
+    public Object getCtPostList(Integer id, Integer page,  String searchVal) {
         Pageable pageable = PageRequest.of(page-1, 10);
 
-        Page<SH_post> postsPage = spr.findAllByCategoryIdOrderByIndateDesc(id, pageable);
+        Page<SH_post> postsPage;
+        if (searchVal == null || searchVal.isEmpty()) {
+
+            postsPage = spr.findAllByCategoryIdOrderByIndateDesc(id, pageable);
+        } else  {
+            postsPage = spr.findByCategoryIdAndTitleContainingOrCategoryIdAndContentContainingOrderByIndateDesc(id, searchVal, id, searchVal, pageable);
+        }
         List<SH_post> posts = postsPage.getContent();;
         long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
         int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수

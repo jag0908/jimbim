@@ -41,6 +41,7 @@ public class ShPostMapper {
         resDto.setViewCount(post.get().getViewCount());
         resDto.setIndate(post.get().getIndate());
         resDto.setUpdateDate(post.get().getUpdateDate());
+        resDto.setSellEx(post.get().getSellEx());
 
         ShMemberDto mdto = new ShMemberDto();
         mdto.setEmail(post.get().getMember().getEmail());

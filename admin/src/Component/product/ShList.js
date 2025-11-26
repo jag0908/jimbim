@@ -51,6 +51,7 @@ function ShList() {
                 arr.push(i);
             }
             setBeginEnd( [...arr] )
+            console.log('paging', result.data.paging)
         })
         .catch((err)=>{console.error(err)})
     }

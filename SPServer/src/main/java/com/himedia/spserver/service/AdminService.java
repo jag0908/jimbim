@@ -9,6 +9,7 @@ import com.himedia.spserver.entity.customer.Qna;
 import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.repository.QnaRepository;
 import com.himedia.spserver.repository.SH_postRepository;
+import com.himedia.spserver.repository.ShPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,19 +64,20 @@ public class AdminService {
         paging.setDisplayPage(10);
         paging.setDisplayRow(10);
         if( key.equals("") ) {
-            int count = spr.findAll().size();
+            int count = spr.findWithMember().size();
             paging.setTotalCount(count);
             paging.calPaging();
 
             Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "postId"));
-            Page<SH_post> list = spr.findAll( pageable ); /// 문제발생
+            Page<SH_post> list = spr.findWithMember( pageable );
+
             result.put("shList", list.getContent());
         }else{
-            int count = spr.findByTitleContaining(key).size();
+            int count = spr.findByTitleContainingWithMember(key).size();
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
-            Page<SH_post> list = spr.findByTitleContaining( key, pageable );
+            Page<SH_post> list = spr.findByTitleContainingWithMember( key, pageable );
             result.put("shList", list.getContent());
         }
         result.put("paging", paging);

@@ -23,4 +23,6 @@ public interface ShPostRepository extends JpaRepository<SH_post, Integer> {
     //이삭 수정
     @Query(value = "SELECT * FROM SH_post WHERE memberid = :memberId", nativeQuery = true)
     List<SH_post> findByMemberId(Integer memberId);
+
+    Page<SH_post> findAllByCategoryIdOrderByIndateDesc(Integer id, Pageable pageable);
 }

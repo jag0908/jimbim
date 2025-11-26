@@ -28,7 +28,7 @@ function ShView() {
     const navigate = useNavigate();
 
     const [postDetail, setPostDetail] = useState(null);
-    const [category, setCategory] = useState(null);
+    const [categoryArr, setCategoryArr] = useState(null);
 
     const [disPlayYN, setDisplayYN] = useState({display: "none"}); 
 
@@ -51,7 +51,7 @@ function ShView() {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
             console.log(res.data);
             setPostDetail(res.data.post);
-            setCategory(res.data.category.category_name);
+            setCategoryArr(res.data.categoryArr);
         } catch (err) {
             console.error(err);
         }
@@ -286,7 +286,7 @@ function ShView() {
     <div className='shView'>
         <div className='viewWrap'>
             <div className='top'>
-                <div className='catetory'>[{category && category}]</div>
+                <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId) - 1].category_name}]</div>
                 <h4 className='tit'>{postDetail?postDetail.title:<Lodding />}</h4>
             </div>
 
@@ -405,7 +405,7 @@ function ShView() {
                         </h2>
                     </div>
                     <div className='dataBoxWrap dobule'>
-                        <div className='catetory'>[{category && category}]</div>
+                        <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId) - 1].category_name}]</div>
                         <div className='date'>{postDetail && formatDateTime(postDetail.indate)}</div>
                     </div>
                     <div className="dataBoxWrap">

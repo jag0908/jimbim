@@ -9,7 +9,7 @@ function AddressList() {
     const loginUser = useSelector( state=>state.user )
     const navigate = useNavigate();
     
-    const [address_id, setAddress_id] = useState(-1)
+    const [addressId, setAddressId] = useState(-1)
     // -1 : 기본값, -2 : 추가폼, 1이상 : 해당아이디의 수정폼
 
     const [address_name, setAddress_name]=useState('')
@@ -21,7 +21,10 @@ function AddressList() {
 
     const [addressList, setAddressList]=useState([])
 
-    //const [member, setMember] = useState({});
+    const [paging, setPaging]=useState({});
+    const [beginEnd, setBeginEnd]=useState([])
+
+    const [member, setMember] = useState({});
 
     const editStyle = {
         border: '#888888 3px double',
@@ -35,30 +38,48 @@ function AddressList() {
                 alert("로그인이 필요한 서비스입니다")
                 navigate("/")
             }else{
-                console.log(loginUser)
-                // jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
-                // .then((result)=>{
-                //     setMember(result.data.member)
-                // }).catch((err)=>{ console.error(err);  })
-
-                jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id}})
+                jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
                 .then((result)=>{
+                    setMember(result.data.member)
+                }).catch((err)=>{ console.error(err);  })
+
+                jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id, page:1}})
+                .then((result)=>{
+                    console.log(result.data)
                     setAddressList(result.data.addressList)
+                    setPaging( result.data.paging )
+                    let arr = [];
+                    for( let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
+                        arr.push(i);
+                    }
+                    setBeginEnd( [...arr] )
                 })
                 .catch((err)=>{console.error(err)})
             }
         },[]
     )
+    function onPageMove(page){
+        jaxios.get(`/api/mypage/getAddressList`, {params:{member_id:member.member_id, page}})
+        .then((result)=>{
+            setAddressList(result.data.addressList)
+            setPaging( result.data.paging )
+            const pageArr = [];
+            for(let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
+                pageArr.push(i);
+            }
+            setBeginEnd( [...pageArr] );
+        }).catch((err)=>{console.error(err)})
+    }
 
     function setOnEditForm(address){
         if(address===-2){
-            setAddress_id((address_id===address)?(-1):(-2))
+            setAddressId((addressId===address)?(-1):(-2))
             setAddress_name('')
             setAddress_zipnum('')
             setAddress_simple('')
             setAddress_detail('')
         }else{
-            setAddress_id((address_id===address.address_id)?(-1):(address.address_id))
+            setAddressId((addressId===address.addressId)?(-1):(address.addressId))
             setAddress_name(address.address_name)
             setAddress_zipnum(address.address_zipnum)
             setAddress_simple(address.address_simple)
@@ -67,27 +88,37 @@ function AddressList() {
     }
 
     const editAddress = {
-        address_id, setAddress_id,
+        addressId, setAddressId,
         address_name, setAddress_name,
         address_zipnum, setAddress_zipnum,
         address_simple, setAddress_simple,
         address_detail, setAddress_detail,
         isOpen, setIsOpen,
         addressList, setAddressList,
+        member, setMember,
+        paging, setPaging,
+        beginEnd, setBeginEnd,
         setOnEditForm
     }
 
-    async function deleteAddress(address_id){
+    async function deleteAddress(addressId){
         if(window.confirm('주소를 삭제하시겠습니까?')){
-            await jaxios.delete('/api/mypage/deleteAddress', {params:{address_id}})
+            console.log(addressId)
+            await jaxios.delete('/api/mypage/deleteAddress', {params:{addressId}})
             .then((result)=>{
                 alert('삭제되었습니다')
             })
             .catch((err)=>{console.error(err)})
 
-            await jaxios.get('/api/mypage/getAddressList', {params:{member_id:loginUser.member_id}})
+            await jaxios.get('/api/mypage/getAddressList', {params:{member_id:member.member_id, page:paging.page}})
             .then((result)=>{
                 setAddressList(result.data.addressList)
+                setPaging( result.data.paging )
+                let arr = [];
+                for( let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
+                    arr.push(i);
+                }
+                setBeginEnd( [...arr] )
             })
             .catch((err)=>{console.error(err)})
         }
@@ -98,9 +129,9 @@ function AddressList() {
                 <SideMenu/>
                 <div className='mypage'>
                     <div className='formtitle'>주소록</div>
-                    {(address_id===-2)?
+                    {(addressId===-2)?
                     (<>
-                        <div className='addressList' >
+                        <div className='addressList' style={(addressId===-2)?editStyle:{}}>
                             <EditAddressForm editAddress={editAddress} />
                         </div>
                     </>):(
@@ -113,9 +144,9 @@ function AddressList() {
                         (
                             addressList.map((address, idx)=>{
                                 return (
-                                    <div key={idx} className='addressList' style={(address_id===address.address_id)?editStyle:{}}>
+                                    <div key={idx} className='addressList' style={(addressId===address.addressId)?editStyle:{}}>
                                         {
-                                            (address_id===address.address_id)?
+                                            (addressId===address.addressId)?
                                             (<>
                                                 <EditAddressForm editAddress={editAddress} />
                                             </>):(
@@ -131,7 +162,7 @@ function AddressList() {
                                                     </div>
                                                     <div className='formBtns'>
                                                         <button onClick={()=>{setOnEditForm(address)}}>수정</button>
-                                                        <button onClick={()=>{deleteAddress(address.address_id)}}>삭제</button>
+                                                        <button onClick={()=>{deleteAddress(address.addressId)}}>삭제</button>
                                                     </div>
                                                 </>
                                             )
@@ -139,8 +170,38 @@ function AddressList() {
                                     </div>
                                 )
                             })
+                            
                         ):
                         (<div>현재 주소가 없습니다</div>)
+                    }
+                    {
+                        
+                        (addressList.length!=0)?
+                        (<div id="paging" style={{textAlign:"center", padding:"10px"}}>
+                            {
+                                (paging.prev)?(
+                                    <span style={{cursor:"pointer"}} onClick={ ()=>{ onPageMove( paging.beginPage-1 ) } } > ◀ </span>
+                                ):(<span></span>)
+                            }
+                            {
+                                (beginEnd)?(
+                                    beginEnd.map((page, idx)=>{
+                                        return (
+                                            <span style={(page==paging.page)?{fontWeight:'bold', cursor:"pointer"}:{cursor:"pointer"}} key={idx} onClick={
+                                                ()=>{ onPageMove( page ) }
+                                            }>&nbsp;{page}&nbsp;</span>
+                                        )
+                                    })
+                                ):(<></>)
+                            }
+                            {
+                                (paging.next)?(
+                                    <span style={{cursor:"pointer"}} onClick={
+                                        ()=>{ onPageMove( paging.endPage+1 ) }
+                                    }>&nbsp;▶&nbsp;</span>
+                                ):(<></>)
+                            }
+                        </div>):(<></>)
                     }
                 </div>
             </div>

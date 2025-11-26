@@ -249,9 +249,10 @@ public class MemberController {
     public HashMap<String, Object> findid( @RequestParam("name") String name,  @RequestParam("phone") String phone ) {
         HashMap<String, Object> result = new HashMap<>();
         Member member = ms.getMemberByNamePhone( name, phone  );
-        System.out.println( name +  phone );
         if( member == null ){
             result.put("msg", "notok");
+        }else if(member.getProvider().equals("KAKAO")){
+            result.put("msg", "kakao");
         }else{
             result.put("msg", "ok");
             result.put("userid", member.getUserid());

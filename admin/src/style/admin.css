@@ -1,0 +1,131 @@
+.AdminForm{
+    width:600px;
+    height:300px;
+    margin: 0 auto;
+    border:1px solid black;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    padding:20px;
+    margin-top: 50px;
+}
+
+.field{
+    width:100%;
+    padding:10px;
+    box-sizing: border-box;
+    display: flex;
+}
+
+label{
+    flex:1;
+    font-weight: bold;
+}
+
+input{
+    flex:3;
+    padding:5px;
+}
+
+.btns button{
+    background: blueviolet;
+    color:white;
+    font-weight: bold;
+}
+
+
+.adminContainer{
+    margin:0 auto;
+    display: flex;
+}
+.loginadminarea{
+    color: white;
+    background-color: blue;
+    padding: 15px;
+    border-radius: 5px;
+}
+.adminmenu{
+    width:500px;
+    background-color: blueviolet;
+    padding:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    height: 100vh;
+}
+.menutitle{
+    margin: 5px 0;
+    border-radius: 5px;
+    padding: 15px;
+    text-decoration: none;
+    color:white;
+    font-weight: bold;
+}
+a{
+    text-decoration: none;
+    color:white;
+    font-weight: bold;
+}
+.title{
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    font-weight: bold;
+    font-size: 130%;
+}
+.productTable{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.productTable .row{
+    display: flex;
+}
+.productTable .row .col{
+    flex:1;
+    padding:20px 0;
+    text-align: center;
+    border:1px dotted #8a2be2;
+    margin: 1px;
+}
+
+.productTable .row:first-child .col{
+    background-color: rgb(182, 142, 219);
+    color:white;
+    font-weight: bold;
+}
+.row:hover{
+    background-color: #eeeeee;
+    cursor: pointer;
+    transition: 3;
+}
+.productTable .field{
+    width:100%;
+    padding:5px;
+    display: flex;
+    border:1px dotted blue;
+    box-sizing: border-box;
+}
+
+.productTable .field label{
+    flex:1;
+    padding:3px;
+}
+.productTable .field input{
+    flex:5;
+    padding:3px;
+}
+.productTable .field div{
+    flex:5;
+}
+
+.btns{
+    display: flex;
+}
+.btns button{
+    flex:1;
+    padding:5px;
+    margin:2px;
+}

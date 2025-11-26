@@ -357,9 +357,9 @@ function Mypage() {
                             (member.indate.substring(0,10)):(null)
                         }</div>
                     </div>
-                    <div className='formBtns'>
+                    {/* <div className='formBtns'>
                         <button onClick={()=>{navigate('/deleteMember')}} style={{backgroundColor:"red"}}>회원탈퇴</button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </article>

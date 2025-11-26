@@ -26,6 +26,10 @@
     margin: 10px;
     margin-bottom: 0px;
 }
+.nozipnumMsg{
+    font-style: italic;
+}
+
 
 .shoparea{
     border: #eeeeee 3px double;

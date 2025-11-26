@@ -85,6 +85,14 @@ public class ChatController {
         return result;
     }
 
+    @GetMapping("/chat/chatCount")
+    public HashMap<String, Object> chatCount(@RequestParam("postId") Integer postId) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("chatRoomCount", cs.getChatRoomCount(postId));
+
+        return result;
+    }
 
 
 

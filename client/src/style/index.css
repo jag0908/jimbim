@@ -1,6 +1,54 @@
-article {display: flex; justify-content: center; align-items: center; height: calc(100vh - 122px);}
+#main-index {display: flex; flex-direction: column; gap: 80px; padding: 100px 0 140px; font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(180deg, #fff 0%, #f7f7f7 60%, #fff 100%); color: #111;}
+#main-index section {width: min(1200px, 92%); margin: 0 auto;}
 
-article .menu {display: flex; justify-content: space-around; width: 768px;}
+#main-index .hero {display: flex; align-items: center; justify-content: space-between; gap: 60px;}
+#main-index .hero-text {flex: 1.2; display: flex; flex-direction: column; gap: 20px;}
+#main-index .hero-text .eyebrow {font-size: 16px; color: #ff7e36; font-weight: 600;}
+#main-index .hero-title {display: flex; align-items: baseline; gap: 20px;}
+#main-index .hero-title h1 {font-size: clamp(48px, 6vw, 64px); font-weight: 700; letter-spacing: -2px;}
+#main-index .rolling-wrap {position: relative; width: 140px; height: 34px; overflow: hidden;}
+#main-index .rolling-word {position: absolute; top: 0; left: 0; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; font-size: 22px; font-weight: 500; color: #888;}
+#main-index .rolling-word.active {opacity: 1; transform: translateY(0);}
+#main-index .subtitle {font-size: 18px; color: #555; line-height: 1.6;}
 
-article .menu > a {display: flex; justify-content: center; align-items: center; width: 120px; height: 120px; border: 1px solid #555; border-radius: 20px; font-size: 18px; font-weight: 500;}
+#main-index .search-bar {display: flex; gap: 12px; padding: 12px 16px; border: 1px solid #ddd; border-radius: 999px; background: #fff; max-width: 540px;}
+#main-index .search-bar input {flex: 1; border: none; font-size: 16px;}
+#main-index .search-bar input::placeholder {color: #bbb;}
+#main-index .search-bar button {padding: 12px 28px; border-radius: 999px; border: none; background: #ff7e36; color: #fff; font-weight: 600; cursor: pointer;}
 
+#main-index .quick-links {display: flex; flex-wrap: wrap; gap: 12px;}
+#main-index .quick-links a {padding: 10px 18px; border-radius: 999px; border: 1px solid #eee; background: #fff; font-size: 14px; color: #555;}
+
+#main-index .hero-visual {flex: 1; position: relative; min-height: 320px;}
+#main-index .hero-circle {position: absolute; border-radius: 50%; opacity: 0.9;}
+#main-index .hero-circle.large {width: 320px; height: 320px; background: #fde4d2; top: 20px; right: 40px;}
+#main-index .hero-circle.medium {width: 220px; height: 220px; background: #ffd2a8; top: 60px; right: 140px;}
+#main-index .hero-circle.small {width: 140px; height: 140px; background: #ffb97a; top: 130px; right: 40px;}
+#main-index .hero-card {position: absolute; bottom: 0; left: 0; padding: 24px; width: 240px; border-radius: 24px; background: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 6px;}
+#main-index .hero-card p {font-size: 13px; color: #999;}
+#main-index .hero-card strong {font-size: 18px;}
+#main-index .hero-card span {font-size: 14px; color: #777;}
+
+#main-index .feature-cards {display: flex; gap: 24px; flex-wrap: wrap;}
+#main-index .feature-card {flex: 1; min-width: 240px; padding: 28px; border-radius: 20px; background: #fff; box-shadow: 0 14px 30px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 12px;}
+#main-index .feature-card h3 {font-size: 20px;}
+#main-index .feature-card p {font-size: 15px; color: #666; line-height: 1.6;}
+#main-index .feature-card a {margin-top: auto; font-weight: 600; color: #ff7e36;}
+
+#main-index .story-section {display: flex; align-items: center; justify-content: space-between; padding: 40px; border-radius: 28px; background: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.06); gap: 40px;}
+#main-index .story-text h2 {font-size: 28px; margin-bottom: 12px;}
+#main-index .story-text p {font-size: 16px; color: #555; line-height: 1.7;}
+#main-index .story-badges {display: flex; flex-wrap: wrap; gap: 10px;}
+#main-index .story-badges span {padding: 10px 18px; border-radius: 999px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; color: #666;}
+
+@media (max-width: 960px) {
+  #main-index .hero {flex-direction: column; align-items: flex-start;}
+  #main-index {padding-top: 60px;}
+}
+
+@media (max-width: 640px) {
+  #main-index .search-bar {flex-direction: column; border-radius: 20px;}
+  #main-index .search-bar button {width: 100%;}
+  #main-index .feature-cards {flex-direction: column;}
+  #main-index .story-section {flex-direction: column;}
+}

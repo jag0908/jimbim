@@ -23,6 +23,7 @@ public class ShPostMapper {
         resDto.setViewCount(post.getViewCount());
         resDto.setIndate(post.getIndate());
         resDto.setUpdateDate(post.getUpdateDate());
+        resDto.setSellEx(post.getSellEx());
 
         return resDto;
     }
@@ -40,6 +41,7 @@ public class ShPostMapper {
         resDto.setViewCount(post.get().getViewCount());
         resDto.setIndate(post.get().getIndate());
         resDto.setUpdateDate(post.get().getUpdateDate());
+        resDto.setSellEx(post.get().getSellEx());
 
         ShMemberDto mdto = new ShMemberDto();
         mdto.setEmail(post.get().getMember().getEmail());
@@ -52,7 +54,6 @@ public class ShPostMapper {
         mdto.setIndate(post.get().getMember().getIndate());
         mdto.setTerms_agree(post.get().getMember().getTerms_agree());
         mdto.setPersonal_agree(post.get().getMember().getPersonal_agree());
-        mdto.setProfileImg(post.get().getMember().getProfileImg());
         mdto.setProfileImg(post.get().getMember().getProfileImg());
 
         resDto.setMember(mdto);

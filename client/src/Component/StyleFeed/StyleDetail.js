@@ -66,6 +66,9 @@ const StyleDetail = () => {
 
     setPost(postData);
 
+    setLikeCount(postData.likeCount || 0);
+    setLiked(postData.liked || false);
+
     // 댓글 트리 생성 (중요!)
     const replyTree = buildReplyTree(postData.replies);
     setReplies(replyTree);
@@ -343,6 +346,7 @@ const StyleDetail = () => {
           </div>
         )}
       </div>
+      <br/>
 
       {/* 좋아요/댓글/공유 */}
       <div className="style-detail-actions">
@@ -353,6 +357,24 @@ const StyleDetail = () => {
         <div className="style-detail-action-item" onClick={handleShare}>
           🔗 공유
         </div>
+      </div>
+
+
+      {/* 댓글 목록 */}
+      <div className="style-detail-replies">
+        {replies.map(reply => (
+          <Reply
+            key={reply.reply_id}
+            reply={reply}
+            myUserid={myUserid}
+            toggleReplyVisibility={toggleReplyVisibility}
+            isOpen={openReplies[reply.reply_id] || false}
+            openReplies={openReplies}
+            setReplyParent={setCommentParent}
+            handleDeleteReply={handleDeleteReply}
+          />
+        ))}
+
       </div>
 
       {/* 댓글 입력창 */}
@@ -372,22 +394,6 @@ const StyleDetail = () => {
 
       </div>
 
-      {/* 댓글 목록 */}
-      <div className="style-detail-replies">
-        {replies.map(reply => (
-          <Reply
-            key={reply.reply_id}
-            reply={reply}
-            myUserid={myUserid}
-            toggleReplyVisibility={toggleReplyVisibility}
-            isOpen={openReplies[reply.reply_id] || false}
-            openReplies={openReplies}
-            setReplyParent={setCommentParent}
-            handleDeleteReply={handleDeleteReply}
-          />
-        ))}
-
-      </div>
     </div>
   );
 };

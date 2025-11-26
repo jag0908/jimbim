@@ -2,12 +2,14 @@ package com.himedia.spserver.controller;
 
 
 import com.himedia.spserver.dto.MemberDTO;
+import com.himedia.spserver.dto.ShPostResDto;
 import com.himedia.spserver.dto.StylePostDTO;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
 import com.himedia.spserver.repository.FollowRepository;
 import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.service.S3UploadService;
+import com.himedia.spserver.service.ShService;
 import com.himedia.spserver.service.StyleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,7 @@ public class StyleController {
     private final S3UploadService sus;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final ShService shs;
 
     @GetMapping("/posts")
     public List<StylePostDTO> getAllPosts(){
@@ -81,15 +84,21 @@ public class StyleController {
         result.put("nickname", member.getName());
         result.put("profileImg", member.getProfileImg());
         result.put("intro", member.getProfileMsg());
+        result.put("memberId", member.getMember_id());
 
         result.put("followers", followRepository.findByEndMember(member).size());
         result.put("following", followRepository.findByStartMember(member).size());
 
+        List<ShPostResDto> sellPosts = shs.getPostsByMemberId(member.getMember_id());
+        result.put("sellPosts", sellPosts);
+
+
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/post/{id}")
-    public ResponseEntity<?> getPost(@PathVariable Integer id) {
+    public ResponseEntity<?> getPost(@PathVariable Integer id, @AuthenticationPrincipal MemberDTO memberDTO) {
         STYLE_post post = styleService.findBySpostId(id);
 
         post.setViewCount(post.getViewCount() + 1);
@@ -97,13 +106,20 @@ public class StyleController {
 
         List<String> imageUrls = styleService.getAllImageUrls(post);
 
+        boolean liked = false; // 기본값 false
+        if (memberDTO != null) {
+            // 로그인한 경우 좋아요 여부 확인
+            liked = styleService.isLikedByUser(id, memberDTO.getUserid());
+        }
+
         Map<String, Object> result = new HashMap<>();
         result.put("title", post.getTitle());
         result.put("content", post.getContent());
         result.put("userid", post.getMember().getUserid());
         result.put("profileImg", post.getMember().getProfileImg());
         result.put("s_images", imageUrls);
-        result.put("likesCount", styleService.countLikes(id));
+        result.put("liked", liked);
+        result.put("likeCount", styleService.countLikes(id));
         result.put("replies", styleService.findReplies(id));
         result.put("hashtags", styleService.findHashtags(id));
         result.put("indate", post.getIndate());
@@ -172,34 +188,34 @@ public class StyleController {
         }
     }
 
-    @PostMapping("/follow")
-    public ResponseEntity<?> toggleFollow(
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal MemberDTO memberDTO) {
-
-        if (memberDTO == null) {
-            return ResponseEntity.status(401).body(Map.of("error", "REQUIRE_LOGIN"));
-        }
-
-        String targetUserid = body.get("targetUserid");
-        boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
-
-        return ResponseEntity.ok(Map.of(
-                "followed", followed,
-                "message", followed ? "팔로우 성공" : "팔로우 취소"
-        ));
-    }
-
-    @GetMapping("/follow/{targetUserid}")
-    public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
-                                         @AuthenticationPrincipal MemberDTO memberDTO) {
-        if (memberDTO == null) {
-            return ResponseEntity.ok(Map.of("followed", false));
-        }
-
-        boolean followed = styleService.isFollowing(memberDTO.getUserid(), targetUserid);
-        return ResponseEntity.ok(Map.of("followed", followed));
-    }
+//    @PostMapping("/follow")
+//    public ResponseEntity<?> toggleFollow(
+//            @RequestBody Map<String, String> body,
+//            @AuthenticationPrincipal MemberDTO memberDTO) {
+//
+//        if (memberDTO == null) {
+//            return ResponseEntity.status(401).body(Map.of("error", "REQUIRE_LOGIN"));
+//        }
+//
+//        String targetUserid = body.get("targetUserid");
+//        boolean followed = styleService.toggleFollow(memberDTO.getUserid(), targetUserid);
+//
+//        return ResponseEntity.ok(Map.of(
+//                "followed", followed,
+//                "message", followed ? "팔로우 성공" : "팔로우 취소"
+//        ));
+//    }
+//
+//    @GetMapping("/follow/{targetUserid}")
+//    public ResponseEntity<?> checkFollow(@PathVariable String targetUserid,
+//                                         @AuthenticationPrincipal MemberDTO memberDTO) {
+//        if (memberDTO == null) {
+//            return ResponseEntity.ok(Map.of("followed", false));
+//        }
+//
+//        boolean followed = styleService.isFollowing(memberDTO.getUserid(), targetUserid);
+//        return ResponseEntity.ok(Map.of("followed", followed));
+//    }
 
 
     @DeleteMapping("/post/{spostId}")

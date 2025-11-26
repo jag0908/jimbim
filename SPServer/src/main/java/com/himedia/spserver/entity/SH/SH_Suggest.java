@@ -3,6 +3,8 @@ package com.himedia.spserver.entity.SH;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
@@ -10,17 +12,20 @@ import java.sql.Timestamp;
 @Data
 public class SH_Suggest {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer suggest_id;
     private Integer suggest_price;
 
-    @Column( columnDefinition="DATETIME default now()" )
+    private Integer postId;
+    private Integer memberId;
+    private String userId;
+    private String memberName;
+    private String memberProfileImg;
+
+    @CreationTimestamp
     private Timestamp indate;
+    @UpdateTimestamp
+    private Timestamp uptime;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    SH_post post_id;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    Member member_id;
+    private Integer approved = 0;
 }

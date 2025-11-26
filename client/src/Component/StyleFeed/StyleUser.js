@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import jaxios from "../../util/jwtutil";
 import "../../style/StyleUser.css";
-import { useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import Masonry from "react-masonry-css";
-
+import { Cookies } from "react-cookie";
+import StyleFollowList from "./StyleFollowList";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function StyleUser() {
   const { userid } = useParams(); // URL에서 유저 아이디 가져오기
   const [userInfo, setUserInfo] = useState(null);
+  const [followType, setFollowType] = useState("followers");
+  const [openFollowModal, setOpenFollowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
-
-  const currentUser = useSelector((state) => state.user);
-  const myUserid = currentUser?.userid;
+  const [activeTab, setActiveTab] = useState("style");
+  const [sellPosts, setSellPosts] = useState([]);
+ 
+  const cookies = new Cookies();
+  const currentUser = cookies.get("user");
+  const myUserid = currentUser?.userid; 
   const navigate = useNavigate();
 
   // ✅ 유저 정보 + 팔로워/팔로잉 수 불러오기
@@ -24,8 +29,27 @@ function StyleUser() {
     try {
       const res = await jaxios.get(`${baseURL}/style/userinfo/${userid}`);
       setUserInfo(res.data);
+
+      // 판매 목록도 바로 세팅
+      if (res.data.sellPosts) {
+        setSellPosts(res.data.sellPosts);
+      }
+
+      return res.data?.memberId;
     } catch (err) {
       console.error("유저 정보 불러오기 실패", err);
+    }
+  };
+
+
+  // ✅ 판매 목록 불러오기
+  const fetchUserSellPosts = async (memberId) => {
+    if (!memberId) return;
+    try {
+      const res = await jaxios.get(`${baseURL}/sh-page/user-sell-list/${memberId}`);
+      setSellPosts(res.data.sellPosts);
+    } catch (err) {
+      console.error("판매 목록 불러오기 실패", err);
     }
   };
 
@@ -63,11 +87,34 @@ function StyleUser() {
     }
   };
 
+  // 팔로워 클릭
+  const openFollowers = () => {
+    setFollowType("followers");
+    setOpenFollowModal(true);
+  };
+
+  // 팔로잉 클릭
+  const openFollowing = () => {
+    setFollowType("following");
+    setOpenFollowModal(true);
+  };
+
+  // 초기 로드
   useEffect(() => {
-    fetchUserInfo();
-    fetchUserPosts();
-    checkFollowStatus();
+    const loadData = async () => {
+      const memberId = await fetchUserInfo(); // memberId를 받아옴
+      fetchUserPosts();
+      checkFollowStatus();
+    };
+    loadData();
   }, [userid, myUserid]);
+
+  // activeTab 변경 시 판매 목록 가져오기
+  useEffect(() => {
+    if (userInfo?.memberId && activeTab === "sell") { 
+      fetchUserSellPosts(userInfo.memberId);
+    }
+  }, [userInfo, activeTab]);
 
   if (!userInfo) return <div>로딩 중...</div>;
 
@@ -105,51 +152,141 @@ function StyleUser() {
             )}
           </div>
 
-        <div className="style-follow-info">
-            <span>팔로워 {userInfo.followers ?? 0}</span>
-            <span>팔로잉 {userInfo.following ?? 0}</span>
-        </div>
+          <div className="style-follow-info">
+            <span onClick={openFollowers} className="clickable">
+              팔로워 {userInfo.followers ?? 0}
+            </span>
+            <span onClick={openFollowing} className="clickable">
+              팔로잉 {userInfo.following ?? 0}
+            </span>
+          </div>
 
           {userInfo.intro && <p className="style-intro-text">{userInfo.intro}</p>}
         </div>
       </div>
 
-      {/* ✅ 게시글 그리드 */}
-      <div className="style-user-posts">
-        {posts.length === 0 ? (
-          <div className="style-no-posts">아직 게시글이 없습니다.</div>
-        ) : (
-          <Masonry
-            breakpointCols={breakpointColumns}
-            className="style-masonry-grid"
-            columnClassName="style-masonry-grid-column"
-          >
-            {posts.map((post) => (
-              <div key={post.spost_id} className="style-post-card">
-                <div className="style-post-image" onClick={() => navigate(`/style/${post.spost_id}`)}>
-                  <img
-                    src={Array.isArray(post.s_images) ? post.s_images[0] : post.s_images}
-                    alt="post"
-                  />
-                  <div className="style-view-count">👁 {post.viewCount ?? 0}</div>
-                </div>
+      {/* 팔로우/팔로잉 모달 */}
+      {openFollowModal && (
+        <StyleFollowList
+          open={openFollowModal}
+          onClose={() => setOpenFollowModal(false)}
+          memberId={userInfo.memberId}
+          type={followType}
+        />
+      )}
 
-                <div className="style-post-info">
-                  <div className="style-user-mini">
-                    <img
-                      src={post.profileImg || "/default_profile.png"}
-                      alt="프로필"
-                      className="style-mini-profile"
-                    />
-                    <span className="style-userid">{post.userid}</span>
-                  </div>
-                  <div className="style-likes">❤️ {post.likeCount}</div>
-                </div>
-              </div>
-            ))}
-          </Masonry>
-        )}
+      {/* ✅ 카테고리 탭 */}
+      <div className="style-user-tabs">
+        <button
+          className={activeTab === "style" ? "tab active" : "tab"}
+          onClick={() => setActiveTab("style")}
+        >
+          Style
+        </button>
+
+        <button
+          className={activeTab === "sell" ? "tab active" : "tab"}
+          onClick={() => {
+            setActiveTab("sell");
+            setOpenFollowModal(false);   // ← 추가!!!
+          }}
+        >
+          판매 목록
+        </button>
+
+        <button
+          className={activeTab === "community" ? "tab active" : "tab"}
+          onClick={() => setActiveTab("community")}
+        >
+          커뮤니티 작성글
+        </button>
       </div>
+
+      {/* ⭐ Style 탭 */}
+      {activeTab === "style" && (
+        <div className="style-user-posts">
+          {posts.length === 0 ? (
+            <div className="style-no-posts">아직 게시글이 없습니다.</div>
+          ) : (
+            <Masonry
+              breakpointCols={breakpointColumns}
+              className="style-masonry-grid"
+              columnClassName="style-masonry-grid-column"
+            >
+              {posts.map((post, index) => (
+                <div 
+                  key={post.spost_id ?? `post-${index}`}
+                  className="style-post-card"
+                >
+                  <div className="style-post-image" onClick={() => navigate(`/style/${post.spost_id}`)}>
+                    <img
+                      src={Array.isArray(post.s_images) ? post.s_images[0] : post.s_images}
+                      alt="post"
+                    />
+                    <div className="style-view-count">👁 {post.viewCount ?? 0}</div>
+                  </div>
+                  <div className="style-post-info">
+                    <div className="style-user-mini">
+                      <img
+                        src={post.profileImg || "/default_profile.png"}
+                        alt="프로필"
+                        className="style-mini-profile"
+                      />
+                      <span className="style-userid">{post.userid}</span>
+                    </div>
+                    <div className="style-likes">❤️ {post.likeCount}</div>
+                  </div>
+                </div>
+              ))}
+            </Masonry>
+          )}
+        </div>
+      )}
+
+      {/* ⭐ 판매 목록 탭 */}
+      {activeTab === "sell" && (
+        <div className="style-user-posts">
+          {sellPosts.length === 0 ? (
+            <div className="style-no-posts">등록된 판매 상품이 없습니다.</div>
+          ) : (
+            <Masonry
+              breakpointCols={breakpointColumns}
+              className="style-masonry-grid"
+              columnClassName="style-masonry-grid-column"
+            >
+              {sellPosts.map((item, index) => (
+                <div
+                  key={item.postId ?? `sell-${index}`}
+                  className="style-post-card"
+                  onClick={() => {
+                    if(item.postId){
+                      navigate(`/sh-page/sh-view/${item.postId}`);
+                    } else {
+                      alert("잘못된 상품입니다.");
+                    }
+                  }}
+
+                >
+                  <div className="style-post-image">
+                    <img src={item.firstFilePath} alt="상품" />
+                  </div>
+
+                  <div className="style-sell-info">
+                    <div className="sell-title">{item.title}</div>
+                    <div className="sell-price">{item.price.toLocaleString()}원</div>
+                  </div>
+                </div>
+              ))}
+            </Masonry>
+          )}
+        </div>
+      )}
+
+      {/* ⭐ 커뮤니티 탭 (추후 추가) */}
+      {activeTab === "community" && (
+        <div className="style-no-posts">준비 중입니다.</div>
+      )}
+
     </div>
   );
 }

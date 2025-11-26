@@ -16,12 +16,15 @@ public class ChatMsgDto {
     private Integer sellerId;
     private String sellerName;
     private String sellerProfileImg;
+    private Integer sellerReadMsg;
 
     // 구매자
     private Integer buyerId;
     private String buyerName;
     private String buyerProfileImg;
+    private Integer buyerReadMsg;
 
     private Integer postId;
     private String postTitle;
+
 }

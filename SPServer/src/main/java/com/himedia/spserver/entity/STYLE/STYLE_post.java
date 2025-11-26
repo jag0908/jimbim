@@ -1,15 +1,10 @@
 package com.himedia.spserver.entity.STYLE;
 
-import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data

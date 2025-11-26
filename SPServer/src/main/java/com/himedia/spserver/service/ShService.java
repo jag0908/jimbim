@@ -180,6 +180,7 @@ public class ShService {
         post.setDirectYN(reqDto.getDirectYN());
         post.setDeliveryYN(reqDto.getDeliveryYN());
         post.setDeliveryPrice(reqDto.getDeliveryPrice());
+        post.setSellEx(reqDto.getSellEx());
         if (reqDto.getDeliveryPrice() == null) {
             post.setDeliveryPrice(0);
         }

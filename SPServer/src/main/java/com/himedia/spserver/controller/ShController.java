@@ -110,7 +110,8 @@ public class ShController {
             @RequestParam("directYN") String directYN,
             @RequestParam("deliveryYN") String deliveryYN,
             @RequestParam(value = "deliveryPrice", required = false) Integer deliveryPrice,
-            @RequestParam("pMemnerId") Integer pMemnerId
+            @RequestParam("pMemnerId") Integer pMemnerId,
+            @RequestParam("sellEx") Integer sellEx
     ) throws CustomJWTException, IOException {
         HashMap<String, Object> result = new HashMap<>();
 
@@ -132,6 +133,7 @@ public class ShController {
         reqDto.setDeliveryYN(deliveryYN);
         reqDto.setDeliveryPrice(deliveryPrice);
         reqDto.setRmFiles(rmFiles);
+        reqDto.setSellEx(sellEx);
 
         SH_post post = ss.updatePost(reqDto);
         if (files == null || files.isEmpty()) {

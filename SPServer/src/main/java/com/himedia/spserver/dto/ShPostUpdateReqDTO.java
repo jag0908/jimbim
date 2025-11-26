@@ -16,6 +16,7 @@ public class ShPostUpdateReqDTO {
     private String directYN;
     private String deliveryYN;
     private Integer deliveryPrice;
+    private Integer sellEx;
 
     private List<MultipartFile> files;
     private List<Integer> rmFiles;

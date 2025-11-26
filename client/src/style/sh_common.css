@@ -86,8 +86,14 @@ button {cursor: pointer;}
 
 .shView .rayoutWrap {display: flex; gap: 50px;}
 .shView .rayoutWrap .leftBox {display: flex; flex-direction: column; width: 50%; gap: 12px;}
-.imgGroup .slick-slide, .imgGroup {border-radius: 12px; overflow: hidden;}
-.imgGroup .slick-slide, .imgGroup .slick-slide * {outline: none !important; box-shadow: none !important;}
+.shView .imgGroup {position: relative;}
+.shView .imgGroup:after {content: ''; display: flex; justify-content: center; align-items: center; position: absolute; z-index: 20; top: 6px; left: 6px; width: 56px; height: 26px; background: #555555e3; font-size: 12px; font-weight: 500; border-radius: 4px; color: #fff;}
+.shView .imgGroup.state0:after {content: '판매중';}
+.shView .imgGroup.state1:after {content: '예약중';}
+.shView .imgGroup.state2:after {content: '판매완료';}
+.shView .imgGroup.state2::before {content: ''; position: absolute; z-index: 10; top: 0px; left: 0px; width: 100%; height: 100%; background: #000; opacity: 0.2;}
+.shView .imgGroup .slick-slide, .shView .imgGroup {border-radius: 12px; overflow: hidden;}
+.shView .imgGroup .slick-slide, .shView .imgGroup .slick-slide * {outline: none !important; box-shadow: none !important;}
 .shView .rayoutWrap .leftBox .imgBox {width: 100%; height: 460px;}
 .shView .rayoutWrap .leftBox .imgBox > img {width: 100%; height: 100%; object-fit: cover;}
 .shView .rayoutWrap .leftBox .slick-dots {bottom: 15px;}
@@ -123,6 +129,7 @@ button {cursor: pointer;}
 .shView .rayoutWrap .rightBox .dataBoxWrap .tit {font-size: 18px; font-weight: 400;}
 .shView .rayoutWrap .rightBox .dataBoxWrap .util {display: flex; gap: 4px;}
 .shView .rayoutWrap .rightBox .dataBoxWrap .util > span {font-size: 16px; font-size: 500; color: #999;}
+.shView .rayoutWrap .rightBox .dataBoxWrap .sellEx {display: flex; align-items: center; padding: 0 4px; border-radius: 4px; width: 88px; height: 28px; border: 1px solid #999; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #999;}
 .shView .rayoutWrap .rightBox .dataBox {font-size: 18px; font-weight: 600;}
 .shView .rayoutWrap .rightBox .mainTitle {font-size: 26px; font-weight: 500;}
 .shView .rayoutWrap .rightBox .price {font-size: 26px; font-weight: 600;} 

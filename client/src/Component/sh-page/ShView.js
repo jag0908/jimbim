@@ -292,7 +292,7 @@ function ShView() {
 
             <div className='rayoutWrap'>
                 <div className='leftBox'>
-                    <Slider className='imgGroup' {...settings}>
+                    <Slider className={'imgGroup' + ` state${postDetail && postDetail.sellEx}`} {...settings}>
                         {
                             postDetail && postDetail.files.map((file, i)=> {
                                 return(
@@ -407,6 +407,11 @@ function ShView() {
                     <div className='dataBoxWrap dobule'>
                         <div className='catetory'>[{category && category}]</div>
                         <div className='date'>{postDetail && formatDateTime(postDetail.indate)}</div>
+                    </div>
+                    <div className="dataBoxWrap">
+                        <div className='sellEx'>
+                            {postDetail && (postDetail.sellEx == 0 ? "판매중" : postDetail.sellEx == 1 ? "예약중" : postDetail.sellEx == 2 ? "판매완료" : "상태")}
+                        </div>
                     </div>
                     <div className='dataBoxWrap'>
                         <span className='dataBox price'>
@@ -527,6 +532,7 @@ function ShView() {
                             }
                             원</span>
                     </div>
+
                 </div>
             </div>
             

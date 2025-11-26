@@ -37,7 +37,11 @@ function Header() {
             }
             
             <Link to={"/"}>고객센터</Link>
-            <Link to={"/"}>알림</Link>
+            {
+                (loginUser.userid)?
+                <Link to={`/alram/${loginUser.member_id}`}>알림</Link> :
+                null
+            }
         </div>
         <div className='inner'>
             <h1 className='logo'>

@@ -39,6 +39,7 @@ import ShUpdate from './Component/sh-page/ShUpdate';
 
 import UpdateCommunity from './Component/community/UpdateCommunity'
 import ChatRoom from './Component/chat/ChatRoom';
+import Alram from './Component/alram/Alram';
 
 
 
@@ -80,6 +81,7 @@ function App() {
 				<Route path='/sh-page/sh-write' element={<ShWrite />} />
 				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 				<Route path='/sh-page/sh-update/:id' element={<ShUpdate />} />
+				<Route path='/alram/:id' element={<Alram />} />
 
 
 

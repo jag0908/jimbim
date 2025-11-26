@@ -1,0 +1,9 @@
+.customercontainer{
+    display:flex;
+    justify-content:center
+}
+.qnaList{
+    display:flex;
+    width:500px;
+    justify-content:space-between
+}

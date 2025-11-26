@@ -26,7 +26,8 @@ function Header() {
                 (
                     <>
                         <a href='#!' onClick={()=>{ onLogout() }}>로그아웃</a>
-                        <Link to={"/mypage"}>마이페이지</Link>
+                        <Link to={"/mypage"}>회원정보수정</Link>
+                        <Link to={`/styleUser/${loginUser.userid}`}>MY</Link>
                     </>):
                 (
                     <>
@@ -36,12 +37,14 @@ function Header() {
                 )
             }
             
+
             <Link to={"/"}>고객센터</Link>
             {
                 (loginUser.userid)?
                 <Link to={`/alram/${loginUser.member_id}`}>알림</Link> :
                 null
             }
+
         </div>
         <div className='inner'>
             <h1 className='logo'>

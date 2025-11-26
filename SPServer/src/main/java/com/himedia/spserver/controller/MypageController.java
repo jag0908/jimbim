@@ -34,18 +34,16 @@ public class MypageController {
     }
 
     @GetMapping("/getAddressList")
-    public HashMap<String, Object> getAddressList(@RequestParam("member_id") String member_id) {
-        HashMap<String, Object> result = new HashMap<>();
-        //System.out.println("getAddress : "+ mys.getAddressList( member_id ));
-        result.put("addressList", mys.getAddressList( member_id ));
+    public HashMap<String, Object> getAddressList(@RequestParam("member_id") String member_id, @RequestParam("page") int page) {
+        HashMap<String, Object> result = mys.getAddressList( member_id, page );
         return result;
     }
 
     @DeleteMapping("/deleteAddress")
-    public HashMap<String, Object> deleteAddress(@RequestParam("address_id") Integer address_id) {
+    public HashMap<String, Object> deleteAddress(@RequestParam("addressId") Integer addressId) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("deleteAddress : "+ address_id);
-        mys.deleteAddress( address_id );
+        System.out.println("deleteAddress : "+ addressId);
+        mys.deleteAddress( addressId );
         result.put("msg", "ok");
         return result;
     }

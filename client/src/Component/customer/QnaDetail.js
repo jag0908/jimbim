@@ -1,0 +1,69 @@
+import React, { useState, useEffect} from 'react'
+import SideMenu from './SideMenu';
+import '../../style/customer.css';
+import { useSelector } from 'react-redux';
+import {useParams, useNavigate } from 'react-router-dom';
+import jaxios from '../../util/jwtutil';
+
+function QnaDetail() {
+    const loginUser = useSelector( state=>state.user )
+    const navigate = useNavigate();
+
+    const [qna, setQna] = useState({});
+    const { qnaId } = useParams();
+
+    useEffect(
+        ()=>{
+            jaxios.get('/api/customer/getQna', {params:{qnaId}})
+            .then((result)=>{ 
+                if( !loginUser.userid || result.data.qna.member.userid!=loginUser.userid ){ 
+                    alert('로그인 후 사용 가능합니다')
+                    navigate('/qna')
+                }
+                setQna(result.data.qna) 
+                console.log(result.data.qna)
+            })
+            .catch((err)=>{console.error(err)})
+        },[]
+    )
+
+    return (
+        <div className='customercontainer'>
+            <SideMenu/>
+            <div>
+                <div className='formtitle'>Qna</div>
+                <div>
+                {
+                    (qna)?
+                        (
+                            <div className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
+                                <div className='field'>
+                                    <label>제목</label>
+                                    <div className='addressListText'>{qna.title}</div>
+                                </div>
+                                <div className='field'>
+                                    <label>작성일</label>
+                                    <div className='addressListText'>{(qna.indate)?(qna.indate.substring(0,10)):(null)}</div>
+                                </div>
+                                <div className='field'>
+                                    <label>내용</label>
+                                    <div className='addressListText'>{qna.content}</div>
+                                </div>
+                                <div className='field'>
+                                    <label>답변</label>
+                                    <div className='addressListText'>{qna.reply}</div>
+                                </div>
+                            </div>
+                        )
+                        :(<></>)
+                }
+                    <div className='formBtns'>
+                        <button onClick={()=>{navigate('/customer/qna')}}>뒤로</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default QnaDetail

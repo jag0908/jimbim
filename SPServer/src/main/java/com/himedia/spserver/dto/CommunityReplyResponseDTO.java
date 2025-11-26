@@ -3,6 +3,8 @@ package com.himedia.spserver.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class CommunityReplyResponseDTO {
@@ -10,4 +12,10 @@ public class CommunityReplyResponseDTO {
     private String content;
     private String userid;
     private Integer memberId;
+    private String indate;
+    private Integer parentReplyId;          // 부모 댓글 ID
+    private List<CommunityReplyResponseDTO> children; // 대댓글 리스트
+
+    // ★ 익명 여부 추가
+    private Boolean anonymous = false;
 }

@@ -18,6 +18,7 @@ function StyleUser() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState("style");
   const [sellPosts, setSellPosts] = useState([]);
+  const [zzimPosts, setZzimPosts] = useState([]);
  
   const cookies = new Cookies();
   const currentUser = cookies.get("user");
@@ -60,6 +61,18 @@ function StyleUser() {
       setPosts(res.data);
     } catch (err) {
       console.error("게시글 불러오기 실패", err);
+    }
+  };
+
+  // 찜 목록 
+  const fetchZzimPosts = async () => {
+    if (!userInfo?.memberId) return;
+    try {
+      const res = await jaxios.get(`${baseURL}/style/zzim-list/${userInfo.memberId}`);
+      // res.data 자체가 배열이면 그대로 set
+      setZzimPosts(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("찜 목록 불러오기 실패", err);
     }
   };
 
@@ -114,6 +127,10 @@ function StyleUser() {
     if (userInfo?.memberId && activeTab === "sell") { 
       fetchUserSellPosts(userInfo.memberId);
     }
+    if (activeTab === "zzim" && userInfo?.memberId) {
+      fetchZzimPosts();
+    }
+
   }, [userInfo, activeTab]);
 
   if (!userInfo) return <div>로딩 중...</div>;
@@ -195,10 +212,10 @@ function StyleUser() {
         </button>
 
         <button
-          className={activeTab === "community" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("community")}
+          className={activeTab === "zzim" ? "tab active" : "tab"}
+          onClick={() => setActiveTab("zzim")}
         >
-          커뮤니티 작성글
+          찜 목록
         </button>
       </div>
 
@@ -282,9 +299,35 @@ function StyleUser() {
         </div>
       )}
 
-      {/* ⭐ 커뮤니티 탭 (추후 추가) */}
-      {activeTab === "community" && (
-        <div className="style-no-posts">준비 중입니다.</div>
+      {/* ⭐ 찜 탭 (추후 추가) */}
+      {activeTab === "zzim" && (
+        <div className="style-user-posts">
+          {(!Array.isArray(zzimPosts) || zzimPosts.length === 0) ? (
+            <div className="style-no-posts">찜한 게시물이 없습니다.</div>
+          ) : (
+            <Masonry
+              breakpointCols={breakpointColumns}
+              className="style-masonry-grid"
+              columnClassName="style-masonry-grid-column"
+            >
+              {zzimPosts.map((item, index) => (
+                <div
+                  key={item.postId ?? `zzim-${index}`}
+                  className="style-post-card"
+                  onClick={() => navigate(`/sh-page/sh-view/${item.postId}`)}
+                >
+                  <div className="style-post-image">
+                    <img src={item.firstFilePath || "/default_image.png"} alt="찜한 상품" />
+                  </div>
+                  <div className="style-sell-info">
+                    <div className="sell-title">{item.title}</div>
+                    <div className="sell-price">{item.price?.toLocaleString() ?? 0}원</div>
+                  </div>
+                </div>
+              ))}
+            </Masonry>
+          )}
+        </div>
       )}
 
     </div>

@@ -15,5 +15,7 @@ public interface ShZzimRepository extends JpaRepository<SH_zzim, Integer> {
 
     List<SH_zzim> findAllByPost(SH_post postEntity);
 
+    Member post(SH_post post);
 
+    List<SH_zzim> findAllByMember(Member member); //이삭 수정
 }

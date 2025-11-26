@@ -15,12 +15,13 @@ import java.util.Map;
 @RequestMapping("/communityReply")
 public class CommunityReplyController {
 
-    private final CommunityReplyService crs; //수정: 생성자 주입
+    private final CommunityReplyService crs; // 생성자 주입
 
     // 댓글 리스트 조회
     @GetMapping("/getReply/{cpostId}")
     public Map<String, Object> getReply(@PathVariable int cpostId) {
-        List<CommunityReplyResponseDTO> replyList = crs.getReplyList(cpostId); //수정: DTO 반환
+        // 서비스에서 DTO 반환 (익명 여부 포함)
+        List<CommunityReplyResponseDTO> replyList = crs.getReplyList(cpostId);
         Map<String, Object> result = new HashMap<>();
         result.put("replyList", replyList);
         return result;
@@ -29,7 +30,8 @@ public class CommunityReplyController {
     // 댓글 추가
     @PostMapping("/addReply")
     public Map<String, String> addReply(@RequestBody CommunityReplyDTO dto) {
-        crs.addReply(dto); //수정: DTO 사용
+        // DTO에 포함된 anonymous 필드도 서비스로 전달
+        crs.addReply(dto);
         Map<String, String> result = new HashMap<>();
         result.put("status", "success");
         return result;

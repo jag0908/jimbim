@@ -73,6 +73,9 @@ function QnaDetail() {
                 </div>)}
                 
                 </>):(<></>)}
+                <div>
+                    <button onClick={()=>{navigate('/qnaList')}}>뒤로</button>
+                </div>
             </div>
         </div>
     )

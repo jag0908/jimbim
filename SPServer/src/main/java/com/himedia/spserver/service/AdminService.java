@@ -137,4 +137,8 @@ public class AdminService {
 
         qna.setReply( reply );
     }
+
+    public Member getMember(int memberId) {
+        return mr.findById( memberId ).get();
+    }
 }

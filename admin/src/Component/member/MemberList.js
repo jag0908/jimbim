@@ -88,7 +88,7 @@ function MemberList() {
                     (memberList)?(
                         memberList.map((member, idx)=>{
                             return (
-                                <div className='row'>
+                                <div className='row' onClick={()=>{navigate(`/memberDetail/${member.member_id}`)}}>
                                     <div className='col'>
                                         {
                                             (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?(

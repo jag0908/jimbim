@@ -1,5 +1,6 @@
 package com.himedia.spserver.controller;
 
+import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,15 @@ public class AdminController {
     public HashMap<String, Object> getMemberList(@RequestParam("page") int page,
                                                  @RequestParam(value="key", required = false, defaultValue = "") String key){
         HashMap<String, Object> result = as.getMemberList(page, key);
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getMember")
+    public HashMap<String, Object> getMember( @RequestParam("member_id") int memberId ) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = as.getMember( memberId );
+        result.put("member", member);
         return result;
     }
 

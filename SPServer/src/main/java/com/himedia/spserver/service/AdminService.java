@@ -128,4 +128,13 @@ public class AdminService {
         member.setMemberRoleList( roleList );
     }
 
+    public Qna getQna(int qnaId) {
+        return qr.findById( qnaId ).get();
+    }
+
+    public void writeReply(int qnaId, String reply) {
+        Qna qna = qr.findById( qnaId).get();
+
+        qna.setReply( reply );
+    }
 }

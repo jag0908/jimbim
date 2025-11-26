@@ -56,4 +56,20 @@ public class AdminController {
         return as.getQnaList(page, key);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getQna")
+    public HashMap<String, Object> getQna(@RequestParam("qnaId") int qnaId){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("qna", as.getQna(qnaId));
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/writeReply")
+    public HashMap<String,Object> writeReply(@RequestParam("qnaId") int qnaId, @RequestParam("reply") String reply ){
+        HashMap<String, Object> result = new HashMap<>();
+        as.writeReply(qnaId, reply);
+        result.put("msg", "ok");
+        return result;
+    }
 }

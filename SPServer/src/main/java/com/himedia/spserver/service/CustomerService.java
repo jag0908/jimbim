@@ -42,4 +42,8 @@ public class CustomerService {
     public void writeQna(Qna qna) {
         qr.save(qna);
     }
+
+    public Qna getQna(int qnaId) {
+        return qr.findById( qnaId ).get();
+    }
 }

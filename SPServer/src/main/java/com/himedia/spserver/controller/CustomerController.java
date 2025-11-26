@@ -25,4 +25,10 @@ public class CustomerController {
         result.put("msg", "ok");
         return result;
     }
+    @GetMapping("/getQna")
+    public HashMap<String, Object> getQna(@RequestParam("qnaId") int qnaId){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("qna", cs.getQna(qnaId));
+        return result;
+    }
 }

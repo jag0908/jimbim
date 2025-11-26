@@ -56,7 +56,7 @@ function Qna() {
                         (
                             qnaList.map((qna, idx)=>{
                                 return (
-                                    <div key={idx} className='qnaList'>
+                                    <div key={idx} className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
                                         <div className='field'>
                                             <label>제목</label>
                                             <div className='addressListText'>{qna.title}</div>

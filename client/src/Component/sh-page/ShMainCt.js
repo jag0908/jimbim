@@ -21,10 +21,10 @@ function ShMain() {
        
       startApi();
         
-    }, []);
+    }, [id]);
 
     async function startApi() {
-      await axios.get(`/api/sh-page/sh-list/${page}`)
+      await axios.get(`/api/sh-page/sh-list/ct/${id}/${page}`)
         .then((result) => {
             // console.log([...result.data.postList]);
             setShPostArr([...result.data.postList.listArr]);
@@ -49,7 +49,7 @@ function ShMain() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         }
-    },[page, totalPage])
+    },[id, page, totalPage])
     
     const handleScroll=()=>{
         // useRef로 동기적으로 로딩 상태 체크 (비동기 상태 업데이트 지연 문제 해결)
@@ -77,7 +77,7 @@ function ShMain() {
         // 동기적으로 로딩 상태 설정 (다른 handleScroll 호출이 즉시 감지 가능)
         isLoadingRef.current = true;
         
-        axios.get(`/api/sh-page/sh-list/${nextPage}`)
+        axios.get(`/api/sh-page/sh-list/ct/${id}/${nextPage}`)
             .then((result) => {
                 setShPostArr(prev => [...prev, ...result.data.postList.listArr]);
                 setPage(nextPage); // 페이지 상태 업데이트

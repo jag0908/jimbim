@@ -124,6 +124,35 @@ public class ShService {
         return result;
     }
 
+    public Object getCtPostList(Integer id, Integer page) {
+        Pageable pageable = PageRequest.of(page-1, 10);
+
+        Page<SH_post> postsPage = spr.findAllByCategoryIdOrderByIndateDesc(id, pageable);
+        List<SH_post> posts = postsPage.getContent();;
+        long totalElements = postsPage.getTotalElements();   // 전체 데이터 개수
+        int totalPages = postsPage.getTotalPages();          // 전체 페이지 개수
+        HashMap<String, Object> result = new HashMap<>();
+
+        List<ShPostResDto> resultArr = new ArrayList<>();
+
+        for (SH_post post : posts) {
+
+            ShPostResDto mapper = spm.toResDto(post);
+
+            // 파일 최신 1개만 조회
+            SH_File firstFile = sfr.findTop1ByPost_PostIdOrderByIndateAsc(mapper.getPostId());
+            if (firstFile != null) {
+                mapper.setFirstFilePath(firstFile.getPath());
+            }
+
+            resultArr.add(mapper);
+        }
+
+        result.put("totalPages", totalPages);
+        result.put("listArr", resultArr);
+        return result;
+    }
+
     public void viewCount(ShViewCountDTO shViewCountDTO) {
         ShViewCountDTO reqDto = new ShViewCountDTO();
         reqDto.setMemberId(shViewCountDTO.getMemberId());
@@ -327,5 +356,7 @@ public class ShService {
 
         return zzimCount.size();
     }
+
+
 }
 

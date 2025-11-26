@@ -11,6 +11,7 @@ function ShWrite() {
 
     const [title, setTitle] = useState('');
     const [categoryId, setCategoryId] = useState('0');
+    const [state, setState] = useState(0);
     const [content, setContent] = useState('');
     const [price, setPrice] = useState('');
     const [directYN, setDirectYN] = useState("N");
@@ -51,6 +52,7 @@ function ShWrite() {
             setDirectYN(res.directYN);
             setDeliveryYN(res.deliveryYN);
             setDeliveryPrice(res.deliveryPrice);
+            setState(res.sellEx);
 
             setPMemberId(res.member.memberId);
             
@@ -163,6 +165,7 @@ function ShWrite() {
         formData.append("categoryId", categoryId);
         formData.append("directYN", directYN);
         formData.append("deliveryYN", deliveryYN);
+        formData.append("sellEx", state);
 
         formData.append("pMemnerId", pMemberId);
 
@@ -259,6 +262,15 @@ function ShWrite() {
                     }
                 </select>
             </div>
+            <div className='selectWrap'>
+                <h4 className='tit'>상태</h4>
+                <select id='dataState' value={state} onChange={(e)=> {setState(e.currentTarget.value)}}>
+                    <option value={0}>판매중</option>
+                    <option value={1}>예약중</option>
+                    <option value={2}>판매완료</option>
+                </select>
+            </div>
+
             <div className='inputWrap'>
                 <h4 className='tit'>제목</h4>
                 <input id='dataTitle' type='text' placeholder='아이폰17 512G 팝니다.' value={title} onChange={(e) => setTitle(e.currentTarget.value)} />

@@ -24,6 +24,7 @@ import StyleEdit from './Component/StyleFeed/StyleEdit'
 
 
 import ShMain from './Component/sh-page/ShMain'
+import ShMainCt from './Component/sh-page/ShMainCt'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
 import ShWrite from './Component/sh-page/ShWrite'
@@ -75,6 +76,7 @@ function App() {
 
 				{/* 정진 */}
 				<Route path="/sh-page" element={<ShMain />} />
+				<Route path="/sh-page/ct/:id" element={<ShMainCt />} />
 				<Route path='/sh-page/sh-write' element={<ShWrite />} />
 				<Route path='/sh-page/sh-view/:id' element={<ShView />} />
 				<Route path='/sh-page/sh-update/:id' element={<ShUpdate />} />

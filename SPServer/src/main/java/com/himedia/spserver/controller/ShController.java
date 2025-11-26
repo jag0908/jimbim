@@ -77,6 +77,13 @@ public class ShController {
         return result;
     }
 
+    @GetMapping("/sh-list/ct/{id}/{page}")
+    public HashMap<String, Object> ct(@PathVariable("id") Integer id, @PathVariable("page") Integer page) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("postList", ss.getCtPostList(id, page));
+        return result;
+    }
+
     @PostMapping("/sh-view-count")
     public HashMap<String, Object> shViewCount(@RequestBody ShViewCountDTO shViewCountDTO) {
         HashMap<String, Object> result = new HashMap<>();
@@ -89,9 +96,9 @@ public class ShController {
     public HashMap<String, Object> shView(@PathVariable("id") Integer id) {
         HashMap<String, Object> result = new HashMap<>();
         ShPostResDto postData = ss.getPost(id);
-        SH_Category categoryName = ss.getCategoryList().get(postData.getCategoryId());
+        List<SH_Category> categoryArr = ss.getCategoryList();
         result.put("post", postData);
-        result.put("category", categoryName);
+        result.put("categoryArr", categoryArr);
 
         return result;
     }

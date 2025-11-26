@@ -70,17 +70,17 @@ public class ShController {
     }
 
     @GetMapping("/sh-list/{page}")
-    public HashMap<String, Object> shList(@PathVariable("page") int page) {
+    public HashMap<String, Object> shList(@PathVariable("page") int page, @RequestParam("searchVal") String searchVal) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("postList", ss.getPostList(page));
+        result.put("postList", ss.getPostList(page, searchVal));
 
         return result;
     }
 
     @GetMapping("/sh-list/ct/{id}/{page}")
-    public HashMap<String, Object> ct(@PathVariable("id") Integer id, @PathVariable("page") Integer page) {
+    public HashMap<String, Object> ct(@PathVariable("id") Integer id, @PathVariable("page") Integer page , @RequestParam("searchVal") String searchVal) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("postList", ss.getCtPostList(id, page));
+        result.put("postList", ss.getCtPostList(id, page, searchVal));
         return result;
     }
 

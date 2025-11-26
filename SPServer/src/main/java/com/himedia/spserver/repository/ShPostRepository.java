@@ -25,4 +25,8 @@ public interface ShPostRepository extends JpaRepository<SH_post, Integer> {
     List<SH_post> findByMemberId(Integer memberId);
 
     Page<SH_post> findAllByCategoryIdOrderByIndateDesc(Integer id, Pageable pageable);
+
+    Page<SH_post> findByTitleContainingOrContentContainingOrderByIndateDesc(String searchVal, String searchVal1, Pageable pageable);
+
+    Page<SH_post> findByCategoryIdAndTitleContainingOrCategoryIdAndContentContainingOrderByIndateDesc(Integer id, String searchVal, Integer id1, String searchVal1, Pageable pageable);
 }

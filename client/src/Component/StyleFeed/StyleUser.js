@@ -166,7 +166,7 @@ function StyleUser() {
         <button className={activeTab === "style" ? "tab active" : "tab"} onClick={() => setActiveTab("style")}>Style</button>
         <button className={activeTab === "sell" ? "tab active" : "tab"} onClick={() => setActiveTab("sell")}>판매 목록</button>
         <button className={activeTab === "zzim" ? "tab active" : "tab"} onClick={() => setActiveTab("zzim")}>찜 목록</button>
-        {isMyProfile && <button className={activeTab === "myPosts" ? "tab active" : "tab"} onClick={() => setActiveTab("myPosts")}>작성한 게시글</button>}
+        {isMyProfile && <button className={activeTab === "myPosts" ? "tab active" : "tab"} onClick={() => setActiveTab("myPosts")}>작성한 커뮤니티</button>}
       </div>
 
       {/* Style 게시글 */}
@@ -180,7 +180,7 @@ function StyleUser() {
                 <div key={post.spost_id ?? index} className="style-post-card" onClick={() => navigate(`/style/${post.spost_id}`)}>
                   <div className="style-post-image">
                     <img src={Array.isArray(post.s_images) ? post.s_images[0] : post.s_images} alt="post" />
-                    <div className="style-view-count">👁 {post.viewCount ?? 0}</div>
+                    <div className="style-likes">❤️ {post.likeCount}</div>
                   </div>
                 </div>
               ))}
@@ -201,9 +201,9 @@ function StyleUser() {
                   <div className="style-post-image">
                     <img src={item.firstFilePath} alt="상품" />
                     <div className="style-sell-info">
-                    <div className="sell-title">{item.title}</div>
-                    <div className="sell-price">{item.price.toLocaleString()}원</div>
-                  </div>
+                      <div className="sell-title">{item.title}</div>
+                      <div className="sell-price">{item.price.toLocaleString()}원</div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -235,22 +235,22 @@ function StyleUser() {
         </div>
       )}
 
-      {/* 작성한 커뮤니티 게시글 */}
+      {/* 작성한 커뮤니티 게시글 (고유 클래스명 적용) */}
       {isMyProfile && activeTab === "myPosts" && (
-        <div className="community">
-          <div className='communityList'>
+        <div className="style-user-community">
+          <div className='style-community-list'>
             {myCommunityPosts.length === 0 ? (
-              <div className='noPosts'>작성한 커뮤니티 게시글이 없습니다.</div>
+              <div className='style-no-community-posts'>작성한 커뮤니티 게시글이 없습니다.</div>
             ) : myCommunityPosts.map(post => (
-              <div className='row' key={post.cpostId}>
-                <div className='col title' onClick={() => navigate(`/communityView/${post.cpostId}`)}>
+              <div className='style-community-row' key={post.cpostId}>
+                <div className='style-community-col title' onClick={() => navigate(`/communityView/${post.cpostId}`)}>
                   {post.title}
                 </div>
-                <div className='col author'>
+                <div className='style-community-col author'>
                   {post.isAnonymous === 'Y' ? "익명" : post.member?.userid || post.userid || "알수없음"}
                 </div>
-                <div className='col date'>{post.indate?.substring(0,10)}</div>
-                <div className='col actions'>
+                <div className='style-community-col date'>{post.indate?.substring(0,10)}</div>
+                <div className='style-community-col actions'>
                   <button onClick={async () => {
                     if (!window.confirm("정말 삭제하시겠습니까?")) return;
                     try {

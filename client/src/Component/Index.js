@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../style/index.css';
 
 const rollingWords = ['짐빔', '중고거래', '스타일', '커뮤니티'];
@@ -26,6 +26,7 @@ const featureCards = [
 
 function Index() {
   const [wordIndex, setWordIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,7 +40,7 @@ function Index() {
     <main id="main-index">
       <section className="hero">
         <div className="hero-text">
-          <p className="eyebrow">당신 근처의</p>
+          <p className="eyebrow">당신과 함께할</p>
           <div className="hero-title">
             <h1>JIMBIM</h1>
             <div className="rolling-wrap" aria-live="polite">
@@ -56,14 +57,6 @@ function Index() {
           <p className="subtitle">
             JIMBIM에서 이웃과 소통하고 원하는 모든 것을 찾아보세요.
           </p>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="JIMBIM에서 검색해보세요"
-              aria-label="메인 검색"
-            />
-            <button type="button">검색</button>
-          </div>
           <div className="quick-links">
             <Link to="/sh-page">JIMBIM 중고거래</Link>
             <Link to="/style">JIMBIM 스타일</Link>
@@ -74,7 +67,7 @@ function Index() {
           <div className="hero-circle large" />
           <div className="hero-circle medium" />
           <div className="hero-circle small" />
-          <div className="hero-card">
+          <div className="hero-card" onClick={()=> {navigate("/sh-page")}}>
             <p>오늘의 추천</p>
             <strong>JIMBIM 인기상품</strong>
             <span>지금 바로 만나보세요</span>

@@ -173,7 +173,7 @@ function ShMain() {
         <div className='menuWrap'>
             <div className='list'>
                   <Link to={`/sh-page`}>
-                    <img src={`${baseURL}/sh_img/1.png`} alt={"전체"} />
+                    <img src={`${baseURL}/sh_img/all.png`} alt={"전체"} />
                     <span className='tit'>전체</span>
                   </Link>
             </div>
@@ -182,7 +182,7 @@ function ShMain() {
               return (
                 <div className='list' key={category.category_id || i}>
                       <Link  to={`/sh-page/ct/${category.category_id}`}>
-                        <img src={`${baseURL}/sh_img/${i}.png`} alt={category.category_name} />
+                        <img src={`${baseURL}/sh_img/${i+1}.png`} alt={category.category_name} />
                         <span className='tit'>{category.category_name}</span>
                       </Link>
                 </div>

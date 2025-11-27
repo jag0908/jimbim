@@ -1,45 +1,47 @@
 import React from 'react';
 import '../style/footer.css';
+import { useNavigate } from 'react-router-dom';
 
 function Footer() {
+  const navigate = useNavigate();
+
   return (
     <footer id="footer">
       <div className="footer-inner">
         <div className="footer-top">
           <div className="footer-column">
-            <h4>이용안내</h4>
+            {/* <h4>이용안내</h4>
             <ul>
               <li>검수기준</li>
               <li>이용정책</li>
               <li>커뮤니티 가이드라인</li>
-            </ul>
+            </ul> */}
           </div>
           <div className="footer-column">
-            <h4>고객지원</h4>
+            {/* <h4>고객지원</h4>
             <ul>
               <li>공지사항</li>
               <li>서비스 소개</li>
               <li>판매자 방문접수</li>
-            </ul>
+            </ul> */}
           </div>
           <div className="footer-support">
-            <span className="support-label">고객센터</span>
             <span className="support-number">1588-7813</span>
             <p>운영시간 평일 10:00 - 18:00 (토·일, 공휴일 휴무)</p>
             <p>점심시간 평일 13:00 - 14:00</p>
             <small>1:1 문의하기는 앱에서만 가능합니다.</small>
-            <button type="button">자주 묻는 질문</button>
+            <button type="button" onClick={()=>{navigate("/customer/qna")}}>자주 묻는 질문</button>
           </div>
         </div>
 
         <div className="footer-divider" />
 
         <div className="footer-links">
-          <a href="#none">회사소개</a>
-          <a href="#none">인재채용</a>
-          <a href="#none">제휴제안</a>
-          <a href="#none">이용약관</a>
-          <a href="#none" className="bold">개인정보처리방침</a>
+          <a href="/customer/map">회사소개</a>
+          <a href="/customer/qna">인재채용</a>
+          {/* <a href="/customer/qna">제휴제안</a>
+          <a href="/customer/qna">이용약관</a>
+          <a href="/customer/qna" className="bold">개인정보처리방침</a> */}
         </div>
 
         <div className="footer-company">
@@ -65,9 +67,8 @@ function Footer() {
         <div className="footer-bottom">
           <p>© JIMBIM Corp.</p>
           <div className="sns-icons">
-            <span>IG</span>
-            <span>FB</span>
-            <span>YT</span>
+            <span onClick={()=>{navigate("/customer/qna")}}>Istargram</span>
+            <span onClick={()=>{navigate("/customer/qna")}}>Facebook</span>
           </div>
         </div>
       </div>

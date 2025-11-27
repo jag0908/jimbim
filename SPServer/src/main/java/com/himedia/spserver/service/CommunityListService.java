@@ -11,9 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -54,34 +53,6 @@ public class CommunityListService {
         });
     }
 
-    // ---------------- 게시글 수정 ----------------
-    public HashMap<String, Object> updateCommunity(C_post post) {
-        HashMap<String, Object> result = new HashMap<>();
-        Optional<C_post> optionalPost = cr.findById(post.getCpostId());
-
-        if (optionalPost.isPresent()) {
-            C_post existingPost = optionalPost.get();
-            existingPost.setTitle(post.getTitle());
-            existingPost.setContent(post.getContent());
-            existingPost.setC_image(post.getC_image());
-
-            // 파일 리스트 수정 시
-            if (post.getFileList() != null && !post.getFileList().isEmpty()) {
-                for (C_File file : post.getFileList()) {
-                    file.setCpost(existingPost); // 게시글 연결
-                    cfr.save(file);
-                }
-                existingPost.setFileList(post.getFileList());
-            }
-
-            cr.save(existingPost);
-            result.put("msg", "ok");
-        } else {
-            result.put("msg", "notok");
-        }
-        return result;
-    }
-
     // ---------------- 게시글 상세조회 ----------------
     public Optional<C_post> getCommunityById(int id) {
         return cr.findById(id);
@@ -117,26 +88,12 @@ public class CommunityListService {
 
                 cfr.save(cfile);
 
-                // 게시글 파일 리스트에 추가
                 if (post.getFileList() != null) {
                     post.getFileList().add(cfile);
                 }
             }
             cr.save(post);
         }
-    }
-
-    // ---------------- 추천 증가 ----------------
-    public int incrementLike(int cpostId) {
-        C_post post = cr.findById(cpostId)
-                .orElseThrow(() -> new RuntimeException("게시글 없음: " + cpostId));
-
-        Integer current = post.getC_like();
-        if (current == null) current = 0;
-        post.setC_like(current + 1);
-
-        cr.save(post);
-        return post.getC_like();
     }
 
     // ---------------- 게시글 리스트 조회 ----------------
@@ -168,36 +125,83 @@ public class CommunityListService {
         return result;
     }
 
-    public boolean updateCommunity(Integer cpostId, String title, String content, String pass, MultipartFile image) throws IOException {
-        // 1. 게시글 조회
-        Optional<C_post> postOpt = cr.findById(cpostId);
-        if (postOpt.isEmpty()) return false;
+    // ---------------- 게시글 수정 (여러 이미지 + 삭제 이미지) ----------------
+    @Transactional
+    public boolean updateCommunity(Integer cpostId,
+                                   String title,
+                                   String content,
+                                   List<Integer> deletedIds,
+                                   List<MultipartFile> newImages) throws IOException {
 
-        C_post post = postOpt.get();
-        Member writer = post.getMember();
+        Optional<C_post> opt = cr.findById(cpostId);
+        if (!opt.isPresent()) return false;
 
-        // 2. 비밀번호 체크
-        if (!writer.getPwd().equals(pass)) {
-            return false; // 비밀번호 불일치 시 false 반환
-        }
+        C_post post = opt.get();
 
-        // 3. 게시글 내용 수정
+        // 게시글 내용 수정
         post.setTitle(title);
         post.setContent(content);
 
-        // 4. 이미지가 있으면 업데이트
-        if (image != null && !image.isEmpty()) {
-            String saveFilename = sus.saveFile(image); // S3 업로드 서비스 사용
-            post.setC_image(saveFilename);
+        // 기존 이미지 컬렉션 가져오기
+        List<C_File> fileList = post.getFileList();
+
+        // 삭제 처리
+        if (deletedIds != null && !deletedIds.isEmpty()) {
+            fileList.removeIf(file -> {
+                if (deletedIds.contains(file.getId())) {
+                    try {
+                        deleteFile(file.getId()); // DB + S3 삭제
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                }
+                return false;
+            });
         }
 
-        // 5. 수정 완료 후 저장
+        // 새 이미지 업로드 후 컬렉션에 추가
+        if (newImages != null && !newImages.isEmpty()) {
+            for (MultipartFile newImg : newImages) {
+                String fileUrl = sus.saveFile(newImg);
+
+                C_File cfile = new C_File();
+                cfile.setCpost(post);
+                cfile.setPath(fileUrl);
+                cfile.setOriginalname(newImg.getOriginalFilename());
+                cfile.setSize(newImg.getSize());
+                cfile.setContentType(newImg.getContentType());
+
+                cfr.save(cfile);
+                fileList.add(cfile);
+            }
+        }
+
+        // Hibernate 추적 컬렉션 그대로 저장
         cr.save(post);
 
-        return true; // 수정 성공
+        return true;
     }
 
     public List<C_post> getPostsByMember(Member member) {
-        return cr.findByMember(member); // JPA 메서드
+        return cr.findByMember(member);
+    }
+
+    // ---------------- 파일 삭제 ----------------
+    public void deleteFile(Integer fileId) throws IOException {
+        Optional<C_File> optFile = cfr.findById(fileId);
+        if (optFile.isEmpty()) {
+            throw new RuntimeException("삭제할 파일이 없습니다. fileId: " + fileId);
+        }
+
+        C_File file = optFile.get();
+
+        // S3에서 삭제
+        if (file.getPath() != null) {
+            sus.deleteFile(file.getPath());
+        }
+
+        // DB에서 삭제
+        cfr.delete(file);
     }
 }

@@ -36,7 +36,8 @@ function QnaDetail() {
             }
             jaxios.get('/api/admin/getQna', {params:{qnaId}})
             .then((result)=>{ 
-                setQna(result.data.qna) 
+                setQna(result.data.qna)
+                setReply('')
             })
             .catch((err)=>{console.error(err)})
         },[]

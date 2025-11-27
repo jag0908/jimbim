@@ -50,4 +50,6 @@ public class DataInit_ShCategory implements CommandLineRunner {
 
         scr.saveAll(categories);
     }
+
+
 }

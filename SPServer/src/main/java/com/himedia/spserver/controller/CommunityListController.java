@@ -182,4 +182,13 @@ public class CommunityListController {
 
         return result;
     }
+
+    @GetMapping("/myPosts/{userid}")
+    public List<C_post> getMyCommunityPosts(@PathVariable String userid) {
+        Member member = mr.findByUserid(userid);
+        if (member == null) {
+            throw new RuntimeException("회원이 없습니다.");
+        }
+        return cs.getPostsByMember(member); // 서비스에서 member 기준으로 게시글 조회
+    }
 }

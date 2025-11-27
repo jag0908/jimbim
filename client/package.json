@@ -22,8 +22,10 @@
     "react-router-dom": "^7.9.5",
     "react-scripts": "5.0.1",
     "react-slick": "^0.31.0",
+    "react-sortablejs": "^6.1.4",
     "slick-carousel": "^1.8.1",
     "sockjs-client": "^1.6.1",
+    "sortablejs": "^1.15.6",
     "stompjs": "^2.3.3",
     "web-vitals": "^2.1.4"
   },

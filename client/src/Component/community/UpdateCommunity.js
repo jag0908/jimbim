@@ -14,12 +14,10 @@ function UpdateCommunity() {
     const [userid, setUserid] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [pass, setPass] = useState('');
-    const [oldImg, setOldImg] = useState('');
-    const [newImgFile, setNewImgFile] = useState(null);
-    const [previewSrc, setPreviewSrc] = useState('');
+    const [images, setImages] = useState([]);
+    const [newFiles, setNewFiles] = useState([]);
+    const [deletedIds, setDeletedIds] = useState([]); // 삭제된 기존 이미지 id 저장
 
-    // 로그인 체크 + 게시글 데이터 불러오기
     useEffect(() => {
         if (!loginUser?.userid) {
             alert('로그인이 필요한 서비스입니다.');
@@ -31,10 +29,19 @@ function UpdateCommunity() {
             try {
                 const res = await jaxios.get(`${baseURL}/communityList/getCommunity/${num}`);
                 const data = res.data.community;
+
                 setUserid(data.member?.userid || '알수없음');
                 setTitle(data.title || '');
                 setContent(data.content || '');
-                setOldImg(data.fileList?.[0]?.path || '');
+
+                // 기존 이미지 세팅
+                const oldImages = data.fileList?.map(file => ({
+                    id: `old-${file.id}`, // 기존 파일 id
+                    src: file.path,
+                    isNew: false,
+                    file: null,
+                })) || [];
+                setImages(oldImages);
             } catch (err) {
                 console.error(err);
                 alert('게시글 정보를 불러오는데 실패했습니다.');
@@ -44,46 +51,60 @@ function UpdateCommunity() {
         fetchData();
     }, [loginUser, navigate, num]);
 
-    // 이미지 선택 시 미리보기
+    // 이미지 선택 시
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setNewImgFile(file);
-        setPreviewSrc(URL.createObjectURL(file));
+        const files = Array.from(e.target.files);
+        const newImgs = files.map((file, idx) => ({
+            id: `new-${Date.now()}-${idx}`,
+            src: URL.createObjectURL(file),
+            isNew: true,
+            file,
+        }));
+        setImages(prev => [...prev, ...newImgs]);
+        setNewFiles(prev => [...prev, ...files]);
+        e.target.value = null;
     };
 
-    // 수정 완료
+    // 이미지 삭제
+    const handleRemoveImage = (id) => {
+        const imgToRemove = images.find(img => img.id === id);
+        if (!imgToRemove) return;
+
+        setImages(prev => prev.filter(img => img.id !== id));
+
+        if (imgToRemove.isNew) {
+            // 새 이미지 파일만 newFiles에서 제거
+            setNewFiles(prev => prev.filter(file => file !== imgToRemove.file));
+        } else {
+            // 기존 이미지 삭제 ID 기록
+            const oldId = Number(id.replace('old-', ''));
+            setDeletedIds(prev => [...prev, oldId]);
+        }
+    };
+
     const handleUpdate = async () => {
-        if (!pass.trim()) return alert('수정 비밀번호를 입력하세요.');
         if (!title.trim()) return alert('제목을 입력하세요.');
         if (!content.trim()) return alert('내용을 입력하세요.');
 
         try {
-            // 1️⃣ 게시글 업데이트
-            const updateData = {
-                num,
-                userid,
-                pass,
-                title,
-                content,
-            };
-            const res = await jaxios.post(`${baseURL}/communityList/updateCommunity`, updateData);
-            if (res.data.msg !== 'ok') return alert('비밀번호가 맞지 않습니다.');
+            const formData = new FormData();
+            formData.append('cpostId', num);
+            formData.append('title', title);
+            formData.append('content', content);
 
-            // 2️⃣ 이미지 업로드 (선택 시)
-            if (newImgFile) {
-                const formData = new FormData();
-                formData.append('image', newImgFile);
-                formData.append('cpostId', num);
-
-                await jaxios.post(`${baseURL}/communityList/fileupload`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" }
-                });
+            if (deletedIds.length > 0) {
+                formData.append('deletedIds', deletedIds.join(','));
             }
+
+            // 새 이미지 추가
+            images.filter(img => img.isNew).forEach(img => formData.append('newImages', img.file));
+
+            await jaxios.post(`${baseURL}/communityList/updateCommunity`, formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
 
             alert('게시물이 수정되었습니다.');
             navigate(`/communityView/${num}`);
-
         } catch (err) {
             console.error(err);
             alert('게시물 수정 중 오류가 발생했습니다.');
@@ -100,11 +121,6 @@ function UpdateCommunity() {
             </div>
 
             <div className="field">
-                <label>비밀번호</label>
-                <input type="password" value={pass} onChange={e => setPass(e.target.value)} />
-            </div>
-
-            <div className="field">
                 <label>제목</label>
                 <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
             </div>
@@ -115,14 +131,31 @@ function UpdateCommunity() {
             </div>
 
             <div className="field">
-                <label>기존 이미지</label>
-                {oldImg ? <img src={oldImg} alt="기존 이미지" className="image-preview" /> : <p>없음</p>}
-            </div>
-
-            <div className="field">
-                <label>새 이미지 선택</label>
-                <input type="file" onChange={handleFileChange} />
-                {previewSrc && <img src={previewSrc} alt="미리보기" className="image-preview" />}
+                <label>이미지</label>
+                <input type="file" multiple onChange={handleFileChange} />
+                <div className="image-preview-container" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                    {images.map(img => (
+                        <div key={img.id} style={{ position: 'relative' }}>
+                            <img src={img.src} alt="" className="image-preview" />
+                            <button
+                                className="remove-image-btn"
+                                onClick={() => handleRemoveImage(img.id)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '-8px',
+                                    right: '-8px',
+                                    backgroundColor: 'red',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '22px',
+                                    height: '22px',
+                                    cursor: 'pointer'
+                                }}
+                            >X</button>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             <div className="btns">

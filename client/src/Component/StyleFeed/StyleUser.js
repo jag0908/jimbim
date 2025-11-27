@@ -180,7 +180,7 @@ function StyleUser() {
                 <div key={post.spost_id ?? index} className="style-post-card" onClick={() => navigate(`/style/${post.spost_id}`)}>
                   <div className="style-post-image">
                     <img src={Array.isArray(post.s_images) ? post.s_images[0] : post.s_images} alt="post" />
-                    <div className="style-view-count">👁 {post.viewCount ?? 0}</div>
+                    <div className="style-likes">❤️ {post.likeCount}</div>
                   </div>
                 </div>
               ))}

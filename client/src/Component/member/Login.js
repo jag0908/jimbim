@@ -63,8 +63,8 @@ function Login() {
                         <button onClick={()=>{ navigate('/join')}}>회원가입</button>
                         <button onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>
                     </div>
-                    <div className="btns">
-                        <button id="kakaobutton" onClick={
+                    <div className="kakaobutton">
+                        <button onClick={
                             ()=>{window.location.href=`${baseURL}/member/kakaostart`}
                         }>KAKAO</button>
                     </div>

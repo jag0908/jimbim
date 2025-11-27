@@ -115,6 +115,20 @@ function Qna() {
                     </div>
                 </Modal>
                 <div>
+                    {
+                        (qnaList.length!=0)?
+                        (<div className='qnaList'>
+                            <div className='field' style={{flex:'2'}}>
+                                <div className='addressListText'>제목</div>
+                            </div>
+                            <div className='field'>
+                                <div className='addressListText'>답변여부</div>
+                            </div>
+                            <div className='field'>
+                                <div className='addressListText'>작성일</div>
+                            </div>
+                        </div>):(<></>)
+                    }
                 {
                     (qnaList.length!=0)?
                         (
@@ -122,15 +136,12 @@ function Qna() {
                                 return (
                                     <div key={idx} className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
                                         <div className='field' style={{flex:'2'}}>
-                                            <label>제목</label>
                                             <div className='addressListText'>{qna.title}</div>
                                         </div>
                                         <div className='field'>
-                                            <label>답변여부</label>
                                             <div className='addressListText'>{(qna.reply)?(<>Y</>):(<>N</>)}</div>
                                         </div>
                                         <div className='field'>
-                                            <label>작성일</label>
                                             <div className='addressListText'>{(qna.indate)?(qna.indate.substring(0,10)):(null)}</div>
                                         </div>
                                     </div>

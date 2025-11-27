@@ -1,7 +1,6 @@
 package com.himedia.spserver.controller;
 
 import com.himedia.spserver.entity.Community.C_Like;
-import com.himedia.spserver.entity.Community.C_File;
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.repository.CommunityLikeRepository;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -85,23 +85,27 @@ public class CommunityListController {
             @RequestParam("cpostId") Integer cpostId,
             @RequestParam("title") String title,
             @RequestParam("content") String content,
-            @RequestParam("pass") String pass,
-            @RequestParam(value = "image", required = false) MultipartFile image
+            @RequestParam(value = "deletedIds", required = false) String deletedIdsStr, // 삭제 이미지 ID (콤마 구분)
+            @RequestParam(value = "newImages", required = false) List<MultipartFile> newImages
     ) {
         HashMap<String, Object> result = new HashMap<>();
-
         try {
-            boolean updated = cs.updateCommunity(cpostId, title, content, pass, image);
-            if (!updated) {
-                result.put("msg", "wrong_pass");
-            } else {
-                result.put("msg", "ok");
+            // deletedIdsStr -> List<Integer>
+            List<Integer> deletedIds = null;
+            if (deletedIdsStr != null && !deletedIdsStr.isEmpty()) {
+                deletedIds = Arrays.stream(deletedIdsStr.split(","))
+                        .map(Integer::parseInt)
+                        .toList();
             }
+
+            boolean updated = cs.updateCommunity(cpostId, title, content, deletedIds, newImages);
+
+            result.put("msg", updated ? "ok" : "notok");
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("msg", "failed");
         }
-
         return result;
     }
 
@@ -140,7 +144,7 @@ public class CommunityListController {
                 return result;
             }
 
-            cs.fileUpload(images, cpostId); // C_File 기반으로 처리됨
+            cs.fileUpload(images, cpostId);
             result.put("msg", "ok");
 
         } catch (IOException e) {
@@ -189,6 +193,21 @@ public class CommunityListController {
         if (member == null) {
             throw new RuntimeException("회원이 없습니다.");
         }
-        return cs.getPostsByMember(member); // 서비스에서 member 기준으로 게시글 조회
+        return cs.getPostsByMember(member);
     }
+
+    // ---------------- 파일 삭제 ----------------
+    @DeleteMapping("/file/{fileId}")
+    public HashMap<String, Object> deleteFile(@PathVariable Integer fileId) {
+        HashMap<String, Object> result = new HashMap<>();
+        try {
+            cs.deleteFile(fileId);
+            result.put("msg", "deleted");
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("error", "failed");
+        }
+        return result;
+    }
+
 }

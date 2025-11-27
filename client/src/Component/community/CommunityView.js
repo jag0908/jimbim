@@ -11,14 +11,14 @@ function CommunityView() {
     const loginUser = useSelector(state => state.user);
     const [community, setCommunity] = useState({});
     const [replyList, setReplyList] = useState([]);
-    const [rContent, setRContent] = useState(''); // 최상위 댓글
-    const [replyInputs, setReplyInputs] = useState({}); // 답글용 입력창
-    const replyRefs = useRef({}); // 답글 입력창 ref
+    const [rContent, setRContent] = useState('');
+    const [replyInputs, setReplyInputs] = useState({});
+    const replyRefs = useRef({});
     const [loading, setLoading] = useState(true);
     const [liked, setLiked] = useState(false);
     const navigate = useNavigate();
     const { num } = useParams();
-    const [anonymousTop, setAnonymousTop] = useState(false); // 최상위 댓글 익명
+    const [anonymousTop, setAnonymousTop] = useState(false);
 
     useEffect(() => {
         const fetchCommunityData = async () => {
@@ -32,7 +32,7 @@ function CommunityView() {
                 ]);
 
                 setCommunity(communityRes.data.community || {});
-                setLiked(communityRes.data.liked || false); 
+                setLiked(communityRes.data.liked || false);
                 setReplyList(replyRes.data.replyList || []);
             } catch (err) {
                 console.error('데이터 로딩 실패:', err);
@@ -45,7 +45,6 @@ function CommunityView() {
         fetchCommunityData();
     }, [num, loginUser?.member_id]);
 
-    // 최상위 댓글 작성
     const addReply = async () => {
         if (!loginUser?.member_id) return alert('로그인이 필요한 서비스입니다.');
         if (!rContent.trim()) return alert('댓글을 입력해주세요.');
@@ -62,7 +61,7 @@ function CommunityView() {
             const result = await axios.get(`${baseURL}/communityReply/getReply/${num}`);
             setReplyList(result.data.replyList || []);
             setRContent('');
-            setAnonymousTop(false); // 체크박스 초기화
+            setAnonymousTop(false);
         } catch (err) {
             console.error('댓글 작성 실패:', err);
             alert('댓글 작성에 실패했습니다.');
@@ -80,7 +79,6 @@ function CommunityView() {
         }, 0);
     };
 
-    // 답글 제출
     const submitReply = async (parentId) => {
         const input = replyInputs[parentId];
         const content = input.content;
@@ -120,7 +118,6 @@ function CommunityView() {
         });
     };
 
-    // 댓글 삭제 (재귀적으로 자식 댓글도 처리)
     const deleteReply = async (replyId) => {
         if (!window.confirm('해당 댓글을 삭제하시겠습니까?')) return;
 
@@ -137,7 +134,6 @@ function CommunityView() {
             };
 
             setReplyList(prev => removeReplyRecursively(prev, replyId));
-
             alert('댓글이 삭제되었습니다.');
         } catch (err) {
             console.error('댓글 삭제 실패:', err);
@@ -167,7 +163,6 @@ function CommunityView() {
 
             setLiked(res.data.liked); 
             setCommunity(prev => ({ ...prev, c_like: res.data.likeCount }));
-            alert(res.data.liked ? '게시물을 추천했습니다! 👍' : '추천을 취소했습니다. 👎'); 
         } catch (err) {
             console.error('추천 처리 실패:', err);
             alert('추천 처리 중 오류가 발생했습니다.');
@@ -186,6 +181,14 @@ function CommunityView() {
         return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
     };
 
+    // 전체 댓글 수 계산 (답글 포함)
+    const getTotalReplyCount = (replies) => {
+        return replies.reduce((acc, reply) => {
+            const childrenCount = reply.children ? getTotalReplyCount(reply.children) : 0;
+            return acc + 1 + childrenCount;
+        }, 0);
+    };
+
     const renderReplies = (replies, level = 0) => {
         return replies.map(reply => (
             <div key={reply.replyId} className="reply-item" style={{ marginLeft: level * 20 }}>
@@ -193,11 +196,7 @@ function CommunityView() {
                     <span className="communityView-reply-user">{reply.anonymous ? '익명' : reply.userid}</span>
                     <span className="communityView-reply-time">{formatDateTime(reply.indate)}</span>
                 </div>
-                <div className="communityView-reply-content">
-                    {level === 0 
-                        ? reply.content 
-                        : `@${reply.anonymous ? '익명' : reply.userid} ${reply.content}`}
-                </div>
+                <div className="communityView-reply-content">{reply.content}</div>
                 <div className="communityView-reply-actions">
                     {loginUser?.member_id && (
                         <button onClick={() => openReplyInput(reply.replyId)}>답글</button>
@@ -207,13 +206,12 @@ function CommunityView() {
                     )}
                 </div>
 
-                {replyInputs[reply.replyId] !== undefined && (
+                {replyInputs[reply.replyId] && (
                     <div className="communityView-reply-input" style={{ marginTop: 6 }}>
-                        <span className="fixed-user">@{loginUser.userid}</span>
                         <textarea
                             ref={el => replyRefs.current[reply.replyId] = el}
                             rows="2"
-                            value={replyInputs[reply.replyId]?.content || ''}
+                            value={replyInputs[reply.replyId].content}
                             onChange={(e) => handleReplyInputChange(reply.replyId, {
                                 ...replyInputs[reply.replyId],
                                 content: e.target.value
@@ -229,10 +227,10 @@ function CommunityView() {
                         <label>
                             <input
                                 type="checkbox"
-                                checked={replyInputs[reply.replyId]?.anonymous || false}
+                                checked={replyInputs[reply.replyId].anonymous}
                                 onChange={() => handleReplyInputChange(reply.replyId, {
                                     ...replyInputs[reply.replyId],
-                                    anonymous: !(replyInputs[reply.replyId]?.anonymous || false)
+                                    anonymous: !replyInputs[reply.replyId].anonymous
                                 })}
                             />
                             익명
@@ -260,8 +258,7 @@ function CommunityView() {
                     <div>작성자: {community.member?.userid || '알수없음'}</div>
                     <div>{formatDateTime(community.indate)}</div>
                     <div>조회수: <span className="count">{community.readcount || 0}</span></div>
-                    <div>추천수: <span className="count">{community.c_like || 0}</span></div>
-                    <div>댓글수: <span className="count">{replyList.length}</span></div>
+                    <div>댓글수: <span className="count">{getTotalReplyCount(replyList)}</span></div>
                 </div>
             </div>
 
@@ -294,7 +291,9 @@ function CommunityView() {
                     </>
                 )}
                 <button onClick={() => navigate('/communityList')}>이전</button>
-                <button onClick={handleLike}>추천 👍</button>
+                <button onClick={handleLike}>
+                    추천 👍 {community.c_like || 0}
+                </button>
             </div>
 
             <div className="communityView-reply-section">

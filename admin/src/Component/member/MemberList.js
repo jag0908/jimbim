@@ -76,7 +76,7 @@ function MemberList() {
             <SubMenu type={type}/>
             <div className='productTable'>
                 <div className='title'>회원목록</div>
-                <div className='row'>
+                <div className='row tableTitle'>
                     <div className='col'>관리자/일반유저</div>
                     <div className='col'>User ID</div>
                     <div className='col'>이름</div>
@@ -122,7 +122,7 @@ function MemberList() {
                     (beginEnd)?(
                         beginEnd.map((page, idx)=>{
                             return (
-                                <span style={{cursor:"pointer"}} key={idx} onClick={
+                                <span style={{cursor:"pointer"}} className={(page==paging.page)?('currentPage'):''} key={idx} onClick={
                                     ()=>{ onPageMove( page ) }
                                 }>&nbsp;{page}&nbsp;</span>
                             )

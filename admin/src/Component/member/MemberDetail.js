@@ -75,7 +75,7 @@ function MemberDetail() {
                     <div className='col'>가입일</div>
                     <div className='col'>{member.indate.substring(0, 10)}</div>
                 </div>
-                <div>
+                <div className='detailPageBtns'>
                     <button onClick={()=>{navigate('/memberList')}}>뒤로</button>
                 </div>
                 </>):(<></>)}

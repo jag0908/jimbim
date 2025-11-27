@@ -5,7 +5,7 @@ function SideMenu() {
     const navigate = useNavigate()
 
     return (
-        <div className='sidebar'>
+        <div className='sidebar' style={{height:'650px', marginTop:'20px'}}>
             <h3>고객센터</h3>
             <ul>
                 <li onClick={()=>{navigate("/customer/qna")}}>문의하기</li>

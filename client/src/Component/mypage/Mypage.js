@@ -189,180 +189,180 @@ function Mypage() {
         }
     }
     return (
-        <article style={{height:'100%'}}>
-            {/* height 짤리는 오류, css 중복되는 오류때문에 넣음 */}
-            <div className='mypagebody'>
-                <SideMenu/>
-                <div className='mypage'>
-                    <div className='formtitle'>로그인 정보</div>
+        <div className='mypagebody'>
+            <SideMenu/>
+            <div className='mypage'>
+                <div className='formtitle'>로그인 정보</div>
+                {
+                    (loginUser.provider==='KAKAO')?
+                    (null):
+                    (<>
+                        <div className='field'>
+                            <label>ID</label>
+                            <div style={{marginBottom:'15px'}}>{loginUser.userid}</div>
+                        </div>
+                        <div className='field'>
+                            <label>비밀번호</label>
+                            {
+                                (type==='pwd')?
+                                (<>
+                                    <div className='field subLabel'>
+                                        <label>현재 비밀번호</label>
+                                        <input type="password" value={prePwd} onChange={
+                                            (e)=>{ setPrePwd(e.currentTarget.value )}
+                                        }/>
+                                    </div>
+                                    <div className='field subLabel'>
+                                        <label>새 비밀번호</label>
+                                        <input type="password" value={pwd} onChange={
+                                            (e)=>{ setPwd(e.currentTarget.value )}
+                                        }/>
+                                    </div>
+                                    <div className='field subLabel'>
+                                        <label>비밀번호 확인</label>
+                                        <input type="password" value={pwdChk} onChange={
+                                            (e)=>{ setPwdChk(e.currentTarget.value )}
+                                        }/>
+                                    </div>
+                                    <div className='formBtns'>
+                                        <button onClick={()=>{updatePwd()}}>수정</button>
+                                        <button onClick={()=>{edit('')}}>취소</button>
+                                    </div>
+                                </>):
+                                (<>
+                                    <div>********</div>
+                                    <div className='formBtns'>
+                                        <button onClick={()=>{edit('pwd')}}>변경</button>
+                                    </div>
+                                </>)
+                            }
+                        </div>
+                    </>)
+                }
+                <div className='field'>
+                    <label>이메일</label>
                     {
-                        (loginUser.provider==='KAKAO')?
-                        (null):
+                        (type==='email')?
                         (<>
-                            <div className='field'>
-                                <label>ID</label>
-                                <div>{loginUser.userid}</div>
-                            </div>
-                            <div className='field'>
-                                <label>비밀번호</label>
-                                {
-                                    (type==='pwd')?
-                                    (<>
-                                        <div className='field subLabel'>
-                                            <label>현재 비밀번호</label>
-                                            <input type="password" value={prePwd} onChange={
-                                                (e)=>{ setPrePwd(e.currentTarget.value )}
-                                            }/>
-                                        </div>
-                                        <div className='field subLabel'>
-                                            <label>새 비밀번호</label>
-                                            <input type="password" value={pwd} onChange={
-                                                (e)=>{ setPwd(e.currentTarget.value )}
-                                            }/>
-                                        </div>
-                                        <div className='field subLabel'>
-                                            <label>비밀번호 확인</label>
-                                            <input type="password" value={pwdChk} onChange={
-                                                (e)=>{ setPwdChk(e.currentTarget.value )}
-                                            }/>
-                                        </div>
-                                        <div className='formBtns'>
-                                            <button onClick={()=>{updatePwd()}}>수정</button>
-                                            <button onClick={()=>{edit('')}}>취소</button>
-                                        </div>
-                                    </>):
-                                    (<>
-                                        <div>********</div>
-                                        <div className='formBtns'>
-                                            <button onClick={()=>{edit('pwd')}}>변경</button>
-                                        </div>
-                                    </>)
-                                }
-                            </div>
-                        </>)
-                    }
-                    <div className='field'>
-                        <label>이메일</label>
-                        {
-                            (type==='email')?
-                            (<>
+                            <div>
                                 <input type="text" className='inputemail' value={email} onChange={(e)=>{
                                     setEmail( e.currentTarget.value )
                                 }}/>
-                                <div className='formBtns'>
-                                    <button onClick={()=>{onSubmit()}}>수정</button>
-                                    <button onClick={()=>{edit('')}}>취소</button>
-                                </div>
-                            </>):
-                            (<>
-                                <div>{member.email}</div>
-                                <div className='formBtns'>
-                                    <button onClick={()=>{edit('email')}}>변경</button>
-                                </div>
-                            </>)
-                        }
-                    </div>
-                    <div className='field'>
-                        <label>전화번호</label>
+                            </div>
+                            
+                            <div className='formBtns'>
+                                <button onClick={()=>{onSubmit()}}>수정</button>
+                                <button onClick={()=>{edit('')}}>취소</button>
+                            </div>
+                        </>):
+                        (<>
+                            <div>{member.email}</div>
+                            <div className='formBtns'>
+                                <button onClick={()=>{edit('email')}}>변경</button>
+                            </div>
+                        </>)
+                    }
+                </div>
+                <div className='field'>
+                    <label>전화번호</label>
+                    {
+                        (type==='phone')?
+                        (<>
+                            <div>
+                                <input type="text" className='inputphone' value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
+                                    setPhone1( e.currentTarget.value )
+                                }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                                <input type="text" className='inputphone' value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                                    setPhone2( e.currentTarget.value )
+                                }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                                <input type="text" className='inputphone' value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
+                                    setPhone3( e.currentTarget.value )
+                                }}/>
+                            </div>
+                            <div className='formBtns'>
+                                <button onClick={()=>{onSubmit()}}>수정</button>
+                                <button onClick={()=>{edit('')}}>취소</button>
+                            </div>
+                        </>):
+                        (<>
+                            <div>{member.phone}</div>
+                            <div className='formBtns'>
+                                <button onClick={()=>{edit('phone')}}>변경</button>
+                            </div>
+                        </>)
+                    }
+                </div>
+                <div className='field'>
+                    <label>주민등록번호</label>
+                    {
+                        (type==='rrn')?
+                        (<>
+                            <div>
+                                <input type="text" className='inputrrn1' value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
+                                    setRrn1( e.currentTarget.value )
+                                }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
+                                <input type="text" id='inputrrn2' value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
+                                    setRrn2( e.currentTarget.value );
+                                }}/> * * * * * * 
+                            </div>
+                            <div className='formBtns'>
+                                <button onClick={()=>{onSubmit()}}>수정</button>
+                                <button onClick={()=>{edit('')}}>취소</button>
+                            </div>
+                        </>):
+                        (<>
+                            <div>{member.rrn}</div>
+                            <div className='formBtns'>
+                                <button onClick={()=>{edit('rrn')}}>변경</button>
+                            </div>
+                        </>)
+                    }
+                </div>
+                <div className='field'>
+                    <label>동의사항(선택)</label>
+                    <div className='checkboxField'>
+                        <div className='subLabel'>
+                            <label>약관 동의</label>
+                        </div>
+                        <div className='agreeCheckbox'>
                         {
-                            (type==='phone')?
-                            (<>
-                                <div>
-                                    <input type="text" className='inputphone' value={phone1} onInput={getNumberOnly} maxLength="3" onChange={(e)=>{
-                                        setPhone1( e.currentTarget.value )
-                                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
-                                    <input type="text" className='inputphone' value={phone2} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                                        setPhone2( e.currentTarget.value )
-                                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
-                                    <input type="text" className='inputphone' value={phone3} onInput={getNumberOnly} maxLength="4" onChange={(e)=>{
-                                        setPhone3( e.currentTarget.value )
-                                    }}/>
-                                </div>
-                                <div className='formBtns'>
-                                    <button onClick={()=>{onSubmit()}}>수정</button>
-                                    <button onClick={()=>{edit('')}}>취소</button>
-                                </div>
-                            </>):
-                            (<>
-                                <div>{member.phone}</div>
-                                <div className='formBtns'>
-                                    <button onClick={()=>{edit('phone')}}>변경</button>
-                                </div>
-                            </>)
+                            (terms_agree === 'N' || terms_agree === 'Y')?
+                            (
+                                (terms_agree === 'N')?  
+                                (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
+                                (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
+                            ):(null)
                         }
-                    </div>
-                    <div className='field'>
-                        <label>주민등록번호</label>
+                        </div>
+                    </div> 
+                    <div className='checkboxField'>
+                        <div className='subLabel'>
+                            <label>개인정보 동의</label>
+                        </div>
+                        <div className='agreeCheckbox'>
                         {
-                            (type==='rrn')?
-                            (<>
-                                <div>
-                                    <input type="text" className='inputrrn1' value={rrn1} onInput={getNumberOnly} maxLength="6" onChange={(e)=>{
-                                        setRrn1( e.currentTarget.value )
-                                    }}/><span className='memberformdash'>&nbsp;-&nbsp;</span>
-                                    <input type="text" id='inputrrn2' value={rrn2} onInput={getNumberOnly} maxLength="1" onChange={(e)=>{
-                                        setRrn2( e.currentTarget.value );
-                                    }}/> * * * * * * 
-                                </div>
-                                <div className='formBtns'>
-                                    <button onClick={()=>{onSubmit()}}>수정</button>
-                                    <button onClick={()=>{edit('')}}>취소</button>
-                                </div>
-                            </>):
-                            (<>
-                                <div>{member.rrn}</div>
-                                <div className='formBtns'>
-                                    <button onClick={()=>{edit('rrn')}}>변경</button>
-                                </div>
-                            </>)
+                            (personal_agree === 'N' || personal_agree === 'Y')?
+                            (
+                                (personal_agree === 'N')?  
+                                (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
+                                (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
+                            ):(null)
                         }
-                    </div>
-                    <div className='field'>
-                        <label>동의사항(선택)</label>
-                        <div className='checkboxField'>
-                            <div className='subLabel'>
-                                <label>약관 동의</label>
-                            </div>
-                            <div className='agreeCheckbox'>
-                            {
-                                (terms_agree === 'N' || terms_agree === 'Y')?
-                                (
-                                    (terms_agree === 'N')?  
-                                    (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>):
-                                    (<input type='checkbox' value={terms_agree} checked={isCheck(terms_agree)} readOnly onClick={()=>{updateAgree('terms', terms_agree)}}/>)
-                                ):(null)
-                            }
-                            </div>
-                        </div> 
-                        <div className='checkboxField'>
-                            <div className='subLabel'>
-                                <label>개인정보 동의</label>
-                            </div>
-                            <div className='agreeCheckbox'>
-                            {
-                                (personal_agree === 'N' || personal_agree === 'Y')?
-                                (
-                                    (personal_agree === 'N')?  
-                                    (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>):
-                                    (<input type='checkbox' value={personal_agree} checked={isCheck(personal_agree)} readOnly onClick={()=>{updateAgree('personal', personal_agree)}}/>)
-                                ):(null)
-                            }
-                            </div>
                         </div>
                     </div>
-                    <div className='field'>
-                        <label>가입일</label>
-                        <div>{
-                            (member.indate)?
-                            (member.indate.substring(0,10)):(null)
-                        }</div>
-                    </div>
-                    {/* <div className='formBtns'>
-                        <button onClick={()=>{navigate('/deleteMember')}} style={{backgroundColor:"red"}}>회원탈퇴</button>
-                    </div> */}
                 </div>
+                <div className='field'>
+                    <label>가입일</label>
+                    <div>{
+                        (member.indate)?
+                        (member.indate.substring(0,10)):(null)
+                    }</div>
+                </div>
+                {/* <div className='formBtns'>
+                    <button onClick={()=>{navigate('/deleteMember')}} style={{backgroundColor:"red"}}>회원탈퇴</button>
+                </div> */}
             </div>
-        </article>
+        </div>
     )
 }
 

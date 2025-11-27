@@ -86,9 +86,11 @@ function EditAddressForm(props) {
         <>
             <div className='field'>
                 <label>주소명</label>
-                <input type="text"  value={address_name} onChange={
-                    (e)=>{ setAddress_name(e.currentTarget.value )}
-                }/>
+                <div>
+                    <input type="text"  value={address_name} onChange={
+                        (e)=>{ setAddress_name(e.currentTarget.value )}
+                    }/>
+                </div>
             </div>
             <div className='formBtns'>
                 <button onClick={ ()=>{ setIsOpen( !isOpen ) }}>주소 검색하기</button>
@@ -100,10 +102,11 @@ function EditAddressForm(props) {
                         (address_zipnum)?(<>
 
                             ({address_zipnum}) {address_simple}
-                            <input type="text" className='address_detail' value={address_detail} onChange={
-                                (e)=>{ setAddress_detail(e.currentTarget.value )}
-                            } placeholder="상세 주소를 입력해주세요"/>
-
+                            <div>
+                                <input type="text" className='address_detail' value={address_detail} onChange={
+                                    (e)=>{ setAddress_detail(e.currentTarget.value )}
+                                } placeholder="상세 주소를 입력해주세요"/>
+                            </div>
                         </>):(<div className='nozipnumMsg'>
                         주소 검색하기 버튼을 눌러주세요</div>)
                     }

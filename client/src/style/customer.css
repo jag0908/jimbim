@@ -1,9 +1,63 @@
 .customercontainer{
     display:flex;
-    justify-content:center
+    width: 1200px;
+    margin: 0 auto;
+}
+.customer{
+    padding: 30px; 
+    padding-top: 0;
+    width: calc(100% - 200px);
 }
 .qnaList{
     display:flex;
-    width:500px;
-    justify-content:space-between
+    justify-content:space-between;
+}
+.qnaList .field{
+    flex: 1;
+    overflow: hidden;
+}
+.writeReplyTitle{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 120%;
+}
+.qnatitle{
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    margin-top: 20px;
+}
+.qnatitle input{
+    padding: 5px;
+    width: 440px;
+}
+.qnaTextarea{
+    display: flex;
+    padding: 20px;
+    padding-bottom: 10px;
+}
+.qnaTextarea textarea{
+    flex: 1;
+    height: 400px;
+}
+.detailPageBtns{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.detailPageBtns button{
+    width: 30%;
+    padding:7px;
+    margin:2px;
+    color:white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    background: #ff7e36;
+    font-size: 100%;
+}
+.graybtn{
+    background: darkgray !important;
 }

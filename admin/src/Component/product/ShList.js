@@ -61,7 +61,7 @@ function ShList() {
             <SubMenu type={type}/>
             <div className='productTable'>
                 <div className='title'>상품목록(중고마을)</div>
-                <div className='row'>
+                <div className='row tableTitle'>
                     <div className='col'>카테고리</div>
                     <div className='col'>상품명</div>
                     <div className='col'>가격</div>
@@ -93,7 +93,7 @@ function ShList() {
                     (beginEnd)?(
                         beginEnd.map((page, idx)=>{
                             return (
-                                <span style={{cursor:"pointer"}} key={idx} onClick={
+                                <span style={{cursor:"pointer"}} key={idx} className={(page==paging.page)?('currentPage'):''}  onClick={
                                     ()=>{ onPageMove( page ) }
                                 }>&nbsp;{page}&nbsp;</span>
                             )

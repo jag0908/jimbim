@@ -40,7 +40,7 @@ function FindAccount() {
                 setViewPW({display:'none'})
             } else if( result.data.msg=='ok'){
                 setUserid(result.data.userid)
-                setViewId({ width:'100%', margin:'5px 0', padding:'5px 0', display: 'flex'})
+                setViewId({display: 'flex'})
             }else{
                 alert('해당이름과 전화번호의 회원이 없습니다.')
                 setViewId({display:'none'})

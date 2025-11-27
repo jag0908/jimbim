@@ -18,7 +18,7 @@ function Map() {
     return (
         <div className='customercontainer'>
             <SideMenu/>
-            <div>
+            <div className='customer'>
                 <div className='formtitle'>찾아오시는 길</div>
                 <div id='map' style={{width:"800px", height:"400px", margin:"20px"}}></div>  
             </div>

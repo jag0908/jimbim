@@ -196,4 +196,8 @@ public class CommunityListService {
 
         return true; // 수정 성공
     }
+
+    public List<C_post> getPostsByMember(Member member) {
+        return cr.findByMember(member); // JPA 메서드
+    }
 }

@@ -3,12 +3,15 @@ package com.himedia.spserver.repository;
 import com.himedia.spserver.dto.CommunityViewDTO;
 import com.himedia.spserver.entity.Community.C_Category;
 import com.himedia.spserver.entity.Community.C_post;
+import com.himedia.spserver.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface CommunityListRepository extends JpaRepository<C_post, Integer> {
@@ -21,4 +24,6 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
     Page<C_post> searchByTitleAndCategory(@Param("title") String title,
                                           @Param("categoryId") Integer categoryId,
                                           Pageable pageable);
+
+    List<C_post> findByMember(Member member);
 }

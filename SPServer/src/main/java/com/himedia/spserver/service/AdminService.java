@@ -141,6 +141,6 @@ public class AdminService {
     }
 
     public Member getMember(int memberId) {
-        return mr.findById( memberId ).get();
+        return mr.findByIdWithDeleted( memberId );
     }
 }

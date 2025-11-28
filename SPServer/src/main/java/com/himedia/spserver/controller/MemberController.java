@@ -30,7 +30,7 @@ public class MemberController {
 
     // /member/login 시 실행되는 코드는 CustomSecurityConfig -> securityFilterChain 에
     // 로그인 없이 동작하게할 주소는 JWTCheckFilter 의 shouldNotFilter 에 추가 필요함
-    String clientUrl = "http://15.165.124.19:3000";
+    String clientUrl = "http://15.165.124.19";
 
     @Autowired
     MemberService ms;

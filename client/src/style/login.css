@@ -13,6 +13,11 @@ article input {
 
 article label {min-width: 120px;}
 
+.memberform .btns {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
 .kakaobutton{
     margin: 20px 0;
 }

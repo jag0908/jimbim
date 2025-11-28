@@ -66,23 +66,23 @@ function QnaDetail() {
                 {(qna.member)?
                 (<>
                     <div className='row'>
-                        <div className='col'>글제목</div>
+                        <div className='col detailTitle'>글제목</div>
                         <div className='col'>{qna.title}</div>
                     </div>
                     <div className='row'>
-                        <div className='col'>게시자</div>
+                        <div className='col detailTitle'>게시자</div>
                         <div className='col'>{qna.member.userid}</div>
                     </div>
                     <div className='row'>
-                        <div className='col'>작성일</div>
+                        <div className='col detailTitle'>작성일</div>
                         <div className='col'>{qna.indate.substring(0, 10)}</div>
                     </div>
                     <div className='row'>
-                        <div className='col' style={{flex:'1'}}>내용</div>
+                        <div className='col detailTitle' style={{flex:'1'}}>내용</div>
                         <div className='col' style={{flex:'9', padding:'20px 10px'}}>{qna.content}</div>
                     </div>
                     <div className='row'>
-                        <div className='col' style={{flex:'1'}}>답변</div>
+                        <div className='col detailTitle' style={{flex:'1'}}>답변</div>
                         <div className='col' style={{flex:'9', padding:'20px 10px'}}>{(qna.reply)?
                             (qna.reply):
                             (

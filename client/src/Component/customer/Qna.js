@@ -53,6 +53,7 @@ function Qna() {
                 jaxios.get(`/api/member/getMember`, {params:{userid:loginUser.userid}} )
                 .then((result)=>{
                     setMember(result.data.member)
+                    console.log(result.data.member)
                 }).catch((err)=>{ console.error(err);  })
             }
         },[]

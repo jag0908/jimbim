@@ -142,8 +142,13 @@ a{
     text-align: center;
     border:1px dotted #8a2be2;
     margin: 1px;
+    overflow: hidden;
 }
-
+.detailTitle{
+    background-color: rgb(182, 142, 219);
+    color:white;
+    font-weight: bold;
+}
 .tableTitle .col{
     background-color: rgb(182, 142, 219);
     color:white;

@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Footer() {
   const navigate = useNavigate();
-  const adminURL = 'http://15.165.124.19:3001'
+  //const adminURL = 'http://15.165.124.19:3001'
+  const adminURL = 'http://localhost:3001'
 
   return (
     <footer id="footer">

@@ -88,6 +88,10 @@ const StyleDetail = () => {
 
   // 좋아요 토글
   const handleLike = async () => {
+    if (!myUserid ) {
+      alert("로그인이 필요한 서비스입니다.");
+      return;
+    }
     try {
       const res = await jaxios.post(`${baseURL}/style/like/${id}`);
       setLiked(res.data.liked);
@@ -139,6 +143,12 @@ const StyleDetail = () => {
   // 댓글 작성
   const handleCommentSubmit = async (parentId = null) => {
     console.log("댓글 작성 요청, parentId:", parentId);  // 부모 댓글 id 확인
+
+    if (!myUserid ) {
+    alert("로그인이 필요한 서비스입니다.");
+    return;
+  }
+
     if (!comment.trim()) return;
 
     try {
@@ -330,7 +340,7 @@ const StyleDetail = () => {
       )}
 
       {/* 본문 */}
-      <div className="style-post-content">
+      <div className="style-detail-post-content">
         <h2>{title}</h2>
         <p>{content}</p>
 

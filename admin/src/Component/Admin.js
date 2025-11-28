@@ -12,7 +12,8 @@ function Admin() {
     const navigate = useNavigate();
     const cookies = new Cookies();
     const dispatch = useDispatch();
-    const clientUrl = 'http://15.165.124.19';
+    const clientUrl = 'http://localhost:3000';
+    //const clientUrl = 'http://15.165.124.19';
 
     async function onLogin(){
         if( !userid ){ return alert('아이디를 입력하세요')}

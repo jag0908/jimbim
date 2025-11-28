@@ -19,7 +19,8 @@ function ChatRoom({roomId, loginUser, token}) {
         return navigate("/login");
     }
 
-    const socket = new SockJS("http://15.165.124.19:8070/ws");
+    //const socket = new SockJS("http://15.165.124.19:8070/ws");
+    const socket = new SockJS("http://localhost:8070/ws");
 
     const client = new Client({
         webSocketFactory: () => socket, // SockJS 연결

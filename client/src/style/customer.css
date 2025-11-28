@@ -8,13 +8,31 @@
     padding-top: 0;
     width: calc(100% - 200px);
 }
+.qnaTable .qnaList:first-child:hover{
+    cursor: auto;
+    background: #f4f4f4;
+}
 .qnaList{
     display:flex;
     justify-content:space-between;
 }
-.qnaList .field{
+.qnaList:hover{
+    cursor: pointer;
+    background: #f0f0f0;
+}
+.qnaTitle{
+    font-weight: bold;  
+    font-size: 105%;
+    background: #f4f4f4;
+}
+.qnaField{
     flex: 1;
     overflow: hidden;
+    padding: 15px;
+    border: #eeeeee 3px double;
+}
+.qnaList .qnaField:first-child{
+    flex: 2;
 }
 .writeReplyTitle{
     display: flex;
@@ -60,4 +78,24 @@
 }
 .graybtn{
     background: darkgray !important;
+}
+
+.qnaDetailTable{
+    display: flex;
+    flex-direction: column;
+}
+.qnaDetailRow{
+    display: flex;
+}
+.qnaDetailCol{
+    flex: 5;
+    padding: 15px;
+    border: #eeeeee 3px double;
+}
+.qnaDetailRow .qnaDetailCol:first-child{
+    flex: 1;
+    font-weight: bold;  
+    font-size: 105%;
+    background: #f4f4f4;
+    text-align: center;
 }

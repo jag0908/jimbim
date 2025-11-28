@@ -78,6 +78,8 @@ function Qna() {
         .then(()=>{ 
             alert('문의가 완료되었습니다.');
             setIsOpen( false )
+            setTitle('')
+            setContent('')
         } ).catch((err)=>{console.error(err)})
 
         await jaxios.get(`/api/customer/getQnaList`, {params:{userid:loginUser.userid, page:1}} )
@@ -114,31 +116,28 @@ function Qna() {
                         <button className='graybtn' onClick={()=>{ setIsOpen(false) }}>닫기</button>
                     </div>
                 </Modal>
-                <div>
+                <div className='qnaTable'>
                 {
                     (qnaList.length!=0)?
-                        (
-                            qnaList.map((qna, idx)=>{
-                                return (
-                                    <div key={idx} className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
-                                        <div className='field' style={{flex:'2'}}>
-                                            <label>제목</label>
-                                            <div className='addressListText'>{qna.title}</div>
-                                        </div>
-                                        <div className='field'>
-                                            <label>답변여부</label>
-                                            <div className='addressListText'>{(qna.reply)?(<>Y</>):(<>N</>)}</div>
-                                        </div>
-                                        <div className='field'>
-                                            <label>작성일</label>
-                                            <div className='addressListText'>{(qna.indate)?(qna.indate.substring(0,10)):(null)}</div>
-                                        </div>
-                                    </div>
-                                )
-                            })
-                            
-                        ):
-                        ((loginUser.userid)?
+                    (<div className='qnaList'>
+                        <div className='qnaField qnaTitle'>제목</div>
+                        <div className='qnaField qnaTitle'>답변여부</div>
+                        <div className='qnaField qnaTitle'>작성일</div>
+                    </div>):(<></>)
+                }
+                {
+                    (qnaList.length!=0)?
+                    (qnaList.map((qna, idx)=>{
+                        return (
+                            <div key={idx} className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
+                                <div className='qnaField'>{qna.title}</div>
+                                <div className='qnaField'>{(qna.reply)?(<>Y</>):(<>N</>)}</div>
+                                <div className='qnaField'>{(qna.indate)?(qna.indate.substring(0,10)):(null)}</div>
+                            </div>
+                        )
+                    })):
+                    (
+                        (loginUser.userid)?
                         (<div>아직 문의가 없습니다</div>):
                         (<div>로그인 후 사용 가능합니다</div>)
                     )

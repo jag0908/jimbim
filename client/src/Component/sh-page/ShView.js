@@ -271,6 +271,10 @@ function ShView() {
                     console.log(res);
                     if(res.data.msg) {
                         setZzimCount(pev => pev = pev + 1);
+
+                        jaxios.post("/api/sh-page/alramZzim", {postId:id, memberId: loginUser.member_id})
+                            .then(res=>console.log(res))
+                            .catch(err=>console.err(err));
                     } else {
                         setZzimCount(pev => pev = pev -1);
                     }
@@ -286,7 +290,7 @@ function ShView() {
     <div className='shView'>
         <div className='viewWrap'>
             <div className='top'>
-                <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId) - 1].category_name}]</div>
+                <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId)].category_name}]</div>
                 <h4 className='tit'>{postDetail?postDetail.title:<Lodding />}</h4>
             </div>
 
@@ -405,7 +409,7 @@ function ShView() {
                         </h2>
                     </div>
                     <div className='dataBoxWrap dobule'>
-                        <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId) - 1].category_name}]</div>
+                        <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId)].category_name}]</div>
                         <div className='date'>{postDetail && formatDateTime(postDetail.indate)}</div>
                     </div>
                     <div className="dataBoxWrap">

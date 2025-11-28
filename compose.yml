@@ -1,0 +1,38 @@
+services:
+  my-db:
+    image: mysql:8.4.2
+    environment:
+      MYSQL_ROOT_PASSWORD: adminuser
+      MYSQL_DATABASE: jimbim
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 5s
+      retries: 10
+
+
+  my-client:
+    image: 996704094876.dkr.ecr.ap-northeast-2.amazonaws.com/jimbim_client
+    ports:
+      - 80:80
+    depends_on:
+      - my-server
+
+  my-admin:
+    image: 996704094876.dkr.ecr.ap-northeast-2.amazonaws.com/jimbim_admin
+    ports:
+      - 3001:3001
+    depends_on:
+      - my-server
+
+  my-server:
+    image: 996704094876.dkr.ecr.ap-northeast-2.amazonaws.com/jimbim_server
+    container_name: my-server
+    ports:
+      - 8070:8070
+    depends_on:
+      my-db:
+        condition: service_healthy

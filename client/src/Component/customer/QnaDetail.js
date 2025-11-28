@@ -30,36 +30,34 @@ function QnaDetail() {
     return (
         <div className='customercontainer'>
             <SideMenu/>
-            <div>
+            <div className='customer'>
                 <div className='formtitle'>Qna</div>
-                <div>
                 {
                     (qna)?
-                        (
-                            <div className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
-                                <div className='field'>
-                                    <label>제목</label>
-                                    <div className='addressListText'>{qna.title}</div>
-                                </div>
-                                <div className='field'>
-                                    <label>작성일</label>
-                                    <div className='addressListText'>{(qna.indate)?(qna.indate.substring(0,10)):(null)}</div>
-                                </div>
-                                <div className='field'>
-                                    <label>내용</label>
-                                    <div className='addressListText'>{qna.content}</div>
-                                </div>
-                                <div className='field'>
-                                    <label>답변</label>
-                                    <div className='addressListText'>{qna.reply}</div>
-                                </div>
+                    (
+                        <div className='qnaDetailTable' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
+                            <div className='qnaDetailRow'>
+                                <div className='qnaDetailCol'>제목</div>
+                                <div className='qnaDetailCol'>{qna.title}</div>
                             </div>
-                        )
-                        :(<></>)
+                            <div className='qnaDetailRow'>
+                                <div className='qnaDetailCol'>작성일</div>
+                                <div className='qnaDetailCol'>{(qna.indate)?(qna.indate.substring(0,10)):(null)}</div>
+                            </div>
+                            <div className='qnaDetailRow'>
+                                <div className='qnaDetailCol'>내용</div>
+                                <div className='qnaDetailCol'>{qna.content}</div>
+                            </div>
+                            <div className='qnaDetailRow'>
+                                <div className='qnaDetailCol'>답변</div>
+                                <div className='qnaDetailCol'>{qna.reply}</div>
+                            </div>
+                        </div>
+                    )
+                    :(<></>)
                 }
-                    <div className='formBtns'>
-                        <button onClick={()=>{navigate('/customer/qna')}}>뒤로</button>
-                    </div>
+                <div className='formBtns'>
+                    <button onClick={()=>{navigate('/customer/qna')}}>뒤로</button>
                 </div>
             </div>
         </div>

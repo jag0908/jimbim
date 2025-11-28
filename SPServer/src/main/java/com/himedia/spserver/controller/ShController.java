@@ -4,6 +4,7 @@ import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.security.util.CustomJWTException;
 import com.himedia.spserver.security.util.JWTUtil;
+import com.himedia.spserver.service.AlramService;
 import com.himedia.spserver.service.ShService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class ShController {
 
     @Autowired
     ShService ss;
+
+    @Autowired
+    AlramService as;
 
     @GetMapping("/sh-category")
     public HashMap<String, Object> shCategory() {
@@ -235,5 +239,12 @@ public class ShController {
         return result;
     }
 
+    @PostMapping("/alramZzim")
+    public HashMap<String, Object> alramZzim(@RequestBody ShZzimDto reqDto) {
+        HashMap<String, Object> result = new HashMap<>();
+        as.insertAlramZzim(reqDto);
+        result.put("msg", "ok");
+        return result;
+    }
 
 }

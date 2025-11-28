@@ -3,12 +3,10 @@ package com.himedia.spserver.repository;
 import com.himedia.spserver.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.himedia.spserver.entity.SH.SH_post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Integer> {
@@ -28,4 +26,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     @Query(value = "select * from member where name like %:key%",  nativeQuery = true)
     Page<Member> findAllByNameContainingWithDeleted(@Param("key") String key, Pageable pageable);
 
+    @Query(value = "select * from member where member_id = :member_id",  nativeQuery = true)
+    Member findByIdWithDeleted(@Param("member_id") int member_id);
 }

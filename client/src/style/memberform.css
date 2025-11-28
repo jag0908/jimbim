@@ -20,26 +20,26 @@
     border-radius: 6px;
     transition: background-color 0.2s, transform 0.1s;
     font-size: 14px;
-    margin-left: 10px;
+    margin: 0 10px;
 }
 .idcheck:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 .inputemail{
-    width: 200px;
+    width: 200px !important;
 }
 
 .inputphone{
-    width: 60px;
+    width: 60px !important;
 }
 
 .inputrrn1{
-    width: 80px;
+    width: 80px !important;
 }
 
 #inputrrn2{
-    width: 25px;
+    width: 25px !important;
     padding: 0;
     text-align: center;
 }
@@ -98,22 +98,23 @@
 
 .checkboxField{
     display: flex;
+    align-items: center;
 }
 .subLabel{
     width: 120px;
+    padding-left: 10px;
 }
 .subLabel label{
     font-size: 95%;
-    padding: 3px;
 }
 /* 버튼 그룹 */
 .formBtns {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 15px;
-  margin-top: 10px;
-  margin-bottom: 20px;
   width: 200px;
+  margin: 15px;
 }
 
 .formBtns button {

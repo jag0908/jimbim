@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Footer() {
   const navigate = useNavigate();
+  //const adminURL = 'http://15.165.124.19:3001'
+  const adminURL = 'http://localhost:3001'
 
   return (
     <footer id="footer">
@@ -39,6 +41,7 @@ function Footer() {
         <div className="footer-links">
           <a href="/customer/map">회사소개</a>
           <a href="/customer/qna">인재채용</a>
+          <a href={adminURL}>관리자</a>
           {/* <a href="/customer/qna">제휴제안</a>
           <a href="/customer/qna">이용약관</a>
           <a href="/customer/qna" className="bold">개인정보처리방침</a> */}

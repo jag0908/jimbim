@@ -124,89 +124,86 @@ function AddressList() {
         }
     }
     return (
-        <article style={{height:'100%'}}>
-            <div className='mypagebody'>
-                <SideMenu/>
-                <div className='mypage'>
-                    <div className='formtitle'>주소록</div>
-                    {(addressId===-2)?
-                    (<>
-                        <div className='addressList' style={(addressId===-2)?editStyle:{}}>
-                            <EditAddressForm editAddress={editAddress} />
-                        </div>
-                    </>):(
-                        <div className='formBtns'>
-                            <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
-                        </div>
-                    )}
-                    {
-                        (addressList.length!=0)?
-                        (
-                            addressList.map((address, idx)=>{
-                                return (
-                                    <div key={idx} className='addressList' style={(addressId===address.addressId)?editStyle:{}}>
-                                        {
-                                            (addressId===address.addressId)?
-                                            (<>
-                                                <EditAddressForm editAddress={editAddress} />
-                                            </>):(
-                                                <>
-                                                    <div className='field'>
-                                                        <label>주소명</label>
-                                                        <div className='addressListText'>{address.address_name}</div>
-                                                    </div>
-                                                    <div className='field'>
-                                                        <label>주소</label>
-                                                        <div className='addressListText'>({address.address_zipnum}) {address.address_simple}</div>
-                                                        <div className='addressListText'>{address.address_detail}</div>
-                                                    </div>
-                                                    <div className='formBtns'>
-                                                        <button onClick={()=>{setOnEditForm(address)}}>수정</button>
-                                                        <button onClick={()=>{deleteAddress(address.addressId)}}>삭제</button>
-                                                    </div>
-                                                </>
-                                            )
-                                        }
-                                    </div>
-                                )
-                            })
-                            
-                        ):
-                        (<div>현재 주소가 없습니다</div>)
-                    }
-                    {
-                        
-                        (addressList.length!=0)?
-                        (<div id="paging" style={{textAlign:"center", padding:"10px"}}>
-                            {
-                                (paging.prev)?(
-                                    <span style={{cursor:"pointer"}} onClick={ ()=>{ onPageMove( paging.beginPage-1 ) } } > ◀ </span>
-                                ):(<span></span>)
-                            }
-                            {
-                                (beginEnd)?(
-                                    beginEnd.map((page, idx)=>{
-                                        return (
-                                            <span style={(page==paging.page)?{fontWeight:'bold', cursor:"pointer"}:{cursor:"pointer"}} key={idx} onClick={
-                                                ()=>{ onPageMove( page ) }
-                                            }>&nbsp;{page}&nbsp;</span>
+        <div className='mypagebody'>
+            <SideMenu/>
+            <div className='mypage'>
+                <div className='formtitle'>주소록</div>
+                {(addressId===-2)?
+                (<>
+                    <div className='addressList' style={(addressId===-2)?editStyle:{}}>
+                        <EditAddressForm editAddress={editAddress} />
+                    </div>
+                </>):(
+                    <div className='formBtns'>
+                        <button onClick={()=>{setOnEditForm(-2)}}>주소 추가하기</button>
+                    </div>
+                )}
+                {
+                    (addressList.length!=0)?
+                    (
+                        addressList.map((address, idx)=>{
+                            return (
+                                <div key={idx} className='addressList' style={(addressId===address.addressId)?editStyle:{}}>
+                                    {
+                                        (addressId===address.addressId)?
+                                        (<>
+                                            <EditAddressForm editAddress={editAddress} />
+                                        </>):(
+                                            <>
+                                                <div className='field'>
+                                                    <label>주소명</label>
+                                                    <div className='addressListText'>{address.address_name}</div>
+                                                </div>
+                                                <div className='field'>
+                                                    <label>주소</label>
+                                                    <div className='addressListText'>({address.address_zipnum}) {address.address_simple}</div>
+                                                    <div className='addressListText'>{address.address_detail}</div>
+                                                </div>
+                                                <div className='formBtns'>
+                                                    <button onClick={()=>{setOnEditForm(address)}}>수정</button>
+                                                    <button onClick={()=>{deleteAddress(address.addressId)}}>삭제</button>
+                                                </div>
+                                            </>
                                         )
-                                    })
-                                ):(<></>)
-                            }
-                            {
-                                (paging.next)?(
-                                    <span style={{cursor:"pointer"}} onClick={
-                                        ()=>{ onPageMove( paging.endPage+1 ) }
-                                    }>&nbsp;▶&nbsp;</span>
-                                ):(<></>)
-                            }
-                        </div>):(<></>)
-                    }
-                </div>
+                                    }
+                                </div>
+                            )
+                        })
+                        
+                    ):
+                    (<div>현재 주소가 없습니다</div>)
+                }
+                {
+                    
+                    (addressList.length!=0)?
+                    (<div id="paging" style={{textAlign:"center", padding:"10px"}}>
+                        {
+                            (paging.prev)?(
+                                <span style={{cursor:"pointer"}} onClick={ ()=>{ onPageMove( paging.beginPage-1 ) } } > ◀ </span>
+                            ):(<span></span>)
+                        }
+                        {
+                            (beginEnd)?(
+                                beginEnd.map((page, idx)=>{
+                                    return (
+                                        <span style={(page==paging.page)?{fontWeight:'bold', cursor:"pointer"}:{cursor:"pointer"}} key={idx} onClick={
+                                            ()=>{ onPageMove( page ) }
+                                        }>&nbsp;{page}&nbsp;</span>
+                                    )
+                                })
+                            ):(<></>)
+                        }
+                        {
+                            (paging.next)?(
+                                <span style={{cursor:"pointer"}} onClick={
+                                    ()=>{ onPageMove( paging.endPage+1 ) }
+                                }>&nbsp;▶&nbsp;</span>
+                            ):(<></>)
+                        }
+                    </div>):(<></>)
+                }
             </div>
-        </article>
-        
+        </div>
     )
 }
 

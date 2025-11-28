@@ -12,8 +12,9 @@ function SubMenu(props) {
     const dispatch = useDispatch()
 
     const currentStyle = {
-        // backgroundcolor : "#8a2be2" blueviolet
-        backgroundColor : "#6809c0"
+        // backgroundcolor : "#ff7e36" 
+        // backgroundColor : "#ee6d25"
+        backgroundColor : "#ff5e16"
     }
 
     const type = props.type
@@ -27,14 +28,14 @@ function SubMenu(props) {
     return (
         <div className='adminmenu'>
             <div className='loginadminarea'>
-                관리자 {loginUser.userid} 로그인중 <button onClick={()=>{onLogout()}}>로그아웃</button>
+                관리자 {loginUser.userid} 로그인중 <button onClick={()=>{onLogout()}} className='logout'>로그아웃</button>
             </div>
-            <div className='menutitle' style={(type=='member')?(currentStyle):({})}><Link to='/memberList'>회원목록</Link></div>
-            <div className='menutitle' style={(type=='sh')?(currentStyle):({})}><Link to='/shList'>상품목록(중고마을)</Link></div>
-            <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>상품목록(SHOP)</Link></div>
-            <div className='menutitle' style={(type=='order')?(currentStyle):({})}><Link to='/orderList'>거래내역</Link></div>
-            <div className='menutitle' style={(type=='qna')?(currentStyle):({})}><Link to='/qnaList'>Q & A</Link></div>
-            <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>요청내역</Link></div>
+            <div className='menutitle' style={(type=='member')?(currentStyle):({})} onClick={()=>{navigate('/memberList')}}>회원목록</div>
+            <div className='menutitle' style={(type=='sh')?(currentStyle):({})} onClick={()=>{navigate('/shList')}}>상품목록(중고마을)</div>
+            {/* <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>상품목록(SHOP)</Link></div> */}
+            {/* <div className='menutitle' style={(type=='order')?(currentStyle):({})}><Link to='/orderList'>거래내역</Link></div> */}
+            <div className='menutitle' style={(type=='qna')?(currentStyle):({})} onClick={()=>{navigate('/qnaList')}}>Q & A</div>
+            {/* <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>요청내역</Link></div> */}
         </div>
     )
 }

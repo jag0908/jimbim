@@ -1,12 +1,25 @@
 .mypagebody{
     display:flex;
-    width: 100%;
+    width: 1200px;
+    margin: 0 auto;
 }
 .mypage{
-    padding: 30px; padding-top: 0;
+    padding: 30px; 
+    padding-top: 0;
     width: calc(100% - 200px);
 }
-
+.mypage .field {
+    margin: 5px;
+}
+.mypage .field input{
+    width: 120px;
+    height: 22px;
+    padding: 3px;
+}
+.mypage .field label{
+    font-weight: bold;
+    color: #222222;
+}
 .addressList{
     border: #eeeeee 3px double;
     padding: 15px;
@@ -22,8 +35,9 @@
 }
 
 .address_detail{
-    width: 250px;
+    width: 250px !important;
     margin: 10px;
+    margin-left: 0px;
     margin-bottom: 0px;
 }
 .nozipnumMsg{

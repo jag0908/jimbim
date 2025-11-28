@@ -30,7 +30,7 @@ public class MemberController {
 
     // /member/login 시 실행되는 코드는 CustomSecurityConfig -> securityFilterChain 에
     // 로그인 없이 동작하게할 주소는 JWTCheckFilter 의 shouldNotFilter 에 추가 필요함
-    String clientUrl = "http://localhost:3000";
+    String clientUrl = "http://localhost:3000"; // "http://15.165.124.19";
 
     @Autowired
     MemberService ms;
@@ -251,7 +251,7 @@ public class MemberController {
         Member member = ms.getMemberByNamePhone( name, phone  );
         if( member == null ){
             result.put("msg", "notok");
-        }else if(member.getProvider().equals("KAKAO")){
+        }else if(member.getProvider()!=null && member.getProvider().equals("KAKAO")){
             result.put("msg", "kakao");
         }else{
             result.put("msg", "ok");

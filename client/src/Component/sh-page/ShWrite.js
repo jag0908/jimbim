@@ -9,7 +9,7 @@ function ShWrite() {
     const navigate = useNavigate();
 
     const [title, setTitle] = useState('');
-    const [categoryId, setCategoryId] = useState('0');
+    const [categoryId, setCategoryId] = useState('1');
     const [content, setContent] = useState('');
     const [price, setPrice] = useState('');
     const [directYN, setDirectYN] = useState('N');

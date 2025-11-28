@@ -71,7 +71,7 @@
 }
 
 /* 삭제 버튼 */
-.remove-btn {
+.write-container .remove-btn {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -84,12 +84,12 @@
   font-weight: 600;
 }
 
-.remove-btn:hover {
+.write-container .remove-btn:hover {
   background-color: #c0392b;
 }
 
 /* + 버튼 */
-.add-image-box {
+.write-container .add-image-box {
   width: 150px;
   height: 120px;
   border: 2px dashed #ccc;
@@ -102,19 +102,19 @@
   color: #999;
 }
 
-.add-image-box:hover {
+.write-container .add-image-box:hover {
   border-color: #007bff;
   color: #007bff;
 }
 
 /* 버튼 영역 */
-.btns {
+.write-container .btns {
   display: flex;
   justify-content: center;
   gap: 15px;
 }
 
-.update-btn {
+.write-container .update-btn {
   background-color: #007bff;
   color: #fff;
   border-radius: 6px;
@@ -122,19 +122,19 @@
   cursor: pointer;
 }
 
-.update-btn:hover {
+.write-container .update-btn:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 
-.cancel-btn {
+.write-container .cancel-btn {
   background-color: #6c757d;
   color: #fff;
   border-radius: 6px;
   padding: 10px 25px;
 }
 
-.cancel-btn:hover {
+.write-container .cancel-btn:hover {
   background-color: #495057;
 }
 

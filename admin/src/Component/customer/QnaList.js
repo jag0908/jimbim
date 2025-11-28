@@ -58,7 +58,7 @@ function QnaList() {
             <SubMenu type={type}/>
             <div className='productTable'>
                 <div className='title'>Q & A</div>
-                <div className='row'>
+                <div className='row tableTitle'>
                     <div className='col'>게시자</div>
                     <div className='col'>글제목</div>
                     <div className='col'>답변여부</div>
@@ -88,7 +88,7 @@ function QnaList() {
                     (beginEnd)?(
                         beginEnd.map((page, idx)=>{
                             return (
-                                <span style={{cursor:"pointer"}} key={idx} onClick={
+                                <span style={{cursor:"pointer"}} key={idx} className={(page==paging.page)?('currentPage'):''}  onClick={
                                     ()=>{ onPageMove( page ) }
                                 }>&nbsp;{page}&nbsp;</span>
                             )

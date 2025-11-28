@@ -3,6 +3,7 @@ import { useParams , useNavigate} from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
 import SubMenu from '../SubMenu';
+import Modal from 'react-modal'
 
 function QnaDetail() {
     const loginUser = useSelector( state=>state.user)
@@ -10,6 +11,22 @@ function QnaDetail() {
     const [qna, setQna] = useState({});
     const [reply, setReply] = useState('');
     const navigate = useNavigate();
+
+    const [isOpen, setIsOpen]=useState(false)
+    const customStyles = {
+        overlay: {
+            backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", 
+            zIndex: "2000"
+        },
+        content: {
+            left: "0",
+            margin: "auto",
+            width: "500px",
+            height: "600px",
+            padding: "0",
+            overflow: "hidden",
+        },
+    };
 
     useEffect(
         ()=>{
@@ -19,7 +36,8 @@ function QnaDetail() {
             }
             jaxios.get('/api/admin/getQna', {params:{qnaId}})
             .then((result)=>{ 
-                setQna(result.data.qna) 
+                setQna(result.data.qna)
+                setReply('')
             })
             .catch((err)=>{console.error(err)})
         },[]
@@ -30,6 +48,7 @@ function QnaDetail() {
         await jaxios.post('/api/admin/writeReply', null, {params:{qnaId, reply}})
         .then(()=>{ 
             alert('답변 작성이 완료되었습니다.');
+            setIsOpen( false )
         } ).catch((err)=>{console.error(err)})
 
         await jaxios.get('/api/admin/getQna', {params:{qnaId}})
@@ -46,35 +65,49 @@ function QnaDetail() {
                 <div className='title'>Q & A</div>
                 {(qna.member)?
                 (<>
-                <div className='row'>
-                    <div className='col'>글제목</div>
-                    <div className='col'>{qna.title}</div>
-                </div>
-                <div className='row'>
-                    <div className='col'>게시자</div>
-                    <div className='col'>{qna.member.userid}</div>
-                </div>
-                <div className='row'>
-                    <div className='col'>작성일</div>
-                    <div className='col'>{qna.indate.substring(0, 10)}</div>
-                </div>
-                <div>
-                    {qna.content}
-                </div>
-                {(qna.reply)?
-                (qna.reply):
-                (<div>
-                    <div>
+                    <div className='row'>
+                        <div className='col detailTitle'>글제목</div>
+                        <div className='col'>{qna.title}</div>
+                    </div>
+                    <div className='row'>
+                        <div className='col detailTitle'>게시자</div>
+                        <div className='col'>{qna.member.userid}</div>
+                    </div>
+                    <div className='row'>
+                        <div className='col detailTitle'>작성일</div>
+                        <div className='col'>{qna.indate.substring(0, 10)}</div>
+                    </div>
+                    <div className='row'>
+                        <div className='col detailTitle' style={{flex:'1'}}>내용</div>
+                        <div className='col' style={{flex:'9', padding:'20px 10px'}}>{qna.content}</div>
+                    </div>
+                    <div className='row'>
+                        <div className='col detailTitle' style={{flex:'1'}}>답변</div>
+                        <div className='col' style={{flex:'9', padding:'20px 10px'}}>{(qna.reply)?
+                            (qna.reply):
+                            (
+                                <div className='detailPageBtns' onClick={ ()=>{ setIsOpen( !isOpen ) }}>
+                                    <button>답변 작성하기</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </>):(<></>)}
+                <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
+                    <div className='writeReplyTitle'>답변 작성</div>
+                    <div className='qnaTextarea'>
                         <textarea value={reply} onChange={(e)=>{setReply( e.currentTarget.value )}} maxLength={2000}></textarea>
                     </div>
-                    <div>
-                        <button onClick={()=>{onSubmit()}}>작성</button>
+                    <div className='detailPageBtns'>
+                        <button onClick={()=>{onSubmit()}}>답변 작성하기</button>
                     </div>
-                </div>)}
+                    <div className='detailPageBtns'>
+                        <button className='graybtn' onClick={()=>{ setIsOpen(false) }}>닫기</button>
+                    </div>
+                </Modal>
                 
-                </>):(<></>)}
-                <div>
-                    <button onClick={()=>{navigate('/qnaList')}}>뒤로</button>
+                <div className='detailPageBtns'>
+                    <button onClick={()=>{navigate('/qnaList')}} >뒤로</button>
                 </div>
             </div>
         </div>

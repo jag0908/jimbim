@@ -30,13 +30,13 @@ function QnaDetail() {
     return (
         <div className='customercontainer'>
             <SideMenu/>
-            <div>
+            <div className='customer'>
                 <div className='formtitle'>Qna</div>
                 <div>
                 {
                     (qna)?
                         (
-                            <div className='qnaList' onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
+                            <div className='qnaList' style={{flexDirection:'column'}} onClick={()=>{navigate(`/customer/qna/${qna.qnaId}`)}}>
                                 <div className='field'>
                                     <label>제목</label>
                                     <div className='addressListText'>{qna.title}</div>

@@ -12,6 +12,7 @@ function Admin() {
     const navigate = useNavigate();
     const cookies = new Cookies();
     const dispatch = useDispatch();
+    const clientUrl = 'http://localhost:3000';
 
     async function onLogin(){
         if( !userid ){ return alert('아이디를 입력하세요')}
@@ -50,6 +51,9 @@ function Admin() {
             </div>
             <div className="btns">
                 <button onClick={()=>{ onLogin(); }}>로그인</button>
+            </div>
+            <div className="btns">
+                <button onClick={()=>{ navigate(`${clientUrl}`); }} className='graybtn'>일반 페이지로 돌아가기</button>
             </div>
         </div>
     )

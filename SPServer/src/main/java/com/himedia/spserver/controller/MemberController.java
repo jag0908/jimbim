@@ -251,7 +251,7 @@ public class MemberController {
         Member member = ms.getMemberByNamePhone( name, phone  );
         if( member == null ){
             result.put("msg", "notok");
-        }else if(member.getProvider().equals("KAKAO")){
+        }else if(member.getProvider()!=null && member.getProvider().equals("KAKAO")){
             result.put("msg", "kakao");
         }else{
             result.put("msg", "ok");

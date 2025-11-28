@@ -184,7 +184,7 @@ function ShMain() {
               return (
                 <div className='list' key={category.category_id || i}>
                       <Link  to={`/sh-page/ct/${category.category_id}`}>
-                        <img src={`${baseURL}/sh_img/${i}.png`} alt={category.category_name} />
+                        <img src={`${baseURL}/sh_img/${i+1}.png`} alt={category.category_name} />
                         <span className='tit'>{category.category_name}</span>
                       </Link>
                 </div>

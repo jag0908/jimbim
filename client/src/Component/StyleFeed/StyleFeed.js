@@ -5,6 +5,7 @@ import jaxios from '../../util/jwtutil';
 import StyleHotAccounts from "./StyleHotAccounts";
 import StyleHotTags from "./StyleHotTags";
 import Masonry from 'react-masonry-css';
+import { useSelector } from "react-redux";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -12,6 +13,7 @@ function StyleFeed() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   const [category, setCategory] = useState("default");
+  const loginUser = useSelector(state => state.user);
 
   useEffect(() => {
     
@@ -48,11 +50,14 @@ function StyleFeed() {
 
 
   const toggleLike = async (postId) => {
+    if (!loginUser || !loginUser.userid) {
+      alert("로그인이 필요한 서비스입니다.");
+      return;
+    }
+
     try {
       const res = await jaxios.post(`${baseURL}/style/like/${postId}`);
       const { liked, likeCount } = res.data;
-
-      console.log(`[좋아요 토글] Post ID: ${postId}, 응답 liked: ${liked}, 응답 likeCount: ${likeCount}`); // ⬅️ 이 부분을 추가
 
       setPosts(prev =>
         prev.map(post =>
@@ -78,8 +83,8 @@ function StyleFeed() {
 
       <div className="style-feed-category-bar">
         <button className={`style-feed-category-btn ${category === "default" ? "active" : ""}`} onClick={() => setCategory("default")}>🏠 전체보기</button>
-        <button className={`style-feed-category-btn ${category === "trending" ? "active" : ""}`} onClick={() => setCategory("trending")}>🔥 요즘 트렌드</button>
-        <button className={`style-feed-category-btn ${category === "views" ? "active" : ""}`} onClick={() => setCategory("views")}>👀 관심 스타일</button>
+        <button className={`style-feed-category-btn ${category === "trending" ? "active" : ""}`} onClick={() => setCategory("trending")}>❤️ 좋아요 순</button>
+        <button className={`style-feed-category-btn ${category === "views" ? "active" : ""}`} onClick={() => setCategory("views")}>👀 조회수 순</button>
         <button className={`style-feed-category-btn ${category === "tags" ? "active" : ""}`} onClick={() => setCategory("tags")}>🏷️ HOT 태그</button>
         <button className={`style-feed-category-btn ${category === "accounts" ? "active" : ""}`} onClick={() => setCategory("accounts")}>👤 HOT 계정</button>
       </div>

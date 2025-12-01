@@ -290,7 +290,7 @@ function ShView() {
     <div className='shView'>
         <div className='viewWrap'>
             <div className='top'>
-                <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId)].category_name}]</div>
+                <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId)-1].category_name}]</div>
                 <h4 className='tit'>{postDetail?postDetail.title:<Lodding />}</h4>
             </div>
 

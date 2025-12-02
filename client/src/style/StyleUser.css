@@ -1,11 +1,9 @@
-/* 페이지 전체 */
 .style-user-page {
   width: 90%;
   margin: 0 auto;
   max-width: 1200px;
 }
 
-/* 프로필 헤더 */
 .style-profile-header {
   display: flex;
   align-items: center;
@@ -46,7 +44,6 @@
   cursor: pointer;
   transition: 0.2s;
 }
-
 .style-follow-btn.following {
   background: gray;
 }
@@ -64,23 +61,22 @@
   color: #333;
 }
 
-/* Style 게시글 */
 .style-user-posts {
   margin-top: 40px;
 }
 
 .style-post-grid {
-  column-count: 4;
-  column-gap: 20px;
+  column-count: 4;        /* 한 줄 최대 4개 */
+  column-gap: 20px;       /* 가로 간격 */
   width: 90%;
   margin: 0 auto;
 }
 
 .style-post-card {
-  break-inside: avoid;
-  margin-bottom: 20px;
+  break-inside: avoid;    /* 세로로 요소 깨짐 방지 */
+  margin-bottom: 20px;    /* 세로 간격 */
   display: block;
-  width: 100%;
+  width: 100%;            /* column 레이아웃에서 필수 */
   border: 1px solid #eee;
   border-radius: 10px;
   overflow: hidden;
@@ -102,9 +98,23 @@
 
 .style-post-image img {
   width: 100%;
-  height: auto;
+  height: auto;           /* 이미지 비율 유지 */
   object-fit: cover;
   display: block;
+}
+
+.style-view-count {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6); /* 반투명 배경 */
+  color: white;
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .style-post-info {
@@ -152,10 +162,12 @@
   background-clip: padding-box;
 }
 
+/* Masonry 내부 카드 */
 .style-masonry-grid-column > .style-post-card {
   margin-bottom: 20px;
 }
 
+/* 게시글 없음 표시 */
 .style-no-posts {
   text-align: center;
   padding: 40px 0;

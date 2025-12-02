@@ -23,6 +23,12 @@ configurations {
 repositories {
     mavenCentral()
 }
+//챗봇 추가
+ext{
+    set('springAiVersion', "1.1.0")
+}
+
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -48,6 +54,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+    //챗봇 추가
+    implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+    implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+    runtimeOnly 'org.postgresql:postgresql'
+
+}
+
+//챗봇 추가
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 tasks.named('test') {

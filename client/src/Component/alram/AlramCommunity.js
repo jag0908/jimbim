@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AlramCommunity() {
+function AlramCommunity({}) {
   return (
     <div>AlramCommunity</div>
   )

@@ -5,10 +5,11 @@ export default function StylePostSlider({ posts, renderItem, showButtons = true 
   const sliderRef = useRef(null);
   const [index, setIndex] = useState(0);
   const [itemWidth, setItemWidth] = useState(0);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   const VISIBLE_COUNT = 4;
 
-  // renderItem 기본값 (HotAccounts 용)
+  // renderItem 기본값
   const defaultRenderItem = (post) => (
     <div className="style-hot-feed-card">
       <div className="style-hot-image-wrapper">
@@ -25,26 +26,36 @@ export default function StylePostSlider({ posts, renderItem, showButtons = true 
 
   useEffect(() => {
     const updateItemWidth = () => {
-      if (posts.length > 0 && sliderRef.current?.firstChild) { 
+      if (posts.length > 0 && sliderRef.current?.firstChild) {
         const width = sliderRef.current.firstChild.offsetWidth;
         const fullWidth = width + 10; // gap
-        setItemWidth(fullWidth); 
+        setItemWidth(fullWidth);
+
+        const totalWidth = fullWidth * posts.length;
+        const visibleWidth = fullWidth * VISIBLE_COUNT;
+
+        // overflow 여부 계산
+        setHasOverflow(totalWidth > visibleWidth);
       }
     };
-    const timer = setTimeout(updateItemWidth, 50); 
+
+    const timer = setTimeout(updateItemWidth, 50);
     window.addEventListener("resize", updateItemWidth);
+
     return () => {
       clearTimeout(timer);
       window.removeEventListener("resize", updateItemWidth);
-    }
+    };
   }, [posts]);
 
   const slide = (dir) => {
     if (itemWidth === 0) return;
     let newIndex = index + dir;
+
     const maxIndex = Math.max(posts.length - VISIBLE_COUNT, 0);
     if (newIndex < 0) newIndex = 0;
     if (newIndex > maxIndex) newIndex = maxIndex;
+
     setIndex(newIndex);
   };
 
@@ -54,8 +65,11 @@ export default function StylePostSlider({ posts, renderItem, showButtons = true 
 
   return (
     <div className="style-post-slider-wrapper">
-      {showButtons && posts.length > VISIBLE_COUNT && (
-        <button className="style-post-slider-btn left" onClick={() => slide(-1)}>‹</button>
+      {/* 왼쪽 버튼 */}
+      {showButtons && hasOverflow && (
+        <button className="style-post-slider-btn left" onClick={() => slide(-1)}>
+          ‹
+        </button>
       )}
 
       <div className="style-post-slider-viewport">
@@ -68,8 +82,11 @@ export default function StylePostSlider({ posts, renderItem, showButtons = true 
         </div>
       </div>
 
-      {showButtons && posts.length > VISIBLE_COUNT && (
-        <button className="style-post-slider-btn right" onClick={() => slide(1)}>›</button>
+      {/* 오른쪽 버튼 */}
+      {showButtons && hasOverflow && (
+        <button className="style-post-slider-btn right" onClick={() => slide(1)}>
+          ›
+        </button>
       )}
     </div>
   );

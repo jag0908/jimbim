@@ -60,7 +60,7 @@ function Header() {
                     <Link to={"/sh-page"}>중고마을</Link>
                 </div>   
                 <div className='list'> 
-                    <Link to={"/"}>SHOP</Link>
+                    <Link to={"/shop"}>SHOP</Link>
                 </div>
                 <div className='list'>
                     <Link to={"/communityList"}>커뮤니티</Link>

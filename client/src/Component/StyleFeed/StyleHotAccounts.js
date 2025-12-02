@@ -20,6 +20,21 @@ function StyleHotAccounts() {
     const loadHotUsers = async () => {
       try {
         const res = await jaxios.get(`${baseURL}/style/hot-users`);
+        
+
+        if (!Array.isArray(res.data)) {
+          console.error("🔥 hot-users API 에러:", res.data);
+
+          // 토큰 오류면 로그인 페이지로 보내기 (선택)
+          if (res.data.error === "ERROR_ACCESS_TOKEN") {
+            // navigate('/login');  // 필요한 경우
+          }
+
+          setAccounts([]); 
+          return;
+        }
+
+
         setAccounts(res.data);
 
         // 로그인 안 했으면 종료

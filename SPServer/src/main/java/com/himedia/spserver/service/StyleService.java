@@ -593,10 +593,14 @@ public class StyleService {
 
         // 8. 팔로우 상태 조회
         Integer currentMemberId = getCurrentMemberId();
-        Set<Integer> followingSet = followRepository.findAllByStartMemberAndEndMembers(currentMemberId, memberIds)
-                .stream()
-                .map(f -> f.getEndMember().getMember_id())
-                .collect(Collectors.toSet());
+
+        Set<Integer> followingSet =
+                (currentMemberId != null)
+                        ? followRepository.findAllByStartMemberAndEndMembers(currentMemberId, memberIds)
+                        .stream()
+                        .map(f -> f.getEndMember().getMember_id())
+                        .collect(Collectors.toSet())
+                        : Collections.emptySet();
 
         // 9. DTO 생성 + 정렬 + 상위 10명
         return allMembers.stream()

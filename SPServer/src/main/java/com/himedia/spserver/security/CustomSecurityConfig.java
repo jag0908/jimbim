@@ -41,6 +41,7 @@ public class CustomSecurityConfig {
                 // 로그인 없이 접근 가능한 GET 요청
                 .requestMatchers(HttpMethod.GET, "/style/post/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/style/posts").permitAll()
+                .requestMatchers(HttpMethod.GET, "/style/hot-users").permitAll()
                 .requestMatchers("/member/**", "/api/member/**", "/uploads/**").permitAll()
                 .requestMatchers(
                         "/style/write",

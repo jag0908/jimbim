@@ -1,0 +1,43 @@
+/* Shop 메인 카테고리 영역 */
+.shop { 
+    display: flex; 
+    flex-direction: column; 
+    padding-top: 60px; 
+}
+
+/* 전체 카테고리 박스 */
+.shop .menuWrap {
+    display: flex;
+    flex-flow: wrap;
+    gap: 15px 30px;
+    margin: 0 auto 60px;
+    width: 1024px;
+}
+
+/* 개별 카테고리 */
+.shop .menuWrap .list {
+    position: relative;
+    width: calc(10% - 16px);
+}
+
+/* 카테고리 링크 */
+.shop .menuWrap .list > a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 아이콘 이미지 */
+.shop .menuWrap .list > a > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 카테고리 이름 */
+.shop .menuWrap .list .tit {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}

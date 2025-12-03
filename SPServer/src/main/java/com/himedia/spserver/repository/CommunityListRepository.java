@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -26,4 +27,8 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
                                           Pageable pageable);
 
     List<C_post> findByMember(Member member);
+
+    List<C_post> findByTitleContaining(String key); /// 관리자페이지 검색용
+
+    Page<C_post> findByTitleContaining(String key, Pageable pageable); /// 관리자페이지 검색용
 }

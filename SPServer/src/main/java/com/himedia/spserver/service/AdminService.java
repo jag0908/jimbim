@@ -2,6 +2,8 @@ package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.Paging;
 import com.himedia.spserver.dto.ShPostDto;
+import com.himedia.spserver.entity.Community.C_Category;
+import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.MemberRole;
 import com.himedia.spserver.entity.SH.SH_Category;
@@ -29,6 +31,8 @@ public class AdminService {
     private final SH_postRepository spr;
     private final Sh_categoryRepository scr;
     private final QnaRepository qr;
+    private final CommunityListRepository cpr;
+    private final CCategoryRepository ccr;
 
     /// ////////////// 멤버관련 /////////////////
 
@@ -116,6 +120,42 @@ public class AdminService {
 
     public List<SH_Category> getShCategoryList() {
         return scr.findAll();
+    }
+
+    /// ////////// 커뮤니티 관련 /////////////////
+    public HashMap<String, Object> getCPostList(int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = cpr.findAll().size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "cpostId"));
+            Page<C_post> list = cpr.findAll( pageable );
+
+            result.put("cPostList", list.getContent());
+        }else{
+            int count = cpr.findByTitleContaining(key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
+            Page<C_post> list = cpr.findByTitleContaining( key, pageable );
+            result.put("cPostList", list.getContent());
+        }
+        result.put("cCategoryList", ccr.findAll());
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
+    }
+    public C_post getCPost(int cpostId) {
+        return cpr.findById( cpostId ).get();
+    }
+    public List<C_Category> getCCategoryList() {
+        return ccr.findAll();
     }
 
     /// ////////////// qna 관련 /////////////////////////

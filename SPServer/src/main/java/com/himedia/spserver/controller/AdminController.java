@@ -1,5 +1,7 @@
 package com.himedia.spserver.controller;
 
+import com.himedia.spserver.entity.Community.C_Category;
+import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
@@ -75,6 +77,26 @@ public class AdminController {
         result.put("shCategoryList", shCategoryList);
         return result;
     }
+
+    ///   ///////// 커뮤니티 관련 /////////
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getCPostList")
+    public HashMap<String, Object> getCPostList(@RequestParam("page") int page,
+                                             @RequestParam(value="key", required = false, defaultValue = "") String key){
+        HashMap<String, Object> result = as.getCPostList(page, key);
+        return result;
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getCPost")
+    public HashMap<String, Object> getCPost(@RequestParam("cpostId") int cpostId){
+        HashMap<String, Object> result = new HashMap<>();
+        C_post post = as.getCPost( cpostId );
+        List<C_Category> cCategoryList = as.getCCategoryList();
+        result.put("cPost", post);
+        result.put("cCategoryList", cCategoryList);
+        return result;
+    }
+
 
     /// ///////////// qna 관련 /////////////
 

@@ -16,7 +16,6 @@ function MemberDetail() {
                 alert('권한이 없습니다')
                 navigate('/')
             }
-            console.log(member_id)
             jaxios.get('/api/admin/getMember', {params:{member_id}})
             .then((result)=>{ 
                 setMember(result.data.member) 
@@ -26,7 +25,10 @@ function MemberDetail() {
     )
 
     function changeAdmin( userid, checked){
-        if( checked ){
+        if(userid == loginUser.userid){
+            alert('자신의 관리자 권한은 수정할 수 없습니다.')
+            return
+        }else if( checked ){
              jaxios.post('/api/admin/changeRoleAdmin', null, {params:{userid}})
             .then((result)=>{
                 if( result.data.msg==='ok'){
@@ -90,16 +92,19 @@ function MemberDetail() {
                     <div className='col detailTitle'>관리자 권한</div>
                     <div className='col'>
                         {
-                            (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?(<>Y 
-                                <input type="checkbox" value={member.userid} onChange={(e)=>{
-                                    changeAdmin( member.userid, e.currentTarget.checked )
-                                }} checked/>
-                            </>
-                            ):(<>N 
-                                <input type="checkbox" value={member.userid} onChange={(e)=>{
-                                    changeAdmin( member.userid, e.currentTarget.checked )
-                                }} />
-                            </>)
+                            (member.deleteyn=='Y')?(<>탈퇴회원</>):
+                            (
+                                (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?(<>Y 
+                                    <input type="checkbox" value={member.userid} onChange={(e)=>{
+                                        changeAdmin( member.userid, e.currentTarget.checked )
+                                    }} checked/>
+                                </>
+                                ):(<>N 
+                                    <input type="checkbox" value={member.userid} onChange={(e)=>{
+                                        changeAdmin( member.userid, e.currentTarget.checked )
+                                    }} />
+                                </>)
+                            )
                         }
                     </div>
                 </div>

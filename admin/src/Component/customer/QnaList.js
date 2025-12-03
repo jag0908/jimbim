@@ -76,7 +76,7 @@ function QnaList() {
                                 </div>
                             )
                         })
-                    ):(<span>loading...</span>)
+                    ):(<></>)
                 }
                 <div id="paging" style={{textAlign:"center", padding:"10px"}}>
                 {

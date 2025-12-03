@@ -7,15 +7,15 @@ import jaxios from '../../util/jwtutil';
 import '../../style/admin.css'
 
 
-function ShList() {
+function CommunityList() {
     const loginUser = useSelector( state=>state.user)
-    const [shList, setShList] = useState([]);
-    const [shCategoryList, setShCategoryList] = useState([]);
+    const [cPostList, setCPostList] = useState([]);
+    const [cCategoryList, setCCategoryList] = useState([]);
     const [paging, setPaging]=useState({});
     const navigate = useNavigate();
     const [beginEnd, setBeginEnd] = useState();
     const [key, setKey] = useState('')
-    const type = 'sh'
+    const type = 'community'
 
     useEffect(
         ()=>{
@@ -23,11 +23,11 @@ function ShList() {
                 alert('권한이 없습니다')
                 navigate('/')
             }
-            jaxios.get('/api/admin/getShList', {params:{page:1, key}})
+            jaxios.get('/api/admin/getCPostList', {params:{page:1, key}})
             .then((result)=>{ 
                 console.log(result)
-                setShList(result.data.shList) 
-                setShCategoryList(result.data.shCategoryList)
+                setCPostList(result.data.cPostList) 
+                setCCategoryList(result.data.cCategoryList)
                 setPaging( result.data.paging )
                 setKey( result.data.key)
 
@@ -42,10 +42,10 @@ function ShList() {
     )
 
     function onPageMove(p){ 
-        jaxios.get('/api/admin/getShList', {params:{page:p, key}})
+        jaxios.get('/api/admin/getCPostList', {params:{page:p, key}})
         .then((result)=>{ 
-            setShList(result.data.shList) 
-            setShCategoryList(result.data.shCategoryList)
+            setCPostList(result.data.cPostList) 
+            setCCategoryList(result.data.cCategoryList)
             setPaging( result.data.paging )
             setKey( result.data.key)
             let arr = [];
@@ -62,24 +62,36 @@ function ShList() {
         <div className='adminContainer'>
             <SubMenu type={type}/>
             <div className='productTable'>
-                <div className='title'>상품목록(중고마을)</div>
+                <div className='title'>커뮤니티</div>
                 <div className='row tableTitle'>
                     <div className='col'>카테고리</div>
-                    <div className='col'>상품명</div>
-                    <div className='col'>가격</div>
-                    <div className='col'>게시자 ID</div>
+                    <div className='col'>제목</div>
+                    <div className='col'>글쓴이</div>
+                    <div className='col'>익명글 여부</div>
                     <div className='col'>게시일</div>
                 </div>
                 {
-                    (shList)?(
-                        shList.map((sh, idx)=>{
+                    (cPostList[0])?(
+                        cPostList.map((cPost, idx)=>{
                             return (
-                                <div className='row' onClick={()=>{navigate(`/ShDetail/${sh.postId}`)}}>
-                                    <div className='col'>{shCategoryList[sh.categoryId-1].category_name}</div>
-                                    <div className='col'>{sh.title}</div>
-                                    <div className='col'>{sh.price} 원</div>
-                                    <div className='col'>{sh.member.userid} {(sh.member.provider)?(<>({sh.member.provider})</>):(<></>)}</div>
-                                    <div className='col'>{sh.indate.substring(0, 10)}</div>
+                                <div className='row' onClick={()=>{navigate(`/communityDetail/${cPost.cpostId}`)}}>
+                                    <div className='col'>
+                                        {
+                                            (cPost.category)?
+                                            (cCategoryList[cPost.category.categoryId].categoryName):
+                                            (<></>)
+                                        }
+                                    </div>
+                                    <div className='col'>{cPost.title}</div>
+                                    <div className='col'>{cPost.member.userid} {(cPost.member.provider)?(<>({cPost.member.provider})</>):(<></>)}</div>
+                                    <div className='col'>{cPost.isAnonymous}</div>
+                                    <div className='col'>
+                                        {
+                                            (cPost.indate)?
+                                            (cPost.indate.substring(0, 10)):
+                                            (<></>)
+                                        }
+                                    </div>
                                 </div>
                             )
                         })
@@ -119,4 +131,4 @@ function ShList() {
     )
 }
 
-export default ShList
+export default CommunityList

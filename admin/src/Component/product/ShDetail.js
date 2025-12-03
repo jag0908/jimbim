@@ -67,6 +67,10 @@ function ShDetail() {
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{shCategoryList[shPost.categoryId-1].category_name}</div>
                     </div>
                     <div className='row'>
+                        <div className='col detailTitle'>상품 이미지</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}></div>
+                    </div>
+                    <div className='row'>
                         <div className='col detailTitle'>상품설명</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{shPost.content}</div>
                     </div>

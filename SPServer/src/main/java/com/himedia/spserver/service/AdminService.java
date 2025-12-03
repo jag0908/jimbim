@@ -4,12 +4,10 @@ import com.himedia.spserver.dto.Paging;
 import com.himedia.spserver.dto.ShPostDto;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.MemberRole;
+import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.customer.Qna;
-import com.himedia.spserver.repository.MemberRepository;
-import com.himedia.spserver.repository.QnaRepository;
-import com.himedia.spserver.repository.SH_postRepository;
-import com.himedia.spserver.repository.ShPostRepository;
+import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +27,10 @@ public class AdminService {
 
     private final MemberRepository mr;
     private final SH_postRepository spr;
+    private final Sh_categoryRepository scr;
     private final QnaRepository qr;
+
+    /// ////////////// 멤버관련 /////////////////
 
     public HashMap<String, Object> getMemberList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -57,6 +58,29 @@ public class AdminService {
         return result;
     }
 
+    public Member getMember(int memberId) {
+        return mr.findByIdWithDeleted( memberId );
+    }
+
+    public void changeRoleAdmin(String userid) {
+        Member member = mr.findByUserid(userid);
+
+        List<MemberRole> roleList = new ArrayList<>();
+        roleList.add(MemberRole.valueOf("USER"));
+        roleList.add(MemberRole.valueOf("ADMIN"));
+        member.setMemberRoleList( roleList );
+    }
+
+    public void changeRoleUser(String userid) {
+        Member member = mr.findByUserid(userid);
+
+        List<MemberRole> roleList = new ArrayList<>();
+        roleList.add(MemberRole.valueOf("USER"));
+        member.setMemberRoleList( roleList );
+    }
+
+    /// /////////// 상품 관련 /////////////////////////
+
     public HashMap<String, Object> getShList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
         Paging paging = new Paging();
@@ -80,10 +104,21 @@ public class AdminService {
             Page<SH_post> list = spr.findByTitleContainingWithMember( key, pageable );
             result.put("shList", list.getContent());
         }
+        result.put("shCategoryList", scr.findAll());
         result.put("paging", paging);
         result.put("key", key);
         return result;
     }
+
+    public SH_post getShPost(int postId) {
+        return spr.findByIdWithMember( postId );
+    }
+
+    public List<SH_Category> getShCategoryList() {
+        return scr.findAll();
+    }
+
+    /// ////////////// qna 관련 /////////////////////////
 
     public HashMap<String, Object> getQnaList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -111,36 +146,15 @@ public class AdminService {
         return result;
     }
 
-    /// ///////////////////////
-
-    public void changeRoleAdmin(String userid) {
-        Member member = mr.findByUserid(userid);
-
-        List<MemberRole> roleList = new ArrayList<>();
-        roleList.add(MemberRole.valueOf("USER"));
-        roleList.add(MemberRole.valueOf("ADMIN"));
-        member.setMemberRoleList( roleList );
-    }
-
-    public void changeRoleUser(String userid) {
-        Member member = mr.findByUserid(userid);
-
-        List<MemberRole> roleList = new ArrayList<>();
-        roleList.add(MemberRole.valueOf("USER"));
-        member.setMemberRoleList( roleList );
-    }
-
     public Qna getQna(int qnaId) {
         return qr.findById( qnaId ).get();
     }
 
-    public void writeReply(int qnaId, String reply) {
+    public void writeReply(int qnaId, String reply, String answerer) {
         Qna qna = qr.findById( qnaId).get();
+        Member member = mr.findByUserid(answerer);
 
         qna.setReply( reply );
-    }
-
-    public Member getMember(int memberId) {
-        return mr.findByIdWithDeleted( memberId );
+        qna.setAnswerer(member);
     }
 }

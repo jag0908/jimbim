@@ -10,6 +10,7 @@ import '../../style/admin.css'
 function ShList() {
     const loginUser = useSelector( state=>state.user)
     const [shList, setShList] = useState([]);
+    const [shCategoryList, setShCategoryList] = useState([]);
     const [paging, setPaging]=useState({});
     const navigate = useNavigate();
     const [beginEnd, setBeginEnd] = useState();
@@ -27,6 +28,7 @@ function ShList() {
             .then((result)=>{ 
                 console.log(result)
                 setShList(result.data.shList) 
+                setShCategoryList(result.data.shCategoryList)
                 setPaging( result.data.paging )
                 setKey( result.data.key)
 
@@ -72,8 +74,8 @@ function ShList() {
                     (shList)?(
                         shList.map((sh, idx)=>{
                             return (
-                                <div className='row'>
-                                    <div className='col'>{sh.categoryId}</div>
+                                <div className='row' onClick={()=>{navigate(`/ShDetail/${sh.postId}`)}}>
+                                    <div className='col'>{shCategoryList[sh.categoryId-1].category_name}</div>
                                     <div className='col'>{sh.title}</div>
                                     <div className='col'>{sh.price}</div>
                                     <div className='col'>{sh.member.userid}</div>

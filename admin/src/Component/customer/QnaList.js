@@ -71,7 +71,7 @@ function QnaList() {
                                 <div className='row' onClick={()=>{navigate(`/qnaDetail/${qna.qnaId}`)}}>
                                     <div className='col'>{qna.member.userid}</div>
                                     <div className='col'>{qna.title}</div>
-                                    <div className='col'>{(qna.reply)?(<>Y</>):(<>N</>)}</div>
+                                    <div className='col'>{(qna.reply)?(<>답변자: {qna.answerer.userid}</>):(<>N</>)}</div>
                                     <div className='col'>{qna.indate.substring(0, 10)}</div>
                                 </div>
                             )

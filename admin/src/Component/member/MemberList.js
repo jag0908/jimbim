@@ -52,35 +52,17 @@ function MemberList() {
         })
         .catch((err)=>{console.error(err)})
     }
-
-    function changeAdmin( userid, checked){
-        if( checked ){
-             jaxios.post('/api/admin/changeRoleAdmin', null, {params:{userid}})
-            .then((result)=>{
-                if( result.data.msg==='ok'){
-                    alert(userid + '님이 관리자로 선정되셨습니다')
-                }
-            })
-        }else{
-            jaxios.post('/api/admin/changeRoleUser', null, {params:{userid}})
-            .then((result)=>{
-                if( result.data.msg==='ok'){
-                    alert(userid + '님의 등급이 일반유저로 변경되었습니다')
-                }
-            })
-        }
-    }
-
+    
     return (
         <div className='adminContainer'>
             <SubMenu type={type}/>
             <div className='productTable'>
                 <div className='title'>회원목록</div>
                 <div className='row tableTitle'>
-                    <div className='col'>관리자/일반유저</div>
                     <div className='col'>User ID</div>
                     <div className='col'>이름</div>
                     <div className='col'>블랙리스트 등급</div>
+                    <div className='col'>관리자 권한</div>
                     <div className='col'>탈퇴유저 여부</div>
                     <div className='col'>가입일</div>
                 </div>
@@ -89,22 +71,15 @@ function MemberList() {
                         memberList.map((member, idx)=>{
                             return (
                                 <div className='row' onClick={()=>{navigate(`/memberDetail/${member.member_id}`)}}>
-                                    <div className='col'>
-                                        {
-                                            (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?(
-                                                <input type="checkbox" value={member.userid} onChange={(e)=>{
-                                                    changeAdmin( member.userid, e.currentTarget.checked )
-                                                }} checked/>
-                                            ):(
-                                                <input type="checkbox" value={member.userid} onChange={(e)=>{
-                                                    changeAdmin( member.userid, e.currentTarget.checked )
-                                                }} />
-                                            )
-                                        }
-                                    </div>
                                     <div className='col'>{member.userid} {(member.provider)?(<>({member.provider})</>):(<></>)}</div>
                                     <div className='col'>{member.name}</div>
                                     <div className='col'>{member.blacklist}</div>
+                                    <div className='col'>
+                                        {
+                                            (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?
+                                            (<>Y</>):(<>N</>)
+                                        }
+                                    </div>
                                     <div className='col'>{member.deleteyn}</div>
                                     <div className='col'>{member.indate.substring(0, 10)}</div>
                                 </div>

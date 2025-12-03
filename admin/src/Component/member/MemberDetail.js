@@ -24,10 +24,29 @@ function MemberDetail() {
             .catch((err)=>{console.error(err)})
         },[]
     )
+
+    function changeAdmin( userid, checked){
+        if( checked ){
+             jaxios.post('/api/admin/changeRoleAdmin', null, {params:{userid}})
+            .then((result)=>{
+                if( result.data.msg==='ok'){
+                    alert(userid + '님이 관리자로 선정되셨습니다')
+                }
+            })
+        }else{
+            jaxios.post('/api/admin/changeRoleUser', null, {params:{userid}})
+            .then((result)=>{
+                if( result.data.msg==='ok'){
+                    alert(userid + '님의 등급이 일반유저로 변경되었습니다')
+                }
+            })
+        }
+    }
+
     return (
         <div className='adminContainer'>
             <SubMenu type={'member'}/>
-            <div className='productTable'>
+            <div className='productTable detailTable'>
                 <div className='title'>회원정보</div>
                 {(member.userid)?
                 (<>
@@ -68,7 +87,24 @@ function MemberDetail() {
                     <div className='col'>{member.personal_agree}</div>
                 </div>
                 <div className='row'>
-                    <div className='col detailTitle'>삭제여부</div>
+                    <div className='col detailTitle'>관리자 권한</div>
+                    <div className='col'>
+                        {
+                            (member.memberRoleList && member.memberRoleList.includes('ADMIN'))?(<>Y 
+                                <input type="checkbox" value={member.userid} onChange={(e)=>{
+                                    changeAdmin( member.userid, e.currentTarget.checked )
+                                }} checked/>
+                            </>
+                            ):(<>N 
+                                <input type="checkbox" value={member.userid} onChange={(e)=>{
+                                    changeAdmin( member.userid, e.currentTarget.checked )
+                                }} />
+                            </>)
+                        }
+                    </div>
+                </div>
+                <div className='row'>
+                    <div className='col detailTitle'>탈퇴유저 여부</div>
                     <div className='col'>{member.deleteyn}</div>
                 </div>
                 <div className='row'>

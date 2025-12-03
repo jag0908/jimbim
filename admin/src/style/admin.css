@@ -17,7 +17,10 @@ button{
     cursor: pointer;
 }
 .graybtn{
-    background: darkgray !important;
+    background: #a9a9a9 !important;
+}
+.graybtn:hover{
+    background: #989898 !important;
 }
 .field{
     width:100%;
@@ -50,6 +53,9 @@ input{
     border-radius: 5px;
     font-size: 90%;
 }
+.btns button:hover{
+    background: #ee6d25;
+}
 .detailPageBtns{
     display: flex;
     justify-content: center;
@@ -65,6 +71,9 @@ input{
     border-radius: 5px;
     background: #ff7e36;
     font-size: 100%;
+}
+.detailPageBtns button:hover{
+    background: #ee6d25;
 }
 
 .logout{
@@ -158,6 +167,10 @@ a{
     background-color: #eeeeee;
     cursor: pointer;
     transition: 3;
+}
+.detailTable .row:hover{
+    background-color: white;
+    cursor: auto;
 }
 .tableTitle:hover{
     background-color: white;

@@ -5,13 +5,16 @@ import com.himedia.spserver.dto.MemberDTO;
 import com.himedia.spserver.dto.ShPostResDto;
 import com.himedia.spserver.dto.StylePostDTO;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SH.SH_File;
-import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.STYLE.STYLE_Reply;
+import com.himedia.spserver.entity.STYLE.STYLE_Reply_Like;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
 import com.himedia.spserver.repository.FollowRepository;
 import com.himedia.spserver.repository.MemberRepository;
+import com.himedia.spserver.repository.STYLE_ReplyLikeRepository;
+import com.himedia.spserver.repository.STYLE_ReplyRepository;
 import com.himedia.spserver.service.S3UploadService;
 import com.himedia.spserver.service.ShService;
+import com.himedia.spserver.service.StyleReplyService;
 import com.himedia.spserver.service.StyleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,10 +38,13 @@ import java.util.stream.Collectors;
 public class StyleController {
 
     private final StyleService styleService;
+    private final StyleReplyService styleReplyService;
     private final S3UploadService sus;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final ShService shs;
+    private final STYLE_ReplyRepository replyRepository;
+    private final STYLE_ReplyLikeRepository replyLikeRepository;
 
     @GetMapping("/posts")
     public List<StylePostDTO> getAllPosts(){
@@ -101,19 +108,30 @@ public class StyleController {
 
 
     @GetMapping("/post/{id}")
-    public ResponseEntity<?> getPost(@PathVariable Integer id, @AuthenticationPrincipal MemberDTO memberDTO) {
+    public ResponseEntity<?> getPost(
+            @PathVariable Integer id,
+            @AuthenticationPrincipal MemberDTO memberDTO) {
+
         STYLE_post post = styleService.findBySpostId(id);
 
+        // 조회수 증가
         post.setViewCount(post.getViewCount() + 1);
         styleService.save(post);
 
         List<String> imageUrls = styleService.getAllImageUrls(post);
 
-        boolean liked = false; // 기본값 false
-        if (memberDTO != null) {
-            // 로그인한 경우 좋아요 여부 확인
-            liked = styleService.isLikedByUser(id, memberDTO.getUserid());
+        // ★ 로그인 유저 아이디 추출
+        String loginUserid = (memberDTO != null) ? memberDTO.getUserid() : null;
+
+        // 게시글 좋아요 여부
+        boolean liked = false;
+        if (loginUserid != null) {
+            liked = styleService.isLikedByUser(id, loginUserid);
         }
+
+        // ★ 댓글 가져올 때 좋아요 포함된 findReplies 호출
+        List<Map<String, Object>> replies =
+                styleReplyService.findReplies(id, "latest", loginUserid);
 
         Map<String, Object> result = new HashMap<>();
         result.put("title", post.getTitle());
@@ -123,13 +141,13 @@ public class StyleController {
         result.put("s_images", imageUrls);
         result.put("liked", liked);
         result.put("likeCount", styleService.countLikes(id));
-        result.put("replies", styleService.findReplies(id));
+        result.put("replies", replies);
         result.put("hashtags", styleService.findHashtags(id));
         result.put("indate", post.getIndate());
         result.put("viewCount", post.getViewCount());
 
         return ResponseEntity.ok(result);
-    }
+        }
 
     @PostMapping("/write")
     public ResponseEntity<?> uploadStylePost(
@@ -189,6 +207,42 @@ public class StyleController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 처리 실패");
         }
+    }
+
+    @PostMapping("/reply/like/{replyId}")
+    public ResponseEntity<?> toggleReplyLike(
+            @PathVariable Integer replyId,
+            @AuthenticationPrincipal MemberDTO memberDTO
+    ) {
+        if (memberDTO == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "로그인 필요"));
+        }
+
+        STYLE_Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new RuntimeException("댓글 없음"));
+
+        Member member = memberRepository.findByUserid(memberDTO.getUserid());
+
+        Optional<STYLE_Reply_Like> existing = replyLikeRepository.findByReplyAndMember(reply, member);
+
+        boolean liked;
+        if (existing.isPresent()) {
+            replyLikeRepository.delete(existing.get());
+            liked = false;
+        } else {
+            STYLE_Reply_Like newLike = new STYLE_Reply_Like();
+            newLike.setReply(reply);
+            newLike.setMember(member);
+            replyLikeRepository.save(newLike);
+            liked = true;
+        }
+
+        int likeCount = replyLikeRepository.countByReply(reply);
+
+        return ResponseEntity.ok(Map.of(
+                "liked", liked,
+                "likeCount", likeCount
+        ));
     }
 
 

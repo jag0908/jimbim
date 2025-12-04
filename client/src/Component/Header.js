@@ -1,5 +1,6 @@
 import React from 'react'
 import '../style/header.css'
+import ChatBot from './ChatBot';
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
@@ -39,6 +40,9 @@ function Header() {
             
 
             <Link to={"/customer/qna"}>고객센터</Link>
+
+            <ChatBot />
+
             {
                 (loginUser.userid)?
                 <Link to={`/alram/${loginUser.member_id}`}>알림</Link> :

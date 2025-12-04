@@ -13,6 +13,18 @@ code {
 }
 
 
+.chatBotBtn{
+    font-family: inherit; /* 헤더와 같은 폰트 상속 */
+    font-weight: 500;     /* 헤더 메뉴와 동일한 굵기 */
+    font-size: 14px;      /* 헤더 util 링크와 동일한 크기 */
+    color: #777;          /* 헤더 util 링크와 동일한 색상 */
+    text-decoration: none; 
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 4px 8px;     /* 버튼 느낌을 위해 약간의 패딩 추가 */
+    border-radius: 6px;   /* input, select 스타일과 통일 */
+}
 .chatbotbox{
     position: fixed;
     width:390px;
@@ -96,4 +108,42 @@ code {
     color:white;
     font-size: 110%; 
     font-weight: bold;
+}
+
+.chatbot-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.chatbot-header h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+.close-btn {
+    margin-left: auto; /* 오른쪽 끝으로 이동 */
+    border: none;
+    color: rgb(22, 21, 21);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+
+
+/* 메시지 시간 스타일 */
+.msgTime {
+    font-size: 11px;
+    color: gray;
+    margin-top: 3px;
+}
+
+.userTime {
+    text-align: right;
+}
+
+.botTime {
+    text-align: left;
 }

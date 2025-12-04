@@ -17,6 +17,18 @@ public interface STYLE_ReplyRepository extends JpaRepository<STYLE_Reply, Intege
 
     List<STYLE_Reply> findBySpost_SpostIdIn(List<Integer> spostIds);
 
-    @Query("SELECT r FROM STYLE_Reply r WHERE r.spost.spostId IN :ids")
-    List<STYLE_Reply> findAllBySpostIds(@Param("ids") List<Integer> ids);
+    // 최신순
+    List<STYLE_Reply> findBySpostOrderByIndateDesc(STYLE_post post);
+
+    // 좋아요 수 기준 정렬 (JPQL)
+    @Query("""
+        SELECT r
+        FROM STYLE_Reply r
+        LEFT JOIN STYLE_Reply_Like l ON l.reply = r
+        WHERE r.spost = :post
+        GROUP BY r
+        ORDER BY COUNT(l) DESC
+    """)
+    List<STYLE_Reply> findBySpostOrderByLikeCountDesc(@Param("post") STYLE_post post);
+
 }

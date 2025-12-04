@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,6 +40,18 @@ public class StyleReplyController {
         }
     }
 
+    @GetMapping("/{spostId}")
+    public ResponseEntity<?> getReplies(
+            @PathVariable Integer spostId,
+            @RequestParam(defaultValue = "latest") String sort,
+            @AuthenticationPrincipal MemberDTO memberDTO
+    ) {
+        String loginUserid = (memberDTO != null) ? memberDTO.getUserid() : null;
+
+        List<Map<String, Object>> replies = stylereplyService.findReplies(spostId, sort, loginUserid);
+        return ResponseEntity.ok(replies);
+    }
+
     @DeleteMapping("/{replyId}")
     public ResponseEntity<?> deleteReply(
             @PathVariable Integer replyId,
@@ -55,4 +68,5 @@ public class StyleReplyController {
             return ResponseEntity.ok(Map.of("message", e.getMessage()));
         }
     }
+
 }

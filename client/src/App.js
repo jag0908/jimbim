@@ -46,8 +46,6 @@ import ChatRoom from './Component/chat/ChatRoom';
 import Alram from './Component/alram/Alram';
 
 
-import ChatBot from './Component/ChatBot'
-
 
 
 
@@ -55,10 +53,6 @@ import ChatBot from './Component/ChatBot'
 function App() {
     return (
 	<>
-
-		<div className='chatComponent'>
-                <ChatBot />
-        </div>
 
 		<Header /> {/* ✅ 항상 보이게 */}
 		<div className="container">

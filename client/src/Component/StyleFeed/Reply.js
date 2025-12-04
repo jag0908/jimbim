@@ -1,21 +1,48 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import jaxios from '../../util/jwtutil';
+
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Reply = ({
-  reply,
-  myUserid,
-  toggleReplyVisibility,
-  isOpen = false, // undefined 방지
-  openReplies,
-  setReplyParent,
-  handleDeleteReply
-}) => {
-  const navigate = useNavigate();
-  const replyDate = reply.indate ? new Date(reply.indate).toLocaleString() : "시간 없음";
-  const isMyComment = reply.userid === myUserid;
+    reply,
+    myUserid,
+    toggleReplyVisibility,
+    isOpen = false, // undefined 방지
+    openReplies,
+    setReplyParent,
+    handleDeleteReply,
+    setReplies
+  }) => {
+    const navigate = useNavigate();
+    const replyDate = reply.indate ? new Date(reply.indate).toLocaleString() : "시간 없음";
+    const isMyComment = reply.userid === myUserid;
 
-  const handleToggle = () => {
-    toggleReplyVisibility(reply.reply_id);
+    const handleToggle = () => {
+      toggleReplyVisibility(reply.reply_id);
+    };
+
+  const handleReplyLike = async (replyId) => {
+    try {
+      const res = await jaxios.post(`${baseURL}/style/reply/like/${replyId}`);
+      const { liked, likeCount } = res.data;
+
+      // 트리에서 댓글 찾아서 갱신
+      const updateLike = (list) => {
+        return list.map(r => {
+          if (r.reply_id === replyId) return { ...r, liked, likeCount };
+          if (r.children && r.children.length > 0) {
+            return { ...r, children: updateLike(r.children) };
+          }
+          return r;
+        });
+      };
+
+      setReplies(prev => updateLike(prev));
+    } catch (err) {
+      console.error(err);
+      alert("좋아요 처리 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -42,6 +69,11 @@ const Reply = ({
             </button>
           )}
           <button onClick={() => setReplyParent(reply.reply_id)}>답글</button>
+          <div className="style-detail-reply-actions">
+            <button onClick={() => handleReplyLike(reply.reply_id)}>
+              {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -68,6 +100,7 @@ const Reply = ({
               openReplies={openReplies}
               setReplyParent={setReplyParent}
               handleDeleteReply={handleDeleteReply}
+              setReplies={setReplies}
             />
           ))}
         </div>

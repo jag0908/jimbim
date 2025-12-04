@@ -51,27 +51,42 @@ function ChatBot() {
 
 
     function appendMessage(sender, content){
+
+        const time = getTime();
+
         setAnswer(prev => {
             if(sender === 'User'){
                 return prev + `<div class="userMessage"><div class="senderUser">
                         User
                     </div><div class="userContent">
                         ${content}
-                    </div></div><br />`
+                    </div>
+                    <div class="msgTime userTime">${time}</div>
+                    </div><br />`
             }else{
                 return prev + `<div class="botMessage"><div class="senderBot">
-                        ChatBot
+                        짐빔 ChatBot
                     </div><div class="botContent">
                         ${content}
-                    </div></div><br />`
+                    </div>
+                    <div class="msgTime userTime">${time}</div>
+                    </div><br />`
             }
         })
         setQuestion('')
     }
+
+    function getTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
   return (
     <div>
-        <div className='chatBot' onClick={()=>{setChatView(!chatView)}}>ChatBot</div>
+        <span className='chatBotBtn' onClick={() => setChatView(!chatView)}>
+                챗봇
+            </span>
         <div className='chatbotbox' style={chatStyle}>
+            <button className="close-btn" onClick={() => setChatView(false)}>X</button>
             <h1 className="text-center">RAG기반 AI 챗봇 서비스</h1>
                 <div className="chat-box" id="chatBox"  dangerouslySetInnerHTML={{ __html: answer }} ></div>
                  <div className="userQuestion">

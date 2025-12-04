@@ -201,8 +201,8 @@ function StyleUser() {
                   <div className="style-post-image">
                     <img src={item.firstFilePath} alt="상품" />
                     <div className="style-sell-info">
-                      <div className="sell-title">{item.title}</div>
                       <div className="sell-price">{item.price.toLocaleString()}원</div>
+                      <div className="sell-title">{item.title}</div>
                     </div>
                   </div>
                 </div>
@@ -225,8 +225,8 @@ function StyleUser() {
                     <img src={item.firstFilePath} alt="찜 상품" />
                   </div>
                   <div className="style-sell-info">
-                    <div className="sell-title">{item.title}</div>
                     <div className="sell-price">{item.price.toLocaleString()}원</div>
+                    <div className="sell-title">{item.title}</div>
                   </div>
                 </div>
               ))}

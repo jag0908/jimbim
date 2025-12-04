@@ -5,6 +5,7 @@ import com.himedia.spserver.entity.STYLE.STYLE_Reply;
 import com.himedia.spserver.entity.STYLE.STYLE_post;
 import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.repository.STYLE_PostRepository;
+import com.himedia.spserver.repository.STYLE_ReplyLikeRepository;
 import com.himedia.spserver.repository.STYLE_ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class StyleReplyService {
     private final STYLE_ReplyRepository replyRepository;
     private final STYLE_PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final STYLE_ReplyLikeRepository replyLikeRepository;
 
     public Map<String, Object> addReply(Integer spostId, String userid, String content, Integer parent_id) {
         Member member = memberRepository.findByUserid(userid);
@@ -67,11 +69,27 @@ public class StyleReplyService {
         replyRepository.delete(reply);
     }
 
-    public List<Map<String, Object>> findReplies(Integer spostId) {
-        STYLE_post post = postRepository.findById(spostId)
-                .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+    public List<Map<String, Object>> findReplies(Integer spostId, String sortBy, String loginUserid) {
 
-        return replyRepository.findBySpost(post).stream()
+        // 1) 게시글 조회
+        STYLE_post spost = postRepository.findById(spostId)
+                .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다"));
+
+        // 2) 로그인 사용자 조회
+        Member loginMember = null;
+        if (loginUserid != null) {
+            loginMember = memberRepository.findByUserid(loginUserid);
+        }
+        final Member finalLoginMember = loginMember; // final 처리
+
+        // 3) 정렬 방식 선택
+        List<STYLE_Reply> list =
+                "like".equals(sortBy)
+                        ? replyRepository.findBySpostOrderByLikeCountDesc(spost)
+                        : replyRepository.findBySpostOrderByIndateDesc(spost);
+
+        // 4) 결과 구성
+        return list.stream()
                 .map(r -> {
                     Map<String, Object> map = new HashMap<>();
                     map.put("reply_id", r.getReply_id());
@@ -80,7 +98,18 @@ public class StyleReplyService {
                     map.put("content", r.getContent());
                     map.put("indate", r.getIndate());
                     map.put("parent_id", r.getParent() != null ? r.getParent().getReply_id() : null);
-                    map.put("isOpen", false);
+
+                    // 좋아요 개수
+                    int likeCount = replyLikeRepository.countByReply(r);
+                    map.put("likeCount", likeCount);
+
+                    // 로그인한 유저가 좋아요 눌렀는지
+                    boolean liked = false;
+                    if (finalLoginMember != null) {
+                        liked = replyLikeRepository.existsByReplyAndMember(r, finalLoginMember);
+                    }
+                    map.put("liked", liked);
+
                     return map;
                 })
                 .toList();

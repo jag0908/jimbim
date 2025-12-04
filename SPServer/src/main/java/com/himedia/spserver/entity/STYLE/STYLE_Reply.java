@@ -29,5 +29,9 @@ public class STYLE_Reply {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private STYLE_Reply parent;
+
+    @Transient
+    private Long likeCount; // 좋아요 개수 계산용
+
 }
 

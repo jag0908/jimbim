@@ -39,6 +39,11 @@ const StyleDetail = () => {
       }
     });
 
+    // children을 좋아요 순으로 정렬
+    Object.values(map).forEach(r => {
+      r.children.sort((a, b) => b.likeCount - a.likeCount);
+    });
+
     return roots;
   };
 
@@ -219,17 +224,23 @@ const StyleDetail = () => {
 
   //댓글 삭제
   const handleDeleteReply = async (replyId) => {
-  if (!replyId) return alert("댓글 ID가 없습니다.");
-  if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+    if (!replyId) return alert("댓글 ID가 없습니다.");
+    if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
 
-  try {
-    await jaxios.delete(`${baseURL}/style/reply/${replyId}`, { data: { userid: myUserid } });
-    setReplies(prev => removeReplyById(prev, replyId));
-  } catch (err) {
-    console.error("댓글 삭제 오류", err.response?.data || err);
-    alert(err.response?.data?.message || "댓글 삭제 중 오류가 발생했습니다.");
-  }
-};
+    try {
+      await jaxios.delete(`${baseURL}/style/reply/${replyId}`, { data: { userid: myUserid } });
+      setReplies(prev => removeReplyById(prev, replyId));
+    } catch (err) {
+      console.error("댓글 삭제 오류", err.response?.data || err);
+      alert(err.response?.data?.message || "댓글 삭제 중 오류가 발생했습니다.");
+    }
+  };
+
+  const fetchReplies = async (sortBy = "latest") => {
+    const res = await jaxios.get(`${baseURL}/style/reply/${id}?sort=${sortBy}`);
+    const replyTree = buildReplyTree(res.data);
+    setReplies(replyTree);
+  };
 
 
 
@@ -371,6 +382,10 @@ const StyleDetail = () => {
 
 
       {/* 댓글 목록 */}
+      <div className="style-detail-reply-sort">
+        <button onClick={() => fetchReplies("latest")}>최신순</button>
+        <button onClick={() => fetchReplies("like")}>좋아요순</button>
+      </div>
       <div className="style-detail-replies">
         {replies.map(reply => (
           <Reply
@@ -382,6 +397,7 @@ const StyleDetail = () => {
             openReplies={openReplies}
             setReplyParent={setCommentParent}
             handleDeleteReply={handleDeleteReply}
+            setReplies={setReplies}
           />
         ))}
 

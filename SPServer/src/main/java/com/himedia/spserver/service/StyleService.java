@@ -232,24 +232,6 @@ public class StyleService {
         return likeRepository.existsBySpost_SpostIdAndMemberid_Userid(spostId, userid);
     }
 
-    public List<Map<String, Object>> findReplies(Integer id) {
-        STYLE_post post = findBySpostId(id);
-
-        return replyRepository.findBySpost(post).stream()
-                .map(r -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("reply_id", r.getReply_id());
-                    map.put("userid", r.getMemberid().getUserid());
-                    map.put("profileImg", r.getMemberid().getProfileImg());
-                    map.put("content", r.getContent());
-                    map.put("indate", r.getIndate());
-                    map.put("parent_id", r.getParent() != null ? r.getParent().getReply_id() : null);
-                    map.put("isOpen", false);
-
-                    return map;
-                })
-                .collect(Collectors.toList());
-    }
 
 
     public List<String> findHashtags(Integer id) {

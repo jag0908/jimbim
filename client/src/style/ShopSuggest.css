@@ -1,0 +1,21 @@
+.shopSuggest {display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin: 0px auto 0px; padding: 60px 0; width: 100%; max-width: 638px;}
+.shopSuggest .writeWrap {display: flex; flex-direction: column; gap: 22px; margin: 0 auto; padding: 40px 34px; width: 100%; border: 1px solid #999; border-radius: 12px; box-sizing: border-box; overflow: auto;}
+.shopSuggest .mainTitle {font-size: 26px; font-weight: 500;}
+.shopSuggest .writeWrap .inputWrap {display: flex; flex-direction: column;}
+.shopSuggest .inputWrap .tit {flex-shrink: 0; padding-bottom: 6px; width: 100%; font-size: 16px; font-weight: 600; color: #555;}
+.shopSuggest .writeWrap .inputWrap > label {font-size: 16px; color: #000;}
+.shopSuggest .writeWrap .inputWrap > input[type=text] {padding: 2px 10px; height: 36px; box-sizing: border-box;}
+.shopSuggest .writeWrap .inputWrap > textarea {padding: 10px 10px; height: 160px; box-sizing: border-box;}
+
+.shopSuggest .writeWrap .inputWrap.file {flex-direction: column; align-items: flex-start; gap: 16px; border: none;}
+.shopSuggest .writeWrap .inputWrap.file > label {display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; width: 72px; height: 72px; border: 1px solid #555; border-radius: 12px; box-sizing: border-box; font-size: 30px; cursor: pointer; }
+.shopSuggest .writeWrap .inputWrap.file > input[type=file].inpFile {display: none;}
+.shopSuggest .writeWrap .inputWrap.file > label > span {font-size: 12px; color: #999;}
+.shopSuggest .writeWrap .inputWrap.file .previewContainer {display: flex; align-items: center; gap: 12px; margin-bottom: 10px;}
+.shopSuggest .writeWrap .inputWrap.file .previewContainer .imgBox {position: relative; width: 72px; height: 72px;}
+.shopSuggest .writeWrap .inputWrap.file .previewContainer .imgBox > img {width:100%; height: 100%; border: 1px solid #999; object-fit: cover; border-radius: 12px; overflow: hidden;}
+.shopSuggest .writeWrap .inputWrap.file .previewContainer .removeBtn {display: flex; justify-content: center; align-items: center; position: absolute; bottom: -8px; right: -8px; width: 20px; height: 20px; background: #fff; border-radius: 50%; border: 1px solid #555; font-size: 12px; font-weight: 600; cursor: pointer;}
+
+.shopSuggest .btnWrap {display: flex; justify-content: flex-end; align-items: center; gap: 8px; width: 100%; box-sizing: border-box;}
+.shopSuggest .btnWrap .navBtn {padding: 0 12px; min-width: 64px; height: 36px; border: 1px solid #999; border-radius: 6px; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #555;}
+.shopSuggest .btnWrap .pointBtn {background-color: #555; color: #fff;}

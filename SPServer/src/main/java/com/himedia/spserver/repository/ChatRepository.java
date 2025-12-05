@@ -1,6 +1,7 @@
 package com.himedia.spserver.repository;
 
 import com.himedia.spserver.entity.SH.ChatRoom;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -18,4 +19,9 @@ public interface ChatRepository extends JpaRepository<ChatRoom, Integer> {
 
 
     List<ChatRoom> findAllByPostId(Integer postId);
+
+
+
+    @EntityGraph(attributePaths = {"chatMsg"})
+    Optional<List<ChatRoom>> findAllBySellerId(Integer id);
 }

@@ -18,4 +18,8 @@ public class CommunityReplyResponseDTO {
 
     // ★ 익명 여부 추가
     private Boolean anonymous = false;
+
+//    이삭수정
+    private Long likeCount = 0L;
+    private Boolean likedByUser = false;
 }

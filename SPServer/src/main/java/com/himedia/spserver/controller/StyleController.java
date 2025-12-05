@@ -12,10 +12,7 @@ import com.himedia.spserver.repository.FollowRepository;
 import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.repository.STYLE_ReplyLikeRepository;
 import com.himedia.spserver.repository.STYLE_ReplyRepository;
-import com.himedia.spserver.service.S3UploadService;
-import com.himedia.spserver.service.ShService;
-import com.himedia.spserver.service.StyleReplyService;
-import com.himedia.spserver.service.StyleService;
+import com.himedia.spserver.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +41,7 @@ public class StyleController {
     private final FollowRepository followRepository;
     private final ShService shs;
     private final STYLE_ReplyRepository replyRepository;
+    private final NotificationService notificationService;
     private final STYLE_ReplyLikeRepository replyLikeRepository;
 
     @GetMapping("/posts")
@@ -89,11 +87,16 @@ public class StyleController {
                     .body(Map.of("message", "사용자를 찾을 수 없습니다."));
         }
 
+        String defaultProfileImg = "/images/default-profile.png";
+
+        String profileImg = member.getProfileImg() != null ? member.getProfileImg() : defaultProfileImg;
+        String intro = member.getProfileMsg() != null ? member.getProfileMsg() : "";
+
         Map<String, Object> result = new HashMap<>();
         result.put("userid", member.getUserid());
         result.put("nickname", member.getName());
-        result.put("profileImg", member.getProfileImg());
-        result.put("intro", member.getProfileMsg());
+        result.put("profileImg", profileImg);
+        result.put("intro", intro);
         result.put("memberId", member.getMember_id());
 
         result.put("followers", followRepository.findByEndMember(member).size());
@@ -235,6 +238,17 @@ public class StyleController {
             newLike.setMember(member);
             replyLikeRepository.save(newLike);
             liked = true;
+
+            // ⭐ 댓글 좋아요 알림 추가
+            Member replyWriter = reply.getMemberid();
+            if (!replyWriter.getUserid().equals(member.getUserid())) {
+                notificationService.sendCommentLikeNotification(
+                        replyWriter,
+                        reply.getSpost().getSpostId().longValue(),
+                        replyId.longValue(),
+                        member
+                );
+            }
         }
 
         int likeCount = replyLikeRepository.countByReply(reply);
@@ -244,6 +258,7 @@ public class StyleController {
                 "likeCount", likeCount
         ));
     }
+
 
 
 

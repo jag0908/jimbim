@@ -46,7 +46,7 @@ const Reply = ({
   };
 
   return (
-    <div className="style-detail-reply">
+    <div className="style-detail-reply-a">
       {/* 댓글 헤더 */}
       <div className="style-detail-reply-header">
         <div className="style-detail-reply-left" onClick={() => navigate(`/styleUser/${reply.userid}`)}>

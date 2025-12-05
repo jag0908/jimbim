@@ -166,6 +166,7 @@ function StyleUser() {
         <button className={activeTab === "style" ? "tab active" : "tab"} onClick={() => setActiveTab("style")}>Style</button>
         <button className={activeTab === "sell" ? "tab active" : "tab"} onClick={() => setActiveTab("sell")}>판매 목록</button>
         <button className={activeTab === "zzim" ? "tab active" : "tab"} onClick={() => setActiveTab("zzim")}>찜 목록</button>
+        <button className={activeTab === "zzim" ? "tab active" : "tab"} onClick={() => setActiveTab("zzim")}>찜 목록</button>
         {isMyProfile && <button className={activeTab === "myPosts" ? "tab active" : "tab"} onClick={() => setActiveTab("myPosts")}>작성한 커뮤니티</button>}
       </div>
 

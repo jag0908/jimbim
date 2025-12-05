@@ -6,6 +6,7 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.repository.CommunityLikeRepository;
 import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.service.CommunityListService;
+import com.himedia.spserver.service.NotificationService;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,9 @@ public class CommunityListController {
 
     @Autowired
     ServletContext sc;
+
+    @Autowired
+    private NotificationService notificationService;
 
     // ---------------- 게시글 리스트 조회 ----------------
     @GetMapping("/getCommunityList/{page}")
@@ -176,6 +180,15 @@ public class CommunityListController {
             newLike.setCpost(post);
             cr.save(newLike);
             result.put("liked", true);
+
+            // 게시글 작성자 알림
+            if (!post.getMember().getMember_id().equals(member.getMember_id())) {
+                notificationService.sendCommunityPostLikeNotification(
+                        post.getMember(),
+                        post.getCpostId().longValue(),
+                        member
+                );
+            }
         }
 
         long likeCount = cr.countByCpost(post);

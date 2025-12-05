@@ -168,11 +168,10 @@ public class AdminService {
 
     public void changeNotice(int cpostId, String isNotice) {
         C_post post = cpr.findById(cpostId).get();
-
-        if( isNotice.equals("N") ) {
-            post.setIsNotice("Y");
-        }else if( isNotice.equals("Y") ) {
+        if( isNotice.equals("Y") ) {
             post.setIsNotice("N");
+        }else {
+            post.setIsNotice("Y");
         }
     }
 

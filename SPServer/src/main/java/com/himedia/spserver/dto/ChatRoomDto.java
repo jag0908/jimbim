@@ -30,4 +30,6 @@ public class ChatRoomDto {
 
     private List<Integer> sellerReadMsg;
     private List<Integer> buyerReadMsg;
+
+    private List<ChatMsgDto> chatMsgList;
 }

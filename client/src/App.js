@@ -44,6 +44,10 @@ import UpdateCommunity from './Component/community/UpdateCommunity'
 import ChatRoom from './Component/chat/ChatRoom';
 import Alram from './Component/alram/Alram';
 
+import Shop from './Component/Shop/Shop';
+import ShopSuggest from './Component/Shop/ShopSuggest';
+import Suggest from './Component/customer/Suggest';
+
 
 
 
@@ -99,6 +103,9 @@ function App() {
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
 				<Route path="/communityView/:num" element={<CommunityView />} />
 				<Route path="/updateCommunity/:num" element={<UpdateCommunity />} />
+				<Route path="/shop" element={<Shop />} />
+				<Route path='/shop/shopSuggest' element={<ShopSuggest />} />
+				<Route path="/customer/suggest" element={<Suggest />} />
 
 			</Routes>
 		</div>

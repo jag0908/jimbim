@@ -68,6 +68,7 @@ function CommunityList() {
                     <div className='col'>제목</div>
                     <div className='col'>글쓴이</div>
                     <div className='col'>익명글 여부</div>
+                    <div className='col'>공지사항 여부</div>
                     <div className='col'>게시일</div>
                 </div>
                 {
@@ -89,6 +90,7 @@ function CommunityList() {
                                         (<span className='italic'>탈퇴회원</span>)
                                     }</div>
                                     <div className='col'>{cPost.isAnonymous}</div>
+                                    <div className='col'>{cPost.isNotice}</div>
                                     <div className='col'>
                                         {
                                             (cPost.indate)?

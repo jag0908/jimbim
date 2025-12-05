@@ -166,6 +166,16 @@ public class AdminService {
         cpr.deleteById(cpostId);
     }
 
+    public void changeNotice(int cpostId, String isNotice) {
+        C_post post = cpr.findById(cpostId).get();
+
+        if( isNotice.equals("N") ) {
+            post.setIsNotice("Y");
+        }else if( isNotice.equals("Y") ) {
+            post.setIsNotice("N");
+        }
+    }
+
     /// ////////////// qna 관련 /////////////////////////
 
     public HashMap<String, Object> getQnaList(int page, String key) {
@@ -199,10 +209,10 @@ public class AdminService {
     }
 
     public void writeReply(int qnaId, String reply, String answerer) {
-        Qna qna = qr.findById( qnaId).get();
+        Qna qna = qr.findById(qnaId).get();
         Member member = mr.findByUserid(answerer);
 
-        qna.setReply( reply );
+        qna.setReply(reply);
         qna.setAnswerer(member);
     }
 }

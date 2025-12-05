@@ -115,6 +115,15 @@ public class AdminController {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/changeNotice")
+    public HashMap<String,Object> changeNotice(@RequestParam("cpostId") int cpostId, @RequestParam("isNotice") String isNotice){
+        HashMap<String, Object> result = new HashMap<>();
+        as.changeNotice(cpostId, isNotice);
+        result.put("msg", "ok");
+        return result;
+    }
+
     /// ///////////// qna 관련 /////////////
 
     @PreAuthorize("hasRole('ADMIN')")

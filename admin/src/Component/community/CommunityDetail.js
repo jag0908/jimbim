@@ -41,6 +41,37 @@ function CommunityDetail() {
             .catch((err)=>{console.error(err)})
         }
     }
+    async function changeNotice( cpostId, isNotice){
+        if( isNotice=='N' ){
+            if(window.confirm('공지글로 등록하시겠습니까?')){
+                await jaxios.post('/api/admin/changeNotice', null, {params:{cpostId, isNotice}})
+                .then((result)=>{
+                    if( result.data.msg==='ok'){
+                        alert('공지글로 등록되었습니다')
+                    }
+                })
+                await jaxios.get('/api/admin/getCPost', {params:{cpostId}})
+                .then((result)=>{  
+                    setCPost(result.data.cPost)
+                    setCCategoryList(result.data.CCategoryList)
+                })
+            }else{return false}
+        }else{
+            if(window.confirm('공지글에서 해제하시겠습니까?')){
+                await jaxios.post('/api/admin/changeNotice', null, {params:{cpostId, isNotice}})
+                .then((result)=>{
+                    if( result.data.msg==='ok'){
+                        alert('공지글에서 해제되었습니다')
+                    }
+                })
+                await jaxios.get('/api/admin/getCPost', {params:{cpostId}})
+                .then((result)=>{  
+                    setCPost(result.data.cPost)
+                    setCCategoryList(result.data.CCategoryList)
+                })
+            }else{return false}
+        }
+    }
     return (
         <div className='adminContainer'>
             <SubMenu type={'community'}/>
@@ -83,6 +114,23 @@ function CommunityDetail() {
                     <div className='row'>
                         <div className='col detailTitle'>첨부 이미지</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}></div>
+                    </div>
+                    <div className='row'>
+                        <div className='col detailTitle'>공지글 설정</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                        {
+                            (cPost.isNotice=='Y')?(<>Y 
+                                <input type="checkbox" value={cPost.cpostId} onClick={()=>{
+                                    changeNotice( cPost.cpostId, cPost.isNotice )
+                                }} checked={cPost.isNotice=='Y'} />
+                            </>
+                            ):(<>N 
+                                <input type="checkbox" value={cPost.cpostId} onClick={()=>{
+                                    changeNotice( cPost.cpostId, cPost.isNotice )
+                                }} checked={cPost.isNotice=='Y'} />
+                            </>)
+                        }
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>내용</div>

@@ -24,6 +24,10 @@ function ShWrite() {
     const [previewUrls, setPreviewUrls] = useState([]); // 이미지 미리보기 URL 배열
 
     useEffect(()=> {
+        if (!loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다."); 
+            return navigate("/login");
+        }
     
         axios.get("/api/sh-page/sh-category")
             .then((result)=> {

@@ -175,7 +175,7 @@ function ShMain() {
         <div className='menuWrap'>
            <div className='list'>
                 <Link to={`/sh-page`}>
-                  <img src={`${baseURL}/sh_img/1.png`} alt={"전체"} />
+                  <img src={`${baseURL}/sh_img/all.png`} alt={"전체"} />
                   <span className='tit'>전체</span>
                 </Link>
           </div>

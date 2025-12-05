@@ -19,6 +19,7 @@ public class ChatRoom_Msg {
     private ChatRoom chatRoom;
 
     private String content;
+
     private Integer senderId;
 
     private Integer buyerReadMsg = 0;
@@ -26,4 +27,9 @@ public class ChatRoom_Msg {
 
     @CreationTimestamp
     private Timestamp indate;
+
+    public String getShortContent() {
+        if (this.content == null) return "";
+        return this.content.length() > 10 ? this.content.substring(0, 10) + "..." : this.content;
+    }
 }

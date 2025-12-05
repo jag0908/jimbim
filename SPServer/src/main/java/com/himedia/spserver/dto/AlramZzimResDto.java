@@ -13,11 +13,13 @@ import java.sql.Timestamp;
 public class AlramZzimResDto {
     private Long id;
 
-    private Member member;
+    private String startUserId;
+    private String startUserProfileImg;
 
-    private String endUserId;
+    private Integer endUserId;
 
-    private Integer targetId;
+    private Integer postId;
+    private String postTitle;
     private String targetType;
 
     private Boolean isRead = false;

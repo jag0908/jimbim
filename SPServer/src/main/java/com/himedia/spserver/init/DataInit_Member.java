@@ -25,11 +25,12 @@ public class DataInit_Member implements CommandLineRunner {
     }
 
     private void initMember() {
+        String defaultImg = "https://jimbimb.s3.ap-northeast-2.amazonaws.com/user.png";
         List<MemberRole> memberRoles = new ArrayList<>();
         memberRoles.add(MemberRole.ADMIN);
         BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         List<Member> members = List.of(
-                new Member(null, "admin", "관리자", pe.encode("admin"), null, null, "관리자", "관리자", "관리자", "N", "N", "N", null, 0, null, memberRoles )
+                new Member(null, "admin", "관리자", pe.encode("admin"), defaultImg, null, "관리자", "관리자", "관리자", "N", "N", "N", null, 0, null, memberRoles )
         );
 
         mr.saveAll(members);

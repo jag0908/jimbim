@@ -31,6 +31,7 @@ public class Member {
     private String name;
     @Column(nullable = false)
     private String pwd;
+    @ColumnDefault("'https://jimbimb.s3.ap-northeast-2.amazonaws.com/user.png'")
     private String profileImg;
     private String profileMsg;
     @Column(nullable = false)

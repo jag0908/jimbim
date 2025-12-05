@@ -83,7 +83,8 @@ function QnaDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>답변</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{(qna.reply)?
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            {(qna.reply)?
                             (<>
                                 <div>답변자: {qna.answerer.userid}</div>
                                 <div>{qna.reply}</div>

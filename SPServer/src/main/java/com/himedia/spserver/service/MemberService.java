@@ -118,4 +118,9 @@ public class MemberService {
             member.setPersonal_agree(yn);
         }
     }
+
+    public void deleteMember(String userid) {
+        Member member = mr.findByUserid(userid);
+        mr.delete(member);
+    }
 }

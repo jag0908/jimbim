@@ -101,7 +101,13 @@ public class MemberController {
         return result;
     }
 
-
+    @DeleteMapping("/deleteMember")
+    public HashMap<String, Object> deleteMember( @RequestParam("userid") String userid ) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.deleteMember( userid );
+        result.put("msg", "ok");
+        return result;
+    }
     /// /////////////////// 파일업로드 /////////////////////////////
 
 //    @Autowired

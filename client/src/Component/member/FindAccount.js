@@ -95,6 +95,10 @@ function FindAccount() {
             <div className='subPage'>
                 <div className='memberform'>
                     <div className='formtitle'>계정 찾기</div>
+                    <div>
+                        ID에 입력되어 있는 이름과 전화번호를 입력해주세요<br/>
+                        카카오 아이디는 카카오에 문의해주세요<br/><br/>
+                    </div>
                     <div className='field'>
                         <label>이름</label>
                         <input type="text" value={name} onChange={(e)=>{

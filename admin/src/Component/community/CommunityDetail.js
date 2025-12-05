@@ -27,6 +27,16 @@ function CommunityDetail() {
             .catch((err)=>{console.error(err)})
         },[]
     )
+    function forceDelete(){
+        if(window.confirm('해당 게시물을 정말 삭제하시겠습니까?')){
+            jaxios.delete('/api/admin/deleteCommunity', {params:{cpostId}})
+            .then((result)=>{ 
+                alert('삭제되었습니다.')
+                navigate('/communityList')
+            })
+            .catch((err)=>{console.error(err)})
+        }
+    }
     return (
         <div className='adminContainer'>
             <SubMenu type={'sh'}/>
@@ -44,11 +54,23 @@ function CommunityDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>게시일</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{cPost.indate.substring(0, 10)}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                        {
+                            (cPost.indate)?
+                            (cPost.indate.substring(0, 10)):
+                            (<></>)
+                        }
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>카테고리</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{cPost.category.categoryName}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                        {
+                            (cPost.category)?
+                            (cPost.category.categoryName):
+                            (<></>)
+                        }
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>첨부 이미지</div>
@@ -66,6 +88,9 @@ function CommunityDetail() {
                 
                 <div className='detailPageBtns'>
                     <button onClick={()=>{navigate('/communityList')}} >뒤로</button>
+                </div>
+                <div className='detailPageBtns'>
+                    <button className='redbtn' onClick={()=>{forceDelete()}} >강제삭제</button>
                 </div>
             </div>
         </div>

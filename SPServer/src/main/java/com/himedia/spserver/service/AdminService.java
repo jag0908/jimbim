@@ -122,6 +122,10 @@ public class AdminService {
         return scr.findAll();
     }
 
+    public void deleteShPost(int postId) {
+        spr.deleteById(postId);
+    }
+
     /// ////////// 커뮤니티 관련 /////////////////
     public HashMap<String, Object> getCPostList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -156,6 +160,10 @@ public class AdminService {
     }
     public List<C_Category> getCCategoryList() {
         return ccr.findAll();
+    }
+
+    public void deleteCommunity(int cpostId) {
+        cpr.deleteById(cpostId);
     }
 
     /// ////////////// qna 관련 /////////////////////////

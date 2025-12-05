@@ -10,7 +10,6 @@ function ShDetail() {
     const { postId } = useParams();
     const [shPost, setShPost] = useState({});
     const [shCategoryList, setShCategoryList] = useState([]);
-    // const [reply, setReply] = useState('');
     const navigate = useNavigate();
 
     useEffect(
@@ -27,22 +26,16 @@ function ShDetail() {
             .catch((err)=>{console.error(err)})
         },[]
     )
-    // async function onSubmit(){
-    //     if(!reply){ return alert('답변을 입력하세요')}
-
-    //     await jaxios.post('/api/admin/writeReply', null, {params:{qnaId, reply, answerer:loginUser.userid}})
-    //     .then(()=>{ 
-    //         alert('답변 작성이 완료되었습니다.');
-    //         setIsOpen( false )
-    //     } ).catch((err)=>{console.error(err)})
-
-    //     await jaxios.get('/api/admin/getQna', {params:{qnaId}})
-    //     .then((result)=>{ 
-    //         setQna(result.data.qna) 
-    //         console.log(result.data.qna)
-    //     })
-    //     .catch((err)=>{console.error(err)})
-    // }
+    function forceDelete(){
+        if(window.confirm('해당 게시물을 정말 삭제하시겠습니까?')){
+            jaxios.delete('/api/admin/deleteShPost', {params:{postId}})
+            .then((result)=>{ 
+                alert('삭제되었습니다.')
+                navigate('/shList')
+            })
+            .catch((err)=>{console.error(err)})
+        }
+    }
     return (
         <div className='adminContainer'>
             <SubMenu type={'sh'}/>
@@ -86,6 +79,9 @@ function ShDetail() {
                 
                 <div className='detailPageBtns'>
                     <button onClick={()=>{navigate('/shList')}} >뒤로</button>
+                </div>
+                <div className='detailPageBtns'>
+                    <button className='redbtn' onClick={()=>{forceDelete()}} >강제삭제</button>
                 </div>
             </div>
         </div>

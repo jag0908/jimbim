@@ -22,6 +22,12 @@ button{
 .graybtn:hover{
     background: #989898 !important;
 }
+.redbtn{
+    background: red !important;
+}
+.redbtn:hover{
+    background: #ee1111 !important;
+}
 .field{
     width:100%;
     padding:10px;

@@ -78,6 +78,15 @@ public class AdminController {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteShPost")
+    public HashMap<String, Object> deleteShPost(@RequestParam("postId") int postId){
+        HashMap<String, Object> result = new HashMap<>();
+        as.deleteShPost(postId);
+        result.put("msg", "ok");
+        return result;
+    }
+
     ///   ///////// 커뮤니티 관련 /////////
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getCPostList")
@@ -97,6 +106,14 @@ public class AdminController {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteCommunity")
+    public HashMap<String, Object> deleteCommunity(@RequestParam("cpostId") int cpostId){
+        HashMap<String, Object> result = new HashMap<>();
+        as.deleteCommunity(cpostId);
+        result.put("msg", "ok");
+        return result;
+    }
 
     /// ///////////// qna 관련 /////////////
 

@@ -1,5 +1,6 @@
 package com.himedia.spserver.entity.SHOP;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,7 +25,9 @@ public class SHOP_Suggest {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member_id;
+    @JsonIgnore
+    private Member member;
+
 
     // 업로드된 파일 리스트
     @OneToMany(mappedBy = "suggest", cascade = CascadeType.ALL, orphanRemoval = true)

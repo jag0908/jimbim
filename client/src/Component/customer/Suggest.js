@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SideMenu from './SideMenu';
-import '../../style/customer.css';
+import '../../style/suggest.css';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -13,43 +13,51 @@ function Suggest() {
 
     const [suggestList, setSuggestList] = useState([]);
     const [paging, setPaging] = useState({});
-    const [beginEnd, setBeginEnd] = useState([]);
+    const [pageNumbers, setPageNumbers] = useState([]);
 
     useEffect(() => {
-        if (loginUser.userid) {
-            fetchSuggestList(1);
-        }
+        if (loginUser?.member_id) fetchSuggestList(1);
     }, [loginUser]);
 
-    function fetchSuggestList(page) {
+    const fetchSuggestList = (page) => {
         axios.get(`${baseURL}/shop/getSuggestList/${page}`, {
-            params: { userid: loginUser.userid }
+            params: { memberId: loginUser.member_id }
         })
-            .then((res) => {
-                // 안전하게 구조 분해
-                const data = res.data || {};
-                const list = data.list || [];
-                const pageData = data.paging || {};
+        .then(res => {
+            const data = res.data || {};
+            const list = data.list || [];
+            const pageData = data.paging || {};
 
-                setSuggestList(list);
-                setPaging(pageData);
+            setSuggestList(list);
+            setPaging(pageData);
 
-                const arr = [];
-                for (let i = pageData.beginPage || 1; i <= (pageData.endPage || 1); i++) {
-                    arr.push(i);
-                }
-                setBeginEnd([...arr]);
-            })
-            .catch(err => {
-                console.error('Suggest fetch error:', err);
-                setSuggestList([]);
-                setPaging({});
-                setBeginEnd([]);
-            });
+            const pages = [];
+            for (let i = pageData.beginPage || 1; i <= (pageData.endPage || 1); i++) {
+                pages.push(i);
+            }
+            setPageNumbers(pages);
+        })
+        .catch(err => {
+            console.error('Suggest fetch error:', err);
+            setSuggestList([]);
+            setPaging({});
+            setPageNumbers([]);
+        });
     }
 
-    function onPageMove(page) {
-        fetchSuggestList(page);
+    const handlePageClick = (page) => fetchSuggestList(page);
+
+    const handleDelete = async (suggestId) => {
+        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+
+        try {
+            await axios.delete(`${baseURL}/shop/deleteSuggest/${suggestId}`);
+            alert("삭제되었습니다.");
+            fetchSuggestList(paging.page || 1);
+        } catch (err) {
+            console.error(err);
+            alert("삭제 실패");
+        }
     }
 
     return (
@@ -57,40 +65,49 @@ function Suggest() {
             <SideMenu />
             <div className='customer'>
                 <div className='formtitle'>요청내역</div>
-                <div className='suggestTable'>
-                    {(suggestList.length > 0) ?
+
+                {suggestList.length === 0 ? (
+                    <div className='noData'>
+                        {loginUser.member_id ? '요청내역이 없습니다.' : '로그인 후 사용 가능합니다.'}
+                    </div>
+                ) : (
+                    <div className='suggestTable'>
                         <div className='suggestListHeader'>
-                            <div className='suggestField'>제목</div>
-                            <div className='suggestField'>내용</div>
-                            <div className='suggestField'>작성일</div>
+                            <div className='suggestField title'>제목</div>
+                            <div className='suggestField date'>작성일</div>
+                            <div className='suggestField delete'>삭제</div>
                         </div>
-                        : <div>{loginUser.userid ? '요청내역이 없습니다.' : '로그인 후 사용 가능합니다.'}</div>
-                    }
 
-                    {suggestList.map((suggest, idx) => (
-                        <div key={idx} className='suggestList' onClick={() => navigate(`/customer/suggestDetail/${suggest.suggestId}`)}>
-                            <div className='suggestField'>{suggest.title}</div>
-                            <div className='suggestField'>{suggest.content}</div>
-                            <div className='suggestField'>{suggest.indate ? suggest.indate.substring(0, 10) : ''}</div>
-                        </div>
-                    ))}
+                        {suggestList.map((suggest) => (
+                            <div key={suggest.suggestId} className='suggestList'>
+                                <div className='suggestField title'
+                                     onClick={() => navigate(`/customer/suggestDetail/${suggest.suggestId}`)}>
+                                    {suggest.title}
+                                </div>
+                                <div className='suggestField date'>
+                                    {suggest.indate ? new Date(suggest.indate).toLocaleDateString() : ''}
+                                </div>
+                                <div className='suggestField delete'>
+                                    <div className='actions'>
+                                        <button onClick={() => handleDelete(suggest.suggestId)}>삭제</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
 
-                    {(suggestList.length > 0) &&
-                        <div id="paging" style={{ textAlign: "center", padding: "10px" }}>
-                            {paging.prev && <span style={{ cursor: "pointer" }} onClick={() => onPageMove(paging.beginPage - 1)}> ◀ </span>}
-                            {beginEnd.map((page, idx) => (
-                                <span
-                                    key={idx}
-                                    style={page === paging.page ? { fontWeight: 'bold', cursor: "pointer" } : { cursor: "pointer" }}
-                                    onClick={() => onPageMove(page)}
-                                >
-                                    &nbsp;{page}&nbsp;
+                        <div className='paging'>
+                            {paging.prev && <span className='pageArrow' onClick={() => handlePageClick(paging.beginPage - 1)}>◀</span>}
+                            {pageNumbers.map((num) => (
+                                <span key={num}
+                                      className={`pageNum ${num === paging.page ? 'active' : ''}`}
+                                      onClick={() => handlePageClick(num)}>
+                                    {num}
                                 </span>
                             ))}
-                            {paging.next && <span style={{ cursor: "pointer" }} onClick={() => onPageMove(paging.endPage + 1)}> ▶ </span>}
+                            {paging.next && <span className='pageArrow' onClick={() => handlePageClick(paging.endPage + 1)}>▶</span>}
                         </div>
-                    }
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     );

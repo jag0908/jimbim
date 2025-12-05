@@ -47,6 +47,7 @@ import Alram from './Component/alram/Alram';
 import Shop from './Component/Shop/Shop';
 import ShopSuggest from './Component/Shop/ShopSuggest';
 import Suggest from './Component/customer/Suggest';
+import SuggestDetail from './Component/customer/SuggestDetail';
 
 
 
@@ -106,6 +107,8 @@ function App() {
 				<Route path="/shop" element={<Shop />} />
 				<Route path='/shop/shopSuggest' element={<ShopSuggest />} />
 				<Route path="/customer/suggest" element={<Suggest />} />
+				<Route path="/customer/suggestDetail/:suggestId" element={<SuggestDetail />} />
+
 
 			</Routes>
 		</div>

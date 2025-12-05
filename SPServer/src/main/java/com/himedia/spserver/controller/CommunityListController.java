@@ -33,6 +33,14 @@ public class CommunityListController {
     @Autowired
     ServletContext sc;
 
+    // ---------------- 공지사항 리스트 조회 ----------------
+    @GetMapping("/getNoticeList")
+    public HashMap<String, Object> getNoticeList() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("noticeList", cs.getNoticeList());
+        return result;
+    }
+
     // ---------------- 게시글 리스트 조회 ----------------
     @GetMapping("/getCommunityList/{page}")
     public HashMap<String, Object> getCommunityList(

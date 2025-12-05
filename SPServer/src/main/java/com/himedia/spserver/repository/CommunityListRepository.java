@@ -31,4 +31,6 @@ public interface CommunityListRepository extends JpaRepository<C_post, Integer> 
     List<C_post> findByTitleContaining(String key); /// 관리자페이지 검색용
 
     Page<C_post> findByTitleContaining(String key, Pageable pageable); /// 관리자페이지 검색용
+
+    List<C_post> findByIsNotice(String y); /// 공지사항 검색용
 }

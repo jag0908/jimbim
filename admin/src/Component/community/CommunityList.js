@@ -83,7 +83,11 @@ function CommunityList() {
                                         }
                                     </div>
                                     <div className='col'>{cPost.title}</div>
-                                    <div className='col'>{cPost.member.userid} {(cPost.member.provider)?(<>({cPost.member.provider})</>):(<></>)}</div>
+                                    <div className='col'>{
+                                        (cPost.member)?
+                                        (((cPost.member.provider)?(cPost.member.userid+' ('+cPost.member.provider+')'):(cPost.member.userid))):
+                                        (<span className='italic'>탈퇴회원</span>)
+                                    }</div>
                                     <div className='col'>{cPost.isAnonymous}</div>
                                     <div className='col'>
                                         {

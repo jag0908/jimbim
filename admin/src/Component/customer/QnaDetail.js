@@ -36,8 +36,13 @@ function QnaDetail() {
             }
             jaxios.get('/api/admin/getQna', {params:{qnaId}})
             .then((result)=>{ 
-                setQna(result.data.qna)
-                setReply('')
+                if(result.data.qna==null){
+                    alert('존재하지 않는 페이지입니다')
+                    navigate('/qnaList')
+                }else{
+                    setQna(result.data.qna)
+                    setReply('')
+                }
             })
             .catch((err)=>{console.error(err)})
         },[]
@@ -63,7 +68,7 @@ function QnaDetail() {
             <SubMenu type={'qna'}/>
             <div className='productTable detailTable'>
                 <div className='title'>Q & A</div>
-                {(qna.member)?
+                {(qna.indate)?
                 (<>
                     <div className='row'>
                         <div className='col detailTitle'>글제목</div>
@@ -71,7 +76,11 @@ function QnaDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>게시자</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{qna.member.userid}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{
+                            (qna.member)?
+                            (((qna.member.provider)?(qna.member.userid+' ('+qna.member.provider+')'):(qna.member.userid))):
+                            (<span className='italic'>탈퇴회원</span>)
+                        }</div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>작성일</div>

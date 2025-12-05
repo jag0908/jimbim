@@ -70,8 +70,9 @@ public class MemberService {
             updateMem.setRrn(member.getRrn());  // 주민번호는 카카오로그인 초기설정 한정으로만 변경가능
     }
 
-    public Member getMemberByNamePhone(String name, String phone) {
-        return mr.findByNameAndPhone(name, phone);
+    public List<Member> getMemberByNamePhoneWithoutKakao(String name, String phone) {
+        System.out.println("getMemberByNamePhoneWithoutKakao" + name + phone + mr.findByNameAndPhoneWithoutKakao(name, phone));
+        return mr.findByNameAndPhoneWithoutKakao(name, phone);
     }
 
     // 이메일 전송주체

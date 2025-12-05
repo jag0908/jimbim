@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -254,15 +255,7 @@ public class MemberController {
     @PostMapping("/findid")
     public HashMap<String, Object> findid( @RequestParam("name") String name,  @RequestParam("phone") String phone ) {
         HashMap<String, Object> result = new HashMap<>();
-        Member member = ms.getMemberByNamePhone( name, phone  );
-        if( member == null ){
-            result.put("msg", "notok");
-        }else if(member.getProvider()!=null && member.getProvider().equals("KAKAO")){
-            result.put("msg", "kakao");
-        }else{
-            result.put("msg", "ok");
-            result.put("userid", member.getUserid());
-        }
+        result.put("memberList", ms.getMemberByNamePhoneWithoutKakao( name, phone  ));
         return result;
     }
 

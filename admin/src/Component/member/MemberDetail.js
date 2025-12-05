@@ -18,7 +18,12 @@ function MemberDetail() {
             }
             jaxios.get('/api/admin/getMember', {params:{member_id}})
             .then((result)=>{ 
-                setMember(result.data.member) 
+                if(result.data.member==null){
+                    alert('존재하지 않는 페이지입니다')
+                    navigate('/memberList')
+                }else{
+                    setMember(result.data.member) 
+                }
             })
             .catch((err)=>{console.error(err)})
         },[]

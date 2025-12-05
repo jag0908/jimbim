@@ -67,7 +67,7 @@ function MemberList() {
                     <div className='col'>가입일</div>
                 </div>
                 {
-                    (memberList)?(
+                    (memberList[0])?(
                         memberList.map((member, idx)=>{
                             return (
                                 <div className='row' onClick={()=>{navigate(`/memberDetail/${member.member_id}`)}}>

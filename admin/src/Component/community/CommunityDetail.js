@@ -19,10 +19,14 @@ function CommunityDetail() {
                 navigate('/')
             }
             jaxios.get('/api/admin/getCPost', {params:{cpostId}})
-            .then((result)=>{ 
-                console.log(result.data)
-                setCPost(result.data.cPost)
-                setCCategoryList(result.data.CCategoryList)
+            .then((result)=>{  
+                if(result.data.cPost==null){
+                    alert('존재하지 않는 페이지입니다')
+                    navigate('/communityList')
+                }else{
+                    setCPost(result.data.cPost)
+                    setCCategoryList(result.data.CCategoryList)
+                }
             })
             .catch((err)=>{console.error(err)})
         },[]
@@ -39,7 +43,7 @@ function CommunityDetail() {
     }
     return (
         <div className='adminContainer'>
-            <SubMenu type={'sh'}/>
+            <SubMenu type={'community'}/>
             <div className='productTable detailTable'>
                 <div className='title'>게시글 정보</div>
                 {(cPost.title)?
@@ -50,7 +54,11 @@ function CommunityDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>글쓴이</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{cPost.member.userid}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            {(cPost.member)?
+                            (((cPost.member.provider)?(cPost.member.userid+' ('+cPost.member.provider+')'):(cPost.member.userid))):
+                            (<span className='italic'>탈퇴회원</span>)}
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>게시일</div>

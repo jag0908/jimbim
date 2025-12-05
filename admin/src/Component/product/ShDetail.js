@@ -20,8 +20,13 @@ function ShDetail() {
             }
             jaxios.get('/api/admin/getShPost', {params:{postId}})
             .then((result)=>{ 
-                setShPost(result.data.shPost)
-                setShCategoryList(result.data.shCategoryList)
+                if(result.data.shPost==null){
+                    alert('존재하지 않는 페이지입니다')
+                    navigate('/shList')
+                }else{
+                    setShPost(result.data.shPost)
+                    setShCategoryList(result.data.shCategoryList)
+                }
             })
             .catch((err)=>{console.error(err)})
         },[]
@@ -49,7 +54,11 @@ function ShDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>게시자</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{shPost.member.userid}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{
+                            (shPost.member)?
+                            (((shPost.member.provider)?(shPost.member.userid+' ('+shPost.member.provider+')'):(shPost.member.userid))):
+                            (<span className='italic'>탈퇴회원</span>)
+                        }</div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>게시일</div>

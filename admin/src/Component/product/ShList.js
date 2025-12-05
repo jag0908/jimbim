@@ -71,14 +71,18 @@ function ShList() {
                     <div className='col'>게시일</div>
                 </div>
                 {
-                    (shList)?(
+                    (shList[0])?(
                         shList.map((sh, idx)=>{
                             return (
                                 <div className='row' onClick={()=>{navigate(`/ShDetail/${sh.postId}`)}}>
                                     <div className='col'>{shCategoryList[sh.categoryId-1].category_name}</div>
                                     <div className='col'>{sh.title}</div>
                                     <div className='col'>{sh.price} 원</div>
-                                    <div className='col'>{sh.member.userid} {(sh.member.provider)?(<>({sh.member.provider})</>):(<></>)}</div>
+                                    <div className='col'>{
+                                        (sh.member)?
+                                        (((sh.member.provider)?(sh.member.userid+' ('+sh.member.provider+')'):(sh.member.userid))):
+                                        (<span className='italic'>탈퇴회원</span>)
+                                    }</div>
                                     <div className='col'>{sh.indate.substring(0, 10)}</div>
                                 </div>
                             )

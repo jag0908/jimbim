@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 public class ChatRoom {
@@ -26,4 +29,13 @@ public class ChatRoom {
 
     private Integer postId;
     private String postTitle;
+
+    @OneToMany(
+            mappedBy = "chatRoom",
+            cascade = CascadeType.ALL,   // 저장/수정/삭제 모두 전이
+            orphanRemoval = true,        // 관계 끊기면 자식도 삭제
+            fetch = FetchType.LAZY       // 지연 로딩
+    )
+    private List<ChatRoom_Msg> chatMsg = new ArrayList<>();;
+
 }

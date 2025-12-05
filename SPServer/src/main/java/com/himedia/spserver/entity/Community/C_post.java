@@ -33,7 +33,7 @@ public class C_post {
 
 
     @ColumnDefault("'N'")
-    private String isNotice; // 공지사항 여부, Y면 공지사항, 관리자페이지에서 설정가능
+    private String isNotice="N"; // 공지사항 여부, Y면 공지사항, 관리자페이지에서 설정가능
 
 
     @Column(nullable = false)

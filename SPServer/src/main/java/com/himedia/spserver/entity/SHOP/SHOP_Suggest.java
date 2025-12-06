@@ -18,7 +18,7 @@ public class SHOP_Suggest {
 
     private String title;          // 제목
     private String content;        // 내용
-    private String price;
+    private Integer price;           // 가격, 자료형 바꿈
 
     @Column(columnDefinition = "DATETIME default now()")
     private Timestamp indate;

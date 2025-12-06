@@ -3,21 +3,29 @@ package com.himedia.spserver.service;
 import com.himedia.spserver.dto.Paging;
 import com.himedia.spserver.dto.ShPostDto;
 import com.himedia.spserver.entity.Community.C_Category;
+import com.himedia.spserver.entity.Community.C_File;
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.MemberRole;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.SHOP.SHOP_Category;
+import com.himedia.spserver.entity.SHOP.SHOP_File;
+import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
+import com.himedia.spserver.entity.SHOP.SHOP_post;
 import com.himedia.spserver.entity.customer.Qna;
 import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +41,12 @@ public class AdminService {
     private final QnaRepository qr;
     private final CommunityListRepository cpr;
     private final CCategoryRepository ccr;
+    private final ShopSuggestRepository ssr;
+    private final ShopCategoryRepository shopcr;
+    private final ShopFileRepository shopfr;
+    private final SHOP_postRepository shoppr;
+    @Autowired
+    private S3UploadService sus;
 
     /// ////////////// 멤버관련 /////////////////
 
@@ -213,5 +227,94 @@ public class AdminService {
 
         qna.setReply(reply);
         qna.setAnswerer(member);
+    }
+
+    /////////////////////////// 요청내역 관련 ////////////////////
+    public HashMap<String, Object> getSuggestList(int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = ssr.findAll().size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "indate"));
+            Page<SHOP_Suggest> list = ssr.findAll( pageable );
+
+            result.put("suggestList", list.getContent());
+        }else{
+            int count = ssr.findByTitleContaining(key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
+            Page<SHOP_Suggest> list = ssr.findByTitleContaining( key, pageable );
+            result.put("suggestList", list.getContent());
+        }
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
+    }
+
+    public SHOP_Suggest getSuggest(int suggestId) {
+        return ssr.findById( suggestId ).get();
+    }
+
+    public void setStatus(int suggestId, String status) {
+        SHOP_Suggest suggest = ssr.findById(suggestId).get();
+        suggest.setIsAccept(status);    // status에 있는 Y 또는 N 값을 isAccept에 넣음
+    }
+
+    public List<SHOP_Category> getShopCategoryList() {
+        return shopcr.findAll();
+    }
+
+    public List<SHOP_File> getShopFiles(int suggestId) {
+        return shopfr.findBySuggest_SuggestId(suggestId);
+    }
+
+    public SHOP_post writeShopPost(String title, String content, int price, int categoryId) {
+        SHOP_Category category =  shopcr.findById(categoryId).get();
+        SHOP_post post = new SHOP_post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setPrice(price);
+        post.setCategory(category);
+        return shoppr.save(post);
+    }
+
+    public void fileUpload(List<MultipartFile> images, String postId) throws IOException {
+        SHOP_post post = shoppr.findById(Integer.parseInt(postId))
+                .orElseThrow(() -> new RuntimeException("게시글 없음"));
+
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile image : images) {
+                String fileUrl = sus.saveFile(image); // S3 업로드
+
+                SHOP_File shopFile = new SHOP_File();
+                shopFile.setPost(post);
+                shopFile.setFilePath(fileUrl);
+                shopFile.setFileName(image.getOriginalFilename());
+//                shopFile.setSize(image.getSize());
+//                shopFile.setContentType(image.getContentType());
+
+                shopfr.save(shopFile);
+
+                if (post.getFiles() != null) {
+                    post.getFiles().add(shopFile);
+                }
+            }
+            shoppr.save(post);
+        }
+    }
+
+    public void uploadOldFile(List<Integer> idList, Integer postId) {
+        SHOP_post post = shoppr.findById(postId).get();
+        for(Integer id : idList) {
+            SHOP_File fileInDB =  shopfr.findById(id).get();
+            fileInDB.setPost(post);
+        }
     }
 }

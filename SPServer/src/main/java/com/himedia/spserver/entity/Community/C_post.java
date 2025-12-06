@@ -45,4 +45,8 @@ public class C_post {
     @JoinColumn(name = "category_id")
     private C_Category category;
 
+    @Transient
+    private long replyCount;
+
+
 }

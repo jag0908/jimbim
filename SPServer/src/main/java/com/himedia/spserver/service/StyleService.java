@@ -4,6 +4,7 @@ import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Follow;
 import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.entity.MemberRole;
 import com.himedia.spserver.entity.SH.SH_File;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.SH.SH_zzim;
@@ -36,6 +37,7 @@ public class StyleService {
     private final FollowRepository followRepository;
     private final ShZzimRepository shzzimRepository;
     private final ShFileRepository shFileRepository;
+    private final NotificationService notificationService;
     private final S3UploadService s3UploadService;
 
 
@@ -191,28 +193,50 @@ public class StyleService {
     }
 
     public Map<String, Object> toggleLike(Integer spostId, String userid) {
+
         Member member = memberRepository.findByUserid(userid);
         STYLE_post post = postRepository.findById(spostId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        Optional<STYLE_Like> existingLike = likeRepository.findByMemberidAndSpost(member, post);
+        Optional<STYLE_Like> existingLike =
+                likeRepository.findByMemberidAndSpost(member, post);
 
         boolean liked;
+
         if (existingLike.isPresent()) {
+            // 좋아요 취소
             likeRepository.delete(existingLike.get());
             liked = false;
+
         } else {
+            // 좋아요 추가
             STYLE_Like newLike = new STYLE_Like();
             newLike.setMemberid(member);
             newLike.setSpost(post);
             likeRepository.save(newLike);
             liked = true;
+
+            // ⭐ 게시글 좋아요 알림 추가
+            Member postOwner = post.getMember();
+
+            // 본인이 자기 게시글 좋아요 누른 경우 알림 X
+            if (!postOwner.getUserid().equals(userid)) {
+                notificationService.sendPostLikeNotification(
+                        postOwner,
+                        spostId.longValue(),
+                        member
+                );
+            }
         }
 
         int likeCount = likeRepository.countBySpost(post);
 
-        return Map.of("liked", liked, "likeCount", likeCount);
+        return Map.of(
+                "liked", liked,
+                "likeCount", likeCount
+        );
     }
+
 
 
 
@@ -541,7 +565,12 @@ public class StyleService {
 
     public List<Map<String, Object>> getHotUsers() {
         // 1. 모든 회원 조회
-        List<Member> allMembers = memberRepository.findAll();
+        List<Member> allMembers = memberRepository.findAll()
+                .stream()
+                .filter(member -> member.getMemberRoleList().stream()
+                        .noneMatch(role -> role == MemberRole.ADMIN)) // ADMIN 제외
+                .toList();
+
 
         // 2. 회원 ID 목록
         List<Integer> memberIds = allMembers.stream()

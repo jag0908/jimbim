@@ -25,11 +25,10 @@ public class StyleReplyService {
     private final STYLE_PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final STYLE_ReplyLikeRepository replyLikeRepository;
+    private final NotificationService notificationService;
 
     public Map<String, Object> addReply(Integer spostId, String userid, String content, Integer parent_id) {
         Member member = memberRepository.findByUserid(userid);
-        if (member == null) throw new RuntimeException("사용자를 찾을 수 없습니다");
-
         STYLE_post post = postRepository.findById(spostId)
                 .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다"));
 
@@ -47,6 +46,39 @@ public class StyleReplyService {
         reply.setIndate(new Timestamp(System.currentTimeMillis()));
         replyRepository.save(reply);
 
+        Member postOwner = post.getMember();
+        Member replyWriter = member;
+        Member targetMember = null;
+
+        if (parent_id != null) {
+            STYLE_Reply parent = replyRepository.findById(parent_id)
+                    .orElseThrow(() -> new RuntimeException("부모 댓글 없음"));
+
+            Member parentWriter = parent.getMemberid();
+
+            if (!parentWriter.getUserid().equals(replyWriter.getUserid())) {
+                targetMember = parentWriter;
+            }
+        } else {
+            if (!postOwner.getUserid().equals(replyWriter.getUserid())) {
+                targetMember = postOwner;
+            }
+        }
+
+        boolean isReplyToComment = (parent_id != null);
+
+        if (targetMember != null) {
+            notificationService.sendReplyNotification(
+                    targetMember,
+                    spostId.longValue(),
+                    replyWriter,
+                    isReplyToComment,
+                    content
+            );
+        }
+
+
+
         Map<String, Object> result = new HashMap<>();
         result.put("reply_id", reply.getReply_id());
         result.put("userid", reply.getMemberid().getUserid());
@@ -57,6 +89,7 @@ public class StyleReplyService {
 
         return result;
     }
+
 
     public void deleteReply(Integer replyId, String userid) {
         STYLE_Reply reply = replyRepository.findById(replyId)

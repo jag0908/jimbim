@@ -9,6 +9,7 @@ function FindAccount() {
     const [phone3, setPhone3] = useState('');
     const [userid, setUserid] = useState('')
     const [viewId, setViewId] = useState({display:'none'})
+    const [memberList, setMemberList] = useState([])
 
     const [usercode, setUsercode] = useState('')
     const [email, setEmail] = useState('')
@@ -34,17 +35,15 @@ function FindAccount() {
 
         axios.post('/api/member/findid', null, {params:{name, phone}})
         .then((result)=>{
-            if( result.data.msg=='kakao'){
-                alert('카카오 아이디는 카카오에 문의해주세요')
-                setViewId({display:'none'})
-                setViewPW({display:'none'})
-            } else if( result.data.msg=='ok'){
-                setUserid(result.data.userid)
-                setViewId({display: 'flex'})
-            }else{
+            setMemberList(result.data.memberList)
+            console.log(result.data)
+            if(result.data.memberList.length==0){
                 alert('해당이름과 전화번호의 회원이 없습니다.')
                 setViewId({display:'none'})
                 setViewPW({display:'none'})
+            }else{
+                setViewId({display: 'flex'})
+                setUserid(result.data.memberList[0].userid)
             }
         }).catch((err)=>{console.error(err)})
     }
@@ -95,6 +94,10 @@ function FindAccount() {
             <div className='subPage'>
                 <div className='memberform'>
                     <div className='formtitle'>계정 찾기</div>
+                    <div>
+                        계정에 등록되어 있는 이름과 전화번호를 입력해주세요.<br/>
+                        카카오 아이디는 카카오에 문의해주세요.<br/><br/>
+                    </div>
                     <div className='field'>
                         <label>이름</label>
                         <input type="text" value={name} onChange={(e)=>{
@@ -117,9 +120,9 @@ function FindAccount() {
                     <div className="formBtns">
                         <button onClick={()=>{findid()}}>아이디 찾기</button>
                     </div>
-
-                    <div className='field' style={viewId}><b>검색하신 아이디는 {userid} 입니다</b></div>
-                    <div className='field' style={viewId}>비밀번호를 찾으려면 아래 이메일인증을 진행하세요</div>
+                    
+                    <div className='field' style={viewId}><b>검색하신 아이디는 {userid} 입니다.</b></div>
+                    <div className='field' style={viewId}>비밀번호를 찾으려면 아래 이메일인증을 진행하세요.</div>
 
                     <div className='field' style={viewId}>
                         <label>이메일</label>

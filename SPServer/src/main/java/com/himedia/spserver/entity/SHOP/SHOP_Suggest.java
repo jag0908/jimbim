@@ -1,26 +1,35 @@
 package com.himedia.spserver.entity.SHOP;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Data
 public class SHOP_Suggest {
-    @Id
-    private Integer suggest_id;
-    private Integer suggest_price;
 
-    @Column( columnDefinition="DATETIME default now()" )
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "suggest_id")
+    private Integer suggestId;
+
+    private String title;          // 제목
+    private String content;        // 내용
+    private String price;
+
+    @Column(columnDefinition = "DATETIME default now()")
     private Timestamp indate;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
-    SHOP_post post_id;
-
-    @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member_id;
+    @JsonIgnore
+    private Member member;
+
+
+    // 업로드된 파일 리스트
+    @OneToMany(mappedBy = "suggest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SHOP_File> files;
 }

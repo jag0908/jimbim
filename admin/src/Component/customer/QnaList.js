@@ -65,18 +65,22 @@ function QnaList() {
                     <div className='col'>작성일</div>
                 </div>
                 {
-                    (qnaList)?(
+                    (qnaList[0])?(
                         qnaList.map((qna, idx)=>{
                             return (
                                 <div className='row' onClick={()=>{navigate(`/qnaDetail/${qna.qnaId}`)}}>
-                                    <div className='col'>{qna.member.userid}</div>
+                                    <div className='col'>{
+                                        (qna.member)?
+                                        (((qna.member.provider)?(qna.member.userid+' ('+qna.member.provider+')'):(qna.member.userid))):
+                                        (<span className='italic'>탈퇴회원</span>)
+                                    }</div>
                                     <div className='col'>{qna.title}</div>
-                                    <div className='col'>{(qna.reply)?(<>Y</>):(<>N</>)}</div>
+                                    <div className='col'>{(qna.reply)?(<>답변자: {qna.answerer.userid}</>):(<>N</>)}</div>
                                     <div className='col'>{qna.indate.substring(0, 10)}</div>
                                 </div>
                             )
                         })
-                    ):(<span>loading...</span>)
+                    ):(<></>)
                 }
                 <div id="paging" style={{textAlign:"center", padding:"10px"}}>
                 {

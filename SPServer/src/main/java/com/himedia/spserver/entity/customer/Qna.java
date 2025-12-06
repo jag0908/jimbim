@@ -24,4 +24,7 @@ public class Qna {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+    @ManyToOne
+    @JoinColumn(name = "answerer")
+    private Member Answerer;
 }

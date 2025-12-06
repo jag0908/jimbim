@@ -39,6 +39,11 @@ public class CommunityListService {
     @Autowired
     private CommunityFileService cfs;
 
+    // ---------------- 공지사항 리스트 조회 ----------------
+    public List<C_post> getNoticeList() {
+        return cr.findByIsNotice("Y");  // isNotice가 Y인 글 리스트 조회
+    }
+
     // ---------------- 게시글 저장 ----------------
     public C_post saveCommunity(C_post cpost) {
         return cr.save(cpost);

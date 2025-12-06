@@ -14,6 +14,45 @@ import '../../style/Alram.css'
 
 function Alram() {
   const [activeTab, setActiveTab] = useState('all');
+  const [isDisplay, setIsDisplay] = useState(null);
+
+  function formatDateTime(indate) {
+        const date = new Date(indate);
+        const now = new Date();
+
+        // 시간 제외하고 날짜만 비교하기 위해 00:00 기준으로 변환
+        const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const diffMs = now - date;
+        const diffMinutes = Math.floor(diffMs / 1000 / 60);
+        const diffHours = Math.floor(diffMinutes / 60);
+
+        const diffDays = Math.floor((startOfNow - startOfDate) / (1000 * 60 * 60 * 24));
+
+        // 오늘일 경우
+        if (diffDays === 0) {
+            if (diffHours > 0) return `${diffHours}시간 전`;
+            if (diffMinutes > 0) return `${diffMinutes}분 전`;
+            return `방금 전`;
+        }
+
+        // 1달(30일) 미만
+        if (diffDays < 30) {
+            return `${diffDays}일 전`;
+        }
+
+        const diffMonths = Math.floor(diffDays / 30);
+        if (diffMonths < 12) {
+            return `${diffMonths}달 전`;
+        }
+
+        // 1년 이상은 날짜 출력
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+  }
 
   // 이삭 수정
   useEffect(() => {
@@ -21,7 +60,7 @@ function Alram() {
 
     if (!memberId) {
       const token = sessionStorage.getItem("accessToken");
-      
+
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split(".")[1]));
@@ -45,47 +84,47 @@ function Alram() {
         {/* Header */}
         <div className="alram-header">
           <h1 className="alram-title">알림</h1>
-          <button className="btn-read-all">전체 읽음</button>
+          {/* <button className="btn-read-all" style={isDisplay}>전체 읽음</button> */}
         </div>
 
         {/* Tab Navigation */}
         <div className="alram-tabs">
           <button 
             className={`tab-item ${activeTab === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveTab('all')}
+            onClick={() => {setActiveTab('all');}}
           >
             전체
           </button>
           <button 
             className={`tab-item ${activeTab === 'chat' ? 'active' : ''}`}
-            onClick={() => setActiveTab('chat')}
+            onClick={() => {setActiveTab('chat');}}
           >
-            거래
+            채팅
           </button>
 
           {/* 이삭 수정 */}
-          <button 
+          <button
             className={`tab-item ${activeTab === 'follow' ? 'active' : ''}`}
             onClick={() => setActiveTab('follow')}
           >
             팔로우
           </button>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'reply' ? 'active' : ''}`}
             onClick={() => setActiveTab('reply')}
           >
             댓글
           </button>
-          <button 
+          <button
             className={`tab-item ${activeTab === 'like' ? 'active' : ''}`}
             onClick={() => setActiveTab('like')}
           >
             좋아요
           </button>
 
-          <button 
+          <button
             className={`tab-item ${activeTab === 'zzim' ? 'active' : ''}`}
-            onClick={() => setActiveTab('zzim')}
+            onClick={() => {setActiveTab('zzim');}}
           >
             찜
           </button>
@@ -95,19 +134,22 @@ function Alram() {
         <div className="alram-list">
             {
                 activeTab == "all" ? 
-                    <AlramAll /> :
+                    <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
-                        <AlramChat /> :
-                          activeTab == "zzim" ?
-                            <AlramZzim /> :
-                              activeTab == "follow" ? //이삭 수정
-                                <AlramFollow /> :
-                                  activeTab == "reply" ?
-                                    <AlramReply /> :
-                                      activeTab == "like" ?
-                                      <AlramLike /> : null
+                        <AlramChat formatDateTime={formatDateTime} /> :
+                        activeTab == "follow" ? //이삭 수정
+                            <AlramFollow /> :
+                            activeTab == "reply" ?
+                                <AlramReply /> :
+                                activeTab == "like" ?
+                                    <AlramLike /> :
+                                      activeTab == "zzim" ?
+                                        <AlramZzim formatDateTime={formatDateTime} /> : null
+
             }
         </div>
+
+
       </div>
     </div>
   )

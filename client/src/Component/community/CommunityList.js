@@ -16,9 +16,11 @@ function CommunityList() {
     const [searchCategoryId, setSearchCategoryId] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState("");
 
+    //공지사항 글 리스트
+    const [noticeList, setNoticeList] = useState([]);
+
     const loginUser = useSelector(state => state.user);
     const navigate = useNavigate();
-    
 
     const categories = [
         { id: 0, name: "전체게시판" },
@@ -32,6 +34,17 @@ function CommunityList() {
     ];
 
     const fetchCommunityList = useCallback((page, categoryId, keyword = "") => {
+
+        // 페이지가 1페이지일 경우 공지사항 불러오기
+        if(page===1){
+            axios.get('/api/communityList/getNoticeList')
+            .then((result)=>{
+                console.log(result)
+                setNoticeList(result.data.noticeList)
+            })
+            .catch((err)=>{console.error(err);});
+        }
+
         // 항상 선택한 categoryId와 keyword 그대로 전달
         let url = `${baseURL}/communityList/getCommunityList/${page}?title=${encodeURIComponent(keyword)}&categoryId=${categoryId}`;
 
@@ -163,6 +176,24 @@ function CommunityList() {
                         <div className='col date'>작성일</div>
                         <div className='col count'>조회수</div>
                     </div>
+
+                    {/* 글 1페이지 한정으로 공지사항 굵은글씨로 나옵니다 */}
+                    {noticeList.length === 0 ? (
+                        <></>
+                    ) : noticeList.map(post => (
+                        <div className='row' key={post.cpostId} style={{fontWeight:'bold'}}>
+                            <div className='col' onClick={() => onCommunityView(post.cpostId)}>
+                                {post.title}
+                            </div>
+                            <div className='col'>
+                                {post.isAnonymous === 'Y'
+                                    ? "익명"
+                                    : post.member?.userid || post.userid || "알수없음"}
+                            </div>
+                            <div className='col'>{post.indate?.substring(0,10)}</div>
+                            <div className='col'>{post.readcount ?? post.readCount ?? 0}</div>
+                        </div>
+                    ))}
 
 
                     {communityList.length === 0 ? (

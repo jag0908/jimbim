@@ -37,6 +37,7 @@ public class ShopService {
         SHOP_Suggest suggest = new SHOP_Suggest();
         suggest.setTitle(dto.getTitle());
         suggest.setContent(dto.getContent());
+        suggest.setPrice(dto.getPrice());       // 수정 : 가격 추가함
         suggest.setMember(
                 mr.findById(dto.getMemberId())
                         .orElseThrow(() -> new RuntimeException("회원 없음"))

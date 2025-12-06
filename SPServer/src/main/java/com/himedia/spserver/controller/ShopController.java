@@ -24,7 +24,7 @@ public class ShopController {
     public HashMap<String, Object> shopSuggest(
             @RequestParam("title") String title,
             @RequestParam("content") String content,
-            @RequestParam("price") Integer price,       // 추가함
+            @RequestParam("price") Integer price,       // 수정 : 가격 추가함
             @RequestParam("memberId") Integer memberId,
             @RequestParam(value = "files", required = false) List<MultipartFile> files
     ) {
@@ -33,7 +33,7 @@ public class ShopController {
             ShopSuggestDto suggestDto = new ShopSuggestDto();
             suggestDto.setTitle(title);
             suggestDto.setContent(content);
-            suggestDto.setPri(price);
+            suggestDto.setPrice(price);         // 수정 : 가격 추가함
             suggestDto.setMemberId(memberId);
             suggestDto.setFiles(files);
 

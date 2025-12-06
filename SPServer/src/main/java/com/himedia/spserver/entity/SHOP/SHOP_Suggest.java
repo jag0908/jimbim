@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -18,9 +20,10 @@ public class SHOP_Suggest {
 
     private String title;          // 제목
     private String content;        // 내용
-    private Integer price;           // 가격, 자료형 바꿈
+    private Integer price;           // 가격, 수정 : 자료형 바꿈
 
-    @Column(columnDefinition = "DATETIME default now()")
+    //@Column(columnDefinition = "DATETIME default now()")
+    @CreationTimestamp              // 수정 : 날짜 기본값 안들어가는 오류 때문에 넣음
     private Timestamp indate;
 
     @ManyToOne

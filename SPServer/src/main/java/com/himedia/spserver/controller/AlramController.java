@@ -2,12 +2,10 @@ package com.himedia.spserver.controller;
 
 import com.himedia.spserver.dto.ChatMsgDto;
 import com.himedia.spserver.dto.ChatRoomDto;
+import com.himedia.spserver.dto.ChatRoomUnreadDto;
 import com.himedia.spserver.service.AlramService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,18 +18,28 @@ public class AlramController {
     private final AlramService alramService;
 
     @GetMapping("/chatMsg/{id}")
-    public HashMap<String, Object> unreadMessages(@PathVariable Integer id) throws IllegalAccessException {
+    public HashMap<String, Object> unreadMessages(@PathVariable Integer id) {
         HashMap<String, Object> result = new HashMap<>();
-        List<ChatMsgDto> resdto = alramService.getUnreadMessages(id);
+        List<ChatRoomUnreadDto> resdto = alramService.getUnreadMessages(id);
         result.put("resDto", resdto);
         return result;
     }
 
-    @GetMapping("/getMyPost")
-    public HashMap<String, Object> getMyPost()  {
+    @GetMapping("/myPostZzim/{id}")
+    public HashMap<String, Object> getMyPostZzim(@PathVariable Integer id) {
         HashMap<String, Object> result = new HashMap<>();
-
+        try {
+            result.put("resDto", alramService.getMyPostZzim(id));
+        } catch (Exception e) {
+            result.put("msg", "비정상적인 요청입니다.");
+            return result;
+        }
         return result;
+    }
+
+    @PostMapping("/myPostZzimRead/{id}")
+    public void myPostZzimRead(@PathVariable Long id) {
+        alramService.myPostZzimRead(id);
     }
 
 }

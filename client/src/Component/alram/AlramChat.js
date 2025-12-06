@@ -25,7 +25,7 @@ function AlramChat({formatDateTime}) {
         msgAlram && msgAlram.resDto.length != 0 ?
           msgAlram.resDto.map((msg, idx)=> {
             return(
-              <div key={idx} className={`alram-item ${msg.sellerReadMsg ? "" : "unread"}`} onClick={()=> {navigate(`/sh-page/sh-view/${msg.postId}`)}}>
+              <div key={idx} className={`alram-item ${msg.unreadCount > 0 ? "unread" : ""}`} onClick={()=> {navigate(`/sh-page/sh-view/${msg.postId}`)}}>
                 <div className="alram-badge"></div>
                 <div className="alram-thumbnail">
                   <div className="thumbnail-placeholder">
@@ -35,11 +35,15 @@ function AlramChat({formatDateTime}) {
                 <div className="alram-content">
                   <div className="alram-text">
                     <p className="alram-message">
-                      <strong>{msg.buyerName}</strong> 님이 회원님의 &nbsp;&nbsp;<strong>"{msg.postTitle}"</strong> 판매글에 채팅을 남겼습니다.
+                      <strong>{msg.buyerName}</strong> 님이 
                       <br />
-                      "{msg.content}"
+                      회원님의 &nbsp;&nbsp;<strong>"{msg.postTitle}"</strong> 판매글에 채팅을 남겼습니다.
+                      <br />
+                      제일 최근 채팅: "{msg.shortContent}"
+                      <br />
+                      읽지 않은 채팅: "<strong>{msg.unreadCount}</strong>" 개
                     </p>
-                    <span className="alram-time">{formatDateTime(msg.indate)}</span>
+                    <span className="alram-time">{formatDateTime(msg.lastTime)}</span>
                   </div>
                 </div>
                 <button className="btn-alram-action">이동</button>
@@ -49,10 +53,10 @@ function AlramChat({formatDateTime}) {
         
         :
           /* Empty State */
-          <div className="alram-empty" style={{display: 'none'}}>
+          <div className="alram-empty">
             <div className="empty-icon">🔔</div>
-            <p className="empty-text">알림이 없습니다</p>
-            <p className="empty-subtext">새로운 알림이 도착하면 여기에 표시됩니다</p>
+            <p className="empty-text">채팅방이 없습니다.</p>
+            <p className="empty-subtext">새로운 채팅을 시작하시면 채팅방이 여기에 표시됩니다</p>
           </div>
       }
       

@@ -9,6 +9,7 @@ import '../../style/Alram.css'
 
 function Alram() {
   const [activeTab, setActiveTab] = useState('all');
+  const [isDisplay, setIsDisplay] = useState(null);
 
   function formatDateTime(indate) {
         const date = new Date(indate);
@@ -95,7 +96,7 @@ function Alram() {
                         activeTab == "community" ?
                             <AlramCommunity /> :
                                 activeTab == "zzim" ?
-                                <AlramZzim /> : null
+                                <AlramZzim formatDateTime={formatDateTime} /> : null
             }
         </div>
 

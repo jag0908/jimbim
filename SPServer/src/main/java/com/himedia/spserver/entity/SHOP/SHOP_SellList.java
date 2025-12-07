@@ -6,15 +6,22 @@ import lombok.Data;
 
 @Entity
 @Data
-public class SHOP_zzim {
+public class SHOP_SellList {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long sellId;
 
     @ManyToOne
     private SHOP_Product product;
 
     @ManyToOne
-    private Member member;
+    private SHOP_ProductOption option;
+
+    @ManyToOne
+    private Member seller;
+
+    private Integer price;
+
+    private String status; // selling, soldout
 }

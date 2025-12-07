@@ -11,23 +11,25 @@ import java.util.stream.Collectors;
 
 @Data
 public class ShopSuggestDto {
-    private Integer suggestId;
+    private Long suggestId;
     private String title;
     private String content;
-    private Integer memberId;   // 유저 PK
+    private String price;
+    private Integer memberId; // 작성자
+    private Long categoryId;
     private List<MultipartFile> files; // 업로드용
     private List<String> fileUrls;     // 조회용
-    private LocalDateTime indate;      // 작성일
+    private LocalDateTime indate;
 
-    // 엔티티 → DTO 변환
+    // 엔티티 → DTO
     public static ShopSuggestDto fromEntity(SHOP_Suggest suggest) {
         ShopSuggestDto dto = new ShopSuggestDto();
-        dto.setSuggestId(suggest.getSuggestId());
+        dto.setSuggestId(suggest.getSuggestId().longValue());
         dto.setTitle(suggest.getTitle());
         dto.setContent(suggest.getContent());
+        dto.setPrice(suggest.getPrice());
         dto.setMemberId(suggest.getMember().getMember_id());
-        dto.setIndate(suggest.getIndate().toLocalDateTime()); // 작성일 복사
-
+        dto.setIndate(suggest.getIndate().toLocalDateTime());
         if (suggest.getFiles() != null) {
             dto.setFileUrls(suggest.getFiles().stream()
                     .map(SHOP_File::getFilePath)

@@ -1,20 +1,19 @@
 package com.himedia.spserver.entity.SHOP;
 
-import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-public class SHOP_zzim {
+public class SHOP_ProductImage {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private SHOP_Product product;
+    private String fileName;
+    private String filePath;
 
     @ManyToOne
-    private Member member;
+    private SHOP_Product product;
 }

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ShopSuggestRepository extends JpaRepository<SHOP_Suggest, Integer> {
+public interface ShopSuggestRepository extends JpaRepository<SHOP_Suggest, Long> {
 
     @Query("SELECT s FROM SHOP_Suggest s WHERE s.member.member_id = :memberId AND s.title LIKE %:title%")
     Page<SHOP_Suggest> findByMemberIdAndTitleContaining(

@@ -35,6 +35,10 @@ public class SHOP_Suggest {
     // 만약 JsonIgnore를 써야하는 상황이 있었더라도 JsonIgnore가 아닌 다른 방법을 써야 할것 같음
     private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private SHOP_Category category; // ✅ 추가
+
 
     // 업로드된 파일 리스트
     @OneToMany(mappedBy = "suggest", cascade = CascadeType.ALL, orphanRemoval = true)

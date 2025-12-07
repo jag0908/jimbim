@@ -75,8 +75,18 @@ function ShopSuggest() {
     formData.append("memberId", loginUser.member_id);
     formData.append("categoryId", selectedCategory);
 
+    console.log("=== handleSubmit 호출 ===");
+    console.log("formData entries:");
+
+    for (let pair of formData.entries()) {
+    console.log(pair[0], pair[1]);
+    }
+    console.log("POST URL:", `${baseURL}/shop/suggest`);
+
+
     try {
-      await jaxios.post(`${baseURL}/shop/suggest`, formData);
+      const res = await jaxios.post(`${baseURL}/shop/suggest`, formData);
+      console.log("응답:", res.data);
       alert("상품 제안이 등록되었습니다.");
       navigate("/shop");
     } catch (err) {
@@ -135,7 +145,7 @@ function ShopSuggest() {
         <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
           <option value="">카테고리 선택</option>
           {categories.map(cat => (
-            <option key={cat.category_id} value={cat.category_id}>{cat.category_name}</option>
+            <option key={cat.categoryId} value={cat.categoryId}>{cat.category_name}</option>
           ))}
         </select>
       </div>

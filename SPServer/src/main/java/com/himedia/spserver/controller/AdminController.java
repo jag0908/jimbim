@@ -192,7 +192,7 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/writeShopPost")
-    public HashMap<String,Object> writeShopPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("price") int price, @RequestParam("categoryId") int categoryId){
+    public HashMap<String,Object> writeShopPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("price") int price, @RequestParam("categoryId") Long categoryId){
         HashMap<String, Object> result = new HashMap<>();
         SHOP_post post = as.writeShopPost(title, content, price, categoryId);
         result.put("postId", post.getPostId());

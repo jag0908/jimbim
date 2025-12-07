@@ -2,12 +2,15 @@ package com.himedia.spserver.entity.SHOP;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
 @Data
 public class SHOP_Product {
+
     @Id
     @GeneratedValue
     private Long productId;
@@ -19,6 +22,9 @@ public class SHOP_Product {
     @Column(columnDefinition = "int default 0")
     private Integer viewCount;
 
+    @CreationTimestamp
+    private Timestamp indate;
+
     @ManyToOne
     private SHOP_Category category;
 
@@ -27,4 +33,8 @@ public class SHOP_Product {
 
     @OneToMany(mappedBy = "product")
     private List<SHOP_ProductOption> options;
+
+    @OneToMany(mappedBy = "product")
+    private List<SHOP_SellList> sellLists;
 }
+

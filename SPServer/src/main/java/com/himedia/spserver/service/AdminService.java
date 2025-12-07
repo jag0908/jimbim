@@ -275,7 +275,7 @@ public class AdminService {
         return shopfr.findBySuggest_SuggestId(suggestId);
     }
 
-    public SHOP_post writeShopPost(String title, String content, int price, int categoryId) {
+    public SHOP_post writeShopPost(String title, String content, int price, Long categoryId) {
         SHOP_Category category =  shopcr.findById(categoryId).get();
         SHOP_post post = new SHOP_post();
         post.setTitle(title);

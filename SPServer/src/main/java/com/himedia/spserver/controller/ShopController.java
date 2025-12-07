@@ -2,12 +2,11 @@ package com.himedia.spserver.controller;
 
 import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SHOP.SHOP_BuyOrder;
-import com.himedia.spserver.entity.SHOP.SHOP_Product;
-import com.himedia.spserver.entity.SHOP.SHOP_SellList;
-import com.himedia.spserver.entity.SHOP.SHOP_zzim;
+import com.himedia.spserver.entity.SHOP.*;
 import com.himedia.spserver.service.ShopService;
+import com.himedia.spserver.service.ShopSuggestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +18,38 @@ import java.util.List;
 public class ShopController {
 
     private final ShopService shopService;
+    private final ShopSuggestService shopSuggestService;
+
+    @PostMapping("/suggest")
+    public ResponseEntity<?> createSuggest(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("price") int price,
+            @RequestParam("memberId") int memberId,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam(value = "files", required = false) MultipartFile[] files
+    ) {
+
+        ShopSuggestDto dto = new ShopSuggestDto();
+        dto.setTitle(title);
+        dto.setContent(content);
+        dto.setPrice(price);
+        dto.setMemberId(memberId);
+        dto.setCategoryId(categoryId);
+
+        //반드시 넣어줘야 파일 업로드 됨
+        if (files != null && files.length > 0) {
+            dto.setFiles(List.of(files));
+        }
+
+        ShopSuggestDto savedDto = shopSuggestService.createSuggest(dto);
+
+        //응답에서 MultipartFile 제거해서 NetworkError 방지
+        savedDto.setFiles(null);
+
+        return ResponseEntity.ok(savedDto);
+    }
+
 
     @GetMapping("/products")
     public List<ShopProductDTO> getAllProducts() {
@@ -57,5 +88,10 @@ public class ShopController {
         Member member = new Member();
         member.setMember_id(1); // 테스트용
         return shopService.createZzim(productId, member);
+    }
+
+    @GetMapping("/categories")
+    public List<SHOP_Category> getCategories() {
+        return shopService.getCategories();
     }
 }

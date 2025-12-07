@@ -22,6 +22,7 @@ public class ShopService {
     private final ShopZzimRepository zzimRepo;
     private final ShopSuggestRepository suggestRepo;
     private final ShopProductImageRepository imageRepo;
+    private final ShopCategoryRepository categoryRepo;
 
     // 상품 전체 조회
     public List<ShopProductDTO> getAllProducts() {
@@ -98,5 +99,9 @@ public class ShopService {
         zzim.setProduct(productRepo.findById(productId).orElseThrow());
         zzim.setMember(member);
         return zzimRepo.save(zzim);
+    }
+
+    public List<SHOP_Category> getCategories() {
+        return categoryRepo.findAll();
     }
 }

@@ -1,5 +1,6 @@
 package com.himedia.spserver.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.himedia.spserver.entity.SHOP.SHOP_File;
 import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
 import lombok.Data;
@@ -15,13 +16,15 @@ public class ShopSuggestDto {
     private String title;
     private String content;
     private Integer price;
-    private Integer memberId; // 작성자
+    private Integer memberId;
     private Long categoryId;
-    private List<MultipartFile> files; // 업로드용
-    private List<String> fileUrls;     // 조회용
+
+    @JsonIgnore
+    private List<MultipartFile> files;   // 요청 전용
+
+    private List<String> fileUrls;       // 응답 전용
     private LocalDateTime indate;
 
-    // 엔티티 → DTO
     public static ShopSuggestDto fromEntity(SHOP_Suggest suggest) {
         ShopSuggestDto dto = new ShopSuggestDto();
         dto.setSuggestId(suggest.getSuggestId().longValue());
@@ -29,7 +32,9 @@ public class ShopSuggestDto {
         dto.setContent(suggest.getContent());
         dto.setPrice(suggest.getPrice());
         dto.setMemberId(suggest.getMember().getMember_id());
+        dto.setCategoryId(suggest.getCategory().getCategoryId());
         dto.setIndate(suggest.getIndate().toLocalDateTime());
+
         if (suggest.getFiles() != null) {
             dto.setFileUrls(suggest.getFiles().stream()
                     .map(SHOP_File::getFilePath)

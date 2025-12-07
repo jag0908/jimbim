@@ -14,7 +14,7 @@ public class ShopSuggestDto {
     private Long suggestId;
     private String title;
     private String content;
-    private String price;
+    private Integer price;
     private Integer memberId; // 작성자
     private Long categoryId;
     private List<MultipartFile> files; // 업로드용

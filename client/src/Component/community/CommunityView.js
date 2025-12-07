@@ -181,6 +181,35 @@ function CommunityView() {
         return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
     };
 
+    // 이삭 수정
+    const toggleReplyLike = async (replyId) => {
+        if (!loginUser?.member_id) {
+            alert('로그인이 필요한 서비스입니다.');
+            return;
+        }
+
+        try {
+            const res = await jaxios.post(`${baseURL}/communityReply/toggleReplyLike/${replyId}/${loginUser.member_id}`);
+            const { liked, likeCount } = res.data;
+
+            const updateLikeStatus = (replies) => {
+                return replies.map(r => {
+                    if (r.replyId === replyId) {
+                        return { ...r, likedByUser: liked, likeCount: likeCount };
+                    } else if (r.children && r.children.length > 0) {
+                        return { ...r, children: updateLikeStatus(r.children) };
+                    }
+                    return r;
+                });
+            };
+
+            setReplyList(prev => updateLikeStatus(prev));
+        } catch (err) {
+            console.error('댓글 좋아요 실패:', err);
+            alert('댓글 좋아요 처리 중 오류가 발생했습니다.');
+        }
+    };
+
     // 전체 댓글 수 계산 (답글 포함)
     const getTotalReplyCount = (replies) => {
         return replies.reduce((acc, reply) => {
@@ -197,6 +226,19 @@ function CommunityView() {
                     <span className="communityView-reply-time">{formatDateTime(reply.indate)}</span>
                 </div>
                 <div className="communityView-reply-content">{reply.content}</div>
+                {/* 👍 좋아요 버튼 — 댓글 내용 바로 밑으로 이동 */}
+                {loginUser?.member_id && (
+                    <div className="reply-like-box">
+                        <button
+                            onClick={() => toggleReplyLike(reply.replyId)}
+                            style={{ color: reply.likedByUser ? 'blue' : 'black' }}
+                        >
+                            👍{reply.likeCount || 0}
+                        </button>
+                    </div>
+                )}
+
+                {/* 답글 / 삭제 — 좋아요 밑으로 이동 */}
                 <div className="communityView-reply-actions">
                     {loginUser?.member_id && (
                         <button onClick={() => openReplyInput(reply.replyId)}>답글</button>
@@ -206,16 +248,19 @@ function CommunityView() {
                     )}
                 </div>
 
+                {/* 답글 입력창 */}
                 {replyInputs[reply.replyId] && (
                     <div className="communityView-reply-input" style={{ marginTop: 6 }}>
                         <textarea
                             ref={el => replyRefs.current[reply.replyId] = el}
                             rows="2"
                             value={replyInputs[reply.replyId].content}
-                            onChange={(e) => handleReplyInputChange(reply.replyId, {
-                                ...replyInputs[reply.replyId],
-                                content: e.target.value
-                            })}
+                            onChange={(e) =>
+                                handleReplyInputChange(reply.replyId, {
+                                    ...replyInputs[reply.replyId],
+                                    content: e.target.value
+                                })
+                            }
                             placeholder="댓글을 입력하세요."
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -228,10 +273,12 @@ function CommunityView() {
                             <input
                                 type="checkbox"
                                 checked={replyInputs[reply.replyId].anonymous}
-                                onChange={() => handleReplyInputChange(reply.replyId, {
-                                    ...replyInputs[reply.replyId],
-                                    anonymous: !replyInputs[reply.replyId].anonymous
-                                })}
+                                onChange={() =>
+                                    handleReplyInputChange(reply.replyId, {
+                                        ...replyInputs[reply.replyId],
+                                        anonymous: !replyInputs[reply.replyId].anonymous
+                                    })
+                                }
                             />
                             익명
                         </label>

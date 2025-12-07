@@ -10,6 +10,7 @@ import '../../style/admin.css'
 function ShList() {
     const loginUser = useSelector( state=>state.user)
     const [shList, setShList] = useState([]);
+    const [shCategoryList, setShCategoryList] = useState([]);
     const [paging, setPaging]=useState({});
     const navigate = useNavigate();
     const [beginEnd, setBeginEnd] = useState();
@@ -18,7 +19,6 @@ function ShList() {
 
     useEffect(
         ()=>{
-            console.log(loginUser)
             if( !loginUser.userid ||  !loginUser.roleNames.includes('ADMIN') ){ 
                 alert('권한이 없습니다')
                 navigate('/')
@@ -27,6 +27,7 @@ function ShList() {
             .then((result)=>{ 
                 console.log(result)
                 setShList(result.data.shList) 
+                setShCategoryList(result.data.shCategoryList)
                 setPaging( result.data.paging )
                 setKey( result.data.key)
 
@@ -44,6 +45,7 @@ function ShList() {
         jaxios.get('/api/admin/getShList', {params:{page:p, key}})
         .then((result)=>{ 
             setShList(result.data.shList) 
+            setShCategoryList(result.data.shCategoryList)
             setPaging( result.data.paging )
             setKey( result.data.key)
             let arr = [];
@@ -69,19 +71,23 @@ function ShList() {
                     <div className='col'>게시일</div>
                 </div>
                 {
-                    (shList)?(
+                    (shList[0])?(
                         shList.map((sh, idx)=>{
                             return (
-                                <div className='row'>
-                                    <div className='col'>{sh.categoryId}</div>
+                                <div className='row' onClick={()=>{navigate(`/ShDetail/${sh.postId}`)}}>
+                                    <div className='col'>{shCategoryList[sh.categoryId-1].category_name}</div>
                                     <div className='col'>{sh.title}</div>
-                                    <div className='col'>{sh.price}</div>
-                                    <div className='col'>{sh.member.userid}</div>
+                                    <div className='col'>{sh.price} 원</div>
+                                    <div className='col'>{
+                                        (sh.member)?
+                                        (((sh.member.provider)?(sh.member.userid+' ('+sh.member.provider+')'):(sh.member.userid))):
+                                        (<span className='italic'>탈퇴회원</span>)
+                                    }</div>
                                     <div className='col'>{sh.indate.substring(0, 10)}</div>
                                 </div>
                             )
                         })
-                    ):(<span>loading...</span>)
+                    ):(<></>)
                 }
                 <div id="paging" style={{textAlign:"center", padding:"10px"}}>
                 {

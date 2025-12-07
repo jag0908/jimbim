@@ -12,4 +12,6 @@ public interface CommunityReplyRepository extends JpaRepository<C_Reply, Integer
     C_Reply findByReplyId(int replyId);
 
     void deleteByCpost_CpostId(Integer cpostId);
+
+    Integer countByCpost_CpostId(Integer cpostId);
 }

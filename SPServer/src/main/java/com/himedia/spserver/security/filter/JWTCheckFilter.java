@@ -150,6 +150,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/question")) return true; //챗봇
 
         if (path.startsWith("/communityList/getCommunityList")) return true;
+        if (path.startsWith("/communityList/getNoticeList")) return true;
 
 
 

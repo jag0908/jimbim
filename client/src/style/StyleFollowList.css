@@ -19,7 +19,7 @@
   max-height: 80%;
   background: #fff;
   border-radius: 14px;
-  overflow: hidden;          /* 상단/하단 둥근 모서리 유지 */
+  overflow: hidden;
   box-shadow: 0 6px 20px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
@@ -105,3 +105,26 @@
   font-size: 15px;
   font-weight: 500;
 }
+
+/* 팔로우 버튼 */
+.f-btn {
+  background: #007bff;       /* 기본 색상 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+}
+
+/* 팔로잉 상태 */
+.f-btn.following {
+  background: gray;          /* 팔로잉 상태 색상 */
+}
+
+/* hover 효과 optional */
+.f-btn:hover {
+  opacity: 0.85;
+}
+

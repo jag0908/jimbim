@@ -382,27 +382,32 @@ const StyleDetail = () => {
 
 
       {/* 댓글 목록 */}
+    <div className="style-detail-reply">
       <div className="style-detail-reply-sort">
-        <button onClick={() => fetchReplies("latest")}>최신순</button>
-        <button onClick={() => fetchReplies("like")}>좋아요순</button>
+        <p>댓글</p>
+        <div className="style-detail-reply-sort button">
+          <button onClick={() => fetchReplies("latest")}>최신순</button>
+          <button onClick={() => fetchReplies("like")}>좋아요순</button>
+        </div>
       </div>
-      <div className="style-detail-replies">
-        {replies.map(reply => (
-          <Reply
-            key={reply.reply_id}
-            reply={reply}
-            myUserid={myUserid}
-            toggleReplyVisibility={toggleReplyVisibility}
-            isOpen={openReplies[reply.reply_id] || false}
-            openReplies={openReplies}
-            setReplyParent={setCommentParent}
-            handleDeleteReply={handleDeleteReply}
-            setReplies={setReplies}
-          />
-        ))}
-
+      <div className="style-detail-reply-container">
+        <div className="style-detail-replies">
+          {replies.map(reply => (
+            <Reply
+              key={reply.reply_id}
+              reply={reply}
+              myUserid={myUserid}
+              toggleReplyVisibility={toggleReplyVisibility}
+              isOpen={openReplies[reply.reply_id] || false}
+              openReplies={openReplies}
+              setReplyParent={setCommentParent}
+              handleDeleteReply={handleDeleteReply}
+              setReplies={setReplies}
+            />
+          ))}
+        </div>
       </div>
-
+      
       {/* 댓글 입력창 */}
       <div className="style-detail-comment-section">
         {commentParent && (
@@ -419,8 +424,8 @@ const StyleDetail = () => {
         <button onClick={() => handleCommentSubmit(commentParent)}>등록</button>
 
       </div>
-
     </div>
+  </div>
   );
 };
 

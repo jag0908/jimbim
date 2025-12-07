@@ -12,7 +12,8 @@ import java.util.List;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Member findByUserid(String username);
 
-    Member findByNameAndPhone(String name, String phone);
+    @Query(value = "select m from Member m where m.name=:name and m.phone=:phone and m.provider IS NULL")
+    List<Member> findByNameAndPhoneWithoutKakao(String name, String phone);
 
     @Query(value = "select * from member ",  nativeQuery = true)
     List<Member> findAllMemberWithDeleted();

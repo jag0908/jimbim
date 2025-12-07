@@ -46,4 +46,14 @@ public class CustomerService {
     public Qna getQna(int qnaId) {
         return qr.findById( qnaId ).get();
     }
+
+    public void updateQna(Qna qna) {
+        Qna updateQna = qr.findById( qna.getQnaId() ).get();
+        updateQna.setTitle(qna.getTitle());
+        updateQna.setContent(qna.getContent());
+    }
+
+    public void deleteQna(int qnaId) {
+        qr.deleteById( qnaId );
+    }
 }

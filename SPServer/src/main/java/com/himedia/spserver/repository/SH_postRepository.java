@@ -25,4 +25,7 @@ public interface SH_postRepository extends JpaRepository<SH_post,Integer> {
 
     @Query("SELECT p FROM SH_post p JOIN FETCH p.member")
     Page<SH_post> findWithMember(Pageable pageable);
+
+    @Query("SELECT p FROM SH_post p JOIN FETCH p.member WHERE p.postId = :postId")
+    SH_post findByIdWithMember(int postId);
 }

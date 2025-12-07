@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
@@ -11,6 +11,8 @@ import AlramLike from './AlramLike'
 
 
 import '../../style/Alram.css'
+import { active } from 'sortablejs'
+import AlramMyChat from './AlramMyChat'
 
 function Alram() {
   const [activeTab, setActiveTab] = useState('all');
@@ -101,6 +103,12 @@ function Alram() {
           >
             채팅
           </button>
+          <button
+            className={`tab-item ${activeTab === 'myChat' ? 'active' : ''}`}
+            onClick={() => {setActiveTab('myChat');}}
+          >
+            내 구매 채팅
+          </button>
 
           {/* 이삭 수정 */}
           <button
@@ -137,15 +145,17 @@ function Alram() {
                     <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
-                        activeTab == "follow" ? //이삭 수정
-                            <AlramFollow /> :
-                            activeTab == "reply" ?
-                                <AlramReply /> :
-                                activeTab == "like" ?
-                                    <AlramLike /> :
-                                      activeTab == "zzim" ?
-                                        <AlramZzim formatDateTime={formatDateTime} /> : null
-
+                        activeTab == "myChat" ?
+                          <AlramMyChat formatDateTime={formatDateTime} /> :
+                            activeTab == "follow" ? //이삭 수정
+                                <AlramFollow /> :
+                                activeTab == "reply" ?
+                                    <AlramReply /> :
+                                    activeTab == "like" ?
+                                        <AlramLike /> :
+                                        activeTab == "zzim" ?
+                                          <AlramZzim formatDateTime={formatDateTime} /> :
+                                          null
             }
         </div>
 

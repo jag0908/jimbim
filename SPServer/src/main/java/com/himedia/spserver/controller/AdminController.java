@@ -5,11 +5,16 @@ import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.SHOP.SHOP_File;
+import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
+import com.himedia.spserver.entity.SHOP.SHOP_post;
 import com.himedia.spserver.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -147,6 +152,79 @@ public class AdminController {
         HashMap<String, Object> result = new HashMap<>();
         as.writeReply(qnaId, reply, answerer);
         result.put("msg", "ok");
+        return result;
+    }
+    /// //////////// 요청내역 관련 //////////////////
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getSuggestList")
+    public HashMap<String, Object> getSuggestList(@RequestParam("page") int page,
+                                              @RequestParam(value="key", required = false, defaultValue = "") String key){
+        return as.getSuggestList(page, key);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getSuggest")
+    public HashMap<String, Object> getSuggest(@RequestParam("suggestId") int suggestId){
+        HashMap<String, Object> result = new HashMap<>();
+        SHOP_Suggest suggest = as.getSuggest( suggestId );
+        List<SHOP_File> files = as.getShopFiles(suggestId);
+        result.put("suggest", suggest);
+        result.put("files", files);
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getShopCategoryList")
+    public HashMap<String,Object> getShopCategoryList(){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("categoryList", as.getShopCategoryList());
+        return result;
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/setStatus")
+    public HashMap<String,Object> setStatus( @RequestParam("suggestId") int suggestId, @RequestParam("status") String status){
+        HashMap<String, Object> result = new HashMap<>();
+        as.setStatus(suggestId, status);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/writeShopPost")
+    public HashMap<String,Object> writeShopPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("price") int price, @RequestParam("categoryId") int categoryId){
+        HashMap<String, Object> result = new HashMap<>();
+        SHOP_post post = as.writeShopPost(title, content, price, categoryId);
+        result.put("postId", post.getPostId());
+        return result;
+    }
+    @PostMapping("/uploadOldFile")
+    public HashMap<String,Object> uploadOldFile(@RequestParam("idList[]") List<Integer> idList, @RequestParam("postId") Integer postId){
+        HashMap<String, Object> result = new HashMap<>();
+        as.uploadOldFile(idList, postId);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/fileupload")
+    public HashMap<String, Object> fileUpload(
+            @RequestParam("imageList") List<MultipartFile> images,
+            @RequestParam("postId") String postId) {
+
+        HashMap<String, Object> result = new HashMap<>();
+        try {
+            if (images == null || images.isEmpty()) {
+                result.put("error", "no files uploaded");
+                return result;
+            }
+
+            as.fileUpload(images, postId);
+            result.put("msg", "ok");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.put("error", "failed");
+        }
         return result;
     }
 }

@@ -37,7 +37,7 @@ button{
     display: flex;
 }
 
-label{
+.field label{
     flex:1;
     font-weight: bold;
 }
@@ -119,7 +119,7 @@ input{
     flex-direction: column;
     justify-content: flex-start;
     box-sizing: border-box;
-    height: 100vh;
+    height: 120vh;
 }
 .menutitle{
     margin: 5px 0;
@@ -221,4 +221,71 @@ a{
 .qnaTextarea textarea{
     flex: 1;
     height: 400px;
+}
+
+.inputWrap.file {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    border: none;
+}
+.inputWrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputWrap.file > label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border: 1px solid #555;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 30px;
+    cursor: pointer;
+}
+.inputWrap.file > label > span {
+    font-size: 12px;
+    color: #999;
+}
+.inputWrap.file > input[type=file].inpFile {
+    display: none;
+}
+.inputWrap.file .previewContainer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.inputWrap.file .previewContainer .imgBox {
+    position: relative;
+    width: 72px;
+    height: 72px;
+}
+.inputWrap.file .previewContainer .imgBox > img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #999;
+    object-fit: cover;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.inputWrap.file .previewContainer .removeBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    border: 1px solid #555;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
 }

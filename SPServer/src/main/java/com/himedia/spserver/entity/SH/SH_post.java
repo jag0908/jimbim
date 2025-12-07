@@ -30,7 +30,7 @@ public class SH_post {  // second hand
     private Timestamp updateDate;
 
     @Column(nullable = false)
-    private Integer price;
+    private Integer price = 0;
 
     @ColumnDefault("'N'")
     private String deliveryYN;

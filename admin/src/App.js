@@ -4,6 +4,8 @@ import MemberList from './Component/member/MemberList'
 import MemberDetail from './Component/member/MemberDetail'
 import ShList from './Component/product/ShList'
 import ShDetail from './Component/product/ShDetail'
+import SuggestList from './Component/suggest/SuggestList'
+import SuggestDetail from './Component/suggest/SuggestDetail'
 import CommunityList from './Component/community/CommunityList'
 import CommunityDetail from './Component/community/CommunityDetail'
 import QnaList from './Component/customer/QnaList'
@@ -19,6 +21,8 @@ function App() {
 				<Route path="/memberDetail/:member_id" element={<MemberDetail />}/>
 				<Route path="/shList" element={<ShList />}/>
 				<Route path="/shDetail/:postId" element={<ShDetail />}/>
+				<Route path="/suggestList" element={<SuggestList />}/>
+				<Route path="/suggestDetail/:suggestId" element={<SuggestDetail />}/>
 				<Route path="/communityList" element={<CommunityList />}/>
 				<Route path="/communityDetail/:cpostId" element={<CommunityDetail />}/>
 				<Route path="/qnaList" element={<QnaList />}/>

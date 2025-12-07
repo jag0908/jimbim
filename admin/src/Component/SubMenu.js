@@ -33,10 +33,10 @@ function SubMenu(props) {
             <div className='menutitle' style={(type=='member')?(currentStyle):({})} onClick={()=>{navigate('/memberList')}}>회원목록</div>
             <div className='menutitle' style={(type=='sh')?(currentStyle):({})} onClick={()=>{navigate('/shList')}}>상품목록(중고마을)</div>
             {/* <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>상품목록(SHOP)</Link></div> */}
+            <div className='menutitle' style={(type=='suggest')?(currentStyle):({})} onClick={()=>{navigate('/suggestList')}}>요청내역(SHOP)</div>
             {/* <div className='menutitle' style={(type=='order')?(currentStyle):({})}><Link to='/orderList'>거래내역</Link></div> */}
             <div className='menutitle' style={(type=='community')?(currentStyle):({})} onClick={()=>{navigate('/communityList')}}>커뮤니티</div>
             <div className='menutitle' style={(type=='qna')?(currentStyle):({})} onClick={()=>{navigate('/qnaList')}}>Q & A</div>
-            {/* <div className='menutitle' style={(type=='')?(currentStyle):({})}><Link to='/'>요청내역</Link></div> */}
         </div>
     )
 }

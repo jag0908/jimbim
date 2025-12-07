@@ -28,6 +28,7 @@ public class ShService {
     private final ShFileRepository sfr;
     private final ShViewRepository svr;
     private final ShSuggestRepository ssr;
+    private final AlramShSuggestRepository assr;
     private final ShSuggestMapper ssm;
     private final ShZzimRepository szr;
     private final MemberRepository mr;
@@ -287,27 +288,33 @@ public class ShService {
 
         reqDto = ssm.toReqDto(claims, reqDto);
 
-//        Optional<SH_Suggest> isSuggest = ssr.findByMemberIdAndPostId(reqDto.getMemberId(), reqDto.getPostId());
-//        if(isSuggest.isPresent()) {
-//            isSuggest.get().setSuggest_price(reqDto.getSuggest_price());
-//
-//            return ssm.toResDto(isSuggest.get());
-//        } else  {
-            SH_Suggest suggest = new SH_Suggest();
-            suggest.setMemberId(reqDto.getMemberId());
-            suggest.setUserId(reqDto.getUserId());
-            suggest.setMemberName(reqDto.getMemberName());
-            suggest.setMemberProfileImg(reqDto.getMemberProfileImg());
-            suggest.setPostId(reqDto.getPostId());
-            suggest.setSuggest_price(reqDto.getSuggest_price());
-            ssr.save(suggest);
+        SH_Suggest suggest = new SH_Suggest();
+        suggest.setMemberId(reqDto.getMemberId());
+        suggest.setUserId(reqDto.getUserId());
+        suggest.setMemberName(reqDto.getMemberName());
+        suggest.setMemberProfileImg(reqDto.getMemberProfileImg());
+        suggest.setPostId(reqDto.getPostId());
+        suggest.setSuggest_price(reqDto.getSuggest_price());
+        ssr.save(suggest);
 
-            return ssm.toResDto(suggest);
-//        }
+        // 알람기능
+        SH_post postEntity = spr.findByPostId(reqDto.getPostId());
+        AlramShSuggest alramShSuggest = new AlramShSuggest();
+        alramShSuggest.setStartUserId(reqDto.getUserId());
+        alramShSuggest.setStartUserProfileImg(reqDto.getMemberProfileImg());
+        alramShSuggest.setEndUserId(postEntity.getMember().getMember_id());
+        alramShSuggest.setPostId(reqDto.getPostId());
+        alramShSuggest.setPostTitle(postEntity.getTitle());
+        alramShSuggest.setTargetType("SH_POST");
+        alramShSuggest.setPrice(reqDto.getSuggest_price());
+        assr.save(alramShSuggest);
+
+
+        return ssm.toResDto(suggest);
     }
 
     public List<ShSuggestDto> getSuggests(Integer postId) {
-        List<SH_Suggest> suggests = ssr.findAllByPostId(postId);
+        List<SH_Suggest> suggests = ssr.findAllByPostIdOrderByIndateDesc(postId);
 
         List<ShSuggestDto> result = new ArrayList<>();
         for(SH_Suggest suggest:suggests) {
@@ -321,6 +328,18 @@ public class ShService {
     public void appSuggest(Integer sid) {
         Optional<SH_Suggest> suggestEntity = ssr.findById(sid);
         suggestEntity.get().setApproved(1);
+
+        // 알람기능
+        AlramShSuggest alramShSuggest = new AlramShSuggest();
+        alramShSuggest.setStartUserId(spr.findByPostId(suggestEntity.get().getPostId()).getMember().getUserid() );
+        alramShSuggest.setStartUserProfileImg(spr.findByPostId(suggestEntity.get().getPostId()).getMember().getProfileImg());
+        alramShSuggest.setEndUserId(suggestEntity.get().getMemberId());
+        alramShSuggest.setPostId(suggestEntity.get().getPostId());
+        alramShSuggest.setPostTitle(spr.findByPostId(suggestEntity.get().getPostId()).getTitle());
+        alramShSuggest.setTargetType("SH_POST");
+        alramShSuggest.setPrice(suggestEntity.get().getSuggest_price());
+        alramShSuggest.setApproved(1);
+        assr.save(alramShSuggest);
     }
 
     public boolean insertZzim(ShZzimDto reqDto) {

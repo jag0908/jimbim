@@ -50,4 +50,18 @@ public class AlramController {
         alramService.myPostZzimRead(id);
     }
 
+    @GetMapping("/myPostSuggest/{id}")
+    public HashMap<String, Object> getMyPostSuggest(@PathVariable Integer id) {
+        HashMap<String, Object> result = new HashMap<>();
+        try {
+            result.put("resDto", alramService.getMyPostSuggest(id));
+        } catch (Exception e) {
+            result.put("msg", "비정상적인 요청입니다.");
+            return result;
+        }
+        return result;
+    }
+
+    @PostMapping("/myPostSuggest/{id}")
+    public void myPostSuggest(@PathVariable Long id) {alramService.getNyPostSuggestRead(id);}
 }

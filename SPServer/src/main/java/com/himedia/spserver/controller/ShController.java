@@ -202,6 +202,7 @@ public class ShController {
     public HashMap<String, Object> getSuggest(@RequestParam("postId") Integer postId) {
         HashMap<String, Object> result = new HashMap<>();
         List<ShSuggestDto> resDto = ss.getSuggests(postId);
+
         result.put("msg", "ok");
         result.put("resDto", resDto);
         return result;

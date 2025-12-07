@@ -610,24 +610,26 @@ function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chat
     
     return (
         <>
-            <div className='popupWrap' style={disPlayYN}>
-                <div className='popupHeader'>
-                    <h3 className='pTitle'>채팅</h3>
-                    <button className='bthClose' onClick={()=>{onPopupClose();}}>X</button>
+            <div className='popupDim' style={disPlayYN}>
+                <div className='popupWrap'>
+                    <div className='popupHeader'>
+                        <h3 className='pTitle'>채팅</h3>
+                        <button className='bthClose' onClick={()=>{onPopupClose();}}>X</button>
+                    </div>
+                    {
+                        openChatState && 
+                        openChatState=="oneToOneChat" &&
+                        
+                        <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} openChatState={openChatState}/>
+
+                    }
+                    {
+                        openChatState && 
+                        openChatState=="chatRoomList" &&
+
+                        <ChatRoomList chatListData={chatListData} loginUser={loginUser} setOpenChatState={setOpenChatState} onOpenClickChat={onOpenClickChat}/>
+                    }
                 </div>
-                {
-                    openChatState && 
-                    openChatState=="oneToOneChat" &&
-                    
-                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} openChatState={openChatState}/>
-
-                }
-                {
-                    openChatState && 
-                    openChatState=="chatRoomList" &&
-
-                    <ChatRoomList chatListData={chatListData} loginUser={loginUser} setOpenChatState={setOpenChatState} onOpenClickChat={onOpenClickChat}/>
-                }
             </div> 
         </>
     )

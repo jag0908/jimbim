@@ -9,8 +9,12 @@ import '../../style/Alram.css'
 import { active } from 'sortablejs'
 import AlramMyChat from './AlramMyChat'
 import AlramSuggest from './AlramSuggest'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function Alram() {
+  const loginUser = useSelector(state=>state.user);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
   const [isDisplay, setIsDisplay] = useState(null);
 
@@ -51,6 +55,13 @@ function Alram() {
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
   }
+
+  useEffect(()=> {
+    if (!loginUser.userid) {
+      alert("로그인이 필요한 서비스입니다."); 
+      return navigate("/login");
+    }
+  }, [])
 
   return (
     <div id="alram-page">

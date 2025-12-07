@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
+import AlramCommunity from './AlramCommunity'
 import AlramZzim from './AlramZzim'
 
 // 이삭 수정
@@ -13,8 +14,13 @@ import AlramLike from './AlramLike'
 import '../../style/Alram.css'
 import { active } from 'sortablejs'
 import AlramMyChat from './AlramMyChat'
+import AlramSuggest from './AlramSuggest'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function Alram() {
+  const loginUser = useSelector(state=>state.user);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
   const [isDisplay, setIsDisplay] = useState(null);
 
@@ -80,6 +86,13 @@ function Alram() {
   }, []);
 
 
+  useEffect(()=> {
+    if (!loginUser.userid) {
+      alert("로그인이 필요한 서비스입니다.");
+      return navigate("/login");
+    }
+  }, [])
+
   return (
     <div id="alram-page">
       <div className="alram-container">
@@ -136,6 +149,12 @@ function Alram() {
           >
             찜
           </button>
+          <button
+            className={`tab-item ${activeTab === 'suggest' ? 'active' : ''}`}
+            onClick={() => {setActiveTab('suggest');}}
+          >
+            가격 제안
+          </button>
         </div>
 
         {/* Notification List */}
@@ -145,8 +164,8 @@ function Alram() {
                     <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
-                        activeTab == "myChat" ?
-                          <AlramMyChat formatDateTime={formatDateTime} /> :
+                        activeTab == "myChat" ? 
+                            <AlramMyChat formatDateTime={formatDateTime} /> :
                             activeTab == "follow" ? //이삭 수정
                                 <AlramFollow /> :
                                 activeTab == "reply" ?
@@ -154,8 +173,10 @@ function Alram() {
                                     activeTab == "like" ?
                                         <AlramLike /> :
                                         activeTab == "zzim" ?
-                                          <AlramZzim formatDateTime={formatDateTime} /> :
-                                          null
+                                            <AlramZzim formatDateTime={formatDateTime} /> :
+                                            activeTab == "suggest" ?
+                                                <AlramSuggest formatDateTime={formatDateTime} /> :
+                                                null
             }
         </div>
 

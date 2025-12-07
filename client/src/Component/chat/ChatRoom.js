@@ -193,6 +193,8 @@ const sendMessage = (roomId) => {
             className="chatInpTxt"
             type="text"
             placeholder="메시지"
+            maxlength="250"
+            wrap="hard"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.currentTarget.value)}
             onKeyDown={(e) => {

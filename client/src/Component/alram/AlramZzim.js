@@ -20,7 +20,6 @@ function AlramZzim({formatDateTime}) {
     jaxios.post(`/api/alram/myPostZzimRead/${targetAtt}`)
       .then((res)=> {
         console.log(res);
-        setZzimAlram(res.data.resDto);
       }).catch(err=>console.error(err));
   };
 

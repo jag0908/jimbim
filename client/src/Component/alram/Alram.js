@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
-import AlramCommunity from './AlramCommunity'
 import AlramZzim from './AlramZzim'
 
 // 이삭 수정
@@ -164,7 +163,7 @@ function Alram() {
                     <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
-                        activeTab == "myChat" ? 
+                        activeTab == "myChat" ?
                             <AlramMyChat formatDateTime={formatDateTime} /> :
                             activeTab == "follow" ? //이삭 수정
                                 <AlramFollow /> :

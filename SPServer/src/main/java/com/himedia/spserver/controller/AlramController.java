@@ -25,6 +25,14 @@ public class AlramController {
         return result;
     }
 
+    @GetMapping("/chatMyMsg/{id}")
+    public HashMap<String, Object> unreadMyMessages(@PathVariable Integer id) {
+        HashMap<String, Object> result = new HashMap<>();
+        List<ChatRoomUnreadDto> resdto = alramService.getUnreadMyMessages(id);
+        result.put("resDto", resdto);
+        return result;
+    }
+
     @GetMapping("/myPostZzim/{id}")
     public HashMap<String, Object> getMyPostZzim(@PathVariable Integer id) {
         HashMap<String, Object> result = new HashMap<>();

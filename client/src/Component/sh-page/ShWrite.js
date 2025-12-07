@@ -78,6 +78,9 @@ function ShWrite() {
   
     function writePost() {
         if(Number(deliveryPrice) > 5000) {return alert("배달비는 5천원을 넘을 수 없습니다.")}
+        if(!title) return alert("제목을 입력해주세요.");
+        if(!content) return alert("내용을 입력해주세요.");
+        if(!price) return alert("가격을 입력해주세요.");
 
         const formData = new FormData();
         fileArr.forEach((file, i)=> {

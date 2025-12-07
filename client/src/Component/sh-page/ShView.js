@@ -299,6 +299,11 @@ function ShView() {
                 <div className='leftBox'>
                     <Slider className={'imgGroup' + ` state${postDetail && postDetail.sellEx}`} {...settings}>
                         {
+                            postDetail && postDetail.files.length == 0 ? 
+                                <div className='imgBox'>
+                                    <span className='noimg'>NO IMAGE</span>
+                                </div>
+                            :
                             postDetail && postDetail.files.map((file, i)=> {
                                 return(
                                 <div className='imgBox'>

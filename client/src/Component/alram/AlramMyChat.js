@@ -3,7 +3,7 @@ import jaxios from '../../util/jwtutil'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 
-function AlramChat({formatDateTime}) {
+function AlramMyChat({formatDateTime}) {
   
   const {id} = useParams();
   const navigate = useNavigate(); 
@@ -11,7 +11,7 @@ function AlramChat({formatDateTime}) {
 
   useEffect(()=> {
     
-    jaxios.get(`/api/alram/chatMsg/${id}`)
+    jaxios.get(`/api/alram/chatMyMsg/${id}`)
       .then((res)=> {
         console.log(res);
         setMsgAlram(res.data);
@@ -29,15 +29,15 @@ function AlramChat({formatDateTime}) {
                 <div className="alram-badge"></div>
                 <div className="alram-thumbnail">
                   <div className="thumbnail-placeholder">
-                    <img src={msg.buyerProfileImg} />
+                    <img src={msg.sellerProfileImg} />
                   </div>
                 </div>
                 <div className="alram-content">
                   <div className="alram-text">
                     <p className="alram-message">
-                      [<strong>{msg.buyerName}</strong> 님에게 받은 채팅방]
+                      [<strong>{msg.sellerName}</strong> 님에게 보낸 채팅방]
                       <br />
-                      내가 판매하는 게시글: <strong>"{msg.postTitle}"</strong>
+                      내가 구매하는 게시글:  <strong>"{msg.postTitle}"</strong>
                       <br />
                       제일 최근 채팅: <strong>"{msg.shortContent}"</strong>
                       <br />
@@ -64,4 +64,4 @@ function AlramChat({formatDateTime}) {
   )
 }
 
-export default AlramChat
+export default AlramMyChat

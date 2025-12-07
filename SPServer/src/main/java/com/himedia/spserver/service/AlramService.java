@@ -85,6 +85,13 @@ public class AlramService {
         return sellerChats;
     }
 
+    public List<ChatRoomUnreadDto> getUnreadMyMessages(Integer id) {
+        List<ChatRoomUnreadDto> buyerChats = crr.findRoomsWithUnreadCountByBuyer(id);
+
+        System.out.println(buyerChats);
+        return buyerChats;
+    }
+
     public List<AlramZzimResDto> getMyPostZzim(Integer id) {
         List<AlramZzimResDto> result =  new ArrayList<>();
         List<AlramZzim> zzims = azr.findAllByEndUserIdOrderByIndateDesc(id);
@@ -108,6 +115,7 @@ public class AlramService {
         AlramZzim targetZzim = azr.findById(id).orElseThrow(() -> new IllegalArgumentException("존재X"));;
         targetZzim.setIsRead(true);
     }
+
 
 
 }

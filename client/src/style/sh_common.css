@@ -49,6 +49,8 @@ button {cursor: pointer;}
 .shMain .btnWrap {display: flex; justify-content: center; align-items: center; position: fixed; bottom: 160px; right: 60px; width: 72px; height: 72px; border-radius: 50%; background-color: #555;}
 .shMain .btnWrap .btnWrite {width: 100%; height: 100%; color: #fff; cursor: pointer;}
 
+.noimg {display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 22px; font-weight: 500; color: #e48d8d;}
+
 
 
 /* 글쓰기(내물건팔기) */

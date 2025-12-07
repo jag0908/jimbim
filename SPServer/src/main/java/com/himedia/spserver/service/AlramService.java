@@ -2,10 +2,7 @@ package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SH.AlramZzim;
-import com.himedia.spserver.entity.SH.ChatRoom;
-import com.himedia.spserver.entity.SH.ChatRoom_Msg;
-import com.himedia.spserver.entity.SH.SH_post;
+import com.himedia.spserver.entity.SH.*;
 import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +22,7 @@ public class AlramService {
     private final AlramZzimRepository azr;
     private final ChatRepository crr;
     private final ChatMsgRepository cmr;
+    private final AlramShSuggestRepository asr;
 
 
     //정진
@@ -112,10 +110,37 @@ public class AlramService {
     }
 
     public void myPostZzimRead(Long id) {
-        AlramZzim targetZzim = azr.findById(id).orElseThrow(() -> new IllegalArgumentException("존재X"));;
+        AlramZzim targetZzim = azr.findById(id).orElseThrow(() -> new IllegalArgumentException("존재X"));
         targetZzim.setIsRead(true);
+        azr.delete(targetZzim);
     }
 
 
+    public List<AlramShSuggestResDto> getMyPostSuggest(Integer id) {
+        List<AlramShSuggestResDto> result = new ArrayList<>();
+        List<AlramShSuggest> alramsuggestList = asr.findAllByEndUserIdAndIsReadOrderByIndateDesc(id, false);
+        for(AlramShSuggest alramsuggest : alramsuggestList) {
+            AlramShSuggestResDto resDto = new AlramShSuggestResDto();
+            resDto.setId(alramsuggest.getId());
+            resDto.setStartUserId(alramsuggest.getStartUserId());
+            resDto.setStartUserProfileImg(alramsuggest.getStartUserProfileImg());
+            resDto.setEndUserId(alramsuggest.getEndUserId());
+            resDto.setPostId(alramsuggest.getPostId());
+            resDto.setPostTitle(alramsuggest.getPostTitle());
+            resDto.setPrice(alramsuggest.getPrice());
+            resDto.setTargetType(alramsuggest.getTargetType());
+            resDto.setIsRead(alramsuggest.getIsRead());
+            resDto.setIndate(alramsuggest.getIndate());
+            resDto.setApproved(alramsuggest.getApproved());
+            result.add(resDto);
+        }
 
+        return result;
+    }
+
+    public void getNyPostSuggestRead(Long id) {
+       AlramShSuggest targetSuggest = asr.findById(id).orElseThrow(() -> new IllegalArgumentException("존재X"));
+        targetSuggest.setIsRead(true);
+        asr.delete(targetSuggest);
+    }
 }

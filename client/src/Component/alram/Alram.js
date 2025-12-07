@@ -8,6 +8,7 @@ import AlramZzim from './AlramZzim'
 import '../../style/Alram.css'
 import { active } from 'sortablejs'
 import AlramMyChat from './AlramMyChat'
+import AlramSuggest from './AlramSuggest'
 
 function Alram() {
   const [activeTab, setActiveTab] = useState('all');
@@ -92,6 +93,12 @@ function Alram() {
           >
             찜
           </button>
+          <button 
+            className={`tab-item ${activeTab === 'suggest' ? 'active' : ''}`}
+            onClick={() => {setActiveTab('suggest');}}
+          >
+            가격 제안
+          </button>
         </div>
 
         {/* Notification List */}
@@ -102,12 +109,14 @@ function Alram() {
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
                         activeTab == "myChat" ? 
-                          <AlramMyChat formatDateTime={formatDateTime} /> :
-                          activeTab == "community" ?
-                            <AlramCommunity /> :
-                            activeTab == "zzim" ?
-                              <AlramZzim formatDateTime={formatDateTime} /> : 
-                              null
+                            <AlramMyChat formatDateTime={formatDateTime} /> :
+                            activeTab == "community" ?
+                                <AlramCommunity /> :
+                                activeTab == "zzim" ?
+                                    <AlramZzim formatDateTime={formatDateTime} /> : 
+                                    activeTab == "suggest" ?
+                                        <AlramSuggest formatDateTime={formatDateTime} /> :
+                                        null
             }
         </div>
 

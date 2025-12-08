@@ -19,7 +19,7 @@ function SuggestDetail() {
   }, [suggestId]);
 
   const fetchSuggestDetail = () => {
-    axios.get(`${baseURL}/shop/getSuggestDetail/${suggestId}`)
+    axios.get(`${baseURL}/customer/getSuggestDetail/${suggestId}`)
       .then(res => {
         console.log(res.data); // 데이터 확인
         setSuggest(res.data.suggest || null);
@@ -34,7 +34,7 @@ function SuggestDetail() {
   const handleDelete = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-    axios.delete(`${baseURL}/shop/deleteSuggest/${suggestId}`)
+    axios.delete(`${baseURL}/customer/deleteSuggest/${suggestId}`)
       .then(() => {
         alert("삭제되었습니다.");
         navigate("/customer/suggest");

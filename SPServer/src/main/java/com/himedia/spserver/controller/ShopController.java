@@ -1,14 +1,14 @@
 package com.himedia.spserver.controller;
 
 import com.himedia.spserver.dto.*;
-import com.himedia.spserver.entity.Member;
+        import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SHOP.*;
-import com.himedia.spserver.service.ShopService;
+        import com.himedia.spserver.service.ShopService;
 import com.himedia.spserver.service.ShopSuggestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+        import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -93,5 +93,25 @@ public class ShopController {
     @GetMapping("/categories")
     public List<SHOP_Category> getCategories() {
         return shopService.getCategories();
+    }
+
+    @PostMapping("/suggest/approve/{suggestId}")
+    public ResponseEntity<?> approve(@PathVariable int suggestId) {
+        SHOP_Product product = shopSuggestService.approveSuggest(suggestId);
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/products/search")
+    public List<ShopProductDTO> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "categoryId", required = false) Long categoryId
+    ) {
+        return shopService.searchProducts(keyword, categoryId);
+    }
+
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
     }
 }

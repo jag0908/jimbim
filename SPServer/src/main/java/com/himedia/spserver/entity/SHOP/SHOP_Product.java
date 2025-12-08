@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,8 +29,8 @@ public class SHOP_Product {
     @ManyToOne
     private SHOP_Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<SHOP_ProductImage> images;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SHOP_ProductImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     private List<SHOP_ProductOption> options;

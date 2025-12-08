@@ -2,16 +2,14 @@ package com.himedia.spserver.service;
 
 import com.himedia.spserver.dto.ShopSuggestDto;
 import com.himedia.spserver.entity.Member;
-import com.himedia.spserver.entity.SHOP.SHOP_Category;
-import com.himedia.spserver.entity.SHOP.SHOP_File;
-import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
-import com.himedia.spserver.repository.MemberRepository;
-import com.himedia.spserver.repository.ShopCategoryRepository;
-import com.himedia.spserver.repository.ShopFileRepository;
-import com.himedia.spserver.repository.ShopSuggestRepository;
+import com.himedia.spserver.entity.SHOP.*;
+import com.himedia.spserver.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -22,6 +20,8 @@ import java.util.List;
 public class ShopSuggestService {
     private final ShopSuggestRepository ssr;
     private final ShopFileRepository shopfr;
+    private final ShopProductRepository shoppr;
+    private final ShopProductImageRepository shopir;
     private final ShopCategoryRepository shopCategoryRepository;
     private final MemberRepository memberRepository;
     private final S3UploadService s3UploadService;
@@ -79,5 +79,43 @@ public class ShopSuggestService {
 
         return dto;
     }
+
+    @Transactional
+    public SHOP_Product approveSuggest(int suggestId) {
+
+        // 1. 요청 가져오기
+        SHOP_Suggest suggest = ssr.findById(suggestId)
+                .orElseThrow(() -> new RuntimeException("Suggest 없음"));
+
+        // 2. 승인 상태로 변경
+        suggest.setIsAccept("Y");
+
+        // 3. 상품 생성
+        SHOP_Product product = new SHOP_Product();
+        product.setTitle(suggest.getTitle());
+        product.setContent(suggest.getContent());
+        product.setCategory(suggest.getCategory());
+        product = shoppr.save(product);
+
+        // 4. 요청에 첨부된 파일 가져오기
+        List<SHOP_File> fileList = shopfr.findBySuggest_SuggestId(suggestId);
+        System.out.println("=== 승인 파일 개수: " + fileList.size());
+
+        for (SHOP_File f : fileList) {
+            SHOP_ProductImage img = new SHOP_ProductImage();
+            img.setProduct(product);
+            img.setFileName(f.getFileName());
+            img.setFilePath(f.getFilePath());
+            shopir.save(img);
+            System.out.println("파일명: " + f.getFileName());
+
+            // 양방향 관계 유지
+            product.getImages().add(img);
+        }
+
+        // 5. 최종 상품 저장
+        return shoppr.save(product);
+    }
+
 }
 

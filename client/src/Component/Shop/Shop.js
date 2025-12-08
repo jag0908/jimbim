@@ -8,7 +8,7 @@ import '../../style/shop.css';
 function Shop() {
     const baseURL = process.env.REACT_APP_BASE_URL;
 
-    const { categoryId } = useParams();   // 카테고리 선택
+    const { categoryId } = useParams();
     const navigate = useNavigate();
 
     const [categoryArr, setCategoryArr] = useState([]);
@@ -17,10 +17,25 @@ function Shop() {
 
     useEffect(() => {
         fetchCategories();
-        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        if (categoryId) {
+            fetchProducts();
+        } else {
+            fetchAllProducts();
+        }
     }, [categoryId]);
 
-    // 카테고리 조회
+    async function fetchAllProducts() {
+        try {
+            const result = await axios.get(`${baseURL}/shop/products`);
+            setProductArr(result.data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     async function fetchCategories() {
         try {
             const result = await jaxios.get(`${baseURL}/sh-page/sh-category`);
@@ -30,12 +45,32 @@ function Shop() {
         }
     }
 
-    // 상품 조회
     async function fetchProducts() {
         try {
             const url = categoryId
-                ? `${baseURL}/shop/products/category/${categoryId}`
+                ? `${baseURL}/shop/products/category/${Number(categoryId)}`
                 : `${baseURL}/shop/products`;
+            const result = await axios.get(url);
+            setProductArr(result.data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // 🔹 검색 API 호출
+    async function handleSearch() {
+        try {
+            if (!searchVal.trim()) {
+                // 검색어 없으면 전체 또는 카테고리별 조회
+                categoryId ? fetchProducts() : fetchAllProducts();
+                return;
+            }
+
+            // 백엔드에 검색용 API가 있다고 가정
+            // 카테고리별 검색도 가능하게
+            const url = categoryId
+                ? `${baseURL}/shop/products/search?keyword=${encodeURIComponent(searchVal)}&categoryId=${categoryId}`
+                : `${baseURL}/shop/products/search?keyword=${encodeURIComponent(searchVal)}`;
 
             const result = await axios.get(url);
             setProductArr(result.data);
@@ -48,10 +83,6 @@ function Shop() {
         navigate("/shop/shopSuggest");
     }
 
-    function formatPrice(num) {
-        return num.toLocaleString('ko-KR');
-    }
-
     return (
         <div className='shop-main'>
             {/* 검색 바 */}
@@ -61,8 +92,9 @@ function Shop() {
                     type="text"
                     value={searchVal}
                     onChange={(e) => setSearchVal(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()} // Enter로 검색
                 />
-                <button onClick={() => console.log(searchVal)}>검색</button>
+                <button onClick={handleSearch}>검색</button>
             </div>
 
             {/* 카테고리 메뉴 */}
@@ -84,20 +116,18 @@ function Shop() {
                 ))}
             </div>
 
-            {/* 상품 목록 — ShMain 스타일 */}
+            {/* 상품 목록 */}
             <div className='shPostWrap'>
+                {productArr.length === 0 && <p>상품이 없습니다.</p>}
                 {productArr.map((item, i) => (
                     <div className="list" key={i}>
                         <Link to={`/shop/product/${item.productId}`}>
                             <div className="imgBox">
-                                {item.firstFilePath 
-                                    ? <img src={item.firstFilePath} alt={item.title} />
+                                {item.firstImage 
+                                    ? <img src={item.firstImage} alt={item.title} />
                                     : <span className='noimg'>NO IMAGE</span>}
                             </div>
-
                             <h3 className='data title'>{item.title}</h3>
-                            {/* <h3 className='data price'>{formatPrice(item.price)}원</h3> */}
-                            {/* <h3 className='data date'>{item.indate.substring(0, 10)}</h3> */}
                         </Link>
                     </div>
                 ))}

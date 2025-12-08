@@ -104,4 +104,24 @@ public class ShopService {
     public List<SHOP_Category> getCategories() {
         return categoryRepo.findAll();
     }
+
+    public List<ShopProductDTO> searchProducts(String keyword, Long categoryId) {
+        if (categoryId != null) {
+            // 카테고리 + 키워드 검색
+            return productRepo.findByCategory_CategoryIdAndTitleContainingIgnoreCase(categoryId, keyword)
+                    .stream()
+                    .map(ShopProductDTO::fromEntity)
+                    .collect(Collectors.toList());
+        } else {
+            // 전체 키워드 검색
+            return productRepo.findByTitleContainingIgnoreCase(keyword)
+                    .stream()
+                    .map(ShopProductDTO::fromEntity)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public SHOP_Product getProductById(Long productId) {
+        return productRepo.findById(productId).orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
+    }
 }

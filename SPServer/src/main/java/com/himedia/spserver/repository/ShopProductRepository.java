@@ -15,4 +15,8 @@ public interface ShopProductRepository extends JpaRepository<SHOP_Product, Long>
     List<SHOP_Product> findByTitleContaining(String key);
 
     Page<SHOP_Product> findByTitleContaining(String key, Pageable pageable);
+
+    List<SHOP_Product> findByTitleContainingIgnoreCase(String keyword);
+
+    List<SHOP_Product> findByCategory_CategoryIdAndTitleContainingIgnoreCase(Long categoryId, String keyword);
 }

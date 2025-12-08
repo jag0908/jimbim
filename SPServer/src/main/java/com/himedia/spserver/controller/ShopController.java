@@ -95,6 +95,26 @@ public class ShopController {
         return shopService.getCategories();
     }
 
+    @PostMapping("/suggest/approve/{suggestId}")
+    public ResponseEntity<?> approve(@PathVariable int suggestId) {
+        SHOP_Product product = shopSuggestService.approveSuggest(suggestId);
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/products/search")
+    public List<ShopProductDTO> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "categoryId", required = false) Long categoryId
+    ) {
+        return shopService.searchProducts(keyword, categoryId);
+    }
+
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
+    }
+
     @GetMapping("/getSuggestList/{page}")
     public ResponseEntity<?> getSuggestList(
             @PathVariable int page,

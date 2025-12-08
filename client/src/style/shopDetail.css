@@ -16,67 +16,62 @@
   position: relative;
 }
 
-.image-slider {
+/* --- 클래스 충돌 피하기 위해 이름 변경됨 --- */
+.shop-slider {
   position: relative;
   width: 100%;
 }
 
-.image-slider img {
+.shop-slider img {
   width: 100%;
-  border-radius: 15px;
-  object-fit: cover;
+  border-radius: 10px;
   display: block;
-  transition: none; /* 호버 확대 제거 */
 }
 
-/* 좌우 버튼 - button 최소화, img로 클릭 영역만 */
-.nav-button {
+/* 좌우 이동 버튼 */
+.shop-slider-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
   background: none;
   border: none;
-  outline: none;
   padding: 0;
   cursor: pointer;
-  z-index: 2;
+  z-index: 3;
 }
 
-.nav-button img {
-  width: 100%;
-  height: 100%;
-  display: block;
+.shop-slider-btn img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.45; /* 버튼 이미지 투명도 70% */
 }
 
-.nav-button.prev {
-  left: 5px;
+.shop-slider-btn.prev {
+  left: 10px;
 }
 
-.nav-button.next {
-  right: 5px;
+.shop-slider-btn.next {
+  right: 10px;
 }
 
-/* 이미지 인디케이터 - 아래쪽, 촘촘하고 조금 키움 */
-.image-indicator {
+/* 인디케이터 */
+.shop-slider-indicator {
   position: absolute;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 3px;
-  z-index: 3;
+  gap: 6px;
 }
 
-.image-indicator span {
-  font-size: 18px; /* 조금 키움 */
-  color: #ccc;
+.shop-slider-indicator span {
+  font-size: 16px;
+  color: #bbb;
   cursor: pointer;
-  transition: color 0.2s;
 }
 
-.image-indicator span.active {
+.shop-slider-indicator .active {
   color: #333;
 }
 
@@ -107,7 +102,7 @@
   color: #555;
 }
 
-/* 버튼 가로 배치 */
+/* 버튼 */
 .product-buttons {
   display: flex;
   gap: 20px;
@@ -121,16 +116,10 @@
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .btn-sell {
   background-color: #f0f0f0;
-  color: #333;
-}
-
-.btn-sell:hover {
-  background-color: #ddd;
 }
 
 .btn-buy {
@@ -138,11 +127,7 @@
   color: #fff;
 }
 
-.btn-buy:hover {
-  background-color: #333;
-}
-
-/* 에러, 로딩 메시지 */
+/* 메시지 */
 .error-message,
 .loading-message {
   font-size: 22px;
@@ -152,7 +137,7 @@
 }
 
 /* NO IMAGE */
-.product-images .noimg {
+.noimg {
   width: 100%;
   height: 400px;
   background: #f0f0f0;

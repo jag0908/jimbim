@@ -216,7 +216,9 @@ function ShMain() {
         </div>
 
         <div className='btnWrap'>
-          <button className='btn btnWrite' onClick={()=> {postWrite();}}>글 작성</button>
+          <button className='btn btnWrite' onClick={()=> {postWrite();}}>
+            <img src={`${baseURL}/sh_img/add.png`} />
+          </button>
         </div>
     </div>
   )

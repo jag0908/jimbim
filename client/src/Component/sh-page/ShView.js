@@ -370,31 +370,35 @@ function ShView() {
                                             postDetail &&
                                             postDetail.member.memberId == loginUser.member_id &&
                                         approvalChat(a.memberId, a.memberName, a.memberProfileImg, a.suggest_id);
-                                    }}>
-                                        <span className='img'>
-                                            <img src={a.memberProfileImg} />
+                                        }}>
+                                        <span className='sgWrap'>
+                                            <span className='img'>
+                                                <img src={a.memberProfileImg} />
+                                            </span>
+                                            <span className='name'>"{a.userId}"</span> 
                                         </span>
-                                        <span className='name'>"{a.userId}"</span> 
                                         님이 
                                     
                                         <span className='price'>
                                             "{a.suggest_price}"   
                                         </span>
-                                        원으로 가격을 제안하셨습니다.
+                                        원으로 가격 제안하셨습니다.
                                         <span className='date'>({formatDateTime(a.uptime)})</span>
                                     </div>
                                     :
                                     <div key={i} className='suggestList active'>
-                                        <span className='img'>
-                                            <img src={a.memberProfileImg} />
+                                        <span className='sgWrap'>
+                                            <span className='img'>
+                                                <img src={a.memberProfileImg} />
+                                            </span>
+                                            <span className='name'>"{a.userId}"</span> 
                                         </span>
-                                        <span className='name'>"{a.userId}"</span> 
                                         님이 
                                     
                                         <span className='price'>
                                             "{a.suggest_price}"   
                                         </span>
-                                        원으로 가격을 제안하셨습니다.
+                                        원으로 가격 제안하셨습니다.
                                         <span className='date'>({formatDateTime(a.uptime)})</span>
                                     </div>
                                 )

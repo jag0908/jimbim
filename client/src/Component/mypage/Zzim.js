@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import SideMenu from './SideMenu';
+import SideMenu from './MypageSideMenu';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';

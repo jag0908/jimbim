@@ -26,6 +26,7 @@ function CommunityDetail() {
                 }else{
                     setCPost(result.data.cPost)
                     setCCategoryList(result.data.CCategoryList)
+                    console.log(result.data)
                 }
             })
             .catch((err)=>{console.error(err)})
@@ -113,7 +114,33 @@ function CommunityDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>첨부 이미지</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}></div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            {(cPost.fileList[0])?(<>
+                                <div className='detailImg'>
+                                {
+                                    cPost.fileList.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx<5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                                <div className='detailImg'>
+                                {
+                                    cPost.fileList.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx>=5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                            </>):(<span className='italic'>이미지 없음</span>)
+                            }
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>공지글 설정</div>

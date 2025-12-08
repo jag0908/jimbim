@@ -6,7 +6,7 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 
 function NotificationItem({ item, onConfirm }) {
   const navigate = useNavigate();
-  
+
   const formatTime = (timeStr) => {
     if (!timeStr) return "";
 

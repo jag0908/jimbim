@@ -1,101 +1,222 @@
-.customercontainer{
-    display:flex;
-    width: 1200px;
-    margin: 0 auto;
+.customercontainer {
+    display: flex;
+    width: 1200px;          /* 전체 너비 */
+    margin: 0 auto;          /* 화면 가운데 정렬 */
+    font-family: "Noto Sans KR", sans-serif;
 }
-.customer{
-    padding: 30px; 
-    padding-top: 0;
-    width: calc(100% - 200px);
+
+.customerSidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f7f7f7;
+    min-height: 540px;
+    width: 200px;            /* 기본 사이드바 너비 */
+    box-sizing: border-box;
+    margin-right: 20px;      /* 메인 컨텐츠와 간격 */
 }
-.qnaTable .qnaList:first-child:hover{
+
+.customerSidebar.map {
+    width: 220px;            /* 지도 페이지 사이드바 넓이 */
+}
+
+.customerSidebar h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.customerSidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.customerSidebar ul li {
+    padding: 10px 12px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    color: #555;
+    font-weight: normal;
+    text-align: center;
+}
+
+.customerSidebar ul li:hover {
+    background-color: #e0e0e0;
+}
+
+.customerSidebar ul li.active {
+    font-weight: bold;
+    color: #000;
+}
+
+.customer {
+    flex: 1;                  /* 사이드바 제외하고 남은 공간 채움 */
+    padding: 30px 0 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/* Map 페이지 지도 */
+.mapContainer {
+    width: 800px;
+    height: 400px;
+    margin: 20px 0;
+}
+
+/* Qna 페이지 */
+.formtitle {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: left; /* 왼쪽 정렬 */
+}
+
+.formBtns {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+}
+
+.formBtns button {
+    padding: 7px 15px;
+    margin-right: 10px;
+    background-color: #ff7e36;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Qna 리스트 */
+.qnaTable .qnaList:first-child:hover {
     cursor: auto;
     background: #f4f4f4;
 }
-.qnaList{
-    display:flex;
-    justify-content:space-between;
-}
-.qnaList:hover{
+
+.qnaList {
+    display: flex;
+    justify-content: space-between;
     cursor: pointer;
+}
+
+.qnaList:hover {
     background: #f0f0f0;
 }
-.qnaTitle{
-    font-weight: bold;  
+
+.qnaTitle {
+    font-weight: bold;
     font-size: 105%;
     background: #f4f4f4;
 }
-.qnaField{
+
+.qnaField {
     flex: 1;
     overflow: hidden;
     padding: 15px;
     border: #eeeeee 3px double;
+    text-align: left; /* 왼쪽 정렬 */
 }
-.qnaList .qnaField:first-child{
+
+.qnaList .qnaField:first-child {
     flex: 2;
 }
-.writeReplyTitle{
+
+/* Qna 작성 모달 */
+.writeReplyTitle {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     margin-top: 20px;
     font-weight: bold;
     font-size: 120%;
 }
-.qnatitle{
+
+.qnatitle {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 0 20px;
     margin-top: 20px;
 }
-.qnatitle input{
+
+.qnatitle input {
     padding: 5px;
     width: 440px;
 }
-.qnaTextarea{
+
+.qnaTextarea {
     display: flex;
     padding: 20px;
     padding-bottom: 10px;
 }
-.qnaTextarea textarea{
+
+.qnaTextarea textarea {
     flex: 1;
     height: 400px;
 }
-.detailPageBtns{
+
+.detailPageBtns {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     margin-top: 10px;
 }
-.detailPageBtns button{
+
+.detailPageBtns button {
     width: 30%;
-    padding:7px;
-    margin:2px;
-    color:white;
+    padding: 7px;
+    margin: 2px;
+    color: white;
     font-weight: bold;
     border: none;
     border-radius: 5px;
     background: #ff7e36;
     font-size: 100%;
 }
-.graybtn{
+
+.graybtn {
     background: darkgray !important;
 }
 
-.qnaDetailTable{
+/* Qna 상세 */
+.qnaDetailTable {
     display: flex;
     flex-direction: column;
 }
-.qnaDetailRow{
+
+.qnaDetailRow {
     display: flex;
 }
-.qnaDetailCol{
+
+.qnaDetailCol {
     flex: 5;
     padding: 15px;
     border: #eeeeee 3px double;
+    text-align: left; /* 왼쪽 정렬 */
 }
-.qnaDetailRow .qnaDetailCol:first-child{
+
+.qnaDetailRow .qnaDetailCol:first-child {
     flex: 1;
-    font-weight: bold;  
+    font-weight: bold;
     font-size: 105%;
     background: #f4f4f4;
-    text-align: center;
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 768px) {
+    .customercontainer {
+        flex-direction: column;
+        width: 95%;
+    }
+    .customerSidebar {
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+    .customer {
+        width: 100% !important;
+    }
 }

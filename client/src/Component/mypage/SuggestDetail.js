@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import '../../style/suggest.css';
+import SideMenu from './MypageSideMenu';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -19,10 +20,10 @@ function SuggestDetail() {
   }, [suggestId]);
 
   const fetchSuggestDetail = () => {
-    axios.get(`${baseURL}/shop/getSuggestDetail/${suggestId}`)
+    axios.get(`${baseURL}/customer/getSuggestDetail/${suggestId}`)
       .then(res => {
-        console.log(res.data); // 데이터 확인
-        setSuggest(res.data.suggest || null);
+        console.log(res.data); // 서버에서 받은 DTO 확인
+        setSuggest(res.data);
         setLoading(false);
       })
       .catch(err => {
@@ -34,7 +35,7 @@ function SuggestDetail() {
   const handleDelete = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-    axios.delete(`${baseURL}/shop/deleteSuggest/${suggestId}`)
+    axios.delete(`${baseURL}/customer/deleteSuggest/${suggestId}`)
       .then(() => {
         alert("삭제되었습니다.");
         navigate("/customer/suggest");
@@ -48,6 +49,7 @@ function SuggestDetail() {
   if (loading) return <div className='noData'>로딩 중...</div>;
   if (!suggest) return <div className='noData'>게시물을 찾을 수 없습니다.</div>;
 
+  // ✅ DTO에서 내려주는 memberId 사용
   const canDelete = loginUser?.member_id === suggest.memberId;
 
   return (

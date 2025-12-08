@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState,useEffect } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
@@ -93,6 +93,7 @@ function Alram() {
     }
   }, [])
 
+
   
   // 전체알람
   const [allAlramCount, setAllAlramCount] = useState(null);
@@ -108,6 +109,7 @@ function Alram() {
               setAllAlramCount(res.data.alram);
           }).catch(err=>console.error(err));
   }
+
 
   return (
     <div id="alram-page">
@@ -180,7 +182,7 @@ function Alram() {
                     <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
-                        activeTab == "myChat" ? 
+                        activeTab == "myChat" ?
                             <AlramMyChat formatDateTime={formatDateTime} /> :
                             activeTab == "follow" ? //이삭 수정
                                 <AlramFollow /> :

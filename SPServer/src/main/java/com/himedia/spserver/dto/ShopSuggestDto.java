@@ -33,13 +33,28 @@ public class ShopSuggestDto {
         dto.setPrice(suggest.getPrice());
         dto.setMemberId(suggest.getMember().getMember_id());
         dto.setCategoryId(suggest.getCategory().getCategoryId());
-        dto.setIndate(suggest.getIndate().toLocalDateTime());
 
-        if (suggest.getFiles() != null) {
-            dto.setFileUrls(suggest.getFiles().stream()
-                    .map(SHOP_File::getFilePath)
-                    .collect(Collectors.toList()));
+        // ✅ Timestamp → LocalDateTime 변환 (replace 필요 없음!)
+        try {
+            if (suggest.getIndate() != null) {
+                dto.setIndate(suggest.getIndate().toLocalDateTime());
+            }
+        } catch (Exception e) {
+            System.out.println("날짜 변환 실패: " + suggest.getIndate());
+            dto.setIndate(null);
         }
+
+        // 파일 URL
+        if (suggest.getFiles() != null) {
+            dto.setFileUrls(
+                    suggest.getFiles().stream()
+                            .map(SHOP_File::getFilePath)
+                            .collect(Collectors.toList())
+            );
+        }
+
         return dto;
     }
+
+
 }

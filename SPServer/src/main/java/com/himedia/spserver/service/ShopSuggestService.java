@@ -11,10 +11,15 @@ import com.himedia.spserver.repository.ShopFileRepository;
 import com.himedia.spserver.repository.ShopSuggestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -79,5 +84,50 @@ public class ShopSuggestService {
 
         return dto;
     }
+
+    public Object getSuggestList(int page, int memberId) {
+
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by("suggestId").descending());
+
+        Page<SHOP_Suggest> result = ssr.findByMemberIdOrderBySuggestIdDesc(memberId, pageable);
+
+        // 페이지 정보 계산
+        int blockLimit = 10;
+        int currentPage = page;
+        int totalPages = result.getTotalPages();
+
+        int beginPage = ((currentPage - 1) / blockLimit) * blockLimit + 1;
+        int endPage = Math.min(beginPage + blockLimit - 1, totalPages);
+
+        // DTO 변환
+        List<ShopSuggestDto> list = result.getContent().stream()
+                .map(ShopSuggestDto::fromEntity)
+                .toList();
+
+        // return 구조
+        return new HashMap<>() {{
+            put("list", list);
+            put("paging", new HashMap<>() {{
+                put("page", currentPage);
+                put("beginPage", beginPage);
+                put("endPage", endPage);
+                put("prev", beginPage > 1);
+                put("next", endPage < totalPages);
+            }});
+        }};
+    }
+
+
+    public SHOP_Suggest findById(Integer id) {
+        return ssr.findById(id)
+                .orElseThrow(() -> new RuntimeException("요청을 찾을 수 없습니다."));
+    }
+
+    public void deleteSuggest(Integer id) {
+        SHOP_Suggest suggest = findById(id);
+        ssr.delete(suggest);
+    }
+
 }
 

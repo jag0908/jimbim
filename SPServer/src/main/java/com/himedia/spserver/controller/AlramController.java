@@ -81,7 +81,7 @@ public class AlramController {
         List<AlramZzimResDto> zzim_resdto = alramService.getMyPostZzim(id);
         for(AlramZzimResDto zzim :zzim_resdto) {allList.add(new UnifiedAlramDto("ZZIM", zzim.getId(), zzim.getStartUserId() + "님이 '" + zzim.getPostTitle() + "' 게시물에 찜 하셨습니다.", zzim.getStartUserProfileImg(), zzim.getEndUserId(), zzim.getIsRead(), zzim.getIndate(), "/sh-page/sh-view/" + zzim.getPostId()));}
         List<AlramShSuggestResDto> suggest_resdto = alramService.getMyPostSuggest(id);
-        for(AlramShSuggestResDto suggest :suggest_resdto) {allList.add(new UnifiedAlramDto("SUGGEST", suggest.getId(), suggest.getStartUserId() + "님이 '" + suggest.getPostTitle() + "' 게시물에" + suggest.getPrice() + "원으로 가격제안 하셨습니다.", suggest.getStartUserProfileImg(), suggest.getEndUserId(), suggest.getIsRead(), suggest.getIndate(), "/sh-page/sh-view/" + suggest.getPostId()));}
+        for(AlramShSuggestResDto suggest :suggest_resdto) {allList.add(new UnifiedAlramDto("SUGGEST", suggest.getId(), suggest.getStartUserId() + "님이 '" + suggest.getPostTitle() + "' 게시물에" + suggest.getPrice() + "원으로 가격제안" + (suggest.getApproved() == 1 ? "을 승낙" : "") + "하셨습니다.", suggest.getStartUserProfileImg(), suggest.getEndUserId(), suggest.getIsRead(), suggest.getIndate(), "/sh-page/sh-view/" + suggest.getPostId()));}
         List<ChatRoomUnreadDto> chat_resdto = alramService.getUnreadMessages(id);
         for(ChatRoomUnreadDto chat :chat_resdto) {allList.add(new UnifiedAlramDto("CHAT", null, chat.getBuyerName(), chat.getBuyerProfileImg(), chat.getSellerId(), chat.getUnreadCount() > 0 ? false : true, chat.getLastTime(), "/sh-page/sh-view/" + chat.getPostId()));}
         List<ChatRoomUnreadDto> mychat_resdto = alramService.getUnreadMyMessages(id);

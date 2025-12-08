@@ -10,7 +10,7 @@ input, textarea, select {border: 1px solid #999; border-radius: 6px;}
 
 
 /* 바디 */
-body {margin-top: 116px;}
+body {margin-top: 122px;}
 
 /* 헤더 */
 #header {display: flex; flex-direction: column; align-items: center; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; background: #fff; border-bottom: 1px solid #bbb; box-sizing: border-box;}
@@ -28,4 +28,4 @@ body {margin-top: 116px;}
 
 
 #header .hAllAlram {position: relative;}
-#header .hAllAlram .floatCount {display: flex; justify-content: center; align-items: center; position: absolute; top: 50%; right: -18px; width: 16px; height: 16px; border-radius: 50%; background: rgb(224, 28, 28); font-size: 11px; font-weight: 500; color: #fff; overflow: hidden; transform: translateY(-50%);}
+#header .hAllAlram .floatCount {display: flex; justify-content: center; align-items: center; position: absolute; top: 50%; right: -18px; width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 11px; font-weight: 500; color: #fff; overflow: hidden; transform: translateY(-50%);}

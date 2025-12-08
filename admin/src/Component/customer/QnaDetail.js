@@ -36,8 +36,13 @@ function QnaDetail() {
             }
             jaxios.get('/api/admin/getQna', {params:{qnaId}})
             .then((result)=>{ 
-                setQna(result.data.qna)
-                setReply('')
+                if(result.data.qna==null){
+                    alert('존재하지 않는 페이지입니다')
+                    navigate('/qnaList')
+                }else{
+                    setQna(result.data.qna)
+                    setReply('')
+                }
             })
             .catch((err)=>{console.error(err)})
         },[]
@@ -45,7 +50,7 @@ function QnaDetail() {
     async function onSubmit(){
         if(!reply){ return alert('답변을 입력하세요')}
 
-        await jaxios.post('/api/admin/writeReply', null, {params:{qnaId, reply}})
+        await jaxios.post('/api/admin/writeReply', null, {params:{qnaId, reply, answerer:loginUser.userid}})
         .then(()=>{ 
             alert('답변 작성이 완료되었습니다.');
             setIsOpen( false )
@@ -61,30 +66,39 @@ function QnaDetail() {
     return (
         <div className='adminContainer'>
             <SubMenu type={'qna'}/>
-            <div className='productTable'>
+            <div className='productTable detailTable'>
                 <div className='title'>Q & A</div>
-                {(qna.member)?
+                {(qna.indate)?
                 (<>
                     <div className='row'>
                         <div className='col detailTitle'>글제목</div>
-                        <div className='col'>{qna.title}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{qna.title}</div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>게시자</div>
-                        <div className='col'>{qna.member.userid}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{
+                            (qna.member)?
+                            (((qna.member.provider)?(qna.member.userid+' ('+qna.member.provider+')'):(qna.member.userid))):
+                            (<span className='italic'>탈퇴회원</span>)
+                        }</div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>작성일</div>
-                        <div className='col'>{qna.indate.substring(0, 10)}</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{qna.indate.substring(0, 10)}</div>
                     </div>
                     <div className='row'>
-                        <div className='col detailTitle' style={{flex:'1'}}>내용</div>
-                        <div className='col' style={{flex:'9', padding:'20px 10px'}}>{qna.content}</div>
+                        <div className='col detailTitle'>내용</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{qna.content}</div>
                     </div>
                     <div className='row'>
-                        <div className='col detailTitle' style={{flex:'1'}}>답변</div>
-                        <div className='col' style={{flex:'9', padding:'20px 10px'}}>{(qna.reply)?
-                            (qna.reply):
+                        <div className='col detailTitle'>답변</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            {(qna.reply)?
+                            (<>
+                                <div>답변자: {qna.answerer.userid}</div>
+                                <div>{qna.reply}</div>
+                            </>
+                            ):
                             (
                                 <div className='detailPageBtns' onClick={ ()=>{ setIsOpen( !isOpen ) }}>
                                     <button>답변 작성하기</button>

@@ -14,6 +14,7 @@ public class StyleFollowService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final NotificationService notificationService;
 
 
     public boolean toggleFollow(String startUserid, String endUserid) {
@@ -34,6 +35,7 @@ public class StyleFollowService {
                     newFollow.setStartMember(startMember);
                     newFollow.setEndMember(endMember);
                     followRepository.save(newFollow);
+                    notificationService.sendFollowNotification(endMember, startMember);
                     return true;
                 });
     }

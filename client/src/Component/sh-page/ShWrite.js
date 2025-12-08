@@ -24,6 +24,10 @@ function ShWrite() {
     const [previewUrls, setPreviewUrls] = useState([]); // 이미지 미리보기 URL 배열
 
     useEffect(()=> {
+        if (!loginUser.userid) {
+            alert("로그인이 필요한 서비스입니다."); 
+            return navigate("/login");
+        }
     
         axios.get("/api/sh-page/sh-category")
             .then((result)=> {
@@ -74,6 +78,9 @@ function ShWrite() {
   
     function writePost() {
         if(Number(deliveryPrice) > 5000) {return alert("배달비는 5천원을 넘을 수 없습니다.")}
+        if(!title) return alert("제목을 입력해주세요.");
+        if(!content) return alert("내용을 입력해주세요.");
+        if(!price) return alert("가격을 입력해주세요.");
 
         const formData = new FormData();
         fileArr.forEach((file, i)=> {

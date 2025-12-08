@@ -16,7 +16,6 @@ import Zzim from './Component/mypage/Zzim'
 
 import Map from './Component/customer/Map'
 import Qna from './Component/customer/Qna'
-import WriteQna from './Component/customer/WriteQna'
 import QnaDetail from './Component/customer/QnaDetail'
 
 
@@ -73,12 +72,12 @@ function App() {
 				<Route path="/mypage" element={<Mypage />} />
 				<Route path="/mypage/profile" element={<Profile />} />
 				<Route path="/mypage/addresslist" element={<AddressList />} />
-				<Route path="/mypage/buying" element={<Buying />} />
+				{/* <Route path="/mypage/buying" element={<Buying />} />
 				<Route path="/mypage/selling" element={<Selling />} />
-				<Route path="/mypage/zzim" element={<Zzim />} />
+				<Route path="/mypage/zzim" element={<Zzim />} /> */}
 				<Route path="/customer/map" element={<Map />} />
 				<Route path="/customer/qna" element={<Qna />} />
-				<Route path="/customer/writeqna" element={<WriteQna />} />
+				{/* <Route path="/customer/writeqna" element={<WriteQna />} /> */}
 				<Route path="/customer/qna/:qnaId" element={<QnaDetail />}/>
 
 				{/* 이삭 */}

@@ -13,4 +13,6 @@ public interface ShSuggestRepository extends JpaRepository<SH_Suggest, Integer> 
     List<SH_Suggest> findAllByPostId(Integer postId);
 
     Optional<SH_Suggest> findByMemberIdAndPostId(Integer memberId, Integer postId);
+
+    List<SH_Suggest> findAllByPostIdOrderByIndateDesc(Integer postId);
 }

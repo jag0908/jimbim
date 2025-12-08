@@ -1,5 +1,6 @@
 package com.himedia.spserver.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.himedia.spserver.entity.SHOP.SHOP_File;
 import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
 import lombok.Data;
@@ -11,22 +12,28 @@ import java.util.stream.Collectors;
 
 @Data
 public class ShopSuggestDto {
-    private Integer suggestId;
+    private Long suggestId;
     private String title;
     private String content;
-    private Integer memberId;   // 유저 PK
-    private List<MultipartFile> files; // 업로드용
-    private List<String> fileUrls;     // 조회용
-    private LocalDateTime indate;      // 작성일
+    private Integer price;
+    private Integer memberId;
+    private Long categoryId;
 
-    // 엔티티 → DTO 변환
+    @JsonIgnore
+    private List<MultipartFile> files;   // 요청 전용
+
+    private List<String> fileUrls;       // 응답 전용
+    private LocalDateTime indate;
+
     public static ShopSuggestDto fromEntity(SHOP_Suggest suggest) {
         ShopSuggestDto dto = new ShopSuggestDto();
-        dto.setSuggestId(suggest.getSuggestId());
+        dto.setSuggestId(suggest.getSuggestId().longValue());
         dto.setTitle(suggest.getTitle());
         dto.setContent(suggest.getContent());
+        dto.setPrice(suggest.getPrice());
         dto.setMemberId(suggest.getMember().getMember_id());
-        dto.setIndate(suggest.getIndate().toLocalDateTime()); // 작성일 복사
+        dto.setCategoryId(suggest.getCategory().getCategoryId());
+        dto.setIndate(suggest.getIndate().toLocalDateTime());
 
         if (suggest.getFiles() != null) {
             dto.setFileUrls(suggest.getFiles().stream()

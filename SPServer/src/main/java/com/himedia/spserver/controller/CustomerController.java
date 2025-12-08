@@ -31,4 +31,18 @@ public class CustomerController {
         result.put("qna", cs.getQna(qnaId));
         return result;
     }
+    @PostMapping("/updateQna")
+    public HashMap<String, Object> updateQna(@RequestBody Qna qna){
+        HashMap<String, Object> result = new HashMap<>();
+        cs.updateQna(qna);
+        result.put("msg", "ok");
+        return result;
+    }
+    @DeleteMapping("/deleteQna")
+    public HashMap<String, Object> deleteQna(@RequestParam("qnaId") int qnaId){
+        HashMap<String, Object> result = new HashMap<>();
+        cs.deleteQna(qnaId);
+        result.put("msg", "ok");
+        return result;
+    }
 }

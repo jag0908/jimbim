@@ -9,6 +9,7 @@ public class ChatMsgDto {
     private Long messageId;
     private Integer chatRoomId;
     private String content;
+
     private Integer senderId;
     private Timestamp indate;
 

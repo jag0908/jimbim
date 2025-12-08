@@ -5,10 +5,24 @@ import AlramChat from './AlramChat'
 import AlramCommunity from './AlramCommunity'
 import AlramZzim from './AlramZzim'
 
+// 이삭 수정
+import AlramFollow from './AlramFollow'
+import AlramReply from './AlramReply'
+import AlramLike from './AlramLike'
+
+
 import '../../style/Alram.css'
+import { active } from 'sortablejs'
+import AlramMyChat from './AlramMyChat'
+import AlramSuggest from './AlramSuggest'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function Alram() {
+  const loginUser = useSelector(state=>state.user);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
+  const [isDisplay, setIsDisplay] = useState(null);
 
   function formatDateTime(indate) {
         const date = new Date(indate);
@@ -48,6 +62,37 @@ function Alram() {
         return `${year}-${month}-${day}`;
   }
 
+  // 이삭 수정
+  useEffect(() => {
+    let memberId = sessionStorage.getItem("member_id");
+
+    if (!memberId) {
+      const token = sessionStorage.getItem("accessToken");
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          memberId = payload.member_id;
+
+          if (memberId) {
+            sessionStorage.setItem("member_id", memberId);
+            console.log("member_id loaded from JWT:", memberId);
+          }
+        } catch (e) {
+          console.error("JWT 파싱 실패:", e);
+        }
+      }
+    }
+  }, []);
+
+
+  useEffect(()=> {
+    if (!loginUser.userid) {
+      alert("로그인이 필요한 서비스입니다.");
+      return navigate("/login");
+    }
+  }, [])
+
   return (
     <div id="alram-page">
       <div className="alram-container">
@@ -71,17 +116,44 @@ function Alram() {
           >
             채팅
           </button>
-          <button 
-            className={`tab-item ${activeTab === 'community' ? 'active' : ''}`}
-            onClick={() => {setActiveTab('community');}}
+          <button
+            className={`tab-item ${activeTab === 'myChat' ? 'active' : ''}`}
+            onClick={() => {setActiveTab('myChat');}}
           >
-            커뮤니티
+            내 구매 채팅
           </button>
-          <button 
+
+          {/* 이삭 수정 */}
+          <button
+            className={`tab-item ${activeTab === 'follow' ? 'active' : ''}`}
+            onClick={() => setActiveTab('follow')}
+          >
+            팔로우
+          </button>
+          <button
+            className={`tab-item ${activeTab === 'reply' ? 'active' : ''}`}
+            onClick={() => setActiveTab('reply')}
+          >
+            댓글
+          </button>
+          <button
+            className={`tab-item ${activeTab === 'like' ? 'active' : ''}`}
+            onClick={() => setActiveTab('like')}
+          >
+            좋아요
+          </button>
+
+          <button
             className={`tab-item ${activeTab === 'zzim' ? 'active' : ''}`}
             onClick={() => {setActiveTab('zzim');}}
           >
             찜
+          </button>
+          <button
+            className={`tab-item ${activeTab === 'suggest' ? 'active' : ''}`}
+            onClick={() => {setActiveTab('suggest');}}
+          >
+            가격 제안
           </button>
         </div>
 
@@ -92,10 +164,19 @@ function Alram() {
                     <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
-                        activeTab == "community" ?
-                            <AlramCommunity /> :
-                                activeTab == "zzim" ?
-                                <AlramZzim /> : null
+                        activeTab == "myChat" ? 
+                            <AlramMyChat formatDateTime={formatDateTime} /> :
+                            activeTab == "follow" ? //이삭 수정
+                                <AlramFollow /> :
+                                activeTab == "reply" ?
+                                    <AlramReply /> :
+                                    activeTab == "like" ?
+                                        <AlramLike /> :
+                                        activeTab == "zzim" ?
+                                            <AlramZzim formatDateTime={formatDateTime} /> :
+                                            activeTab == "suggest" ?
+                                                <AlramSuggest formatDateTime={formatDateTime} /> :
+                                                null
             }
         </div>
 

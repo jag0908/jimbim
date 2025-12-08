@@ -175,7 +175,7 @@ function ShMain() {
         <div className='menuWrap'>
            <div className='list'>
                 <Link to={`/sh-page`}>
-                  <img src={`${baseURL}/sh_img/1.png`} alt={"전체"} />
+                  <img src={`${baseURL}/sh_img/all.png`} alt={"전체"} />
                   <span className='tit'>전체</span>
                 </Link>
           </div>
@@ -203,7 +203,7 @@ function ShMain() {
                 <div className={"list" + ` state${ShPost.sellEx}` } key={i}>
                   <Link to={`/sh-page/sh-view/${ShPost.postId}`}>
                       <div className='imgBox'>
-                        <img src={ShPost.firstFilePath && ShPost.firstFilePath} alt={ShPost.title} />
+                        {ShPost.firstFilePath ? <img src={ShPost.firstFilePath && ShPost.firstFilePath} alt={ShPost.title} /> : <span className='noimg'>NO IMAGE</span>}
                       </div>
             
                       <h3 className='data title'>{ShPost.title}</h3>

@@ -49,6 +49,7 @@ function ShView() {
         // 2. 데이터 가져오기 (조회수 증가 후)
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
+            if(res.data.error) {alert("잘못된 게시글이거나, 이미 지워진 게시글 입니다.");  navigate("/sh-page");}
             console.log(res.data);
             setPostDetail(res.data.post);
             setCategoryArr(res.data.categoryArr);
@@ -298,6 +299,11 @@ function ShView() {
                 <div className='leftBox'>
                     <Slider className={'imgGroup' + ` state${postDetail && postDetail.sellEx}`} {...settings}>
                         {
+                            postDetail && postDetail.files.length == 0 ? 
+                                <div className='imgBox'>
+                                    <span className='noimg'>NO IMAGE</span>
+                                </div>
+                            :
                             postDetail && postDetail.files.map((file, i)=> {
                                 return(
                                 <div className='imgBox'>
@@ -409,7 +415,7 @@ function ShView() {
                         </h2>
                     </div>
                     <div className='dataBoxWrap dobule'>
-                        <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId)].category_name}]</div>
+                        <div className='catetory'>[{categoryArr && categoryArr[Number(postDetail && postDetail.categoryId) -1].category_name}]</div>
                         <div className='date'>{postDetail && formatDateTime(postDetail.indate)}</div>
                     </div>
                     <div className="dataBoxWrap">
@@ -604,24 +610,26 @@ function PopupLayer({disPlayYN, openChatState, setOpenChatState, loginUser, chat
     
     return (
         <>
-            <div className='popupWrap' style={disPlayYN}>
-                <div className='popupHeader'>
-                    <h3 className='pTitle'>채팅</h3>
-                    <button className='bthClose' onClick={()=>{onPopupClose();}}>X</button>
+            <div className='popupDim' style={disPlayYN}>
+                <div className='popupWrap'>
+                    <div className='popupHeader'>
+                        <h3 className='pTitle'>채팅</h3>
+                        <button className='bthClose' onClick={()=>{onPopupClose();}}>X</button>
+                    </div>
+                    {
+                        openChatState && 
+                        openChatState=="oneToOneChat" &&
+                        
+                        <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} openChatState={openChatState}/>
+
+                    }
+                    {
+                        openChatState && 
+                        openChatState=="chatRoomList" &&
+
+                        <ChatRoomList chatListData={chatListData} loginUser={loginUser} setOpenChatState={setOpenChatState} onOpenClickChat={onOpenClickChat}/>
+                    }
                 </div>
-                {
-                    openChatState && 
-                    openChatState=="oneToOneChat" &&
-                    
-                    <ChatRoomCP chatRoomData={chatRoomData} loginUser={loginUser} openChatState={openChatState}/>
-
-                }
-                {
-                    openChatState && 
-                    openChatState=="chatRoomList" &&
-
-                    <ChatRoomList chatListData={chatListData} loginUser={loginUser} setOpenChatState={setOpenChatState} onOpenClickChat={onOpenClickChat}/>
-                }
             </div> 
         </>
     )

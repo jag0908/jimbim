@@ -21,6 +21,7 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository mr;
+    private String defaultImg = "https://jimbimb.s3.ap-northeast-2.amazonaws.com/user.png";
 
     public Member getMember(String id) {
         return mr.findByUserid( id );
@@ -29,6 +30,10 @@ public class MemberService {
     public void insertMember(Member member) {
         BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         member.setPwd( pe.encode( member.getPwd()));
+
+        if(member.getProfileImg() == null ||  "".equals(member.getProfileImg())){
+            member.setProfileImg(defaultImg);
+        }
 
         List<MemberRole> roles = new ArrayList<>();
         roles.add(MemberRole.USER);
@@ -62,6 +67,11 @@ public class MemberService {
         updateMem.setEmail(member.getEmail());
         updateMem.setPhone(member.getPhone());
         updateMem.setProfileImg(member.getProfileImg());
+
+        if(member.getProfileImg() == null ||  "".equals(member.getProfileImg())){
+            updateMem.setProfileImg(defaultImg);
+        }
+
         updateMem.setProfileMsg(member.getProfileMsg());
         updateMem.setTerms_agree(member.getTerms_agree());
         updateMem.setPersonal_agree(member.getPersonal_agree());
@@ -70,8 +80,9 @@ public class MemberService {
             updateMem.setRrn(member.getRrn());  // 주민번호는 카카오로그인 초기설정 한정으로만 변경가능
     }
 
-    public Member getMemberByNamePhone(String name, String phone) {
-        return mr.findByNameAndPhone(name, phone);
+    public List<Member> getMemberByNamePhoneWithoutKakao(String name, String phone) {
+        System.out.println("getMemberByNamePhoneWithoutKakao" + name + phone + mr.findByNameAndPhoneWithoutKakao(name, phone));
+        return mr.findByNameAndPhoneWithoutKakao(name, phone);
     }
 
     // 이메일 전송주체
@@ -117,5 +128,10 @@ public class MemberService {
         if(agree.equals("personal")){
             member.setPersonal_agree(yn);
         }
+    }
+
+    public void deleteMember(String userid) {
+        Member member = mr.findByUserid(userid);
+        mr.delete(member);
     }
 }

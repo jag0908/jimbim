@@ -9,7 +9,9 @@
     padding:20px;
     margin-top: 50px;
 }
-
+.italic{
+    font-style: italic;
+}
 img{
     max-width: 400px;
 }
@@ -17,7 +19,16 @@ button{
     cursor: pointer;
 }
 .graybtn{
-    background: darkgray !important;
+    background: #a9a9a9 !important;
+}
+.graybtn:hover{
+    background: #989898 !important;
+}
+.redbtn{
+    background: red !important;
+}
+.redbtn:hover{
+    background: #ee1111 !important;
 }
 .field{
     width:100%;
@@ -26,7 +37,7 @@ button{
     display: flex;
 }
 
-label{
+.field label{
     flex:1;
     font-weight: bold;
 }
@@ -50,6 +61,9 @@ input{
     border-radius: 5px;
     font-size: 90%;
 }
+.btns button:hover{
+    background: #ee6d25;
+}
 .detailPageBtns{
     display: flex;
     justify-content: center;
@@ -65,6 +79,9 @@ input{
     border-radius: 5px;
     background: #ff7e36;
     font-size: 100%;
+}
+.detailPageBtns button:hover{
+    background: #ee6d25;
 }
 
 .logout{
@@ -102,7 +119,7 @@ input{
     flex-direction: column;
     justify-content: flex-start;
     box-sizing: border-box;
-    height: 100vh;
+    height: 120vh;
 }
 .menutitle{
     margin: 5px 0;
@@ -159,6 +176,10 @@ a{
     cursor: pointer;
     transition: 3;
 }
+.detailTable .row:hover{
+    background-color: white;
+    cursor: auto;
+}
 .tableTitle:hover{
     background-color: white;
     cursor:auto	
@@ -200,4 +221,71 @@ a{
 .qnaTextarea textarea{
     flex: 1;
     height: 400px;
+}
+
+.inputWrap.file {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    border: none;
+}
+.inputWrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputWrap.file > label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border: 1px solid #555;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 30px;
+    cursor: pointer;
+}
+.inputWrap.file > label > span {
+    font-size: 12px;
+    color: #999;
+}
+.inputWrap.file > input[type=file].inpFile {
+    display: none;
+}
+.inputWrap.file .previewContainer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.inputWrap.file .previewContainer .imgBox {
+    position: relative;
+    width: 72px;
+    height: 72px;
+}
+.inputWrap.file .previewContainer .imgBox > img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #999;
+    object-fit: cover;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.inputWrap.file .previewContainer .removeBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    border: 1px solid #555;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
 }

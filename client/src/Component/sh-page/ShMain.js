@@ -201,7 +201,7 @@ function ShMain() {
                 <div className={"list" + ` state${ShPost.sellEx}` } key={i}>
                   <Link to={`/sh-page/sh-view/${ShPost.postId}`}>
                       <div className='imgBox'>
-                        <img src={ShPost.firstFilePath && ShPost.firstFilePath} alt={ShPost.title} />
+                        {ShPost.firstFilePath ? <img src={ShPost.firstFilePath && ShPost.firstFilePath} alt={ShPost.title} /> : <span className='noimg'>NO IMAGE</span>}
                       </div>
             
                       <h3 className='data title'>{ShPost.title}</h3>

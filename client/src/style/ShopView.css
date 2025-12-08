@@ -1,0 +1,59 @@
+.shopView-main {
+    padding: 20px;
+}
+
+.shopView-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.shopView-card {
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease;
+}
+
+.shopView-card:hover {
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.shopView-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.shopView-card h4 {
+    margin: 10px 0 5px;
+    font-size: 16px;
+}
+
+.shopView-card p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.shopView-btns {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.shopView-btns button {
+    padding: 5px 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.shopView-btns button:hover {
+    opacity: 0.8;
+}

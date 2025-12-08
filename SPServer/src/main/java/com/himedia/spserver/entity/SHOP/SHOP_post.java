@@ -1,46 +1,50 @@
 package com.himedia.spserver.entity.SHOP;
 
+import com.himedia.spserver.entity.Community.C_Category;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @Entity
 public class SHOP_post {  // second hand
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer post_id;
+    private Integer postId;
     @Column(nullable = false, length = 50)
     private String title;
     @Column(nullable = false, length = 2000)
     private String content;
-    private String sh_image;
-    @Column( columnDefinition="DATETIME default now()" )
+
+    @CreationTimestamp
     private Timestamp indate;
     @Column(nullable = false)
     private Integer price;
-    @Column(nullable = false)
+
+    //@Column(nullable = false)
     @ColumnDefault("'N'")
     private String delivery_yn;
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @ColumnDefault("'0'")
     private Integer delivery_price;
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @ColumnDefault("'N'")
     private String direct_yn;
-    @Column(nullable = false)
-    private String category;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private SHOP_Category category;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     Member member;
 
-
-    @ManyToOne
-    @JoinColumn(name = "file_id")
-    File file;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SHOP_File> files;
 }

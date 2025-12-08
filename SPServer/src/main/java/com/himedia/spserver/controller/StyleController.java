@@ -12,10 +12,7 @@ import com.himedia.spserver.repository.FollowRepository;
 import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.repository.STYLE_ReplyLikeRepository;
 import com.himedia.spserver.repository.STYLE_ReplyRepository;
-import com.himedia.spserver.service.S3UploadService;
-import com.himedia.spserver.service.ShService;
-import com.himedia.spserver.service.StyleReplyService;
-import com.himedia.spserver.service.StyleService;
+import com.himedia.spserver.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +42,8 @@ public class StyleController {
     private final ShService shs;
     private final STYLE_ReplyRepository replyRepository;
     private final STYLE_ReplyLikeRepository replyLikeRepository;
+    private final NotificationService notificationService;
+
 
     @GetMapping("/posts")
     public List<StylePostDTO> getAllPosts(){
@@ -235,6 +234,17 @@ public class StyleController {
             newLike.setMember(member);
             replyLikeRepository.save(newLike);
             liked = true;
+
+            // ⭐ 댓글 좋아요 알림 추가
+            Member replyWriter = reply.getMemberid();
+            if (!replyWriter.getUserid().equals(member.getUserid())) {
+                notificationService.sendCommentLikeNotification(
+                        replyWriter,
+                        reply.getSpost().getSpostId().longValue(),
+                        replyId.longValue(),
+                        member
+                );
+            }
         }
 
         int likeCount = replyLikeRepository.countByReply(reply);
@@ -244,6 +254,7 @@ public class StyleController {
                 "likeCount", likeCount
         ));
     }
+
 
 
 

@@ -9,6 +9,7 @@ function SideMenu() {
             <h3>고객센터</h3>
             <ul>
                 <li onClick={()=>{navigate("/customer/qna")}}>문의하기</li>
+                <li onClick={()=>{navigate("/customer/suggest")}}>요청내역</li>
                 <li onClick={()=>{navigate("/customer/map")}}>찾아오시는 길</li>
             </ul>
         </div>

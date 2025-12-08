@@ -8,22 +8,17 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 function AlramLike() {
   const [list, setList] = useState([]);
   const cookies = new Cookies();
-  const currentUser = cookies.get("user");
   const myMemberId = cookies.get("user")?.member_id || sessionStorage.getItem("member_id");
-
-  
 
   useEffect(() => {
     if (!myMemberId) {
-      console.warn("로그인 정보 없음. 알림을 불러올 수 없습니다.");
-      setList([]); // 안전하게 빈 배열 처리
+      setList([]);
       return;
     }
 
     const fetchNotifications = async () => {
       try {
         const res = await jaxios.get(`${baseURL}/api/notification/${myMemberId}`);
-        // STYLE_FOLLOW 타입만 필터링
         const likeNotifications = res.data.filter(n => n.type === "LIKE");
         setList(likeNotifications);
       } catch (err) {
@@ -34,14 +29,20 @@ function AlramLike() {
     fetchNotifications();
   }, [myMemberId]);
 
+  // 확인 처리 후 해당 알림만 읽음 처리 및 UI 갱신
+  const handleConfirm = (id) => {
+    setList(prev => prev.filter(item => item.id !== id));
+  };
+
   return (
     <>
       {list.length === 0 && <div>좋아요 알림이 없습니다.</div>}
       {list.map(item => (
-        <NotificationItem key={item.id} item={item} />
+        <NotificationItem key={item.id} item={item} onConfirm={handleConfirm} />
       ))}
     </>
   );
 }
+
 
 export default AlramLike;

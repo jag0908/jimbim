@@ -39,6 +39,11 @@ public class CommunityListService {
     @Autowired
     private CommunityFileService cfs;
 
+    // ---------------- 공지사항 리스트 조회 ----------------
+    public List<C_post> getNoticeList() {
+        return cr.findByIsNotice("Y");  // isNotice가 Y인 글 리스트 조회
+    }
+
     // ---------------- 게시글 저장 ----------------
     public C_post saveCommunity(C_post cpost) {
         return cr.save(cpost);
@@ -107,7 +112,16 @@ public class CommunityListService {
                 pageable
         );
 
-        result.put("communityList", list.getContent());
+        List<C_post> posts = list.getContent();
+
+        // 댓글 수 세서 세팅
+        posts.forEach(post -> {
+            int replyCount = crr.countByCpost_CpostId(post.getCpostId()); // 댓글 Repository 사용
+            post.setReplyCount(replyCount); // C_post 엔티티에 replyCount 필드가 있어야 함
+        });
+
+        result.put("communityList", posts); // 이제 replyCount가 포함됨
+
 
         int totalPages = list.getTotalPages();
         int currentPage = page;

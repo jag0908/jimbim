@@ -193,34 +193,50 @@ public class StyleService {
     }
 
     public Map<String, Object> toggleLike(Integer spostId, String userid) {
+
         Member member = memberRepository.findByUserid(userid);
         STYLE_post post = postRepository.findById(spostId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        Optional<STYLE_Like> existingLike = likeRepository.findByMemberidAndSpost(member, post);
+        Optional<STYLE_Like> existingLike =
+                likeRepository.findByMemberidAndSpost(member, post);
 
         boolean liked;
+
         if (existingLike.isPresent()) {
+            // 좋아요 취소
             likeRepository.delete(existingLike.get());
             liked = false;
+
         } else {
+            // 좋아요 추가
             STYLE_Like newLike = new STYLE_Like();
             newLike.setMemberid(member);
             newLike.setSpost(post);
             likeRepository.save(newLike);
             liked = true;
 
+            // ⭐ 게시글 좋아요 알림 추가
             Member postOwner = post.getMember();
-            if (!postOwner.getUserid().equals(userid)) { // 본인이 좋아요한 경우 제외
-                notificationService.sendLikeNotification(postOwner, spostId.longValue(), member);
 
+            // 본인이 자기 게시글 좋아요 누른 경우 알림 X
+            if (!postOwner.getUserid().equals(userid)) {
+                notificationService.sendPostLikeNotification(
+                        postOwner,
+                        spostId.longValue(),
+                        member
+                );
             }
         }
 
         int likeCount = likeRepository.countBySpost(post);
 
-        return Map.of("liked", liked, "likeCount", likeCount);
+        return Map.of(
+                "liked", liked,
+                "likeCount", likeCount
+        );
     }
+
 
 
 

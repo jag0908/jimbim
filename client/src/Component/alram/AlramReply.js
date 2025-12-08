@@ -8,7 +8,6 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 function AlramReply() {
   const [list, setList] = useState([]);
   const cookies = new Cookies();
-  const currentUser = cookies.get("user");
   const myMemberId = cookies.get("user")?.member_id || sessionStorage.getItem("member_id");
 
 
@@ -34,10 +33,16 @@ function AlramReply() {
     fetchNotifications();
   }, [myMemberId]);
 
+  const handleConfirm = (id) => {
+    setList(prev => prev.filter(item => item.id !== id));
+  };
+
   return (
     <>
       {list.length === 0 && <div>댓글 알림이 없습니다.</div>}
-      {list.map(item => <NotificationItem key={item.id} item={item} />)}
+      {list.map(item => (
+        <NotificationItem key={item.id} item={item} onConfirm={handleConfirm} />
+      ))}
     </>
   );
 }

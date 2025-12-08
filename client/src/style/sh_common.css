@@ -49,6 +49,8 @@ button {cursor: pointer;}
 .shMain .btnWrap {display: flex; justify-content: center; align-items: center; position: fixed; bottom: 160px; right: 60px; width: 72px; height: 72px; border-radius: 50%; background-color: #555;}
 .shMain .btnWrap .btnWrite {width: 100%; height: 100%; color: #fff; cursor: pointer;}
 
+.noimg {display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 22px; font-weight: 500; color: #e48d8d;}
+
 
 
 /* 글쓰기(내물건팔기) */
@@ -159,7 +161,8 @@ button {cursor: pointer;}
 
 
 /* 채팅 팝업*/
-.shView .popupWrap {display: flex; flex-direction: column; position: fixed; z-index: 2000; top: 50%; right: 50%; width: 360px; padding: 0px 0px 0px; background-color: #fff; box-shadow: 0px 0px 7px 3px #cfcfcf; box-sizing: border-box; border-radius: 8px; overflow: hidden; transform: translate(50%, -50%);}
+.shView .popupDim {justify-content: center; align-items: center; position: fixed; z-index: 2000; top: 0%; right: 0%; width: 100%; height: 100%; background-color: hsla(0, 0%, 0%, 0.8);}
+.shView .popupWrap {display: flex; flex-direction: column;  width: 360px; padding: 0px 0px 0px; background-color: #fff; box-shadow: 0px 0px 7px 3px #cfcfcf; box-sizing: border-box; border-radius: 8px; overflow: hidden;}
 .shView .popupWrap .popupHeader {display: flex; justify-content: space-between; padding: 28px 28px 24px; box-sizing: border-box; background:#e7b7b7;}
 .shView .popupWrap .pTitle {font-size: 18px; font-weight: 600; color: #555;}
 .shView .popupWrap .bthClose { font-size: 18px; font-weight: 500;}
@@ -199,17 +202,17 @@ button {cursor: pointer;}
 .privateChatRoom .oneToOneArea::-webkit-scrollbar-thumb {background: #e48d8d; border-radius: 20px; overflow: hidden;}
 .privateChatRoom .oneToOneArea .hello {line-height: 20px; text-align: center; font-size: 12px; font-weight: 500; color: #999;}
 .privateChatRoom .oneToOneArea .chat {display: flex; align-items: flex-start; gap: 4px; margin: 10px 0;}
-.privateChatRoom .oneToOneArea .chat.left {}
+.privateChatRoom .oneToOneArea .chat.left {flex-direction: column;}
 .privateChatRoom .oneToOneArea .chat.right {display: flex; flex-direction: row-reverse;}
-.privateChatRoom .oneToOneArea .chat .name {flex-shrink: 0; padding-right: 6px; font-size: 16px; font-weight: 600; color: #555;}
+.privateChatRoom .oneToOneArea .chat .name {flex-shrink: 0; padding-right: 6px; font-size: 16px; font-weight: 600; color: #555; width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .privateChatRoom .oneToOneArea .chat .msgWrap {display: flex; gap: 6px; align-items: flex-end;}
-.privateChatRoom .oneToOneArea .chat .msg {padding: 4px 10px; box-sizing: border-box; border-radius: 10px; font-size: 15px; font-weight: 500; color: #555; overflow: hidden; white-space: pre-wrap;}
+.privateChatRoom .oneToOneArea .chat .msg {padding: 4px 10px; box-sizing: border-box; border-radius: 10px; font-size: 15px; font-weight: 500; color: #555; overflow: hidden; white-space: pre-wrap; overflow-wrap: anywhere;}
 .privateChatRoom .oneToOneArea .chat.left .msg { background-color: #e48d8d;}
 .privateChatRoom .oneToOneArea .chat.right .name {display: none;}
 .privateChatRoom .oneToOneArea .chat.right .msg { background-color: #ffff52;}
 .privateChatRoom .oneToOneArea .chat .indate {display: flex; align-items: flex-end; flex-shrink: 0; height: 100%; font-size: 10px; font-weight: 500; color: #555;}
 .privateChatRoom .eventArea {display: flex; flex-direction: column; align-items: flex-end; border: 1px solid #999; border-radius: 8px; height: 128px;}
-.privateChatRoom .eventArea .chatInpTxt {padding:6px 12px; width: 100%; height: 100%; border:none !important; box-sizing: border-box;}
+.privateChatRoom .eventArea .chatInpTxt {padding:6px 12px; width: 100%; height: 100%; border:none !important; white-space: pre-wrap; box-sizing: border-box; word-wrap: break-all; overflow-wrap: anywhere;}
 .privateChatRoom .eventArea .sendMsg {display: flex; justify-content: center; align-items: center; flex-shrink: 0; margin: 8px; width: 52px; height: 32px; background: #e48d8d; border-radius: 6px; font-size: 14px; font-weight: 500; color: #fff;}
 
 

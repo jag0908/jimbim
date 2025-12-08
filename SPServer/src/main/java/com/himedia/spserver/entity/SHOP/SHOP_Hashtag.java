@@ -13,4 +13,5 @@ public class SHOP_Hashtag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tag_id;
     private String word;
+
 }

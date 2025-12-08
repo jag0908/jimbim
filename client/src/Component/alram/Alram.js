@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
-import AlramCommunity from './AlramCommunity'
 import AlramZzim from './AlramZzim'
 
 // 이삭 수정

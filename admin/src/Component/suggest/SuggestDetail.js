@@ -14,7 +14,7 @@ function SuggestDetail() {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [price, setPrice] = useState('');
+    // const [price, setPrice] = useState('');
 
     const [categoryId, setCategoryId] = useState('1');
     const [categoryArr, setCategoryArr] = useState([]);
@@ -93,7 +93,8 @@ function SuggestDetail() {
         setIsOpen(!isOpen)
         setTitle(suggest.title)
         setContent(suggest.content)
-        setPrice(suggest.price)
+        // setPrice(suggest.price)
+        setCategoryId(suggest.category.categoryId)
     }
     // 숫자만 입력 가능하게
     const getNumberOnly = (e) => {
@@ -152,35 +153,35 @@ function SuggestDetail() {
     async function writeShopPost(){
         if(!title){ return alert('제목을 입력하세요')}
         if(!content){ return alert('내용을 입력하세요')}
-        if(!price){ return alert('가격을 입력하세요')}
+        // if(!price){ return alert('가격을 입력하세요')}
         if(!categoryId){ return alert('카테고리를 선택하세요')}
 
         if(window.confirm('등록하시겠습니까?')){
             let createdPostId;
-            await jaxios.post('/api/admin/writeShopPost', null, {params:{title, content, price, categoryId}})
+            await jaxios.post('/api/admin/writeShopPost', null, {params:{title, content, categoryId}})
             .then((result)=>{ 
                 alert('등록이 완료되었습니다.');
                 createdPostId = result.data.postId;
                 setIsOpen( false )
             } ).catch((err)=>{console.error(err)})
 
-            await createFormData(fileArr, createdPostId);
+            await createFormData(fileArr, createdPostId);       // 새로 등록한 이미지 s3에 업로드 후 DB에 등록
 
             const idList = oldFiles.map( e => e.file_id )
 
 
-            await jaxios.post('/api/admin/uploadOldFile', null, {params:{idList:idList, postId:createdPostId}})
+            await jaxios.post('/api/admin/uploadOldFile', null, {params:{idList:idList, postId:createdPostId}})     // 기존 suggest에 있는 이미지 product id 값 넣음
             .then((result)=>{ 
 
             } ).catch((err)=>{console.error(err)})
 
-            await jaxios.post('/api/admin/setStatus', null, {params:{suggestId, status:'Y'}})
+            await jaxios.post('/api/admin/setStatus', null, {params:{suggestId, status:'Y'}})       // suggest 수락으로 상태 바꾸고
             .then((result)=>{ 
                 
             })
             .catch((err)=>{console.error(err)})
 
-            await jaxios.get('/api/admin/getSuggest', {params:{suggestId}})
+            await jaxios.get('/api/admin/getSuggest', {params:{suggestId}})         // suggest 상태 다시 불러옴
             .then((result)=>{
                 setSuggest(result.data.suggest)
                 setOldFiles(result.data.files);
@@ -239,10 +240,10 @@ function SuggestDetail() {
                         <div className='col detailTitle'>상품설명</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.content}</div>
                     </div>
-                    <div className='row'>
+                    {/* <div className='row'>
                         <div className='col detailTitle'>가격</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.price} 원</div>
-                    </div>
+                    </div> */}
                     <div className='row'>
                         <div className='col detailTitle'>상태</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{
@@ -257,10 +258,10 @@ function SuggestDetail() {
                             </>)
                         }</div>
                     </div>
-                    <div className='row'>
+                    {/* <div className='row'>
                         <div className='col detailTitle'>가격</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.price} 원</div>
-                    </div>
+                    </div> */}
                 </>):(<></>)}
                 
                 <div className='detailPageBtns'>
@@ -278,7 +279,7 @@ function SuggestDetail() {
                             {
                                 categoryArr.map((category, i)=> {
                                     return(
-                                        <option key={i} value={category.category_id}>
+                                        <option key={i} value={category.categoryId}>
                                             {category.category_name}
                                         </option>
                                     )
@@ -327,10 +328,10 @@ function SuggestDetail() {
                         <div className='col detailTitle'>상품설명</div>
                         <textarea value={content} onChange={(e)=>{setContent( e.currentTarget.value )}} maxLength={2000}></textarea>
                     </div>
-                    <div className='row'>
+                    {/* <div className='row'>
                         <div className='col detailTitle'>가격</div>
                         <input value={price} onInput={getNumberOnly} onChange={(e)=>{setPrice( e.currentTarget.value )}}/>
-                    </div>
+                    </div> */}
                     <div className='detailPageBtns'>
                         <button onClick={()=>{writeShopPost()}}>상품 등록하기</button>
                     </div>

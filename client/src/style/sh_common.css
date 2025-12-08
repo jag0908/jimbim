@@ -39,14 +39,15 @@ button {cursor: pointer;}
 .shMain .shPostWrap .list.state2:after {content: '판매완료'; background: #000000a2; width: 64px;}
 .shMain .shPostWrap .list > a {display: flex; flex-direction: column; align-items: flex-start; gap: 2px;}
 .shMain .shPostWrap .list .imgBox {position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden;} 
-.shMain .shPostWrap .list.state2 .imgBox::before {content: ''; position: absolute; z-index: 10; top: 0; left: 0; width: 100%; height: 100%; background: #000; border-radius: 10px; opacity: 0.2;}
+.shMain .shPostWrap .list.state2 .imgBox::before {content: ''; position: absolute; z-index: 10; top: 0; left: 0; width: 100%; height: 100%; background: #000; border-radius: 10px; opacity: 0.4;}
 .shMain .shPostWrap .list .imgBox img {width: 100%; height: 100%; object-fit: cover;}
 .shMain .shPostWrap .list .data {padding: 0 4px; box-sizing: border-box;}
 .shMain .shPostWrap .list .data.title {display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; text-overflow: ellipsis; font-size: 16px; font-weight: 400;}
 .shMain .shPostWrap .list .data.price {font-size: 20px; font-weight: 600;}
 .shMain .shPostWrap .list .data.date {font-size: 14px; font-weight: 600; color: #999;}
 
-.shMain .btnWrap {display: flex; justify-content: center; align-items: center; position: fixed; bottom: 140px; right: 45px; width: 56px; height: 56px; border-radius: 40%; background-color: #d7d3d3;}
+.shMain .btnWrap {display: flex; justify-content: center; align-items: center; position: fixed; bottom: 140px; right: 45px; width: 56px; height: 56px; border-radius: 40%; background-color: #d7d3d3; transition: all 0.2s;}
+.shMain .btnWrap:hover {background: #a3a3a3;}
 .shMain .btnWrap .btnWrite {display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 13px; color: #fff; cursor: pointer;}
 .shMain .btnWrap .btnWrite > img {width: 50%; height: 50%; object-fit: contain;}
 
@@ -163,8 +164,8 @@ button {cursor: pointer;}
 
 
 /* 채팅 팝업*/
-.shView .popupDim {justify-content: center; align-items: center; position: fixed; z-index: 2000; top: 0%; right: 0%; width: 100%; height: 100%; background-color: hsla(0, 0%, 0%, 0.8);}
-.shView .popupWrap {display: flex; flex-direction: column;  width: 360px; padding: 0px 0px 0px; background-color: #fff; box-shadow: 0px 0px 7px 3px #cfcfcf; box-sizing: border-box; border-radius: 8px; overflow: hidden;}
+.shView .popupDim {justify-content: center; align-items: center; position: fixed; z-index: 2000; top: 0%; right: 0%; width: 100%; height: 100%; background-color: hsla(0, 0%, 0%, 0.6);}
+.shView .popupWrap {display: flex; flex-direction: column;  width: 360px; padding: 0px 0px 0px; background-color: #fff; box-sizing: border-box; border-radius: 8px; overflow: hidden;}
 .shView .popupWrap .popupHeader {display: flex; justify-content: space-between; padding: 28px 28px 24px; box-sizing: border-box; background:#e7b7b7;}
 .shView .popupWrap .pTitle {font-size: 18px; font-weight: 600; color: #555;}
 .shView .popupWrap .bthClose { font-size: 18px; font-weight: 500;}

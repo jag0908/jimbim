@@ -34,7 +34,7 @@ function ShView() {
 
     const [sModal, setSModal] = useState(false);
     const [suggestPrice, setSuggestPrice] = useState(0);
-    const [isZzim, setIsZzim] = useState("false");
+    const [isZzim, setIsZzim] = useState(false);
     const [suggestInfo, setSuggestInfo] = useState([]);
     const [zzimCount, setZzimCount] = useState(0);
     const [chatRoomCount, setChatRoomCount] = useState(0);
@@ -493,7 +493,7 @@ function ShView() {
                         }
                         
                         {
-                            postDetail &&
+                            postDetail && 
                             postDetail.member.memberId != loginUser.member_id && 
                             <button className='btnEvent btnZZim' style={isZzim? {backgroundColor: "#f17575", color : "#fff"} : null} onClick={()=> {eventZzim();}}>찜</button>
                         }

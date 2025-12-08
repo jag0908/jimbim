@@ -180,13 +180,8 @@
   position: relative;
 }
 
-/* 부모 댓글과 자식 댓글 구분 */
-.reply-item[data-level="1"] { margin-left: 20px; }
-.reply-item[data-level="2"] { margin-left: 40px; }
-.reply-item[data-level="3"] { margin-left: 60px; }
-
 /* 댓글 헤더 */
-.reply-header {
+.communityView-reply-header {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -211,28 +206,8 @@
   line-height: 1.5;
 }
 
-/* 삭제 버튼 */
-.communityView-reply-delete {
-  position: absolute;
-  right: 10px;
-  top: 12px;
-  background-color: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.communityView-reply-delete:hover {
-  background-color: #c0392b;
-  transform: scale(1.05);
-}
-
 /* 답글 버튼 */
-.reply-reply-btn {
+.communityView-reply-actions button {
   background-color: #17a2b8;
   color: #fff;
   border: none;
@@ -242,9 +217,10 @@
   cursor: pointer;
   transition: 0.2s;
   margin-top: 6px;
+  margin-right: 6px;
 }
 
-.reply-reply-btn:hover {
+.communityView-reply-actions button:hover {
   background-color: #138496;
   transform: translateY(-1px);
 }
@@ -254,13 +230,5 @@
   .communityView-container {
     width: 95%;
     padding: 20px;
-  }
-  
-  .communityView-reply-input {
-    flex-direction: column;
-  }
-
-  .communityView-reply-input button {
-    width: 100%;
   }
 }

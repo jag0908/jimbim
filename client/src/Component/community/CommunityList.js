@@ -16,7 +16,6 @@ function CommunityList() {
     const [searchCategoryId, setSearchCategoryId] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState("");
 
-    //공지사항 글 리스트
     const [noticeList, setNoticeList] = useState([]);
 
     const loginUser = useSelector(state => state.user);
@@ -35,17 +34,12 @@ function CommunityList() {
 
     const fetchCommunityList = useCallback((page, categoryId, keyword = "") => {
 
-        // 페이지가 1페이지일 경우 공지사항 불러오기
         if(page===1){
             axios.get('/api/communityList/getNoticeList')
-            .then((result)=>{
-                console.log(result)
-                setNoticeList(result.data.noticeList)
-            })
-            .catch((err)=>{console.error(err);});
+            .then((result)=> setNoticeList(result.data.noticeList))
+            .catch((err)=> console.error(err));
         }
 
-        // 항상 선택한 categoryId와 keyword 그대로 전달
         let url = `${baseURL}/communityList/getCommunityList/${page}?title=${encodeURIComponent(keyword)}&categoryId=${categoryId}`;
 
         axios.get(url)
@@ -62,44 +56,32 @@ function CommunityList() {
                 }
                 setPages(pArr);
             })
-            .catch(err=>{
+            .catch(err=> {
                 console.error(err);
                 alert("게시글 로딩 실패");
             });
     }, []);
 
-
-
-    // 초기 로딩
     useEffect(() => {
-    // 사이드바 카테고리가 바뀔 때, 해당 카테고리로 리스트를 다시 불러옵니다.
-    // 검색어는 초기화되었기 때문에 빈 문자열로 전달됩니다.
-    fetchCommunityList(1, selectedCategoryId); 
-}, [fetchCommunityList, selectedCategoryId]);
+        fetchCommunityList(1, selectedCategoryId); 
+    }, [fetchCommunityList, selectedCategoryId]);
 
     const onSearch = () => {
-        // 검색 시, 검색 select에서 선택된 카테고리(searchCategoryId)와 키워드를 사용합니다.
-        // 검색 후 사이드바 선택 상태도 검색된 카테고리로 업데이트 (선택 사항)
-        setSelectedCategoryId(searchCategoryId); // 사이드바 상태를 검색 카테고리로 동기화
+        setSelectedCategoryId(searchCategoryId);
         fetchCommunityList(1, searchCategoryId, searchKeyword.trim());
     };
 
-    // 페이지 이동
     const onPageMove = (page) => {
-    // 현재 (사이드바에 반영된) 카테고리 기준으로 검색어를 포함하여 페이지 이동
-    fetchCommunityList(page, selectedCategoryId, searchKeyword.trim());
-};
+        fetchCommunityList(page, selectedCategoryId, searchKeyword.trim());
+    };
 
-    // 글 클릭
     const onCommunityView = (id) => {
         jaxios.post(`${baseURL}/communityList/addReadCount?num=${id}`).catch(()=>{});
         navigate(`/communityView/${id}`);
     };
 
-    // 글 삭제
     const onDelete = async (id) => {
         if(!window.confirm("정말 삭제하시겠습니까?")) return;
-
         try {
             await jaxios.delete(`${baseURL}/communityList/deleteCommunity/${id}`);
             alert("삭제되었습니다.");
@@ -110,7 +92,6 @@ function CommunityList() {
         }
     };
 
-    // 글쓰기
     const onWrite = () => {
         if(!loginUser?.userid){
             alert("로그인이 필요합니다");
@@ -123,7 +104,6 @@ function CommunityList() {
     return (
         <>
             <div className="writeBtnArea top" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {/* 검색 영역 */}
                 <div className="searchArea" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <select 
                         value={searchCategoryId} 
@@ -149,7 +129,6 @@ function CommunityList() {
             </div>
 
             <div className='community'>
-                {/* 사이드바 */}
                 <div className="sidebar">
                     <h3>카테고리</h3>
                     <ul>
@@ -158,8 +137,8 @@ function CommunityList() {
                                 className={selectedCategoryId === c.id ? "active" : ""}
                                 onClick={() => {
                                     setSelectedCategoryId(c.id);
-                                    setSearchKeyword("");      // 검색어 초기화
-                                    setSearchCategoryId(0);    // 검색 select 초기화
+                                    setSearchKeyword("");
+                                    setSearchCategoryId(0);
                                 }}
                             >
                                 {c.name}
@@ -168,7 +147,6 @@ function CommunityList() {
                     </ul>
                 </div>
 
-                {/* 게시글 리스트 */}
                 <div className='communityList'>
                     <div className='titlerow'>
                         <div className='col title'>제목</div>
@@ -177,45 +155,16 @@ function CommunityList() {
                         <div className='col count'>조회수</div>
                     </div>
 
-                    {/* 글 1페이지 한정으로 공지사항 굵은글씨로 나옵니다 */}
-                    {noticeList.length === 0 ? (
-                        <></>
-                    ) : noticeList.map(post => (
-                        <div className='row' key={post.cpostId} style={{fontWeight:'bold'}}>
-                            <div className='col' onClick={() => onCommunityView(post.cpostId)}>
-                                {post.title}
-                            </div>
-                            <div className='col'>
-                                {post.isAnonymous === 'Y'
-                                    ? "익명"
-                                    : post.member?.userid || post.userid || "알수없음"}
-                            </div>
-                            <div className='col'>{post.indate?.substring(0,10)}</div>
-                            <div className='col'>{post.readcount ?? post.readCount ?? 0}</div>
-                        </div>
-                    ))}
-
-
-                    {communityList.length === 0 ? (
-                        <div className='noPosts'>게시물이 없습니다.</div>
-                    ) : communityList.map(post => (
-                        <div className='row' key={post.cpostId} onClick={() => onCommunityView(post.cpostId)}>
+                    {/* 공지사항 */}
+                    {noticeList.length > 0 && paging.page==1 && noticeList.map(post => (
+                        <div className='row notice' key={post.cpostId} onClick={() => onCommunityView(post.cpostId)}>
                             <div className='col title'>
-                                {/* 아이콘 */}
-                                {post.fileList && post.fileList.length > 0 ? (
-                                    <span className="icon" role="img" aria-label="image-icon">📷</span>
-                                ) : (
-                                    <span className="icon" role="img" aria-label="text-icon">📄</span>
-                                )}
-
-                                {/* 제목 텍스트 - ellipsis 적용 위해 별도 class 추가 */}
-                                <span className="title-text">{post.title || '제목 없음'}</span>
-
-                                {/* 댓글 수 */}
-                                <span className="comment-count">[{post.replyCount ?? 0}]</span>
+                                <div className="title-wrapper">
+                                    <span className="notice-icon" role="img" aria-label="notice-icon">📢</span>
+                                    <span className="title-text">&nbsp;{post.title}</span>
+                                    <span className="comment-count">[{post.replyCount ?? 0}]</span>
+                                </div>
                             </div>
-
-
                             <div className='col author'>
                                 {post.isAnonymous === 'Y'
                                     ? "익명"
@@ -226,7 +175,32 @@ function CommunityList() {
                         </div>
                     ))}
 
-                    {/* 페이징 */}
+                    {/* 일반 게시글 */}
+                    {communityList.length === 0 ? (
+                        <div className='noPosts'>게시물이 없습니다.</div>
+                    ) : communityList.map(post => (
+                        <div className='row' key={post.cpostId} onClick={() => onCommunityView(post.cpostId)}>
+                            <div className='col title'>
+                                <div className="title-wrapper">
+                                    {post.fileList && post.fileList.length > 0 ? (
+                                        <span className="icon" role="img" aria-label="image-icon">📷</span>
+                                    ) : (
+                                        <span className="icon" role="img" aria-label="text-icon">📄</span>
+                                    )}
+                                    <span className="title-text">&nbsp;{post.title || '제목 없음'}</span>
+                                    <span className="comment-count">[{post.replyCount ?? 0}]</span>
+                                </div>
+                            </div>
+                            <div className='col author'>
+                                {post.isAnonymous === 'Y'
+                                    ? "익명"
+                                    : post.member?.userid || post.userid || "알수없음"}
+                            </div>
+                            <div className='col date'>{post.indate?.substring(0,10)}</div>
+                            <div className='col count'>{post.readcount ?? post.readCount ?? 0}</div>
+                        </div>
+                    ))}
+
                     <div id='paging'>
                         {paging.prev && <span onClick={() => onPageMove(Math.max(1, paging.page - 1))}>◀</span>}
                         {pages.map(p => (

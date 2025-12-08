@@ -10,6 +10,7 @@ function ShDetail() {
     const { postId } = useParams();
     const [shPost, setShPost] = useState({});
     const [shCategoryList, setShCategoryList] = useState([]);
+    const [shFileList, setShFileList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(
@@ -26,6 +27,8 @@ function ShDetail() {
                 }else{
                     setShPost(result.data.shPost)
                     setShCategoryList(result.data.shCategoryList)
+                    setShFileList(result.data.shFileList)
+                    console.log(result.data)
                 }
             })
             .catch((err)=>{console.error(err)})
@@ -70,7 +73,33 @@ function ShDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>상품 이미지</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}></div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            {(shFileList[0])?(<>
+                                <div className='detailImg'>
+                                {
+                                    shFileList.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx<5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                                <div className='detailImg'>
+                                {
+                                    shFileList.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx>=5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                            </>):(<span className='italic'>이미지 없음</span>)
+                            }
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>상품설명</div>

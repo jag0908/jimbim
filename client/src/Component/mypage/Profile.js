@@ -3,7 +3,7 @@ import { useNavigate,} from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
 import '../../style/login.css';
-import SideMenu from './SideMenu';
+import SideMenu from './MypageSideMenu';
 import '../../style/mypage.css';
 
 function Profile() {

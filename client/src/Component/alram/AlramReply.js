@@ -39,7 +39,14 @@ function AlramReply() {
 
   return (
     <>
-      {list.length === 0 && <div>댓글 알림이 없습니다.</div>}
+      {
+        list.length === 0 && 
+        <div className="alram-empty">
+            <div className="empty-icon">🔔</div>
+            <p className="empty-text">새로운 댓글이 없습니다.</p>
+            <p className="empty-subtext">새로운 댓글이 생기면 여기에 표시됩니다</p>
+          </div>
+      }
       {list.map(item => (
         <NotificationItem key={item.id} item={item} onConfirm={handleConfirm} />
       ))}

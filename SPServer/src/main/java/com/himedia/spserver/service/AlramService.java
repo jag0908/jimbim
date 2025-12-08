@@ -21,7 +21,6 @@ public class AlramService {
     private final ShPostRepository spr;
     private final AlramZzimRepository azr;
     private final ChatRepository crr;
-    private final ChatMsgRepository cmr;
     private final AlramShSuggestRepository asr;
 
 
@@ -143,4 +142,5 @@ public class AlramService {
         targetSuggest.setIsRead(true);
         asr.delete(targetSuggest);
     }
+
 }

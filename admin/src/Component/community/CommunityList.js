@@ -90,7 +90,7 @@ function CommunityList() {
                                         (<span className='italic'>탈퇴회원</span>)
                                     }</div>
                                     <div className='col'>{cPost.isAnonymous}</div>
-                                    <div className='col'>{cPost.isNotice}</div>
+                                    <div className='col'>{(cPost.isNotice=='Y')?('Y'):('N')}</div>
                                     <div className='col'>
                                         {
                                             (cPost.indate)?

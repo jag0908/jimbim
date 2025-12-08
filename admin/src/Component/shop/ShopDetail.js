@@ -5,12 +5,11 @@ import jaxios from '../../util/jwtutil';
 import SubMenu from '../SubMenu';
 import Modal from 'react-modal'
 
-function ShDetail() {
+function ShopDetail() {
     const loginUser = useSelector( state=>state.user)
     const { postId } = useParams();
     const [shPost, setShPost] = useState({});
     const [shCategoryList, setShCategoryList] = useState([]);
-    const [shFileList, setShFileList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(
@@ -19,16 +18,16 @@ function ShDetail() {
                 alert('권한이 없습니다')
                 navigate('/')
             }
+            alert('준비중')
+            navigate('/shopList')
             jaxios.get('/api/admin/getShPost', {params:{postId}})
             .then((result)=>{ 
                 if(result.data.shPost==null){
-                    alert('존재하지 않는 페이지입니다')
-                    navigate('/shList')
+                    alert('준비중')
+                    navigate('/shopList')
                 }else{
                     setShPost(result.data.shPost)
                     setShCategoryList(result.data.shCategoryList)
-                    setShFileList(result.data.shFileList)
-                    console.log(result.data)
                 }
             })
             .catch((err)=>{console.error(err)})
@@ -73,30 +72,7 @@ function ShDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>상품 이미지</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
-                            <div className='detailImg'>
-                            {
-                                shFileList.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx<5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
-                            }
-                            </div>
-                            <div className='detailImg'>
-                            {
-                                shFileList.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx>=5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
-                            }
-                            </div>
-                        </div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}></div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>상품설명</div>
@@ -123,4 +99,4 @@ function ShDetail() {
     )
 }
 
-export default ShDetail
+export default ShopDetail

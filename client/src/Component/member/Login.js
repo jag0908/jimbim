@@ -47,21 +47,23 @@ function Login() {
 
     return (
         <article>
-            <div className='subPage'>
+            <div className='subPage login'>
                 <div className='memberform'>
                     <div className='formtitle'>로그인</div>
                     <div className='field'>
-                        <label>아이디</label>
-                        <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
+                        {/* <label>아이디</label> */}
+                        <input type='text' placeholder='아이디' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='field'>
-                        <label>비밀번호</label>
-                        <input type='password'  value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
+                        {/* <label>비밀번호</label> */}
+                        <input type='password' placeholder='비밀번호' value={pwd} onChange={(e)=>{setPwd( e.currentTarget.value)}} onKeyDown={(e) => activeEnter(e)}/>
                     </div>
                     <div className='btns'>
-                        <button onClick={()=>{ onloginlocal() }}>로그인</button>
-                        <button onClick={()=>{ navigate('/join')}}>회원가입</button>
-                        <button onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>
+                        <button className='join' onClick={()=>{ navigate('/join')}}>회원가입</button>
+                        <button className='find' onClick={()=>{ navigate('/findaccount')}}>아이디/비밀번호 찾기</button>                        
+
+                        <button className='login' onClick={()=>{ onloginlocal() }}>로그인</button>
+
                     </div>
                     <div className="kakaobutton">
                         <button onClick={

@@ -96,8 +96,8 @@ function Shop() {
                             </div>
 
                             <h3 className='data title'>{item.title}</h3>
-                            <h3 className='data price'>{formatPrice(item.price)}원</h3>
-                            <h3 className='data date'>{item.indate.substring(0, 10)}</h3>
+                            {/* <h3 className='data price'>{formatPrice(item.price)}원</h3> */}
+                            {/* <h3 className='data date'>{item.indate.substring(0, 10)}</h3> */}
                         </Link>
                     </div>
                 ))}

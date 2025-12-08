@@ -289,3 +289,8 @@ a{
     font-weight: 600;
     cursor: pointer;
 }
+.detailImg img{
+    max-width: 100px;
+    margin: 10px;
+    cursor: pointer;
+}

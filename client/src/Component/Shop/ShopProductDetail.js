@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import jaxios from '../../util/jwtutil';
+import ShopBuyModal from './ShopBuyModal';
 import '../../style/shopDetail.css';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
@@ -9,6 +10,7 @@ function ShopProductDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false); //이삭 수정
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
@@ -112,9 +114,18 @@ function ShopProductDetail() {
         {/* 버튼 가로 배치 */}
         <div className="product-buttons">
           <button className="btn-sell">판매하기</button>
-          <button className="btn-buy">구매하기</button>
+          <button className="btn-buy" onClick={() => setIsBuyModalOpen(true)}>
+            구매하기
+          </button>
         </div>
       </div>
+
+      {isBuyModalOpen &&(
+        <ShopBuyModal
+          product={product}
+          onClose={()=> setIsBuyModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

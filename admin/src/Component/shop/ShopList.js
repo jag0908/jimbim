@@ -7,15 +7,15 @@ import jaxios from '../../util/jwtutil';
 import '../../style/admin.css'
 
 
-function CommunityList() {
+function ShopList() {
     const loginUser = useSelector( state=>state.user)
-    const [cPostList, setCPostList] = useState([]);
-    const [cCategoryList, setCCategoryList] = useState([]);
+    const [shopList, setShopList] = useState([]);
+    const [shopCategoryList, setShopCategoryList] = useState([]);
     const [paging, setPaging]=useState({});
     const navigate = useNavigate();
     const [beginEnd, setBeginEnd] = useState();
     const [key, setKey] = useState('')
-    const type = 'community'
+    const type = 'shop'
 
     useEffect(
         ()=>{
@@ -23,11 +23,11 @@ function CommunityList() {
                 alert('권한이 없습니다')
                 navigate('/')
             }
-            jaxios.get('/api/admin/getCPostList', {params:{page:1, key}})
+            jaxios.get('/api/admin/getShopList', {params:{page:1, key}})
             .then((result)=>{ 
                 console.log(result)
-                setCPostList(result.data.cPostList) 
-                setCCategoryList(result.data.cCategoryList)
+                setShopList(result.data.shopList) 
+                setShopCategoryList(result.data.shopCategoryList)
                 setPaging( result.data.paging )
                 setKey( result.data.key)
 
@@ -42,10 +42,10 @@ function CommunityList() {
     )
 
     function onPageMove(p){ 
-        jaxios.get('/api/admin/getCPostList', {params:{page:p, key}})
+        jaxios.get('/api/admin/getShopList', {params:{page:p, key}})
         .then((result)=>{ 
-            setCPostList(result.data.cPostList) 
-            setCCategoryList(result.data.cCategoryList)
+            setShopList(result.data.shopList) 
+            setShopCategoryList(result.data.shopCategoryList)
             setPaging( result.data.paging )
             setKey( result.data.key)
             let arr = [];
@@ -62,42 +62,27 @@ function CommunityList() {
         <div className='adminContainer'>
             <SubMenu type={type}/>
             <div className='productTable'>
-                <div className='title'>커뮤니티</div>
+                <div className='title'>상품목록(SHOP)</div>
                 <div className='row tableTitle'>
                     <div className='col'>카테고리</div>
-                    <div className='col'>제목</div>
-                    <div className='col'>글쓴이</div>
-                    <div className='col'>익명글 여부</div>
-                    <div className='col'>공지사항 여부</div>
-                    <div className='col'>게시일</div>
+                    <div className='col'>상품명</div>
+                    <div className='col'>원가</div>
+                    <div className='col'>추가일</div>
                 </div>
                 {
-                    (cPostList[0])?(
-                        cPostList.map((cPost, idx)=>{
+                    (shopList[0])?(
+                        shopList.map((shop, idx)=>{
                             return (
-                                <div className='row' onClick={()=>{navigate(`/communityDetail/${cPost.cpostId}`)}}>
-                                    <div className='col'>
-                                        {
-                                            (cPost.category)?
-                                            (cCategoryList[cPost.category.categoryId].categoryName):
-                                            (<></>)
-                                        }
-                                    </div>
-                                    <div className='col'>{cPost.title}</div>
-                                    <div className='col'>{
-                                        (cPost.member)?
-                                        (((cPost.member.provider)?(cPost.member.userid+' ('+cPost.member.provider+')'):(cPost.member.userid))):
+                                <div className='row' onClick={()=>{navigate(`/ShopDetail/${shop.productId}`)}}>
+                                    <div className='col'>{shopCategoryList[shop.category.categoryId-1].category_name}</div>
+                                    <div className='col'>{shop.title}</div>
+                                    <div className='col'>{shop.price} 원</div>
+                                    {/* <div className='col'>{
+                                        (shop.member)?
+                                        (((shop.member.provider)?(shop.member.userid+' ('+shop.member.provider+')'):(shop.member.userid))):
                                         (<span className='italic'>탈퇴회원</span>)
-                                    }</div>
-                                    <div className='col'>{cPost.isAnonymous}</div>
-                                    <div className='col'>{(cPost.isNotice=='Y')?('Y'):('N')}</div>
-                                    <div className='col'>
-                                        {
-                                            (cPost.indate)?
-                                            (cPost.indate.substring(0, 10)):
-                                            (<></>)
-                                        }
-                                    </div>
+                                    }</div> */}
+                                    <div className='col'>{shop.indate.substring(0, 10)}</div>
                                 </div>
                             )
                         })
@@ -137,4 +122,4 @@ function CommunityList() {
     )
 }
 
-export default CommunityList
+export default ShopList

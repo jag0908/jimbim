@@ -94,4 +94,47 @@ public class ShopController {
     public List<SHOP_Category> getCategories() {
         return shopService.getCategories();
     }
+
+    @PostMapping("/suggest/approve/{suggestId}")
+    public ResponseEntity<?> approve(@PathVariable int suggestId) {
+        SHOP_Product product = shopSuggestService.approveSuggest(suggestId);
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/products/search")
+    public List<ShopProductDTO> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "categoryId", required = false) Long categoryId
+    ) {
+        return shopService.searchProducts(keyword, categoryId);
+    }
+
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
+    }
+
+    @GetMapping("/getSuggestList/{page}")
+    public ResponseEntity<?> getSuggestList(
+            @PathVariable int page,
+            @RequestParam int memberId
+    ){
+        return ResponseEntity.ok(shopSuggestService.getSuggestList(page, memberId));
+    }
+
+    @GetMapping("/getSuggestDetail/{id}")
+    public ShopSuggestDto getSuggestDetail(@PathVariable Integer id) {
+        SHOP_Suggest suggest = shopSuggestService.findById(id);
+        return ShopSuggestDto.fromEntity(suggest);
+    }
+
+    @DeleteMapping("/deleteSuggest/{id}")
+    public ResponseEntity<String> deleteSuggest(@PathVariable Integer id) {
+        shopSuggestService.deleteSuggest(id);
+        return ResponseEntity.ok("삭제 완료");
+    }
+
+
+
 }

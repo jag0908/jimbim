@@ -44,9 +44,8 @@ public class DataInit_ShopCategory implements CommandLineRunner {
                 new SHOP_Category(15L, "책"),
                 new SHOP_Category(16L, "인형"),
                 new SHOP_Category(17L, "캠핑"),
-                new SHOP_Category(18L, "자동차"),
-                new SHOP_Category(19L, "취미"),
-                new SHOP_Category(20L, "기타")
+                new SHOP_Category(18L, "취미"),
+                new SHOP_Category(19L, "기타")
         );
 
         sr.saveAll(categories);

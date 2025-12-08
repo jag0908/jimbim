@@ -156,7 +156,7 @@ function CommunityList() {
                     </div>
 
                     {/* 공지사항 */}
-                    {noticeList.length > 0 && noticeList.map(post => (
+                    {noticeList.length > 0 && paging.page==1 && noticeList.map(post => (
                         <div className='row notice' key={post.cpostId} onClick={() => onCommunityView(post.cpostId)}>
                             <div className='col title'>
                                 <div className="title-wrapper">

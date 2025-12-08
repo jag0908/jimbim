@@ -7,10 +7,7 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_File;
 import com.himedia.spserver.entity.SH.SH_post;
-import com.himedia.spserver.entity.SHOP.SHOP_File;
-import com.himedia.spserver.entity.SHOP.SHOP_Product;
-import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
-import com.himedia.spserver.entity.SHOP.SHOP_post;
+import com.himedia.spserver.entity.SHOP.*;
 import com.himedia.spserver.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -114,25 +111,31 @@ public class AdminController {
         return result;
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @GetMapping("/getShopPost")
-//    public HashMap<String, Object> getShopPost(@RequestParam("postId") int postId){
-//        HashMap<String, Object> result = new HashMap<>();
-//        SH_post post = as.getShPost( postId );
-//        List<SH_Category> shCategoryList = as.getShCategoryList();
-//        result.put("shPost", post);
-//        result.put("shCategoryList", shCategoryList);
-//        return result;
-//    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getShopProduct")
+    public HashMap<String, Object> getShopProduct(@RequestParam("productId") Long productId){
+        HashMap<String, Object> result = new HashMap<>();
+        SHOP_Product product = as.getShopProduct( productId );
+        result.put("product", product);
+        return result;
+    }
 //
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @DeleteMapping("/deleteShPost")
-//    public HashMap<String, Object> deleteShPost(@RequestParam("postId") int postId){
-//        HashMap<String, Object> result = new HashMap<>();
-//        as.deleteShPost(postId);
-//        result.put("msg", "ok");
-//        return result;
-//    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteShopProduct")
+    public HashMap<String, Object> deleteShopProduct(@RequestParam("productId") Long productId){
+        HashMap<String, Object> result = new HashMap<>();
+        as.deleteShopProduct(productId);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getOptionList")
+    public HashMap<String, Object> getOptionList(@RequestParam("page") int page,
+                                               @RequestParam("productId") Long productId){
+        HashMap<String, Object> result = as.getOptionList(page, productId);
+        return result;
+    }
 
     ///   ///////// 커뮤니티 관련 /////////
     @PreAuthorize("hasRole('ADMIN')")
@@ -233,10 +236,10 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/writeShopPost")
-    public HashMap<String,Object> writeShopPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("categoryId") Long categoryId){
+    @PostMapping("/writeShopProduct")
+    public HashMap<String,Object> writeShopProduct(@RequestParam("title") String title, @RequestParam("price") int price, @RequestParam("categoryId") Long categoryId){
         HashMap<String, Object> result = new HashMap<>();
-        SHOP_Product post = as.writeShopPost(title, content, categoryId);
+        SHOP_Product post = as.writeShopProduct(title, price, categoryId);
         result.put("postId", post.getProductId());
         return result;
     }

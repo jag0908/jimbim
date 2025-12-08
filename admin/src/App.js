@@ -6,6 +6,7 @@ import ShList from './Component/product/ShList'
 import ShDetail from './Component/product/ShDetail'
 import ShopList from './Component/shop/ShopList'
 import ShopDetail from './Component/shop/ShopDetail'
+import OptionList from './Component/shop/OptionList'
 import SuggestList from './Component/suggest/SuggestList'
 import SuggestDetail from './Component/suggest/SuggestDetail'
 import CommunityList from './Component/community/CommunityList'
@@ -24,7 +25,8 @@ function App() {
 				<Route path="/shList" element={<ShList />}/>
 				<Route path="/shDetail/:postId" element={<ShDetail />}/>
 				<Route path="/shopList" element={<ShopList />}/>
-				<Route path="/shopDetail/:postId" element={<ShopDetail />}/>
+				<Route path="/shopDetail/:productId" element={<ShopDetail />}/>
+				<Route path="/shopDetail/:productId/optionList" element={<OptionList />}/>
 				<Route path="/suggestList" element={<SuggestList />}/>
 				<Route path="/suggestDetail/:suggestId" element={<SuggestDetail />}/>
 				<Route path="/communityList" element={<CommunityList />}/>

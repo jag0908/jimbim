@@ -49,6 +49,7 @@ public class AdminService {
     private final ShopFileRepository shopfr;
     private final ShopProductRepository shoppr;
     private final ShopProductImageRepository shopir;
+    private final ShopProductOptionRepository shopor;
 
     @Autowired
     private S3UploadService sus;
@@ -182,6 +183,31 @@ public class AdminService {
         result.put("shopCategoryList", shopcr.findAll());
         result.put("paging", paging);
         result.put("key", key);
+        return result;
+    }
+    public SHOP_Product getShopProduct(Long productId) {
+        return shoppr.findById( productId ).get();
+    }
+    public void deleteShopProduct(Long productId) {
+        shopor.deleteByProduct_ProductId(productId);
+        shoppr.deleteById(productId);
+    }
+    public HashMap<String, Object> getOptionList(int page, Long productId) {
+        // 검색없앰
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        int count = shopor.findByProduct_ProductId(productId).size();
+        paging.setTotalCount(count);
+        paging.calPaging();
+
+        Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "optionId"));
+        Page<SHOP_ProductOption > list = shopor.findByProduct_ProductId( productId , pageable);
+
+        result.put("optionList", list.getContent());
+        result.put("paging", paging);
         return result;
     }
 
@@ -320,13 +346,37 @@ public class AdminService {
         return shopfr.findBySuggest_SuggestId(suggestId);
     }
 
-    public SHOP_Product writeShopPost(String title, String content, Long categoryId) {
+    public SHOP_Product writeShopProduct(String title, int price, Long categoryId) {
         SHOP_Category category =  shopcr.findById(categoryId).get();
-        SHOP_Product post = new SHOP_Product();
-        post.setTitle(title);
-        post.setContent(content);
-        post.setCategory(category);
-        return shoppr.save(post);
+        SHOP_Product product = new SHOP_Product();
+        product.setTitle(title);
+        product.setPrice(price);
+        product.setCategory(category);
+        ///  옵션 추가 부분 ///////////
+        if(1 <= categoryId && categoryId <= 4){
+            String[] sizeList = {"S", "M", "L", "XL"};
+            for (String size : sizeList){               // DB 에 "S" 한줄, "M" 한줄, "L" 한줄, "XL" 한줄
+                SHOP_ProductOption option = new SHOP_ProductOption();
+                option.setOptionName(size);
+                option.setProduct(product);
+                shopor.save(option);
+            }
+        }
+        else if(5 <= categoryId && categoryId <= 7){
+            for (int size = 220; size <= 300; size+=5){  // DB에 220 부터 300까지 5단위 간격으로 한줄씩
+                SHOP_ProductOption option = new SHOP_ProductOption();
+                option.setOptionName(String.valueOf(size));
+                option.setProduct(product);
+                shopor.save(option);
+            }
+        }else{
+            SHOP_ProductOption option = new SHOP_ProductOption();
+            option.setOptionName("one size");
+            option.setProduct(product);
+            shopor.save(option);
+        }
+        /// ////////
+        return shoppr.save(product);
     }
 
     public void fileUpload(List<MultipartFile> images, Long postId) throws IOException {
@@ -356,8 +406,8 @@ public class AdminService {
 
     public void uploadOldFile(List<Integer> idList, Long postId) {
         SHOP_Product post = shoppr.findById(postId).get();
-        for(Integer id : idList) {
-            SHOP_File fileInDB =  shopfr.findById(id).get();        // suggest는 SHOP_File을 씀
+        for (Integer id : idList) {
+            SHOP_File fileInDB = shopfr.findById(id).get();        // suggest는 SHOP_File을 씀
 
             SHOP_ProductImage shoppi = new SHOP_ProductImage();     // product는 SHOP_ProductImage를 씀
             shoppi.setProduct(post);

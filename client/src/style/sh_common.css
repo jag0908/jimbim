@@ -139,7 +139,7 @@ button {cursor: pointer;}
 .shView .rayoutWrap .rightBox .dataBoxWrap.dobule > div {font-size: 14px; font-weight: 500; color: #999;}
 .shView .rayoutWrap .rightBox .dataBoxWrap .tit {font-size: 18px; font-weight: 400;}
 .shView .rayoutWrap .rightBox .dataBoxWrap .util {display: flex; gap: 4px;}
-.shView .rayoutWrap .rightBox .dataBoxWrap .util > span {font-size: 16px; font-size: 500; color: #999;}
+.shView .rayoutWrap .rightBox .dataBoxWrap .util > span {font-size: 16px; font-weight: 500; color: #999;}
 .shView .rayoutWrap .rightBox .dataBoxWrap .sellEx {display: flex; align-items: center; padding: 0 4px; border-radius: 4px; width: 88px; height: 28px; border: 1px solid #999; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #999;}
 .shView .rayoutWrap .rightBox .dataBox {font-size: 18px; font-weight: 600;}
 .shView .rayoutWrap .rightBox .mainTitle {font-size: 26px; font-weight: 500;}

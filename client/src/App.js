@@ -46,8 +46,8 @@ import Alram from './Component/alram/Alram';
 
 import Shop from './Component/Shop/Shop';
 import ShopSuggest from './Component/Shop/ShopSuggest';
-import Suggest from './Component/customer/Suggest';
-import SuggestDetail from './Component/customer/SuggestDetail';
+import Suggest from './Component/mypage/Suggest';
+import SuggestDetail from './Component/mypage/SuggestDetail';
 
 
 
@@ -106,8 +106,8 @@ function App() {
 				<Route path="/updateCommunity/:num" element={<UpdateCommunity />} />
 				<Route path="/shop" element={<Shop />} />
 				<Route path='/shop/shopSuggest' element={<ShopSuggest />} />
-				<Route path="/customer/suggest" element={<Suggest />} />
-				<Route path="/customer/suggestDetail/:suggestId" element={<SuggestDetail />} />
+				<Route path="/mypage/suggest" element={<Suggest />} />
+				<Route path="/mypage/suggestDetail/:suggestId" element={<SuggestDetail />} />
 
 
 			</Routes>

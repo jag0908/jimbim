@@ -94,4 +94,27 @@ public class ShopController {
     public List<SHOP_Category> getCategories() {
         return shopService.getCategories();
     }
+
+    @GetMapping("/getSuggestList/{page}")
+    public ResponseEntity<?> getSuggestList(
+            @PathVariable int page,
+            @RequestParam int memberId
+    ){
+        return ResponseEntity.ok(shopSuggestService.getSuggestList(page, memberId));
+    }
+
+    @GetMapping("/getSuggestDetail/{id}")
+    public ShopSuggestDto getSuggestDetail(@PathVariable Integer id) {
+        SHOP_Suggest suggest = shopSuggestService.findById(id);
+        return ShopSuggestDto.fromEntity(suggest);
+    }
+
+    @DeleteMapping("/deleteSuggest/{id}")
+    public ResponseEntity<String> deleteSuggest(@PathVariable Integer id) {
+        shopSuggestService.deleteSuggest(id);
+        return ResponseEntity.ok("삭제 완료");
+    }
+
+
+
 }

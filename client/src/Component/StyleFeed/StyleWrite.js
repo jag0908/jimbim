@@ -63,6 +63,11 @@ function StyleWrite() {
     alert('제목과 내용을 입력해주세요.');
     return;
   }
+  
+  if (images.length === 0) { // 이미지 체크 추가
+    alert('이미지를 최소 1장 이상 업로드해주세요.');
+    return;
+  }
 
   try {
     const formData = new FormData();

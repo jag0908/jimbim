@@ -148,3 +148,139 @@
   font-size: 20px;
   color: #999;
 }
+
+/* 모달 배경 */
+.sell-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+/* 모달 박스 */
+.sell-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 20px 20px 20px; /* 아래 패딩 약간 줄임 */
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: fadeIn 0.2s ease-in-out;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 모달 X 버튼 */
+.modal-close-btn {
+  position: absolute;
+  top: 30px;  /* 아래 라인과 맞추기 위해 조정 */
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* 옵션 리스트 - 한 줄에 옵션 이름과 가격 같이 */
+.option-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+/* 옵션 아이템 하나씩을 가로로 정렬 */
+.option-list > div {
+  flex: 1 1 120px; /* 너비 유연하게 조절 */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f7f7f7;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.option-list > div:hover {
+  background: #eee;
+}
+
+.option-list > div button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000; /* 검은색으로 변경 */
+  cursor: pointer;
+  margin-bottom: 6px;
+  padding: 0;
+  width: 100%;
+}
+
+
+.option-list > div span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 가격 표시가 없으면 '판매입찰'은 진한 회색 */
+.option-list > div span.no-price {
+  color: #666;
+  font-weight: 600;
+}
+
+/* 확인/취소 버튼 */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modal-buttons .btn-confirm,
+.modal-buttons .btn-cancel {
+  flex: 1;
+  padding: 10px 0;
+  margin: 0 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.modal-buttons .btn-confirm {
+  background: #28a745;
+  color: #fff;
+}
+
+.modal-buttons .btn-confirm:hover {
+  background: #218838;
+}
+
+.modal-buttons .btn-cancel {
+  background: #dc3545;
+  color: #fff;
+}
+
+.modal-buttons .btn-cancel:hover {
+  background: #c82333;
+}
+
+/* 모달 나타나는 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

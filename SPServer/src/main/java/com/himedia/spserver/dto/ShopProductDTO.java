@@ -14,14 +14,13 @@ public class ShopProductDTO {
     private Long productId;
     private String title;
     private String content;
-    private Integer minPrice;     // 최저가
-    private String status;        // selling, soldout
-    private String firstImage;    // 대표 이미지
+    private Integer minPrice;
+    private String firstImage;
     private Long categoryId;
-    private String indate;        // 등록일
+    private String indate;
 
-    // 🔹 여러 이미지 리스트 추가
     private List<String> imageUrls;
+    private List<ShopProductOptionDTO> options;
 
     public static ShopProductDTO fromEntity(SHOP_Product product) {
         ShopProductDTO dto = new ShopProductDTO();
@@ -29,16 +28,8 @@ public class ShopProductDTO {
         dto.setTitle(product.getTitle());
         dto.setContent(product.getContent());
 
-        // ⭐ 대표 이미지 설정
         if (product.getImages() != null && !product.getImages().isEmpty()) {
-            SHOP_ProductImage first = product.getImages().stream()
-                    .findFirst()
-                    .orElse(null);
-            if (first != null) {
-                dto.setFirstImage(first.getFilePath());
-            }
-
-            // 🔹 모든 이미지 리스트
+            dto.setFirstImage(product.getImages().get(0).getFilePath());
             dto.setImageUrls(
                     product.getImages().stream()
                             .map(SHOP_ProductImage::getFilePath)
@@ -46,33 +37,35 @@ public class ShopProductDTO {
             );
         }
 
-        // 카테고리
         if (product.getCategory() != null) {
             dto.setCategoryId(product.getCategory().getCategoryId());
         }
 
-        // 최저가 및 상태
+        // 가격: SellList 기준 최소값
         if (product.getSellLists() != null && !product.getSellLists().isEmpty()) {
             dto.setMinPrice(
                     product.getSellLists().stream()
                             .map(SHOP_SellList::getPrice)
                             .min(Integer::compareTo)
-                            .orElse(null)
+                            .orElse(product.getPrice())
             );
-
-            boolean anySelling = product.getSellLists().stream()
-                    .anyMatch(s -> "selling".equals(s.getStatus()));
-            dto.setStatus(anySelling ? "selling" : "soldout");
         } else {
-            dto.setMinPrice(null);
-            dto.setStatus("selling");
+            dto.setMinPrice(product.getPrice());
         }
 
-        // 등록일
         if (product.getIndate() != null) {
             dto.setIndate(product.getIndate().toString());
+        }
+
+        if (product.getOptions() != null && !product.getOptions().isEmpty()) {
+            dto.setOptions(
+                    product.getOptions().stream()
+                            .map(ShopProductOptionDTO::fromEntity)
+                            .collect(Collectors.toList())
+            );
         }
 
         return dto;
     }
 }
+

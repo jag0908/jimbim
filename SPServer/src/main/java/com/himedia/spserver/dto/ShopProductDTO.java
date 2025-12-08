@@ -5,8 +5,8 @@ import com.himedia.spserver.entity.SHOP.SHOP_ProductImage;
 import com.himedia.spserver.entity.SHOP.SHOP_SellList;
 import lombok.Data;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class ShopProductDTO {
@@ -20,24 +20,30 @@ public class ShopProductDTO {
     private Long categoryId;
     private String indate;        // 등록일
 
+    // 🔹 여러 이미지 리스트 추가
+    private List<String> imageUrls;
+
     public static ShopProductDTO fromEntity(SHOP_Product product) {
         ShopProductDTO dto = new ShopProductDTO();
         dto.setProductId(product.getProductId());
         dto.setTitle(product.getTitle());
         dto.setContent(product.getContent());
 
-        // ⭐ 대표 이미지 설정 (null 방지 + 안전 처리)
+        // ⭐ 대표 이미지 설정
         if (product.getImages() != null && !product.getImages().isEmpty()) {
-            // 이미지 정렬되어 있다고 가정, 첫 번째 이미지 사용
-            SHOP_ProductImage firstImage = product.getImages().stream()
+            SHOP_ProductImage first = product.getImages().stream()
                     .findFirst()
                     .orElse(null);
-
-            if (firstImage != null) {
-                dto.setFirstImage(firstImage.getFilePath());
+            if (first != null) {
+                dto.setFirstImage(first.getFilePath());
             }
-        } else {
-            dto.setFirstImage(null); // 또는 기본 이미지 설정 가능
+
+            // 🔹 모든 이미지 리스트
+            dto.setImageUrls(
+                    product.getImages().stream()
+                            .map(SHOP_ProductImage::getFilePath)
+                            .collect(Collectors.toList())
+            );
         }
 
         // 카테고리
@@ -45,7 +51,7 @@ public class ShopProductDTO {
             dto.setCategoryId(product.getCategory().getCategoryId());
         }
 
-        // ⭐ 최저가 계산
+        // 최저가 및 상태
         if (product.getSellLists() != null && !product.getSellLists().isEmpty()) {
             dto.setMinPrice(
                     product.getSellLists().stream()
@@ -54,23 +60,19 @@ public class ShopProductDTO {
                             .orElse(null)
             );
 
-            // ⭐ 판매 상태
             boolean anySelling = product.getSellLists().stream()
                     .anyMatch(s -> "selling".equals(s.getStatus()));
-
             dto.setStatus(anySelling ? "selling" : "soldout");
         } else {
             dto.setMinPrice(null);
             dto.setStatus("selling");
         }
 
-        // ⭐ 등록일
+        // 등록일
         if (product.getIndate() != null) {
             dto.setIndate(product.getIndate().toString());
         }
 
         return dto;
     }
-
-
 }

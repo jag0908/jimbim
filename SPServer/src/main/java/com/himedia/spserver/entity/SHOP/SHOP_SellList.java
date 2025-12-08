@@ -3,6 +3,10 @@ package com.himedia.spserver.entity.SHOP;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Data
@@ -23,5 +27,10 @@ public class SHOP_SellList {
 
     private Integer price;
 
+    @CreationTimestamp
+    @Column( columnDefinition="DATETIME default now()" )
+    private Timestamp indate;
+
+    @ColumnDefault("'N'")
     private String status; // selling, soldout
 }

@@ -181,7 +181,6 @@ function CommunityView() {
         return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
     };
 
-    // 전체 댓글 수 계산 (답글 포함)
     const getTotalReplyCount = (replies) => {
         return replies.reduce((acc, reply) => {
             const childrenCount = reply.children ? getTotalReplyCount(reply.children) : 0;

@@ -10,7 +10,6 @@ function CommunityDetail() {
     const { cpostId } = useParams();
     const [cPost, setCPost] = useState({});
     const [cCategoryList, setCCategoryList] = useState([]);
-    const [cFileList, setCFileList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(
@@ -27,7 +26,6 @@ function CommunityDetail() {
                 }else{
                     setCPost(result.data.cPost)
                     setCCategoryList(result.data.CCategoryList)
-                    setCFileList(result.data.cFileList)
                     console.log(result.data)
                 }
             })

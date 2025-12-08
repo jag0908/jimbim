@@ -13,8 +13,8 @@ function SuggestDetail() {
     const navigate = useNavigate();
 
     const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    // const [price, setPrice] = useState('');
+    // const [content, setContent] = useState('');
+    const [price, setPrice] = useState('');
 
     const [categoryId, setCategoryId] = useState('1');
     const [categoryArr, setCategoryArr] = useState([]);
@@ -42,7 +42,7 @@ function SuggestDetail() {
             overflow: "hidden",
         },
     };
-
+    let i =0 ;
     useEffect(
         ()=>{
             if( !loginUser.userid ||  !loginUser.roleNames.includes('ADMIN') ){ 
@@ -92,9 +92,13 @@ function SuggestDetail() {
     function openModal(){
         setIsOpen(!isOpen)
         setTitle(suggest.title)
-        setContent(suggest.content)
-        // setPrice(suggest.price)
+        // setContent(suggest.content)
+        setPrice(suggest.price)
         setCategoryId(suggest.category.categoryId)
+        setOldFiles(suggest.files)
+        setFileArr([])
+        setFileLength(suggest.files.length);    
+        setPreviewUrls([])
     }
     // 숫자만 입력 가능하게
     const getNumberOnly = (e) => {
@@ -150,20 +154,23 @@ function SuggestDetail() {
         setFileLength(prev => prev - 1);
     }
 
-    async function writeShopPost(){
+    async function writeShopProduct(){
         if(!title){ return alert('제목을 입력하세요')}
-        if(!content){ return alert('내용을 입력하세요')}
-        // if(!price){ return alert('가격을 입력하세요')}
+        // if(!content){ return alert('내용을 입력하세요')}
+        if(!price){ return alert('가격을 입력하세요')}
         if(!categoryId){ return alert('카테고리를 선택하세요')}
 
         if(window.confirm('등록하시겠습니까?')){
             let createdPostId;
-            await jaxios.post('/api/admin/writeShopPost', null, {params:{title, content, categoryId}})
+            await jaxios.post('/api/admin/writeShopProduct', null, {params:{title, price, categoryId}})
             .then((result)=>{ 
                 alert('등록이 완료되었습니다.');
                 createdPostId = result.data.postId;
                 setIsOpen( false )
-            } ).catch((err)=>{console.error(err)})
+            } ).catch((err)=>{
+                console.error(err);
+                return;
+            })
 
             await createFormData(fileArr, createdPostId);       // 새로 등록한 이미지 s3에 업로드 후 DB에 등록
 
@@ -228,22 +235,49 @@ function SuggestDetail() {
                         <div className='col detailTitle'>게시일</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.indate.substring(0, 10)}</div>
                     </div>
+                    <div className='row'>
+                        <div className='col detailTitle'>카테고리</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.category.category_name}</div>
+                    </div>
                     {/* <div className='row'>
                         <div className='col detailTitle'>카테고리</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{shCategoryList[shPost.categoryId-1].category_name}</div>
                     </div> */}
                     <div className='row'>
                         <div className='col detailTitle'>상품 이미지</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>추후작업예정, 상품 추가하기 버튼 누르면 이미지 나옵니다</div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            <div className='detailImg'>
+                            {
+                                suggest.files.map((file, idx)=>{
+                                    return (<>
+                                        {
+                                            (idx<5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
+                                        }
+                                    </>)
+                                })
+                            }
+                            </div>
+                            <div className='detailImg'>
+                            {
+                                suggest.files.map((file, idx)=>{
+                                    return (<>
+                                        {
+                                            (idx>=5)?(<img key={idx} src={file.filePath}  onClick={()=>{navigate(file.filePath)}}/>):(<></>)
+                                        }
+                                    </>)
+                                })
+                            }
+                            </div>
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>상품설명</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.content}</div>
                     </div>
-                    {/* <div className='row'>
-                        <div className='col detailTitle'>가격</div>
+                    <div className='row'>
+                        <div className='col detailTitle'>정가</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{suggest.price} 원</div>
-                    </div> */}
+                    </div>
                     <div className='row'>
                         <div className='col detailTitle'>상태</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>{
@@ -269,71 +303,111 @@ function SuggestDetail() {
                 </div>
                 <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
                     <div className='writeReplyTitle'>상품 등록</div>
-                    <div className='row'>
-                        <div className='col detailTitle'>상품명</div>
-                        <input value={title} onChange={(e)=>{setTitle( e.currentTarget.value )}}/>
+                    <div className='writeProductRow'>
+                        <div className='detailTitle'>상품명</div>
+                        <div className='writearea'><input value={title} onChange={(e)=>{setTitle( e.currentTarget.value )}}/></div>
                     </div>
-                    <div className='row'>
-                        <div className='col detailTitle'>카테고리</div>
-                        <select id='dataCategory' value={categoryId} onChange={(e)=> {setCategoryId(e.currentTarget.value)}}>
-                            {
-                                categoryArr.map((category, i)=> {
-                                    return(
-                                        <option key={i} value={category.categoryId}>
-                                            {category.category_name}
-                                        </option>
-                                    )
-                                })
-                            }
-                        </select>
-                    </div>
-                    <div className='row'>
-                        <div className='col detailTitle'>상품 이미지</div>
-                        <div className='inputWrap file'>
-                            <label htmlFor="dataFile">+ <span>{fileLength}/10</span></label>
-                            {/* 파일업로드 인풋 */}
-                            <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} multiple />
-                            {/* 미리보기 이미지 */}
-                            <div className="previewContainer">
-                                {/* 서버이미지 */}
+                    <div className='writeProductRow'>
+                        <div className='detailTitle'>카테고리</div>
+                        <div className='writearea'>
+                            <select id='dataCategory' value={categoryId} onChange={(e)=> {setCategoryId(e.currentTarget.value)}}>
                                 {
-                                    oldFiles.map((file, i)=> {
+                                    categoryArr.map((category, i)=> {
                                         return(
-                                            <div className='imgBox' key={i} >
-                                                <img src={file.filePath} alt={`preview-${i}`} />
-                                                <div className={`removeBtn removeBtn_${i}`} onClick={()=> {
-                                                        oldHandleRemoveFile(i, file.file_id);  
-                                                }}>X</div>
-                                            </div>    
+                                            <option key={i} value={category.categoryId}>
+                                                {category.category_name}
+                                            </option>
                                         )
                                     })
                                 }
-                                {/* 현재이미지 */}
-                                {
-                                    previewUrls.map((url, i) => {
-                                        return(
-                                            <div className='imgBox' key={i} >
-                                                <img src={url} alt={`preview-${i}`} />
-                                                <div className={`removeBtn removeBtn_${i}`} onClick={()=> {
-                                                        handleRemoveFile(i);  
-                                                }}>X</div>
-                                            </div>    
-                                        )
-                                    })
-                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div className='writeProductRow'>
+                        <div className='detailTitle'>상품 이미지</div>
+                        <div className='writearea'>
+                            <div className='inputWrap file'>
+                                <label htmlFor="dataFile">+ <span>{fileLength}/10</span></label>
+                                {/* 파일업로드 인풋 */}
+                                <input id='dataFile' type='file' className='inpFile' onChange={(e)=> {fileupload(e);}} multiple />
+                                {/* 미리보기 이미지 */}
+                                <div className="previewContainer">
+                                    <div className='twoline'>
+                                        {/* 서버이미지 */}
+                                        {
+                                            oldFiles.map((file, i)=> {
+                                                return(<>
+                                                    {(i<5)?
+                                                    (<div className='imgBox' key={i} >
+                                                        <img src={file.filePath} alt={`preview-${i}`} />
+                                                        <div className={`removeBtn removeBtn_${i}`} onClick={()=> {
+                                                                oldHandleRemoveFile(i, file.file_id);  
+                                                        }}>X</div>
+                                                    </div>):
+                                                    (<></>)}
+                                                </>)
+                                            })
+                                        }
+                                        {/* 현재이미지 */}
+                                        {
+                                            previewUrls.map((url, i) => {
+                                                return(<>
+                                                    {(i+oldFiles.length<5)?
+                                                    (<div className='imgBox' key={i} >
+                                                        <img src={url} alt={`preview-${i}`} />
+                                                        <div className={`removeBtn removeBtn_${i}`} onClick={()=> {
+                                                                handleRemoveFile(i);  
+                                                        }}>X</div>
+                                                    </div>):
+                                                    (<></>)}
+                                                </>)
+                                            })
+                                        }
+                                    </div>
+                                    <div className='twoline'>
+                                        {/* 서버이미지 */}
+                                        {
+                                            oldFiles.map((file, i)=> {
+                                                return(<>
+                                                    {(i>=5)?
+                                                    (<div className='imgBox' key={i} >
+                                                        <img src={file.filePath} alt={`preview-${i}`} />
+                                                        <div className={`removeBtn removeBtn_${i}`} onClick={()=> {
+                                                                oldHandleRemoveFile(i, file.file_id);  
+                                                        }}>X</div>
+                                                    </div>):
+                                                    (<></>)}
+                                                </>)
+                                            })
+                                        }
+                                        {/* 현재이미지 */}
+                                        {
+                                            previewUrls.map((url, i) => {
+                                                return(<>
+                                                    {(i+oldFiles.length>=5)?
+                                                    (<div className='imgBox' key={i} >
+                                                        <img src={url} alt={`preview-${i}`} />
+                                                        <div className={`removeBtn removeBtn_${i}`} onClick={()=> {
+                                                                handleRemoveFile(i);  
+                                                        }}>X</div>
+                                                    </div>):
+                                                    (<></>)}
+                                                </>)
+                                            })
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className='row'>
-                        <div className='col detailTitle'>상품설명</div>
-                        <textarea value={content} onChange={(e)=>{setContent( e.currentTarget.value )}} maxLength={2000}></textarea>
+                    <div className='writeProductRow'>
+                        <div className='detailTitle'>가격</div>
+                        <div className='writearea'>
+                            <input value={price} onInput={getNumberOnly} onChange={(e)=>{setPrice( e.currentTarget.value )}}/> 원
+                        </div>
                     </div>
-                    {/* <div className='row'>
-                        <div className='col detailTitle'>가격</div>
-                        <input value={price} onInput={getNumberOnly} onChange={(e)=>{setPrice( e.currentTarget.value )}}/>
-                    </div> */}
                     <div className='detailPageBtns'>
-                        <button onClick={()=>{writeShopPost()}}>상품 등록하기</button>
+                        <button onClick={()=>{writeShopProduct()}}>상품 등록하기</button>
                     </div>
                     <div className='detailPageBtns'>
                         <button className='graybtn' onClick={()=>{ setIsOpen(false) }}>닫기</button>

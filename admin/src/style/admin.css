@@ -176,6 +176,12 @@ a{
     cursor: pointer;
     transition: 3;
 }
+.writeProductRow .detailTitle{
+    padding: 5px;
+}
+.writearea{
+    padding: 5px;
+}
 .detailTable .row:hover{
     background-color: white;
     cursor: auto;
@@ -210,12 +216,14 @@ a{
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    margin-bottom: 20px;
     font-weight: bold;
     font-size: 120%;
 }
 .qnaTextarea{
     display: flex;
     padding: 20px;
+    padding-top: 0px;
     padding-bottom: 10px;
 }
 .qnaTextarea textarea{
@@ -255,17 +263,20 @@ a{
 .inputWrap.file > input[type=file].inpFile {
     display: none;
 }
-.inputWrap.file .previewContainer {
+/* .inputWrap.file .previewContainer {
+    
+} */
+.inputWrap.file .previewContainer .twoline {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-.inputWrap.file .previewContainer .imgBox {
+.inputWrap.file .previewContainer .twoline .imgBox {
     position: relative;
     width: 72px;
     height: 72px;
 }
-.inputWrap.file .previewContainer .imgBox > img {
+.inputWrap.file .previewContainer .twoline .imgBox > img {
     width: 100%;
     height: 100%;
     border: 1px solid #999;
@@ -273,7 +284,7 @@ a{
     border-radius: 12px;
     overflow: hidden;
 }
-.inputWrap.file .previewContainer .removeBtn {
+.inputWrap.file .previewContainer .twoline .removeBtn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -288,6 +299,7 @@ a{
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
+    z-index: 10;
 }
 .detailImg img{
     max-width: 100px;

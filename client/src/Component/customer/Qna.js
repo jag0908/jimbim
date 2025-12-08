@@ -63,6 +63,13 @@ function Qna() {
         for (let i = result.data.paging.beginPage; i <= result.data.paging.endPage; i++) arr.push(i);
         setBeginEnd(arr);
     }
+    function openModal(){
+        if(!loginUser.userid){
+            alert('로그인 후 이용 가능합니다.')
+        }else{
+            setIsOpen(!isOpen)
+        }        
+    }
 
     return (
         <div className="customercontainer customer-qna">
@@ -70,7 +77,7 @@ function Qna() {
             <div className="customer">
                 <div className="formtitle">Qna</div>
                 <div className="formBtns">
-                    <button onClick={() => setIsOpen(!isOpen)}>문의하기</button>
+                    <button onClick={() => openModal()}>문의하기</button>
                 </div>
                 <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles}>
                     <div className="writeReplyTitle">문의하기</div>

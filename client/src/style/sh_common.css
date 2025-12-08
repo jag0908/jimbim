@@ -71,11 +71,11 @@ button {cursor: pointer;}
 .shWrite .inputWrap .radioBox > label {cursor: pointer;}
 .shWrite .inputWrap .radioBox > input[type=radio] {cursor: pointer;}
 
-.shWrite .writeWrap .inputWrap.file {flex-direction: row; align-items: center; gap: 16px; border: none;}
+.shWrite .writeWrap .inputWrap.file {flex-direction: row; align-items: flex-start; gap: 16px; border: none;}
 .shWrite .writeWrap .inputWrap.file > label {display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; width: 72px; height: 72px; border: 1px solid #555; border-radius: 12px; box-sizing: border-box; font-size: 30px; cursor: pointer; }
 .shWrite .writeWrap .inputWrap.file > input[type=file].inpFile {display: none;}
 .shWrite .writeWrap .inputWrap.file > label > span {font-size: 12px; color: #999;}
-.shWrite .writeWrap .inputWrap.file .previewContainer {display: flex; align-items: center; gap: 12px;}
+.shWrite .writeWrap .inputWrap.file .previewContainer {display: flex; align-items: center; flex-flow: wrap; gap: 12px;}
 .shWrite .writeWrap .inputWrap.file .previewContainer .imgBox {position: relative; width: 72px; height: 72px;}
 .shWrite .writeWrap .inputWrap.file .previewContainer .imgBox > img {width:100%; height: 100%; border: 1px solid #999; object-fit: cover; border-radius: 12px; overflow: hidden;}
 .shWrite .writeWrap .inputWrap.file .previewContainer .removeBtn {display: flex; justify-content: center; align-items: center; position: absolute; bottom: -8px; right: -8px; width: 20px; height: 20px; background: #fff; border-radius: 50%; border: 1px solid #555; font-size: 12px; font-weight: 600; cursor: pointer;}

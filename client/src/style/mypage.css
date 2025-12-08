@@ -100,11 +100,17 @@ body {
     border-radius: 3px;
 }
 
-.formBtns {
+.mypagebody .formBtns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    width: 200px;
+    margin: 15px;
     margin-top: 10px;
 }
 
-.formBtns button {
+.mypagebody .formBtns button {
     margin-right: 5px;
 }
 

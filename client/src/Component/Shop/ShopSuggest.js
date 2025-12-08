@@ -97,7 +97,8 @@ function ShopSuggest() {
 
   return (
     <div className="shopSuggest">
-      <h2 className="mainTitle">상품 제안하기</h2>
+      <div className="writeWrap">
+      <h2 className="mainTitle">상품 요청하기</h2>
 
       {/* 이미지 업로드 */}
       <div className="inputWrap file">
@@ -165,6 +166,7 @@ function ShopSuggest() {
       <div className="btnWrap">
         <button className="navBtn pointBtn" onClick={handleSubmit}>제안하기</button>
         <button className="navBtn" onClick={() => navigate(-1)}>취소</button>
+      </div>
       </div>
     </div>
   );

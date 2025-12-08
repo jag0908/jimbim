@@ -78,7 +78,7 @@ function QnaDetail() {
                         <input value={title} onChange={e => setTitle(e.target.value)} />
                     </div>
                     <div className='qnaTextarea'>
-                        <textarea value={content} onChange={e => setContent(e.target.value)} maxLength={2000}></textarea>
+                        <textarea value={content} onChange={e => setContent(e.target.value)} placeholder='내용을 입력해주세요' maxLength={2000}></textarea>
                     </div>
                     <div className='detailPageBtns'>
                         <button onClick={updateQna}>수정</button>

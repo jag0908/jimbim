@@ -1,21 +1,211 @@
-.shopSuggest {display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; margin: 0px auto 0px; padding: 60px 0; width: 100%; max-width: 638px;}
-.shopSuggest .writeWrap {display: flex; flex-direction: column; gap: 22px; margin: 0 auto; padding: 40px 34px; width: 100%; border: 1px solid #999; border-radius: 12px; box-sizing: border-box; overflow: auto;}
-.shopSuggest .mainTitle {font-size: 26px; font-weight: 500;}
-.shopSuggest .writeWrap .inputWrap {display: flex; flex-direction: column;}
-.shopSuggest .inputWrap .tit {flex-shrink: 0; padding-bottom: 6px; width: 100%; font-size: 16px; font-weight: 600; color: #555;}
-.shopSuggest .writeWrap .inputWrap > label {font-size: 16px; color: #000;}
-.shopSuggest .writeWrap .inputWrap > input[type=text] {padding: 2px 10px; height: 36px; box-sizing: border-box;}
-.shopSuggest .writeWrap .inputWrap > textarea {padding: 10px 10px; height: 160px; box-sizing: border-box;}
+/* shopSuggest 전체 컨테이너 */
+.shopSuggest {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto;
+  padding: 20px; /* 전체 여백 */
+  width: 100%;
+  max-width: 640px;
+  box-sizing: border-box;
+}
 
-.shopSuggest .writeWrap .inputWrap.file {flex-direction: column; align-items: flex-start; gap: 16px; border: none;}
-.shopSuggest .writeWrap .inputWrap.file > label {display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; width: 72px; height: 72px; border: 1px solid #555; border-radius: 12px; box-sizing: border-box; font-size: 30px; cursor: pointer; }
-.shopSuggest .writeWrap .inputWrap.file > input[type=file].inpFile {display: none;}
-.shopSuggest .writeWrap .inputWrap.file > label > span {font-size: 12px; color: #999;}
-.shopSuggest .writeWrap .inputWrap.file .previewContainer {display: flex; align-items: center; gap: 12px; margin-bottom: 10px;}
-.shopSuggest .writeWrap .inputWrap.file .previewContainer .imgBox {position: relative; width: 72px; height: 72px;}
-.shopSuggest .writeWrap .inputWrap.file .previewContainer .imgBox > img {width:100%; height: 100%; border: 1px solid #999; object-fit: cover; border-radius: 12px; overflow: hidden;}
-.shopSuggest .writeWrap .inputWrap.file .previewContainer .removeBtn {display: flex; justify-content: center; align-items: center; position: absolute; bottom: -8px; right: -8px; width: 20px; height: 20px; background: #fff; border-radius: 50%; border: 1px solid #555; font-size: 12px; font-weight: 600; cursor: pointer;}
+/* 상품 요청 폼을 감싸는 박스 */
+.shopSuggest .writeWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  padding: 40px 34px;
+  border: 2px solid #585555; /* 테두리 두께와 색상 */
+  border-radius: 16px;     /* 둥글게 */
+  box-sizing: border-box;
+  background-color: #fff;  /* 흰색 배경 */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 약간 그림자 */
+}
 
-.shopSuggest .btnWrap {display: flex; justify-content: flex-end; align-items: center; gap: 8px; width: 100%; box-sizing: border-box;}
-.shopSuggest .btnWrap .navBtn {padding: 0 12px; min-width: 64px; height: 36px; border: 1px solid #999; border-radius: 6px; box-sizing: border-box; font-size: 14px; font-weight: 500; color: #555;}
-.shopSuggest .btnWrap .pointBtn {background-color: #555; color: #fff;}
+/* 제목 */
+.shopSuggest .mainTitle {
+  font-size: 26px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 입력 래퍼 */
+.shopSuggest .inputWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* 입력 제목 */
+.shopSuggest .inputWrap .tit {
+  font-size: 16px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* 텍스트 입력 */
+.shopSuggest .inputWrap > input[type=text],
+.shopSuggest .inputWrap > textarea,
+.shopSuggest .inputWrap > select {
+  padding: 10px;
+  height: 36px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  color: #333;
+}
+
+.shopSuggest .inputWrap > textarea {
+  height: 160px;
+  resize: vertical;
+}
+
+/* 이미지 업로드 */
+.shopSuggest .inputWrap.file {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  border: none;
+}
+
+/* 파일 업로드 버튼 */
+.shopSuggest .inputWrap.file > label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 72px;
+  height: 72px;
+  border: 1px solid #555;
+  border-radius: 12px;
+  font-size: 30px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.shopSuggest .inputWrap.file > label > span {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 숨김 input */
+.shopSuggest .inputWrap.file > input[type=file] {
+  display: none;
+}
+
+/* 이미지 미리보기 */
+.shopSuggest .previewContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shopSuggest .previewContainer .imgBox {
+  position: relative;
+  width: 72px;
+  height: 72px;
+}
+
+.shopSuggest .previewContainer .imgBox > img {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #999;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* 이미지 삭제 버튼 */
+.shopSuggest .previewContainer .removeBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid #555;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 버튼 래퍼 */
+.shopSuggest .btnWrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 버튼 스타일 */
+.shopSuggest .btnWrap .navBtn {
+  padding: 0 12px;
+  min-width: 64px;
+  height: 36px;
+  border: 1px solid #999;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  background-color: #fff;
+  transition: 0.2s;
+}
+
+.shopSuggest .btnWrap .navBtn:hover {
+  background-color: #f0f0f0;
+}
+
+/* 강조 버튼 */
+.shopSuggest .btnWrap .pointBtn {
+  background-color: #555;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+.shopSuggest .btnWrap .pointBtn:hover {
+  background-color: #333;
+  border-color: #333;
+  color: #fff;
+}
+
+/* select 스타일 */
+.shopSuggest select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* 반응형 처리 */
+@media (max-width: 640px) {
+  .shopSuggest .writeWrap {
+    padding: 20px 16px;
+  }
+  .shopSuggest .inputWrap.file {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .shopSuggest .previewContainer {
+    justify-content: flex-start;
+  }
+}

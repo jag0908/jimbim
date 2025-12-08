@@ -420,6 +420,12 @@ const StyleDetail = () => {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder={commentParent ? "답글을 입력하세요..." : "댓글을 입력하세요..."}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault(); // 줄바꿈 방지
+              handleCommentSubmit(commentParent);
+            }
+          }}
         />
         <button onClick={() => handleCommentSubmit(commentParent)}>등록</button>
 

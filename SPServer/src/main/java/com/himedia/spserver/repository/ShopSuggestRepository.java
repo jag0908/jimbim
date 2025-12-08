@@ -19,9 +19,6 @@ public interface ShopSuggestRepository extends JpaRepository<SHOP_Suggest, Integ
             @Param("title") String title,
             Pageable pageable
     );
-
-    Page<SHOP_Suggest> searchByTitle(String s, Pageable pageable);
-
     /// ////////////// 어드민 페이지용 /////////////////////////////
     @Query("SELECT p FROM SHOP_Suggest p WHERE p.title like %:key% ")
     List<SHOP_Suggest> findByTitleContaining(String key);
@@ -29,4 +26,8 @@ public interface ShopSuggestRepository extends JpaRepository<SHOP_Suggest, Integ
     @Query("SELECT p FROM SHOP_Suggest p WHERE p.title like %:key% ")
     Page<SHOP_Suggest> findByTitleContaining(String key, Pageable pageable);
     /// //////////////////////////////////////////////////////
+
+    @Query("SELECT s FROM SHOP_Suggest s WHERE s.member.member_id = :memberId ORDER BY s.suggestId DESC")
+    Page<SHOP_Suggest> findByMemberIdOrderBySuggestIdDesc(@Param("memberId") int memberId, Pageable pageable);
+
 }

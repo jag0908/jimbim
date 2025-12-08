@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState,useEffect } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
@@ -92,6 +92,30 @@ function Alram() {
     }
   }, [])
 
+  // 이삭 수정
+  useEffect(() => {
+    let memberId = sessionStorage.getItem("member_id");
+
+    if (!memberId) {
+      const token = sessionStorage.getItem("accessToken");
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          memberId = payload.member_id;
+
+          if (memberId) {
+            sessionStorage.setItem("member_id", memberId);
+            console.log("member_id loaded from JWT:", memberId);
+          }
+        } catch (e) {
+          console.error("JWT 파싱 실패:", e);
+        }
+      }
+    }
+  }, []);
+
+
   return (
     <div id="alram-page">
       <div className="alram-container">
@@ -113,7 +137,7 @@ function Alram() {
             className={`tab-item ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => {setActiveTab('chat');}}
           >
-            채팅
+            내 판매 채팅
           </button>
           <button
             className={`tab-item ${activeTab === 'myChat' ? 'active' : ''}`}
@@ -163,7 +187,7 @@ function Alram() {
                     <AlramAll formatDateTime={formatDateTime} /> :
                     activeTab == "chat" ? 
                         <AlramChat formatDateTime={formatDateTime} /> :
-                        activeTab == "myChat" ? 
+                        activeTab == "myChat" ?
                             <AlramMyChat formatDateTime={formatDateTime} /> :
                             activeTab == "follow" ? //이삭 수정
                                 <AlramFollow /> :

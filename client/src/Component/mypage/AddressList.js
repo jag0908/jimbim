@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate, Link  } from 'react-router-dom'
 import jaxios from '../../util/jwtutil';
 import EditAddressForm from './EditAddressForm';
-import SideMenu from './SideMenu';
+import SideMenu from './MypageSideMenu';
 
 function AddressList() {
     const loginUser = useSelector( state=>state.user )

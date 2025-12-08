@@ -38,7 +38,14 @@ function AlramFollow() {
 
   return (
     <>
-      {list.length === 0 && <div>팔로우 알림이 없습니다.</div>}
+      {
+        list.length === 0 && 
+        <div className="alram-empty">
+            <div className="empty-icon">🔔</div>
+            <p className="empty-text">새로운 팔로우가 없습니다.</p>
+            <p className="empty-subtext">새로운 팔로우가 생기면 여기에 표시됩니다</p>
+          </div>
+      }
       {list.map(item => (
         <NotificationItem key={item.id} item={item} onConfirm={handleConfirm} />
       ))}

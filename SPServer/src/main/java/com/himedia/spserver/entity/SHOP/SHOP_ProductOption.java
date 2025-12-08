@@ -11,7 +11,7 @@ import java.util.List;
 public class SHOP_ProductOption {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long optionId;
 
     private String optionName; // 예: 260, 265 또는 S/M/L

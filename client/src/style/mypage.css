@@ -1,70 +1,360 @@
-.mypagebody{
-    display:flex;
+/* ==========================================
+   전체 레이아웃 및 공통
+========================================== */
+body {
+    font-family: "Noto Sans KR", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.mypagebody, .customercontainer {
+    display: flex;
     width: 1200px;
     margin: 0 auto;
+    min-height: 100vh;
 }
-.mypage{
-    padding: 30px; 
-    padding-top: 0;
-    width: calc(100% - 200px);
+
+/* ---------- 사이드바 ---------- */
+.mypageSidebar {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    min-height: 540px;
+    padding: 20px 15px;
+    border-radius: 8px;
+    background-color: #fff;
 }
-.mypage .field {
-    margin: 5px;
+
+.sidebarHeader {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    padding-left: 5px;
+    color: #222;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+    line-height: 40px;
 }
-.mypage .field input{
+
+.menuTitle {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #333;
+    padding-left: 5px;
+    line-height: 40px;
+}
+
+.menuList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.menuItem {
+    padding: 0 12px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #555;
+    border-radius: 4px;
+    font-weight: 400;
+}
+
+.menuItem:hover {
+    background-color: #eaeaea;
+    color: #111;
+}
+
+.menuItem.active {
+    font-weight: 700;
+    color: #000;
+    background-color: #ddd;
+}
+
+/* ---------- 마이페이지 / 고객 페이지 메인 ---------- */
+.mypage, .customer {
+    flex: 1;
+    padding: 30px 20px;
+    background-color: #fff;
+}
+
+.mypage .field, .customer .field {
+    margin: 5px 0;
+}
+
+.mypage .field label, .customer .field label {
+    font-weight: bold;
+    color: #222;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.mypage .field input, .customer .field input {
     width: 120px;
     height: 22px;
     padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
-.mypage .field label{
-    font-weight: bold;
-    color: #222222;
+
+.formBtns {
+    margin-top: 10px;
 }
-.addressList{
-    border: #eeeeee 3px double;
+
+.formBtns button {
+    margin-right: 5px;
+}
+
+/* ---------- 체크박스 ---------- */
+.checkboxField {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.checkboxField label {
+    margin-right: 10px;
+}
+
+/* ---------- 주소록 ---------- */
+.addressList {
     padding: 15px;
     margin: 3px 0;
     width: 100%;
-    transition: border 0.4s, margin 0.2s;
 }
 
-.addressListText{
+.addressListText {
     margin-left: 3px;
     font-size: 95%;
-    color: #111111;
+    color: #111;
 }
 
-.address_detail{
+.address_detail {
     width: 250px !important;
-    margin: 10px;
-    margin-left: 0px;
-    margin-bottom: 0px;
+    margin: 10px 0 0 0;
 }
-.nozipnumMsg{
+
+.nozipnumMsg {
     font-style: italic;
 }
 
-
-.shoparea{
-    border: #eeeeee 3px double;
+/* ---------- 쇼핑 정보 영역 ---------- */
+.shoparea {
     padding: 20px;
     width: 100%;
 }
-.shoparea h3{
+
+.shoparea h3 {
     font-size: 140%;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
+/* ---------- 회원탈퇴 ---------- */
 .deleteMemberPage {
     display: flex;
     width: 1200px;
     margin: 0 auto;
     flex-direction: column;
 }
-.deleteMemberText{
+
+.deleteMemberText {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 30px 0px;
+    margin: 30px 0;
+}
+
+/* ==========================================
+   Suggest 페이지
+========================================== */
+.customercontainer {
+    display: flex;
+    min-height: 100vh;
+}
+
+.customer {
+    flex: 1;
+    padding: 20px;
+}
+
+.formtitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.noData {
+    text-align: center;
+    color: #888;
+    margin-top: 50px;
+}
+
+/* ---------- 테이블 / 리스트 ---------- */
+.suggestTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.suggestListHeader, .suggestList {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 8px 0;
+}
+
+.suggestListHeader {
+    font-weight: bold;
+    background-color: #fafafa;
+}
+
+.suggestField {
+    padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.suggestField.title {
+    flex: 2;
+}
+
+.suggestField.date {
+    flex: 1;
+}
+
+.suggestField.delete {
+    flex: 0.5;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.actions button {
+    background-color: #ff4d4f;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.actions button:hover {
+    background-color: #ff7875;
+}
+
+/* ---------- 페이징 ---------- */
+.paging {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pageNum {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    background-color: #f0f0f0;
+    transition: 0.2s;
+}
+
+.pageNum.active {
+    background-color: #1890ff;
+    color: #fff;
+}
+
+.pageArrow {
+    margin: 0 10px;
+    cursor: pointer;
+    font-weight: bold;
+    user-select: none;
+}
+
+/* ---------- 리스트 hover ---------- */
+.suggestList:hover {
+    background-color: #f9f9f9;
+}
+
+/* ---------- 상세 페이지 ---------- */
+.suggest-content {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #fafafa;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
+
+.suggest-files {
+    margin-top: 15px;
+}
+
+.suggest-files ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.suggest-files li {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.suggest-img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 4px;
+}
+
+/* ==========================================
+   반응형 (모바일)
+========================================== */
+@media (max-width: 768px) {
+    .mypagebody, .customercontainer {
+        flex-direction: column;
+        width: 95%;
+    }
+
+    .mypageSidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .mypage, .customer {
+        width: 100%;
+    }
+
+    .mypage .field input, .customer .field input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .shoparea, .addressList {
+        width: 100%;
+    }
+
+    .suggestListHeader, .suggestList {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 0;
+    }
+
+    .suggestField {
+        width: 100%;
+        padding: 5px 0;
+    }
+
+    .suggestField.delete {
+        justify-content: flex-start;
+    }
+
+    .paging {
+        flex-wrap: wrap;
+    }
 }

@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import '../style/header.css'
 import ChatBot from './ChatBot';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { Cookies } from 'react-cookie'
 import { logoutAction } from '../store/userSlice'
+import jaxios from '../util/jwtutil';
 
 function Header() {
     const loginUser = useSelector( state=>state.user )
@@ -19,6 +20,21 @@ function Header() {
         navigate('/')
     }
 
+    // 전체알람
+    const [allAlramCount, setAllAlramCount] = useState(null);
+    const location = useLocation();
+    useEffect(() => {
+        if (!loginUser.userid) return;
+        runMyFunction();
+    }, [location.pathname])
+    function runMyFunction() {
+        jaxios.get(`/api/alram/allAlramCount/${loginUser.member_id}`)
+            .then((res)=> {
+                console.log(res);
+                setAllAlramCount(res.data.alram);
+            }).catch(err=>console.error(err));
+    }
+
   return (
     <div id='header'>
         <div className='util'>
@@ -27,8 +43,8 @@ function Header() {
                 (
                     <>
                         <a href='#!' onClick={()=>{ onLogout() }}>로그아웃</a>
-                        <Link to={"/mypage"}>회원정보수정</Link>
-                        <Link to={`/styleUser/${loginUser.userid}`}>MY</Link>
+                        <Link to={"/mypage"}>마이페이지</Link>
+                        <Link to={`/styleUser/${loginUser.userid}`}>프로필</Link>
                     </>):
                 (
                     <>
@@ -45,7 +61,10 @@ function Header() {
 
             {
                 (loginUser.userid)?
-                <Link to={`/alram/${loginUser.member_id}`}>알림</Link> :
+                <Link to={`/alram/${loginUser.member_id}`} className='hAllAlram'>
+                    알림
+                    <div className='floatCount'>{allAlramCount}</div>
+                </Link> :
                 null
             }
 

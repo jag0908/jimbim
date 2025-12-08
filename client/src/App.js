@@ -46,9 +46,10 @@ import Alram from './Component/alram/Alram';
 
 import Shop from './Component/Shop/Shop';
 import ShopSuggest from './Component/Shop/ShopSuggest';
-import Suggest from './Component/customer/Suggest';
-import SuggestDetail from './Component/customer/SuggestDetail';
+import Suggest from './Component/mypage/Suggest';
+import SuggestDetail from './Component/mypage/SuggestDetail';
 
+import ShopProductDetail from './Component/Shop/ShopProductDetail';
 
 
 
@@ -104,10 +105,15 @@ function App() {
 				<Route path="/writeCommunity" element={<WriteCommunity />} />
 				<Route path="/communityView/:num" element={<CommunityView />} />
 				<Route path="/updateCommunity/:num" element={<UpdateCommunity />} />
-				<Route path="/shop" element={<Shop />} />
+
+				{/* <Route path="/shop" element={<ShopView />} /> */}
+				<Route path="/shop/:categoryId?" element={<Shop />} />
 				<Route path='/shop/shopSuggest' element={<ShopSuggest />} />
 				<Route path="/customer/suggest" element={<Suggest />} />
 				<Route path="/customer/suggestDetail/:suggestId" element={<SuggestDetail />} />
+				<Route path="/shop/product/:productId" element={<ShopProductDetail />} />
+				<Route path="/mypage/suggest" element={<Suggest />} />
+				<Route path="/mypage/suggestDetail/:suggestId" element={<SuggestDetail />} />
 
 
 			</Routes>

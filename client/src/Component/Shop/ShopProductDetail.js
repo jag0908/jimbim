@@ -66,19 +66,19 @@ function ShopProductDetail() {
             {/* 좌우 버튼 이미지 */}
             <button className="nav-button prev" onClick={handlePrev}>
               <img
-  src="/icons/left-arrow.png"
-  alt="왼쪽"
-  className="nav-icon prev"
-  onClick={handlePrev}
-/>
+                src="/icons/left-arrow.png"
+                alt="왼쪽"
+                className="nav-icon prev"
+                onClick={handlePrev}
+            />
             </button>
             <button className="nav-button next" onClick={handleNext}>
               <img
-  src="/icons/right-arrow.png"
-  alt="오른쪽"
-  className="nav-icon next"
-  onClick={handleNext}
-/>
+                src="/icons/right-arrow.png"
+                alt="오른쪽"
+                className="nav-icon next"
+                onClick={handleNext}
+              />
             </button>
 
             {/* 인디케이터 - 이미지 아래 */}

@@ -34,3 +34,23 @@ article label {min-width: 120px;}
     background-color: #dddd00;
     transform: translateY(-2px);
 }
+
+
+
+
+
+/* 정진 */
+.login.subPage {display: flex; justify-content: center; width: 100%;}
+.login .memberform {margin: 20px 0 50px; width: 388px;}
+.login .memberform .formtitle {margin-bottom: 26px; font-weight: 500; color: #333;}
+.login .memberform .field > label {min-width: 80px;}
+.login .memberform .field > input {padding: 3px 10px; width: 100%; border-color: #999; height: 36px; font-size: 16px;}
+.login .memberform .field > input::placeholder {font-size: 14px;}
+.login .memberform .field > input:focus {border-color: #c96c38;}
+.login .memberform .btns {flex-flow: wrap; justify-content: flex-end; margin-top: 10px;}
+.login .memberform .btns > button {color: #666;}
+.login .memberform .btns > .login {width: 100%; height: 42px; background: #ff7e36; border-radius: 6px; font-size: 16px; font-weight: 700; color: #fff; transition: all 0.2s;}
+.login .memberform .btns > .login:hover {background: #c96c38; transform: translateY(-2px);}
+
+.login .memberform .kakaobutton {margin: 12px 0;}
+.login .memberform .kakaobutton > button {height: 42px; padding: 0; border-radius: 6px; font-size: 16px; color: #555; transition: all 0.2s;}

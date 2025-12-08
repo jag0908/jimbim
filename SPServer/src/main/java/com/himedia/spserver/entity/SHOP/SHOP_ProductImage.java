@@ -1,5 +1,6 @@
 package com.himedia.spserver.entity.SHOP;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,5 +16,6 @@ public class SHOP_ProductImage {
     private String filePath;
 
     @ManyToOne
+    @JsonIgnore         // 어드민 페이지에서 추가
     private SHOP_Product product;
 }

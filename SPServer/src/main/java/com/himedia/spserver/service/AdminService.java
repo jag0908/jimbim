@@ -8,11 +8,9 @@ import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.MemberRole;
 import com.himedia.spserver.entity.SH.SH_Category;
+import com.himedia.spserver.entity.SH.SH_File;
 import com.himedia.spserver.entity.SH.SH_post;
-import com.himedia.spserver.entity.SHOP.SHOP_Category;
-import com.himedia.spserver.entity.SHOP.SHOP_File;
-import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
-import com.himedia.spserver.entity.SHOP.SHOP_post;
+import com.himedia.spserver.entity.SHOP.*;
 import com.himedia.spserver.entity.customer.Qna;
 import com.himedia.spserver.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +34,22 @@ import java.util.List;
 public class AdminService {
 
     private final MemberRepository mr;
+
     private final SH_postRepository spr;
     private final Sh_categoryRepository scr;
+    private final ShFileRepository sfr;
+
     private final QnaRepository qr;
+
     private final CommunityListRepository cpr;
     private final CCategoryRepository ccr;
+
     private final ShopSuggestRepository ssr;
     private final ShopCategoryRepository shopcr;
     private final ShopFileRepository shopfr;
-    private final SHOP_postRepository shoppr;
+    private final ShopProductRepository shoppr;
+    private final ShopProductImageRepository shopir;
+
     @Autowired
     private S3UploadService sus;
 
@@ -97,7 +102,12 @@ public class AdminService {
         member.setMemberRoleList( roleList );
     }
 
-    /// /////////// 상품 관련 /////////////////////////
+    public void updateBlacklist(String userid, int blacklist) {
+        Member member = mr.findByUserid(userid);
+
+        member.setBlacklist(blacklist);
+    }
+    /// /////////// 중고 관련 /////////////////////////
 
     public HashMap<String, Object> getShList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -136,8 +146,43 @@ public class AdminService {
         return scr.findAll();
     }
 
+    public List<SH_File> getShFileList(int postId) {
+        return sfr.findAllByPost_postId(postId);
+    }
+
     public void deleteShPost(int postId) {
         spr.deleteById(postId);
+    }
+
+    ///////////////// shop 관련 ///////////////
+
+    public HashMap<String, Object> getShopList(int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = shoppr.findAll().size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "productId"));
+            Page<SHOP_Product> list = shoppr.findAll( pageable );
+
+            result.put("shopList", list.getContent());
+        }else{
+            int count = shoppr.findByTitleContaining(key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "productId"));
+            Page<SHOP_Product> list = shoppr.findByTitleContaining( key, pageable );
+            result.put("shopList", list.getContent());
+        }
+        result.put("shopCategoryList", shopcr.findAll());
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
     }
 
     /// ////////// 커뮤니티 관련 /////////////////
@@ -275,46 +320,54 @@ public class AdminService {
         return shopfr.findBySuggest_SuggestId(suggestId);
     }
 
-    public SHOP_post writeShopPost(String title, String content, int price, Long categoryId) {
+    public SHOP_Product writeShopPost(String title, String content, Long categoryId) {
         SHOP_Category category =  shopcr.findById(categoryId).get();
-        SHOP_post post = new SHOP_post();
+        SHOP_Product post = new SHOP_Product();
         post.setTitle(title);
         post.setContent(content);
-        post.setPrice(price);
         post.setCategory(category);
         return shoppr.save(post);
     }
 
-    public void fileUpload(List<MultipartFile> images, String postId) throws IOException {
-        SHOP_post post = shoppr.findById(Integer.parseInt(postId))
+    public void fileUpload(List<MultipartFile> images, Long postId) throws IOException {
+        SHOP_Product post = shoppr.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글 없음"));
 
         if (images != null && !images.isEmpty()) {
             for (MultipartFile image : images) {
                 String fileUrl = sus.saveFile(image); // S3 업로드
 
-                SHOP_File shopFile = new SHOP_File();
-                shopFile.setPost(post);
-                shopFile.setFilePath(fileUrl);
-                shopFile.setFileName(image.getOriginalFilename());
+                SHOP_ProductImage shoppi = new SHOP_ProductImage();
+                shoppi.setProduct(post);
+                shoppi.setFilePath(fileUrl);
+                shoppi.setFileName(image.getOriginalFilename());
 //                shopFile.setSize(image.getSize());
 //                shopFile.setContentType(image.getContentType());
 
-                shopfr.save(shopFile);
+                shopir.save(shoppi);
 
-                if (post.getFiles() != null) {
-                    post.getFiles().add(shopFile);
+                if (post.getImages() != null) {
+                    post.getImages().add(shoppi);
                 }
             }
             shoppr.save(post);
         }
     }
 
-    public void uploadOldFile(List<Integer> idList, Integer postId) {
-        SHOP_post post = shoppr.findById(postId).get();
+    public void uploadOldFile(List<Integer> idList, Long postId) {
+        SHOP_Product post = shoppr.findById(postId).get();
         for(Integer id : idList) {
-            SHOP_File fileInDB =  shopfr.findById(id).get();
-            fileInDB.setPost(post);
+            SHOP_File fileInDB =  shopfr.findById(id).get();        // suggest는 SHOP_File을 씀
+
+            SHOP_ProductImage shoppi = new SHOP_ProductImage();     // product는 SHOP_ProductImage를 씀
+            shoppi.setProduct(post);
+            shoppi.setFilePath(fileInDB.getFilePath());
+            shoppi.setFileName(fileInDB.getFileName());
+            shopir.save(shoppi);
+
+            if (post.getImages() != null) {
+                post.getImages().add(shoppi);
+            }
         }
     }
 }

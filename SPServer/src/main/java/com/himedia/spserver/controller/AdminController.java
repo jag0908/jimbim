@@ -1,11 +1,14 @@
 package com.himedia.spserver.controller;
 
 import com.himedia.spserver.entity.Community.C_Category;
+import com.himedia.spserver.entity.Community.C_File;
 import com.himedia.spserver.entity.Community.C_post;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SH.SH_Category;
+import com.himedia.spserver.entity.SH.SH_File;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.SHOP.SHOP_File;
+import com.himedia.spserver.entity.SHOP.SHOP_Product;
 import com.himedia.spserver.entity.SHOP.SHOP_Suggest;
 import com.himedia.spserver.entity.SHOP.SHOP_post;
 import com.himedia.spserver.service.AdminService;
@@ -61,13 +64,20 @@ public class AdminController {
         result.put("msg", "ok");
         return result;
     }
-
-    /////////////// 상품 관련 ////////////////////////
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/updateBlacklist")
+    public HashMap<String,Object> updateBlacklist( @RequestParam("userid") String userid, @RequestParam("blacklist") int blacklist){
+        HashMap<String, Object> result = new HashMap<>();
+        as.updateBlacklist(userid, blacklist);
+        result.put("msg", "ok");
+        return result;
+    }
+    /////////////// 중고마을 관련 ////////////////////////
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getShList")
     public HashMap<String, Object> getShList(@RequestParam("page") int page,
-                                                 @RequestParam(value="key", required = false, defaultValue = "") String key){
+                                             @RequestParam(value="key", required = false, defaultValue = "") String key){
         HashMap<String, Object> result = as.getShList(page, key);
         return result;
     }
@@ -78,8 +88,10 @@ public class AdminController {
         HashMap<String, Object> result = new HashMap<>();
         SH_post post = as.getShPost( postId );
         List<SH_Category> shCategoryList = as.getShCategoryList();
+        List<SH_File> shFileList = as.getShFileList(postId);
         result.put("shPost", post);
         result.put("shCategoryList", shCategoryList);
+        result.put("shFileList", shFileList);
         return result;
     }
 
@@ -91,6 +103,36 @@ public class AdminController {
         result.put("msg", "ok");
         return result;
     }
+
+    /// //////////////////// shop 관련 //////////////////////////
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getShopList")
+    public HashMap<String, Object> getShopList(@RequestParam("page") int page,
+                                               @RequestParam(value="key", required = false, defaultValue = "") String key){
+        HashMap<String, Object> result = as.getShopList(page, key);
+        return result;
+    }
+
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/getShopPost")
+//    public HashMap<String, Object> getShopPost(@RequestParam("postId") int postId){
+//        HashMap<String, Object> result = new HashMap<>();
+//        SH_post post = as.getShPost( postId );
+//        List<SH_Category> shCategoryList = as.getShCategoryList();
+//        result.put("shPost", post);
+//        result.put("shCategoryList", shCategoryList);
+//        return result;
+//    }
+//
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @DeleteMapping("/deleteShPost")
+//    public HashMap<String, Object> deleteShPost(@RequestParam("postId") int postId){
+//        HashMap<String, Object> result = new HashMap<>();
+//        as.deleteShPost(postId);
+//        result.put("msg", "ok");
+//        return result;
+//    }
 
     ///   ///////// 커뮤니티 관련 /////////
     @PreAuthorize("hasRole('ADMIN')")
@@ -192,14 +234,14 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/writeShopPost")
-    public HashMap<String,Object> writeShopPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("price") int price, @RequestParam("categoryId") Long categoryId){
+    public HashMap<String,Object> writeShopPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("categoryId") Long categoryId){
         HashMap<String, Object> result = new HashMap<>();
-        SHOP_post post = as.writeShopPost(title, content, price, categoryId);
-        result.put("postId", post.getPostId());
+        SHOP_Product post = as.writeShopPost(title, content, categoryId);
+        result.put("postId", post.getProductId());
         return result;
     }
     @PostMapping("/uploadOldFile")
-    public HashMap<String,Object> uploadOldFile(@RequestParam("idList[]") List<Integer> idList, @RequestParam("postId") Integer postId){
+    public HashMap<String,Object> uploadOldFile(@RequestParam("idList[]") List<Integer> idList, @RequestParam("postId") Long postId){
         HashMap<String, Object> result = new HashMap<>();
         as.uploadOldFile(idList, postId);
         result.put("msg", "ok");
@@ -209,7 +251,7 @@ public class AdminController {
     @PostMapping("/fileupload")
     public HashMap<String, Object> fileUpload(
             @RequestParam("imageList") List<MultipartFile> images,
-            @RequestParam("postId") String postId) {
+            @RequestParam("postId") Long postId) {
 
         HashMap<String, Object> result = new HashMap<>();
         try {

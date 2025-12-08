@@ -10,6 +10,7 @@ function CommunityDetail() {
     const { cpostId } = useParams();
     const [cPost, setCPost] = useState({});
     const [cCategoryList, setCCategoryList] = useState([]);
+    const [cFileList, setCFileList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(
@@ -26,6 +27,8 @@ function CommunityDetail() {
                 }else{
                     setCPost(result.data.cPost)
                     setCCategoryList(result.data.CCategoryList)
+                    setCFileList(result.data.cFileList)
+                    console.log(result.data)
                 }
             })
             .catch((err)=>{console.error(err)})
@@ -113,7 +116,30 @@ function CommunityDetail() {
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>첨부 이미지</div>
-                        <div className='col' style={{flex:'5', padding:'20px 10px'}}></div>
+                        <div className='col' style={{flex:'5', padding:'20px 10px'}}>
+                            <div className='detailImg'>
+                            {
+                                cPost.fileList.map((file, idx)=>{
+                                    return (<>
+                                        {
+                                            (idx<5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                        }
+                                    </>)
+                                })
+                            }
+                            </div>
+                            <div className='detailImg'>
+                            {
+                                cPost.fileList.map((file, idx)=>{
+                                    return (<>
+                                        {
+                                            (idx>=5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                        }
+                                    </>)
+                                })
+                            }
+                            </div>
+                        </div>
                     </div>
                     <div className='row'>
                         <div className='col detailTitle'>공지글 설정</div>

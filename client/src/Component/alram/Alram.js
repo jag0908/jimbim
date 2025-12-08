@@ -14,8 +14,9 @@ import '../../style/Alram.css'
 import { active } from 'sortablejs'
 import AlramMyChat from './AlramMyChat'
 import AlramSuggest from './AlramSuggest'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import jaxios from '../../util/jwtutil'
 
 function Alram() {
   const loginUser = useSelector(state=>state.user);
@@ -92,28 +93,22 @@ function Alram() {
     }
   }, [])
 
-  // 이삭 수정
+
+  
+  // 전체알람
+  const [allAlramCount, setAllAlramCount] = useState(null);
+  const location = useLocation();
   useEffect(() => {
-    let memberId = sessionStorage.getItem("member_id");
-
-    if (!memberId) {
-      const token = sessionStorage.getItem("accessToken");
-
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          memberId = payload.member_id;
-
-          if (memberId) {
-            sessionStorage.setItem("member_id", memberId);
-            console.log("member_id loaded from JWT:", memberId);
-          }
-        } catch (e) {
-          console.error("JWT 파싱 실패:", e);
-        }
-      }
-    }
-  }, []);
+      if (!loginUser.userid) return;
+      runMyFunction();
+  }, [location.pathname])
+  function runMyFunction() {
+      jaxios.get(`/api/alram/allAlramCount/${loginUser.member_id}`)
+          .then((res)=> {
+              console.log(res);
+              setAllAlramCount(res.data.alram);
+          }).catch(err=>console.error(err));
+  }
 
 
   return (
@@ -121,7 +116,7 @@ function Alram() {
       <div className="alram-container">
         {/* Header */}
         <div className="alram-header">
-          <h1 className="alram-title">알림</h1>
+          <h1 className="alram-title">알림 <span>{allAlramCount}</span></h1>
           {/* <button className="btn-read-all" style={isDisplay}>전체 읽음</button> */}
         </div>
 

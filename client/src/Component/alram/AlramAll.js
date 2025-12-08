@@ -71,11 +71,11 @@ function AlramAll({formatDateTime}) {
                                         alram.alarmType == "NOTI" ?
                                         <strong>{alram.senderId}</strong> :
                                         alram.alarmType == "CHAT" ?
-                                        <strong>{alram.senderId}님과의 읽지않은 채팅이 있습니다.</strong> :
+                                        <strong>[내 판매 채팅] {alram.senderId}님과의 읽지않은 채팅이 있습니다.</strong> :
                                         alram.alarmType == "SUGGEST" ?
                                         <strong>{alram.senderId}</strong> :
                                         alram.alarmType == "MYCHAT" ?
-                                        <strong>{alram.senderId}님과의 읽지않은 채팅이 있습니다.</strong> :
+                                        <strong>[내 구매 채팅] {alram.senderId}님과의 읽지않은 채팅이 있습니다.</strong> :
                                         alram.alarmType == "ZZIM" ?
                                         <strong>{alram.senderId}</strong> : "noalram"
                                         }

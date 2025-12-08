@@ -33,10 +33,10 @@ button {cursor: pointer;}
 .shMain .shPostWrap {display: flex; flex-flow: wrap; gap: 30px 30px; margin: 60px auto 60px; width: 1024px;}
 
 .shMain .shPostWrap .list {position: relative;  width: calc(20% - 24px);}
-.shMain .shPostWrap .list:after {content: ''; display: flex; justify-content: center; align-items: center; position: absolute; z-index: 20; top: 6px; left: 6px; width: 56px; height: 26px; background: #555555e3; font-size: 12px; font-weight: 500; border-radius: 4px; color: #fff;}
+.shMain .shPostWrap .list:after {content: ''; display: flex; justify-content: center; align-items: center; position: absolute; z-index: 20; top: 6px; left: 6px; width: 56px; height: 26px; background: #ff7c36da; font-size: 12px; font-weight: 500; border-radius: 4px; color: #fff;}
 .shMain .shPostWrap .list.state0:after {content: '판매중';}
-.shMain .shPostWrap .list.state1:after {content: '예약중';}
-.shMain .shPostWrap .list.state2:after {content: '판매완료';}
+.shMain .shPostWrap .list.state1:after {content: '예약중'; background: #667eeaaf;}
+.shMain .shPostWrap .list.state2:after {content: '판매완료'; background: #000000a2; width: 64px;}
 .shMain .shPostWrap .list > a {display: flex; flex-direction: column; align-items: flex-start; gap: 2px;}
 .shMain .shPostWrap .list .imgBox {position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden;} 
 .shMain .shPostWrap .list.state2 .imgBox::before {content: ''; position: absolute; z-index: 10; top: 0; left: 0; width: 100%; height: 100%; background: #000; border-radius: 10px; opacity: 0.2;}
@@ -46,8 +46,9 @@ button {cursor: pointer;}
 .shMain .shPostWrap .list .data.price {font-size: 20px; font-weight: 600;}
 .shMain .shPostWrap .list .data.date {font-size: 14px; font-weight: 600; color: #999;}
 
-.shMain .btnWrap {display: flex; justify-content: center; align-items: center; position: fixed; bottom: 160px; right: 60px; width: 72px; height: 72px; border-radius: 50%; background-color: #555;}
-.shMain .btnWrap .btnWrite {width: 100%; height: 100%; color: #fff; cursor: pointer;}
+.shMain .btnWrap {display: flex; justify-content: center; align-items: center; position: fixed; bottom: 140px; right: 45px; width: 56px; height: 56px; border-radius: 40%; background-color: #d7d3d3;}
+.shMain .btnWrap .btnWrite {display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 13px; color: #fff; cursor: pointer;}
+.shMain .btnWrap .btnWrite > img {width: 50%; height: 50%; object-fit: contain;}
 
 .noimg {display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 22px; font-weight: 500; color: #e48d8d;}
 
@@ -96,10 +97,10 @@ button {cursor: pointer;}
 .shView .rayoutWrap {display: flex; gap: 50px;}
 .shView .rayoutWrap .leftBox {display: flex; flex-direction: column; width: 50%; gap: 12px;}
 .shView .imgGroup {position: relative;}
-.shView .imgGroup:after {content: ''; display: flex; justify-content: center; align-items: center; position: absolute; z-index: 20; top: 6px; left: 6px; width: 56px; height: 26px; background: #555555e3; font-size: 12px; font-weight: 500; border-radius: 4px; color: #fff;}
+.shView .imgGroup:after {content: ''; display: flex; justify-content: center; align-items: center; position: absolute; z-index: 20; top: 6px; left: 6px; width: 56px; height: 26px; background: #ff7c36da; font-size: 12px; font-weight: 500; border-radius: 4px; color: #fff;}
 .shView .imgGroup.state0:after {content: '판매중';}
-.shView .imgGroup.state1:after {content: '예약중';}
-.shView .imgGroup.state2:after {content: '판매완료';}
+.shView .imgGroup.state1:after {content: '예약중'; background: #667eeaaf;}
+.shView .imgGroup.state2:after {content: '판매완료'; background: #000000a2; width: 64px;}
 .shView .imgGroup.state2::before {content: ''; position: absolute; z-index: 10; top: 0px; left: 0px; width: 100%; height: 100%; background: #000; opacity: 0.2;}
 .shView .imgGroup .slick-slide, .shView .imgGroup {border-radius: 12px; overflow: hidden;}
 .shView .imgGroup .slick-slide, .shView .imgGroup .slick-slide * {outline: none !important; box-shadow: none !important;}
@@ -120,15 +121,16 @@ button {cursor: pointer;}
 .shView .leftBox .userState > span {padding-left: 6px; font-size: 20px;}
 
 .shView .leftBox .suggestWrap {display: flex; flex-direction: column; gap: 12px; margin-top: 10px; max-height: 230px; overflow: auto;}
-.shView .leftBox .suggestWrap .suggestList {display: flex; justify-content: flex-end; align-items: center; gap: 6px; position: relative; padding: 10px; background-color: #ededed; border-radius: 10px; box-sizing: border-box; font-size: 14px; font-weight: 600; color: #555;}
+.shView .leftBox .suggestWrap .suggestList {display: flex; justify-content: flex-end; align-items: center; gap: 6px; position: relative; padding: 10px; background-color: #ededed; border-radius: 10px; box-sizing: border-box; font-size: 12px; font-weight: 600; color: #555;}
 .shView .leftBox .suggestWrap .suggestList:after {content: "가격제안 요청이 수락됨"; display: none; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: hsla(0, 1%, 21%, 0.6); font-size: 20px; font-weight: 500; color: #fff;}
 .shView .leftBox .suggestWrap .suggestList.active {pointer-events: none;}
 .shView .leftBox .suggestWrap .suggestList.active:after {display: flex;}
+.shView .leftBox .suggestWrap .suggestList .sgWrap {display: flex; flex-direction: column; align-items: center;}
 .shView .leftBox .suggestWrap .suggestList .img {width: 48px; height: 48px; border-radius: 4px; overflow: hidden;}
 .shView .leftBox .suggestWrap .suggestList .img > img {width: 100%; height: 100%; object-fit: cover;}
-.shView .leftBox .suggestWrap .suggestList .name {font-size: 14px; font-weight: 600; color: #555;}
-.shView .leftBox .suggestWrap .suggestList .price {font-size: 20px; font-weight: 700; color: #121212;}
-.shView .leftBox .suggestWrap .suggestList .date {font-size: 12px; font-weight: 500; color: #555;}
+.shView .leftBox .suggestWrap .suggestList .name {font-size: 13px; font-weight: 600; color: #555;}
+.shView .leftBox .suggestWrap .suggestList .price {font-size: 15px; font-weight: 700; color: #121212;}
+.shView .leftBox .suggestWrap .suggestList .date {font-size: 11px; font-weight: 500; color: #555;}
 
 
 .shView .rayoutWrap .rightBox {display: flex; flex-direction: column; gap: 10px; width: 50%;}
@@ -147,7 +149,7 @@ button {cursor: pointer;}
 .shView .rayoutWrap .rightBox .eventArea {display: flex; gap: 10px; width: 100%;}
 .shView .rayoutWrap .rightBox .eventArea .btnEvent {display: flex; justify-content: center; align-items: center; width: 100%; height: 42px; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-weight: 500; color: #555; overflow: hidden;}
 .shView .rayoutWrap .rightBox .eventArea .btnEvent.btnChat {background-color: #ddd;}
-.shView .rayoutWrap .rightBox .eventArea .btnEvent.btnBuy {background-color: rgb(105, 221, 105);}
+.shView .rayoutWrap .rightBox .eventArea .btnEvent.btnBuy {background-color: #ff7e36; color: #fff;}
 .shView .rayoutWrap .rightBox .eventArea .btnEvent.btnZZim {flex-shrink: 0; width: 42px; border: 1px solid #ddd;}
 .shView .rayoutWrap .rightBox .eventArea .btnEvent.btnLike
 {flex-shrink: 0; width: 42px; border: 1px solid #ddd;}

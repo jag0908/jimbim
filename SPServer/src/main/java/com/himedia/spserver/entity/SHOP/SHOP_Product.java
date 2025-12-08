@@ -17,8 +17,9 @@ public class SHOP_Product {
     private Long productId;
 
     private String title;
-    private String content;
-    private Integer deliveryPrice;
+    private String content;         // 남겨놓았음
+    private Integer deliveryPrice;  // 남겨놓았음
+    private Integer price;
 
     @Column(columnDefinition = "int default 0")
     private Integer viewCount;

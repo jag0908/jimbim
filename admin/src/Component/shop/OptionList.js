@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import SubMenu from '../SubMenu'
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
 import '../../style/admin.css'
 
 
-function ShopList() {
+function OptionList() {
     const loginUser = useSelector( state=>state.user)
-    const [shopList, setShopList] = useState([]);
-    const [shopCategoryList, setShopCategoryList] = useState([]);
+    const { productId } = useParams();
+    const [product, setProduct] = useState({});
+    const [optionList, setOptionList] = useState([]);
     const [paging, setPaging]=useState({});
     const navigate = useNavigate();
     const [beginEnd, setBeginEnd] = useState();
-    const [key, setKey] = useState('')
     const type = 'shop'
 
     useEffect(
@@ -23,13 +23,12 @@ function ShopList() {
                 alert('권한이 없습니다')
                 navigate('/')
             }
-            jaxios.get('/api/admin/getShopList', {params:{page:1, key}})
+            
+            jaxios.get('/api/admin/getOptionList', {params:{page:1, productId}})
             .then((result)=>{ 
                 console.log(result)
-                setShopList(result.data.shopList) 
-                setShopCategoryList(result.data.shopCategoryList)
+                setOptionList(result.data.optionList) 
                 setPaging( result.data.paging )
-                setKey( result.data.key)
 
                 let arr = [];
                 for( let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
@@ -38,16 +37,21 @@ function ShopList() {
                 setBeginEnd( [...arr] )
             })
             .catch((err)=>{console.error(err)})
+
+            jaxios.get('/api/admin/getShopProduct', {params:{productId}})
+            .then((result)=>{
+                console.log(result.data)
+                setProduct(result.data.product)
+            })
+            .catch((err)=>{console.error(err)})
         },[]
     )
 
     function onPageMove(p){ 
-        jaxios.get('/api/admin/getShopList', {params:{page:p, key}})
+        jaxios.get('/api/admin/getOptionList', {params:{page:p, productId}})
         .then((result)=>{ 
-            setShopList(result.data.shopList) 
-            setShopCategoryList(result.data.shopCategoryList)
+            setOptionList(result.data.optionList) 
             setPaging( result.data.paging )
-            setKey( result.data.key)
             let arr = [];
             for( let i=result.data.paging.beginPage; i<=result.data.paging.endPage; i++){
                 arr.push(i);
@@ -56,33 +60,29 @@ function ShopList() {
             console.log('paging', result.data.paging)
         })
         .catch((err)=>{console.error(err)})
+        jaxios.get('/api/admin/getShopProduct', {params:{productId}})
+        .then((result)=>{
+            console.log(result.data)
+            setProduct(result.data.product)
+        })
+        .catch((err)=>{console.error(err)})
     }
 
     return (
         <div className='adminContainer'>
             <SubMenu type={type}/>
             <div className='productTable'>
-                <div className='title'>상품목록(SHOP)</div>
+                <div className='title'>상품목록(SHOP) / {product.title}</div>
                 <div className='row tableTitle'>
-                    <div className='col'>카테고리</div>
-                    <div className='col'>상품명</div>
-                    <div className='col'>원가</div>
-                    <div className='col'>추가일</div>
+                    <div className='col'>옵션명</div>
+                    <div className='col'></div>
                 </div>
                 {
-                    (shopList[0])?(
-                        shopList.map((shop, idx)=>{
+                    (optionList[0])?(
+                        optionList.map((option, idx)=>{
                             return (
-                                <div className='row' onClick={()=>{navigate(`/ShopDetail/${shop.productId}`)}}>
-                                    <div className='col'>{shopCategoryList[shop.category.categoryId-1].category_name}</div>
-                                    <div className='col'>{shop.title}</div>
-                                    <div className='col'>{shop.price} 원</div>
-                                    {/* <div className='col'>{
-                                        (shop.member)?
-                                        (((shop.member.provider)?(shop.member.userid+' ('+shop.member.provider+')'):(shop.member.userid))):
-                                        (<span className='italic'>탈퇴회원</span>)
-                                    }</div> */}
-                                    <div className='col'>{shop.indate.substring(0, 10)}</div>
+                                <div className='row' onClick={()=>{}}>
+                                    <div className='col'>{option.optionName}</div>
                                 </div>
                             )
                         })
@@ -112,14 +112,13 @@ function ShopList() {
                         }>&nbsp;▶&nbsp;</span>
                     ):(<></>)
                 }
+                </div>  
+                <div className='detailPageBtns'>
+                    <button onClick={()=>{navigate(`/ShopDetail/${productId}`)}} >뒤로</button>
                 </div>
-                <div className='btns' style={{display:"flex", margin:"5px"}}>
-                    <input type="text" value={key} onChange={(e)=>{setKey(e.currentTarget.value)}} />
-                    <button style={{marginLeft:"auto"}} onClick={()=>{ onPageMove(1) }}>검색</button>
-                </div>    
             </div>
         </div>
     )
 }
 
-export default ShopList
+export default OptionList

@@ -25,6 +25,7 @@ public class StyleReplyService {
     private final STYLE_PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final STYLE_ReplyLikeRepository replyLikeRepository;
+    private final NotificationService notificationService;
 
     public Map<String, Object> addReply(Integer spostId, String userid, String content, Integer parent_id) {
         Member member = memberRepository.findByUserid(userid);
@@ -46,6 +47,11 @@ public class StyleReplyService {
 
         reply.setIndate(new Timestamp(System.currentTimeMillis()));
         replyRepository.save(reply);
+
+        Member postOwner = post.getMember();
+        if (!postOwner.getUserid().equals(userid)) { // 본인이 자기글에 쓴 건 알림 X
+            notificationService.sendReplyNotification(postOwner, spostId.longValue(), member);
+        }
 
         Map<String, Object> result = new HashMap<>();
         result.put("reply_id", reply.getReply_id());

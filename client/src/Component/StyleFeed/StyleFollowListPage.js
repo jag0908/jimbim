@@ -11,6 +11,7 @@ export default function StyleFollowListPage() {
       onClose={() => window.close()}
       userid={userid}
       type={type}
+      onFollowChange={handleFollowToggle}
     />
   );
 }

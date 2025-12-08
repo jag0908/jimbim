@@ -1,14 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 
 import AlramAll from './AlramAll'
 import AlramChat from './AlramChat'
-import AlramCommunity from './AlramCommunity'
 import AlramZzim from './AlramZzim'
+
+// 이삭 수정
+import AlramFollow from './AlramFollow'
+import AlramReply from './AlramReply'
+import AlramLike from './AlramLike'
+
 
 import '../../style/Alram.css'
 
 function Alram() {
   const [activeTab, setActiveTab] = useState('all');
+
+  // 이삭 수정
+  useEffect(() => {
+    let memberId = sessionStorage.getItem("member_id");
+
+    if (!memberId) {
+      const token = sessionStorage.getItem("accessToken");
+      
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          memberId = payload.member_id;
+
+          if (memberId) {
+            sessionStorage.setItem("member_id", memberId);
+            console.log("member_id loaded from JWT:", memberId);
+          }
+        } catch (e) {
+          console.error("JWT 파싱 실패:", e);
+        }
+      }
+    }
+  }, []);
+
 
   return (
     <div id="alram-page">
@@ -33,12 +62,27 @@ function Alram() {
           >
             거래
           </button>
+
+          {/* 이삭 수정 */}
           <button 
-            className={`tab-item ${activeTab === 'community' ? 'active' : ''}`}
-            onClick={() => setActiveTab('community')}
+            className={`tab-item ${activeTab === 'follow' ? 'active' : ''}`}
+            onClick={() => setActiveTab('follow')}
           >
-            커뮤니티
+            팔로우
           </button>
+          <button 
+            className={`tab-item ${activeTab === 'reply' ? 'active' : ''}`}
+            onClick={() => setActiveTab('reply')}
+          >
+            댓글
+          </button>
+          <button 
+            className={`tab-item ${activeTab === 'like' ? 'active' : ''}`}
+            onClick={() => setActiveTab('like')}
+          >
+            좋아요
+          </button>
+
           <button 
             className={`tab-item ${activeTab === 'zzim' ? 'active' : ''}`}
             onClick={() => setActiveTab('zzim')}
@@ -54,10 +98,14 @@ function Alram() {
                     <AlramAll /> :
                     activeTab == "chat" ? 
                         <AlramChat /> :
-                        activeTab == "community" ?
-                            <AlramCommunity /> :
-                                activeTab == "zzim" ?
-                                <AlramZzim /> : null
+                          activeTab == "zzim" ?
+                            <AlramZzim /> :
+                              activeTab == "follow" ? //이삭 수정
+                                <AlramFollow /> :
+                                  activeTab == "reply" ?
+                                    <AlramReply /> :
+                                      activeTab == "like" ?
+                                      <AlramLike /> : null
             }
 
 
@@ -65,7 +113,7 @@ function Alram() {
 
 
           {/* 알람 아이템 예시 - unread */}
-          <div className="alram-item unread">
+          {/* <div className="alram-item unread">
             <div className="alram-badge"></div>
             <div className="alram-thumbnail">
               <div className="thumbnail-placeholder"></div>
@@ -79,10 +127,10 @@ function Alram() {
               </div>
             </div>
             <button className="btn-alram-action">확인</button>
-          </div>
+          </div> */}
 
           {/* 알람 아이템 예시 - read */}
-          <div className="alram-item">
+          {/* <div className="alram-item">
             <div className="alram-badge"></div>
             <div className="alram-thumbnail">
               <div className="thumbnail-placeholder"></div>
@@ -96,7 +144,7 @@ function Alram() {
               </div>
             </div>
             <button className="btn-alram-action">확인</button>
-          </div>
+          </div> */}
 
           {/* 더 많은 알람 아이템들... */}
           <div className="alram-item">

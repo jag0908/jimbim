@@ -5,7 +5,7 @@ import "../../style/StyleFollowList.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-function StyleFollowList({ open, onClose, memberId, type }) {
+function StyleFollowList({ open, onClose, memberId, type, onFollowChange }) {
   const [list, setList] = useState([]);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -32,21 +32,22 @@ function StyleFollowList({ open, onClose, memberId, type }) {
 
   const handleFollowToggle = async (targetUserid) => {
     try {
-      const res = await jaxios.post(`${baseURL}/style/follow`, {
-        targetUserid,
-      });
+      const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid });
 
+      // 리스트 안 상태 업데이트
       setList((prev) =>
         prev.map((u) =>
-          u.userid === targetUserid
-            ? { ...u, isFollowing: res.data.followed }
-            : u
+          u.userid === targetUserid ? { ...u, isFollowing: res.data.followed } : u
         )
       );
+
+      // 부모 컴포넌트에 팔로우 상태 전달
+      if (onFollowChange) onFollowChange(targetUserid, res.data.followed);
     } catch (err) {
       console.error("팔로우 토글 실패", err);
     }
   };
+
 
   const filtered = list.filter(
     (u) =>

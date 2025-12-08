@@ -23,6 +23,7 @@ function StyleUser() {
   const cookies = new Cookies();
   const currentUser = cookies.get("user");
   const myUserid = currentUser?.userid;
+  const myMemberId = currentUser?.member_id;
   const navigate = useNavigate();
 
   const isMyProfile = myUserid === userid;
@@ -86,7 +87,9 @@ function StyleUser() {
   const checkFollowStatus = async () => {
     if (!myUserid || isMyProfile) return;
     try {
-      const res = await jaxios.get(`${baseURL}/style/follow/${userid}`);
+      const res = await jaxios.get(`${baseURL}/style/follow/${userid}`,{
+      params: { member_id: myMemberId }
+      });
       setIsFollowing(res.data.followed);
     } catch (err) {
       console.error("팔로우 상태 확인 실패", err);
@@ -96,7 +99,9 @@ function StyleUser() {
   // --- 팔로우 토글 ---
   const handleFollowToggle = async () => {
     try {
-      const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
+        const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid,
+        member_id: myMemberId
+      });
       setIsFollowing(res.data.followed);
       checkFollowStatus();
       fetchUserInfo();
@@ -158,8 +163,23 @@ function StyleUser() {
 
       {/* 팔로우 모달 */}
       {openFollowModal && (
-        <StyleFollowList open={openFollowModal} onClose={() => setOpenFollowModal(false)} memberId={userInfo.memberId} type={followType}/>
+        <StyleFollowList
+          open={openFollowModal}
+          onClose={() => setOpenFollowModal(false)}
+          memberId={userInfo.memberId}
+          type={followType}
+          onFollowChange={(targetUserid, followed) => {
+            // 팔로워/팔로잉 수 업데이트
+            setUserInfo((prev) => ({
+              ...prev,
+              followers: followed ? prev.followers + 1 : prev.followers - 1
+            }));
+            // 현재 로그인 사용자의 팔로잉 상태도 업데이트
+            if (targetUserid === userid) setIsFollowing(followed);
+          }}
+        />
       )}
+
 
       {/* 탭 */}
       <div className="style-user-tabs">

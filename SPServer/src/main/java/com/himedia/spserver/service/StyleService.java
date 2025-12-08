@@ -4,6 +4,7 @@ import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.File;
 import com.himedia.spserver.entity.Follow;
 import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.entity.MemberRole;
 import com.himedia.spserver.entity.SH.SH_File;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.SH.SH_zzim;
@@ -36,6 +37,7 @@ public class StyleService {
     private final FollowRepository followRepository;
     private final ShZzimRepository shzzimRepository;
     private final ShFileRepository shFileRepository;
+    private final NotificationService notificationService;
     private final S3UploadService s3UploadService;
 
 
@@ -207,6 +209,12 @@ public class StyleService {
             newLike.setSpost(post);
             likeRepository.save(newLike);
             liked = true;
+
+            Member postOwner = post.getMember();
+            if (!postOwner.getUserid().equals(userid)) { // 본인이 좋아요한 경우 제외
+                notificationService.sendLikeNotification(postOwner, spostId.longValue(), member);
+
+            }
         }
 
         int likeCount = likeRepository.countBySpost(post);
@@ -541,7 +549,12 @@ public class StyleService {
 
     public List<Map<String, Object>> getHotUsers() {
         // 1. 모든 회원 조회
-        List<Member> allMembers = memberRepository.findAll();
+        List<Member> allMembers = memberRepository.findAll()
+                .stream()
+                .filter(member -> member.getMemberRoleList().stream()
+                        .noneMatch(role -> role == MemberRole.ADMIN)) // ADMIN 제외
+                .toList();
+
 
         // 2. 회원 ID 목록
         List<Integer> memberIds = allMembers.stream()

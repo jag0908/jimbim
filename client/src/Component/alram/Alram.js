@@ -113,7 +113,7 @@ function Alram() {
             className={`tab-item ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => {setActiveTab('chat');}}
           >
-            채팅
+            내 판매 채팅
           </button>
           <button
             className={`tab-item ${activeTab === 'myChat' ? 'active' : ''}`}

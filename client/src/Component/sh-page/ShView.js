@@ -343,7 +343,7 @@ function ShView() {
                             </div>
                         </div>
 
-                        <div className='userState'>
+                        {/* <div className='userState'>
                             매너단계: 
                             <span>
                                 {
@@ -352,7 +352,7 @@ function ShView() {
                                     <Lodding/>
                                 }
                             </span>
-                        </div>
+                        </div> */}
                     </div>
                     <div className='suggestWrap'>
                         {
@@ -375,7 +375,7 @@ function ShView() {
                                             <span className='img'>
                                                 <img src={a.memberProfileImg} />
                                             </span>
-                                            <span className='name'>"{a.userId}"</span> 
+                                            <span className='name'>{a.userId}</span> 
                                         </span>
                                         님이 
                                     

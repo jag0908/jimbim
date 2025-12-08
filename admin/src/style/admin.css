@@ -306,3 +306,21 @@ a{
     margin: 10px;
     cursor: pointer;
 }
+
+.optionListRow{
+    display: flex;
+    flex-wrap:wrap;
+}
+.optionListCol{
+    width:calc(50% - 4px);
+    padding: 20px 0;
+    text-align: center;
+    border: 1px dotted #8a2be2;
+    margin: 1px;
+    overflow: hidden;
+}
+.optionListCol:hover{
+    background-color: #eeeeee;
+    cursor: pointer;
+    transition: 3;
+}

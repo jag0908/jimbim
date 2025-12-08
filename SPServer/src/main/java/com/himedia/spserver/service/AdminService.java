@@ -195,19 +195,7 @@ public class AdminService {
     public HashMap<String, Object> getOptionList(int page, Long productId) {
         // 검색없앰
         HashMap<String, Object> result = new HashMap<>();
-        Paging paging = new Paging();
-        paging.setPage(page);
-        paging.setDisplayPage(10);
-        paging.setDisplayRow(10);
-        int count = shopor.findByProduct_ProductId(productId).size();
-        paging.setTotalCount(count);
-        paging.calPaging();
-
-        Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "optionId"));
-        Page<SHOP_ProductOption > list = shopor.findByProduct_ProductId( productId , pageable);
-
-        result.put("optionList", list.getContent());
-        result.put("paging", paging);
+        result.put("optionList", shopor.findByProduct_ProductId(productId));
         return result;
     }
 

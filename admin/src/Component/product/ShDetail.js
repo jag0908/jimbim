@@ -74,28 +74,31 @@ function ShDetail() {
                     <div className='row'>
                         <div className='col detailTitle'>상품 이미지</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>
-                            <div className='detailImg'>
-                            {
-                                shFileList.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx<5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
+                            {(shFileList[0])?(<>
+                                <div className='detailImg'>
+                                {
+                                    shFileList.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx<5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                                <div className='detailImg'>
+                                {
+                                    shFileList.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx>=5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                            </>):(<span className='italic'>이미지 없음</span>)
                             }
-                            </div>
-                            <div className='detailImg'>
-                            {
-                                shFileList.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx>=5)?(<img src={file.path} onClick={()=>{navigate(file.path)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
-                            }
-                            </div>
                         </div>
                     </div>
                     <div className='row'>

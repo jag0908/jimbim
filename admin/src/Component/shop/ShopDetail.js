@@ -62,28 +62,33 @@ function ShopDetail() {
                     <div className='row'>
                         <div className='col detailTitle'>상품 이미지</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>
-                            <div className='detailImg'>
-                            {
-                                product.images.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx<5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
+                            
+                            {(product.images[0])?(<>
+                                <div className='detailImg'>
+                                {
+                                    product.images.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx<5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                                <div className='detailImg'>
+                                {
+                                    product.images.map((file, idx)=>{
+                                        return (<>
+                                            {
+                                                (idx>=5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
+                                            }
+                                        </>)
+                                    })
+                                }
+                                </div>
+                                </>):(<span className='italic'>이미지 없음</span>)
                             }
-                            </div>
-                            <div className='detailImg'>
-                            {
-                                product.images.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx>=5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
-                            }
-                            </div>
+                            
                         </div>
                     </div>
                     {/* <div className='row'>

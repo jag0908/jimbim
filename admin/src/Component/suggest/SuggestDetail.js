@@ -176,12 +176,13 @@ function SuggestDetail() {
 
             const idList = oldFiles.map( e => e.file_id )
 
+            if(idList){
+                await jaxios.post('/api/admin/uploadOldFile', null, {params:{idList:idList, postId:createdPostId}})     // 기존 suggest에 있는 이미지 product id 값 넣음
+                .then((result)=>{ 
 
-            await jaxios.post('/api/admin/uploadOldFile', null, {params:{idList:idList, postId:createdPostId}})     // 기존 suggest에 있는 이미지 product id 값 넣음
-            .then((result)=>{ 
-
-            } ).catch((err)=>{console.error(err)})
-
+                } ).catch((err)=>{console.error(err)})
+            }
+            
             await jaxios.post('/api/admin/setStatus', null, {params:{suggestId, status:'Y'}})       // suggest 수락으로 상태 바꾸고
             .then((result)=>{ 
                 
@@ -246,28 +247,32 @@ function SuggestDetail() {
                     <div className='row'>
                         <div className='col detailTitle'>상품 이미지</div>
                         <div className='col' style={{flex:'5', padding:'20px 10px'}}>
-                            <div className='detailImg'>
                             {
-                                suggest.files.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx<5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
+                                (suggest.files[0])?(<>
+                                    <div className='detailImg'>
+                                    {
+                                        suggest.files.map((file, idx)=>{
+                                            return (<>
+                                                {
+                                                    (idx<5)?(<img src={file.filePath} onClick={()=>{navigate(file.filePath)}}/>):(<></>)
+                                                }
+                                            </>)
+                                        })
+                                    }
+                                    </div>
+                                    <div className='detailImg'>
+                                    {
+                                        suggest.files.map((file, idx)=>{
+                                            return (<>
+                                                {
+                                                    (idx>=5)?(<img key={idx} src={file.filePath}  onClick={()=>{navigate(file.filePath)}}/>):(<></>)
+                                                }
+                                            </>)
+                                        })
+                                    }
+                                    </div>
+                                </>):(<span className='italic'>이미지 없음</span>)
                             }
-                            </div>
-                            <div className='detailImg'>
-                            {
-                                suggest.files.map((file, idx)=>{
-                                    return (<>
-                                        {
-                                            (idx>=5)?(<img key={idx} src={file.filePath}  onClick={()=>{navigate(file.filePath)}}/>):(<></>)
-                                        }
-                                    </>)
-                                })
-                            }
-                            </div>
                         </div>
                     </div>
                     <div className='row'>

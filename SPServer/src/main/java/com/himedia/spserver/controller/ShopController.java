@@ -1,14 +1,14 @@
 package com.himedia.spserver.controller;
 
 import com.himedia.spserver.dto.*;
-        import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SHOP.*;
-        import com.himedia.spserver.service.ShopService;
+import com.himedia.spserver.service.ShopService;
 import com.himedia.spserver.service.ShopSuggestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-        import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -114,4 +114,27 @@ public class ShopController {
         SHOP_Product product = shopService.getProductById(productId);
         return ShopProductDTO.fromEntity(product);
     }
+
+    @GetMapping("/getSuggestList/{page}")
+    public ResponseEntity<?> getSuggestList(
+            @PathVariable int page,
+            @RequestParam int memberId
+    ){
+        return ResponseEntity.ok(shopSuggestService.getSuggestList(page, memberId));
+    }
+
+    @GetMapping("/getSuggestDetail/{id}")
+    public ShopSuggestDto getSuggestDetail(@PathVariable Integer id) {
+        SHOP_Suggest suggest = shopSuggestService.findById(id);
+        return ShopSuggestDto.fromEntity(suggest);
+    }
+
+    @DeleteMapping("/deleteSuggest/{id}")
+    public ResponseEntity<String> deleteSuggest(@PathVariable Integer id) {
+        shopSuggestService.deleteSuggest(id);
+        return ResponseEntity.ok("삭제 완료");
+    }
+
+
+
 }

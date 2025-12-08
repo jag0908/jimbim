@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SideMenu from './SideMenu';
+import SideMenu from './MypageSideMenu';
 import '../../style/suggest.css';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

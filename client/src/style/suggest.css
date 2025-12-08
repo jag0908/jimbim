@@ -2,27 +2,25 @@
    Suggest 페이지 전체 CSS
 ========================================== */
 
-.customercontainer {
+.sg-customercontainer {
     display: flex;
-    width: 100%;
     min-height: 100vh;
-    background-color: #f5f5f5;
     font-family: Arial, sans-serif;
 }
 
-.customer {
+.sg-customer {
     flex: 1;
     padding: 20px;
     background-color: #fff;
 }
 
-.formtitle {
+.sg-formtitle {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
-.noData {
+.sg-noData {
     text-align: center;
     color: #888;
     margin-top: 50px;
@@ -31,46 +29,46 @@
 /* ------------------------------------------
    테이블 스타일
 ------------------------------------------- */
-.suggestTable {
+.sg-suggestTable {
     width: 100%;
     border-collapse: collapse;
 }
 
-.suggestListHeader, .suggestList {
+.sg-suggestListHeader, .sg-suggestList {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #ddd;
     padding: 8px 0;
 }
 
-.suggestListHeader {
+.sg-suggestListHeader {
     font-weight: bold;
     background-color: #fafafa;
 }
 
-.suggestField {
+.sg-suggestField {
     padding: 0 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.suggestField.title {
+.sg-suggestField.title {
     flex: 2;
 }
 
-.suggestField.date {
+.sg-suggestField.date {
     flex: 1;
 }
 
-.suggestField.delete {
+.sg-suggestField.delete {
     flex: 0.5;
     display: flex;
     justify-content: flex-end;
 }
 
 /* 삭제 버튼 */
-.actions button {
+.sg-actions button {
     background-color: #ff4d4f;
     color: #fff;
     border: none;
@@ -81,21 +79,21 @@
     transition: 0.2s;
 }
 
-.actions button:hover {
+.sg-actions button:hover {
     background-color: #ff7875;
 }
 
 /* ------------------------------------------
    페이징
 ------------------------------------------- */
-.paging {
+.sg-paging {
     margin-top: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.pageNum {
+.sg-pageNum {
     margin: 0 5px;
     padding: 5px 10px;
     cursor: pointer;
@@ -104,12 +102,12 @@
     transition: 0.2s;
 }
 
-.pageNum.active {
+.sg-pageNum.active {
     background-color: #1890ff;
     color: #fff;
 }
 
-.pageArrow {
+.sg-pageArrow {
     margin: 0 10px;
     cursor: pointer;
     font-weight: bold;
@@ -119,7 +117,7 @@
 /* ------------------------------------------
    리스트 hover 효과
 ------------------------------------------- */
-.suggestList:hover {
+.sg-suggestList:hover {
     background-color: #f9f9f9;
 }
 
@@ -127,22 +125,22 @@
    반응형 (모바일)
 ------------------------------------------- */
 @media (max-width: 768px) {
-    .suggestListHeader, .suggestList {
+    .sg-suggestListHeader, .sg-suggestList {
         flex-direction: column;
         align-items: flex-start;
         padding: 10px 0;
     }
 
-    .suggestField {
+    .sg-suggestField {
         width: 100%;
         padding: 5px 0;
     }
 
-    .suggestField.delete {
+    .sg-suggestField.delete {
         justify-content: flex-start;
     }
 
-    .paging {
+    .sg-paging {
         flex-wrap: wrap;
     }
 }
@@ -150,7 +148,7 @@
 /* ------------------------------------------
    상세페이지 콘텐츠
 ------------------------------------------- */
-.suggest-content {
+.sg-suggest-content {
     margin: 15px 0;
     padding: 10px;
     background-color: #fafafa;
@@ -158,23 +156,23 @@
     white-space: pre-wrap;
 }
 
-.suggest-files {
+.sg-suggest-files {
     margin-top: 15px;
 }
 
-.suggest-files ul {
+.sg-suggest-files ul {
     list-style: none;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
 }
 
-.suggest-files li {
+.sg-suggest-files li {
     margin-right: 10px;
     margin-bottom: 10px;
 }
 
-.suggest-img {
+.sg-suggest-img {
     max-width: 200px;
     max-height: 200px;
     border-radius: 4px;

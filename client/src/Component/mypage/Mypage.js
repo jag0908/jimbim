@@ -154,11 +154,12 @@ function Mypage() {
                         <label>ID</label>
                         <div>{loginUser.userid}</div>
 
-                        <label>비밀번호</label>
+                        <label style={{marginTop:'15px'}}>비밀번호</label>
                         {type === 'pwd' ? (
                             <>
-                                <input type="password" placeholder="현재 비밀번호" value={form.prePwd} onChange={e => setForm({ ...form, prePwd: e.target.value })} />
-                                <input type="password" placeholder="새 비밀번호" value={form.pwd} onChange={e => setForm({ ...form, pwd: e.target.value })} />
+                            {/* 수정필요 */}
+                                <input type="password" placeholder="현재 비밀번호" value={form.prePwd} onChange={e => setForm({ ...form, prePwd: e.target.value })} /><br/>
+                                <input type="password" placeholder="새 비밀번호" value={form.pwd} onChange={e => setForm({ ...form, pwd: e.target.value })} /><br/> 
                                 <input type="password" placeholder="비밀번호 확인" value={form.pwdChk} onChange={e => setForm({ ...form, pwdChk: e.target.value })} />
                                 <div className="formBtns">
                                     <button onClick={handleUpdatePwd}>수정</button>
@@ -181,7 +182,7 @@ function Mypage() {
                     <label>이메일</label>
                     {type === 'email' ? (
                         <>
-                            <input type="text" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                            <input className='inputemail' type="text" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
                             <div className="formBtns">
                                 <button onClick={handleSubmit}>수정</button>
                                 <button onClick={() => editField('')}>취소</button>
@@ -201,9 +202,11 @@ function Mypage() {
                     <label>전화번호</label>
                     {type === 'phone' ? (
                         <>
-                            <input type="text" maxLength="3" value={form.phone1} onInput={getNumberOnly} onChange={e => setForm({ ...form, phone1: e.target.value })} /> -
-                            <input type="text" maxLength="4" value={form.phone2} onInput={getNumberOnly} onChange={e => setForm({ ...form, phone2: e.target.value })} /> -
-                            <input type="text" maxLength="4" value={form.phone3} onInput={getNumberOnly} onChange={e => setForm({ ...form, phone3: e.target.value })} />
+                            <input type="text" className='inputphone' maxLength="3" value={form.phone1} onInput={getNumberOnly} onChange={e => setForm({ ...form, phone1: e.target.value })} />
+                            <span className='memberformdash'>&nbsp;-&nbsp;</span>
+                            <input type="text" className='inputphone' maxLength="4" value={form.phone2} onInput={getNumberOnly} onChange={e => setForm({ ...form, phone2: e.target.value })} />
+                            <span className='memberformdash'>&nbsp;-&nbsp;</span>
+                            <input type="text" className='inputphone' maxLength="4" value={form.phone3} onInput={getNumberOnly} onChange={e => setForm({ ...form, phone3: e.target.value })} />
                             <div className="formBtns">
                                 <button onClick={handleSubmit}>수정</button>
                                 <button onClick={() => editField('')}>취소</button>
@@ -223,8 +226,9 @@ function Mypage() {
                     <label>주민등록번호</label>
                     {type === 'rrn' ? (
                         <>
-                            <input type="text" maxLength="6" value={form.rrn1} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn1: e.target.value })} /> -
-                            <input type="text" maxLength="1" value={form.rrn2} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn2: e.target.value })} /> ******
+                            <input type="text" className='inputrrn1' maxLength="6" value={form.rrn1} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn1: e.target.value })} />
+                            <span className='memberformdash'>&nbsp;-&nbsp;</span>
+                            <input type="text" className='inputrrn2' maxLength="1" value={form.rrn2} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn2: e.target.value })} /> ******
                             <div className="formBtns">
                                 <button onClick={handleSubmit}>수정</button>
                                 <button onClick={() => editField('')}>취소</button>
@@ -240,15 +244,23 @@ function Mypage() {
                     )}
                 </div>
 
-                <div className="field">
+                <div className='field'>
                     <label>동의사항(선택)</label>
-                    <div className="checkboxField">
-                        <label>약관 동의</label>
-                        <input type="checkbox" checked={isChecked(form.terms_agree)} readOnly onClick={() => handleUpdateAgree('terms', form.terms_agree)} />
+                    <div className='checkboxField'>
+                        <div className='subLabel'>
+                            <label>약관 동의</label>
+                        </div>
+                        <div className='agreeCheckbox'>
+                            <input type="checkbox" checked={isChecked(form.terms_agree)} readOnly onClick={() => handleUpdateAgree('terms', form.terms_agree)} />
+                        </div>
                     </div>
-                    <div className="checkboxField">
-                        <label>개인정보 동의</label>
-                        <input type="checkbox" checked={isChecked(form.personal_agree)} readOnly onClick={() => handleUpdateAgree('personal', form.personal_agree)} />
+                    <div className='checkboxField'>
+                        <div className='subLabel'>
+                            <label>개인정보 동의</label>
+                        </div>
+                        <div className='agreeCheckbox'>
+                            <input type="checkbox" checked={isChecked(form.personal_agree)} readOnly onClick={() => handleUpdateAgree('personal', form.personal_agree)} />
+                        </div>
                     </div>
                 </div>
 

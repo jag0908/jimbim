@@ -14,7 +14,7 @@
     margin-right: 5px;
 }
 .idcheck{
-    background-color: #007bff;
+    background-color: #ff7e36;
     color: #fff;
     padding: 10px 25px;
     border-radius: 6px;
@@ -23,7 +23,7 @@
     margin: 0 10px;
 }
 .idcheck:hover {
-  background-color: #0056b3;
+  background-color: #ee6d25;
   transform: translateY(-2px);
 }
 .inputemail{
@@ -70,7 +70,7 @@
 }
 
 .imgBtns{
-    background-color: #007bff;
+    background-color: #ff7e36;
     color: #fff;
     border: none;
     padding: 10px 25px;
@@ -79,12 +79,12 @@
     font-size: 14px;
     transition: background-color 0.2s, transform 0.1s;
     text-align: center;
-    width: 120px;
+    width: 130px;
     font-weight: normal;
 }
 
 .imgBtns:hover {
-  background-color: #0056b3;
+  background-color: #ee6d25;
   transform: translateY(-2px);
 }
 
@@ -118,7 +118,7 @@
 }
 
 .formBtns button {
-  background-color: #007bff;
+  background-color: #ff7e36;
   color: #fff;
   border: none;
   padding: 10px 25px;
@@ -129,7 +129,7 @@
 }
 
 .formBtns button:hover {
-  background-color: #0056b3;
+  background-color: #ee6d25;
   transform: translateY(-2px);
 }
 

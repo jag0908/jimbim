@@ -72,6 +72,8 @@ function ShWrite() {
         // 미리보기도 같이 갱신
         const newUrls = previewUrls.filter((_, i) => i !== index);
         setPreviewUrls(newUrls);
+
+        setFileLength(prev => prev - 1);
     };
 
     // 파일 업로드시 formData 추가 및 ajax

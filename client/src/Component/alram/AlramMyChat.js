@@ -13,7 +13,7 @@ function AlramMyChat({formatDateTime}) {
     
     jaxios.get(`/api/alram/chatMyMsg/${id}`)
       .then((res)=> {
-        console.log(res);
+        // console.log(res);
         setMsgAlram(res.data);
       }).catch(err=>console.error(err));
   }, [])

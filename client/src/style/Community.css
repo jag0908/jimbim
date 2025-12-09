@@ -5,7 +5,8 @@
   margin: 0 auto 20px;
   font-family: "Noto Sans KR", sans-serif;
   gap: 20px;
-  align-items: flex-start;
+  align-items: stretch;       /* 왼쪽과 오른쪽 높이 자동 일치 */
+  min-height: 680px;          /* 기본 화면 높이 이상 유지 */
 }
 
 /* ---------- 사이드바 ---------- */
@@ -18,7 +19,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  min-height: 540px;
+  height: 540px;  
 }
 
 .sidebar h3 {
@@ -60,7 +61,9 @@
   border-radius: 6px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  min-height: 540px;
+
+  height: 580px;         /* 사이드바와 동일 높이 */
+  overflow-y: auto;       /* 내부 스크롤 */
 }
 
 /* 헤더와 row 모두 같은 flex 구조 */
@@ -193,28 +196,6 @@
   background-color: #0056b3;
 }
 
-/* 페이징 */
-#paging {
-  margin-top: auto;
-  text-align: center;
-  font-size: 16px;
-  padding-bottom: 15px;
-}
-
-#paging span {
-  display: inline-block;
-  margin: 0 5px;
-  padding: 5px 8px;
-  color: #333;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-#paging span:hover {
-  background-color: #007bff;
-  color: #fff;
-}
-
 /* ---------- 반응형 ---------- */
 @media (max-width: 768px) {
   .community {
@@ -241,4 +222,66 @@
     padding-top: 15px;
     margin-bottom: 15px;
   }
+}
+
+.searchArea button {
+  padding: 8px 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.searchArea button:hover {
+  background-color: #0056b3;
+}
+
+/* ... 기존 CSS ... */
+
+/* 고정 헤더 */
+.communityList .sticky {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 10;
+}
+
+/* 댓글 0일 때 숨김 처리는 JS에서 처리했으므로 CSS 수정 필요 없음 */
+
+/* 검색 버튼 */
+.writeBtnArea.top .searchBtn {
+    padding: 6px 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.writeBtnArea.top .searchBtn:hover {
+    background-color: #218838;
+}
+
+/* 전체 영역 기본 커서 */
+.community, .sidebar, .communityList {
+    cursor: default; /* 기본 커서로 설정, 필요시 다른 타입으로 변경 가능 */
+}
+
+/* 클릭 가능한 요소 */
+.sidebar li,
+.writeBtn,
+.searchBtn,
+.communityList .row,
+.communityList .row.notice {
+    cursor: pointer; /* 손 모양 커서 */
+}
+
+/* 예: 모든 버튼에 손 모양 적용 */
+button {
+    cursor: pointer;
 }

@@ -5,22 +5,28 @@ import '../style/index.css';
 const rollingWords = ['짐빔', '중고거래', '스타일', '커뮤니티'];
 const featureCards = [
   {
-    title: '우리 동네 중고거래',
-    description: '안전하게 중고 물품을 등록하고 이웃과 직거래하세요.',
+    title: '전국 어디서든 중고거래',
+    description: '안전하게 중고 물품을 등록하고 택배와 직거래하세요.',
     action: '/sh-page',
     label: '물건 올리기',
+  },
+  {
+    title: '하자걱정없는 신제품',
+    description: '안전하게 제품 물품을 등록하고 판매까지 JIMBIM과 거래하세요.',
+    action: '/shop',
+    label: '판매/구매 요청',
+  },
+    {
+    title: '커뮤니티',
+    description: '소소한 일상부터 동네 소식까지, 이야기 나눠요.',
+    action: '/communityList',
+    label: '이야기 나누기',
   },
   {
     title: '스타일 피드',
     description: '당신의 스타일을 공유하고 이웃들의 코디를 만나보세요.',
     action: '/style',
     label: '스타일 구경하기',
-  },
-  {
-    title: '커뮤니티',
-    description: '소소한 일상부터 동네 소식까지, 이야기 나눠요.',
-    action: '/communityList',
-    label: '이야기 나누기',
   },
 ];
 
@@ -59,8 +65,9 @@ function Index() {
           </p>
           <div className="quick-links">
             <Link to="/sh-page">JIMBIM 중고거래</Link>
-            <Link to="/style">JIMBIM 스타일</Link>
+            <Link to="/shop">JIMBIM SHOP</Link>
             <Link to="/communityList">JIMBIM 커뮤니티</Link>
+            <Link to="/style">JIMBIM 스타일</Link>
           </div>
         </div>
         <div className="hero-visual">

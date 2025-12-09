@@ -54,6 +54,7 @@ function SuggestDetail() {
 
   return (
     <div className='customercontainer'>
+      <SideMenu />
       <div className='customer'>
         <div className='formtitle'>요청 상세</div>
 

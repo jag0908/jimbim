@@ -73,6 +73,9 @@ const StyleDetail = () => {
 
     setLikeCount(postData.likeCount || 0);
     setLiked(postData.liked || false);
+    setIsFollowing(Boolean(postData.isFollowing));
+
+    console.log(postData);
 
     // 댓글 트리 생성 (중요!)
     const replyTree = buildReplyTree(postData.replies);
@@ -111,9 +114,16 @@ const StyleDetail = () => {
 
   // 팔로우 토글
   const handleFollow = async () => {
+    if (!myUserid) return alert("로그인이 필요합니다.");
+
     try {
       const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: post.userid });
-      setIsFollowing(res.data.followed);
+      setIsFollowing(Boolean(res.data.followed));
+
+      // 팔로우/언팔로우 후 서버에서 최신 게시글 데이터 가져오기
+      const updatedPost = await jaxios.get(`${baseURL}/style/post/${id}`);
+      setPost(prev => ({ ...prev, ...updatedPost.data }));
+
       alert(res.data.message);
     } catch (err) {
       console.error("팔로우 오류", err);
@@ -122,6 +132,7 @@ const StyleDetail = () => {
       }
     }
   };
+
 
   const getCommentCount = (repliesArray) => {
     let count = repliesArray.length;

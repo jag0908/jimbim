@@ -33,4 +33,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             @Param("startMemberId") Integer startMemberId,
             @Param("endMemberIds") List<Integer> endMemberIds
     );
+
+    boolean existsByStartMember_UseridAndEndMember_Userid(String loginUserid, String userid);
 }

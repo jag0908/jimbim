@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import jaxios from "../../util/jwtutil";
 import "../../style/shopBuyModal.css";
+import { useSelector } from 'react-redux';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -16,6 +17,7 @@ function ShopBuyModal({ initialProduct, onClose }) {
   });
   const [selectedOption, setSelectedOption] = useState("");
   const [sellList, setSellList] = useState([]);
+  const loginUser = useSelector(state => state.user);
 
   // 상품 상세 정보 가져오기
   useEffect(() => {
@@ -57,7 +59,7 @@ function ShopBuyModal({ initialProduct, onClose }) {
 
   const handleBuyNow = async (sellId) => {
     try {
-        const res = await jaxios.post(`${baseURL}/shop/buy/${sellId}`);
+        const res = await jaxios.post(`${baseURL}/shop/buy/${sellId}`, {memberId: loginUser.member_id});
         const order = res.data; // ShopBuyOrderDTO
         console.log("주문 완료", order);
         alert(`구매 완료! 주문번호: ${order.orderId}`);

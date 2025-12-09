@@ -58,6 +58,7 @@ function StyleHotAccounts() {
   const toggleFollow = async (userid) => {
   try {
     const res = await jaxios.post(`${baseURL}/style/follow`, { targetUserid: userid });
+    console.log(res.data); 
 
     setFollowStatus(prev => ({
       ...prev,

@@ -128,6 +128,12 @@ public class StyleController {
             liked = styleService.isLikedByUser(id, loginUserid);
         }
 
+        // 팔로우 상태 추가
+        boolean isFollowing = false;
+        if (loginUserid != null) {
+            isFollowing = followRepository.existsByStartMember_UseridAndEndMember_Userid(loginUserid, post.getMember().getUserid());
+        }
+
         // ★ 댓글 가져올 때 좋아요 포함된 findReplies 호출
         List<Map<String, Object>> replies =
                 styleReplyService.findReplies(id, "latest", loginUserid);
@@ -144,6 +150,7 @@ public class StyleController {
         result.put("hashtags", styleService.findHashtags(id));
         result.put("indate", post.getIndate());
         result.put("viewCount", post.getViewCount());
+        result.put("isFollowing", isFollowing);
 
         return ResponseEntity.ok(result);
         }

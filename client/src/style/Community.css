@@ -6,7 +6,7 @@
   font-family: "Noto Sans KR", sans-serif;
   gap: 20px;
   align-items: stretch;       /* 왼쪽과 오른쪽 높이 자동 일치 */
-  min-height: 680;          /* 기본 화면 높이 이상 유지 */
+  min-height: 680px;          /* 기본 화면 높이 이상 유지 */
 }
 
 /* ---------- 사이드바 ---------- */

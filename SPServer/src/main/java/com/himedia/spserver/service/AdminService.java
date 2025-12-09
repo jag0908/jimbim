@@ -232,6 +232,10 @@ public class AdminService {
         return result;
     }
 
+    public void deleteSellList(Long sellId) {
+        shopslr.deleteById(sellId);
+    }
+
     /// ////////// 커뮤니티 관련 /////////////////
     public HashMap<String, Object> getCPostList(int page, String key) {
         HashMap<String, Object> result = new HashMap<>();
@@ -392,7 +396,7 @@ public class AdminService {
             }
         }else{
             SHOP_ProductOption option = new SHOP_ProductOption();
-            option.setOptionName("one size");
+            option.setOptionName("ONE SIZE");
             option.setProduct(product);
             shopor.save(option);
         }

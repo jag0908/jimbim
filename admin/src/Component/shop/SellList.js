@@ -87,14 +87,14 @@ function ShopList() {
             .catch((err)=>{console.error(err)})
     }
 
-    function forceDelete(sellId){
+    async function forceDelete(sellId){
         if(window.confirm('해당 상품을 정말 삭제하시겠습니까?')){
-            jaxios.delete('/api/admin/deleteSellList', {params:{sellId}})
+            await jaxios.delete('/api/admin/deleteSellList', {params:{sellId}})
             .then((result)=>{ 
                 alert('삭제되었습니다.')
             })
             .catch((err)=>{console.error(err)})
-            jaxios.get('/api/admin/getSellList', {params:{page:1, key, productId, optionId}})
+            await jaxios.get('/api/admin/getSellList', {params:{page:1, key, productId, optionId}})
             .then((result)=>{ 
                 console.log(result)
                 setSellList(result.data.sellList)
@@ -109,14 +109,14 @@ function ShopList() {
             })
             .catch((err)=>{console.error(err)})
 
-            jaxios.get('/api/admin/getOption', {params:{optionId}})
+            await jaxios.get('/api/admin/getOption', {params:{optionId}})
             .then((result)=>{ 
                 console.log(result)
                 setOption(result.data.option)
             })
             .catch((err)=>{console.error(err)})
 
-            jaxios.get('/api/admin/getShopProduct', {params:{productId}})
+            await jaxios.get('/api/admin/getShopProduct', {params:{productId}})
             .then((result)=>{ 
                 console.log(result.data)
                 setProduct(result.data.product)

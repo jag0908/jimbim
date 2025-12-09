@@ -100,7 +100,6 @@ public class AdminController {
         result.put("msg", "ok");
         return result;
     }
-
     /// //////////////////// shop 관련 //////////////////////////
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -152,6 +151,15 @@ public class AdminController {
                                                @RequestParam("productId") Long productId,
                                                @RequestParam("optionId") Long optionId){
         HashMap<String, Object> result = as.getSellList(page, key, productId, optionId);
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteSellList")
+    public HashMap<String, Object> deleteSellList(@RequestParam("sellId") Long sellId){
+        HashMap<String, Object> result = new HashMap<>();
+        as.deleteSellList(sellId);
+        result.put("msg", "ok");
         return result;
     }
 

@@ -122,8 +122,16 @@ function ShopProductDetail() {
 
       {isBuyModalOpen &&(
         <ShopBuyModal
-          product={product}
-          onClose={()=> setIsBuyModalOpen(false)}
+          initialProduct={{
+            productId: product.productId,
+            ...product,                        // 기존 product 정보 유지
+            imageUrls: product.firstImage ? [product.firstImage] : [], // 배열로 변환
+            options: product.options || [],    // 옵션 초기값
+            optionPrices: product.optionPrices || {}, // 가격 초기값
+            title: product.title || "",
+            description: product.description || "",
+          }}
+          onClose={() => setIsBuyModalOpen(false)}
         />
       )}
     </div>

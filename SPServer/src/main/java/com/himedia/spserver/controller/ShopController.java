@@ -77,10 +77,11 @@ public class ShopController {
     }
 
     @PostMapping("/buy/{sellId}")
-    public SHOP_BuyOrder buyProduct(@PathVariable Long sellId) {
+    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId) {
         Member buyer = new Member();
         buyer.setMember_id(1); // 테스트용
-        return shopService.createBuy(sellId, buyer);
+        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
+        return ShopBuyOrderDTO.fromEntity(order); // 클라이언트에게 주문 정보 반환
     }
 
     @PostMapping("/zzim/{productId}")
@@ -135,8 +136,16 @@ public class ShopController {
         return ResponseEntity.ok("삭제 완료");
     }
 
+    @GetMapping("/sell")
+    public List<ShopSellListDTO> getSellList(@RequestParam Long productId, @RequestParam Long optionId) {
+        return shopService.getSellList(productId, optionId);
+    }
 
 
+    @GetMapping("/product/{productId}/detail")
+    public ShopProductDTO getProductDetail(@PathVariable Long productId) {
+        return shopService.getProductDetail(productId);
+    }
 
 
 }

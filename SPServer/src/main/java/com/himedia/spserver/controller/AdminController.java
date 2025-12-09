@@ -131,9 +131,27 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getOptionList")
-    public HashMap<String, Object> getOptionList(@RequestParam("page") int page,
-                                               @RequestParam("productId") Long productId){
-        HashMap<String, Object> result = as.getOptionList(page, productId);
+    public HashMap<String, Object> getOptionList(@RequestParam("productId") Long productId){
+        HashMap<String, Object> result = as.getOptionList(productId);
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getOption")
+    public HashMap<String, Object> getOption(@RequestParam("optionId") Long optionId){
+        HashMap<String, Object> result = new HashMap<>();
+        SHOP_ProductOption option = as.getOption( optionId );
+        result.put("option", option);
+        return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getSellList")
+    public HashMap<String, Object> getSellList(@RequestParam("page") int page,
+                                               @RequestParam(value="key", required = false, defaultValue = "") String key,
+                                               @RequestParam("productId") Long productId,
+                                               @RequestParam("optionId") Long optionId){
+        HashMap<String, Object> result = as.getSellList(page, key, productId, optionId);
         return result;
     }
 

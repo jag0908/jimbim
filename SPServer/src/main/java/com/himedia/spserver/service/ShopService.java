@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +23,10 @@ public class ShopService {
     private final ShopSuggestRepository suggestRepo;
     private final ShopProductImageRepository imageRepo;
     private final ShopCategoryRepository categoryRepo;
+
+    private final ShopPostRepository spr;
+    private final ShopSellRepository ssr;
+    private final MemberRepository mr;
 
     // 상품 전체 조회
     public List<ShopProductDTO> getAllProducts() {
@@ -72,29 +74,6 @@ public class ShopService {
         return product;
     }
 
-    // 판매 등록
-    public SHOP_SellList createSell(ShopSellCreateDTO dto, Member seller) {
-        SHOP_SellList sell = new SHOP_SellList();
-        sell.setPrice(dto.getPrice());
-        sell.setProduct(productRepo.findById(dto.getProductId()).orElseThrow());
-        sell.setOption(optionRepo.findById(dto.getOptionId()).orElseThrow());
-        sell.setSeller(seller);
-        sell.setStatus("selling");
-        return sellRepo.save(sell);
-    }
-
-    // 구매 등록
-    public SHOP_BuyOrder createBuy(Long sellId, Member buyer) {
-        SHOP_SellList sell = sellRepo.findById(sellId).orElseThrow();
-        SHOP_BuyOrder order = new SHOP_BuyOrder();
-        order.setSellList(sell);
-        order.setBuyer(buyer);
-        order.setPurchasePrice(sell.getPrice());
-        sell.setStatus("soldout");
-        sellRepo.save(sell);
-        return buyRepo.save(order);
-    }
-
     // 찜 등록
     public SHOP_zzim createZzim(Long productId, Member member) {
         SHOP_zzim zzim = new SHOP_zzim();
@@ -127,28 +106,23 @@ public class ShopService {
         return productRepo.findById(productId).orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
     }
 
-    public ShopProductDTO getProductDetail(Long productId) {
-        SHOP_Product product = productRepo.findById(productId)
-                .orElseThrow(() -> new RuntimeException("상품 없음"));
-
-        // fromEntity 사용 (재귀 없이 안전)
-        return ShopProductDTO.fromEntity(product);
+    public SHOP_post getPostById(Integer postId) {
+        return spr.findById(postId)
+                .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다. id: " + postId));
     }
 
-    public List<ShopSellListDTO> getSellList(Long productId, Long optionId) {
-        return sellRepo.findByProduct_ProductIdAndOption_OptionIdAndStatus(productId, optionId, "selling")
-                .stream()
-                .map(sell -> {
-                    ShopSellListDTO dto = new ShopSellListDTO();
-                    dto.setSellId(sell.getSellId());
-                    dto.setProductId(sell.getProduct().getProductId());
-                    dto.setOptionId(sell.getOption().getOptionId());
-                    dto.setPrice(sell.getPrice());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+    public SHOP_Sell createSell(ShopSellRequestDTO dto, Member seller) {
+        SHOP_Product product = productRepo.findById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
+        SHOP_ProductOption option = optionRepo.findById(dto.getOptionId())
+                .orElseThrow(() -> new RuntimeException("옵션이 존재하지 않습니다."));
+
+        SHOP_Sell sell = new SHOP_Sell();
+        sell.setProduct(product);
+        sell.setOption(option);
+        sell.setPrice(dto.getPrice());
+        sell.setSeller(seller);
+
+        return ssr.save(sell);
     }
-
-
-
 }

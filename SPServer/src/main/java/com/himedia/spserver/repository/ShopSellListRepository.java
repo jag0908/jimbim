@@ -33,4 +33,6 @@ public interface ShopSellListRepository extends JpaRepository<SHOP_SellList, Lon
 
     List<SHOP_SellList> findByProduct_ProductIdAndOption_OptionIdAndStatus(Long productId, Long optionId, String status);
 
+
+
 }

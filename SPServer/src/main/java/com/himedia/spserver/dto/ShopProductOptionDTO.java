@@ -2,6 +2,8 @@ package com.himedia.spserver.dto;
 
 import com.himedia.spserver.entity.SHOP.SHOP_ProductOption;
 import lombok.Data;
+import java.util.List;
+import java.util.Map;
 
 @Data
 public class ShopProductOptionDTO {
@@ -17,3 +19,4 @@ public class ShopProductOptionDTO {
         return dto;
     }
 }
+

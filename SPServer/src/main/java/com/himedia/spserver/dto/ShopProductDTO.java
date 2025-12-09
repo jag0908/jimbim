@@ -20,6 +20,7 @@ public class ShopProductDTO {
     private String firstImage;
     private Long categoryId;
     private String indate;
+    private Integer price;
 
     // 🔹 여러 이미지 리스트 추가
     private List<String> imageUrls;
@@ -35,6 +36,7 @@ public class ShopProductDTO {
         dto.setProductId(product.getProductId());
         dto.setTitle(product.getTitle());
         dto.setContent(product.getContent());
+        dto.setPrice(product.getPrice());
 
         // 이미지 처리
         if (product.getImages() != null && !product.getImages().isEmpty()) {
@@ -56,18 +58,17 @@ public class ShopProductDTO {
                 product.getOptions().stream()
                         .map(ShopProductOptionDTO::fromEntity)
                         .collect(Collectors.toList());
-
         dto.setOptions(optionList);
 
-        // ⭐ 옵션별 최저가 계산
+        // ⭐ 옵션별 최저가 계산 (status = 'N' 기준)
         Map<Long, Integer> optionPrices = new HashMap<>();
 
         for (SHOP_ProductOption opt : product.getOptions()) {
 
-            // 옵션에 연결된 판매 리스트 중 'selling' 상태만
+            // 옵션에 연결된 판매 리스트 중 'N' 상태만 (거래 전)
             List<SHOP_SellList> sells =
                     opt.getSellList().stream()
-                            .filter(s -> "selling".equals(s.getStatus()))
+                            .filter(s -> "N".equals(s.getStatus()))
                             .collect(Collectors.toList());
 
             // 최저가 (없으면 null)
@@ -82,7 +83,7 @@ public class ShopProductDTO {
 
         dto.setOptionPrices(optionPrices);
 
-        // 전체 상품 최저가
+        // 전체 상품 최저가 (옵션별 최저가 중 최소)
         dto.setMinPrice(
                 optionPrices.values().stream()
                         .filter(Objects::nonNull)
@@ -90,7 +91,7 @@ public class ShopProductDTO {
                         .orElse(null)
         );
 
-        // 상태: 하나라도 판매 중이면 selling
+        // 상태: 하나라도 판매 대기(N) 있으면 selling
         boolean anySelling = optionPrices.values().stream().anyMatch(Objects::nonNull);
         dto.setStatus(anySelling ? "selling" : "soldout");
 

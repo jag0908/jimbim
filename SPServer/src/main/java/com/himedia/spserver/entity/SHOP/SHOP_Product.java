@@ -1,12 +1,15 @@
 package com.himedia.spserver.entity.SHOP;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Data
@@ -37,6 +40,7 @@ public class SHOP_Product {
     private List<SHOP_ProductOption> options;
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<SHOP_SellList> sellLists;
 }
 

@@ -91,6 +91,9 @@ body {
     display: block;
     margin-bottom: 3px;
 }
+.mypagePassword input{
+    margin: 5px 0;
+}
 
 .mypage .field input, .customer .field input {
     width: 120px;

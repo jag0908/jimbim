@@ -156,8 +156,7 @@ function Mypage() {
 
                         <label style={{marginTop:'15px'}}>비밀번호</label>
                         {type === 'pwd' ? (
-                            <>
-                            {/* 수정필요 */}
+                            <div className='mypagePassword'>
                                 <input type="password" placeholder="현재 비밀번호" value={form.prePwd} onChange={e => setForm({ ...form, prePwd: e.target.value })} /><br/>
                                 <input type="password" placeholder="새 비밀번호" value={form.pwd} onChange={e => setForm({ ...form, pwd: e.target.value })} /><br/> 
                                 <input type="password" placeholder="비밀번호 확인" value={form.pwdChk} onChange={e => setForm({ ...form, pwdChk: e.target.value })} />
@@ -165,7 +164,7 @@ function Mypage() {
                                     <button onClick={handleUpdatePwd}>수정</button>
                                     <button onClick={() => editField('')}>취소</button>
                                 </div>
-                            </>
+                            </div>
                         ) : (
                             <div>
                                 <span>********</span>
@@ -228,7 +227,7 @@ function Mypage() {
                         <>
                             <input type="text" className='inputrrn1' maxLength="6" value={form.rrn1} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn1: e.target.value })} />
                             <span className='memberformdash'>&nbsp;-&nbsp;</span>
-                            <input type="text" className='inputrrn2' maxLength="1" value={form.rrn2} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn2: e.target.value })} /> ******
+                            <input type="text" id='inputrrn2' maxLength="1" value={form.rrn2} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn2: e.target.value })} /> ******
                             <div className="formBtns">
                                 <button onClick={handleSubmit}>수정</button>
                                 <button onClick={() => editField('')}>취소</button>

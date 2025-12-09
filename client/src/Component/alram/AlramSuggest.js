@@ -11,7 +11,7 @@ function AlramSuggest({formatDateTime}) {
   useEffect(()=> {
     jaxios.get(`/api/alram/myPostSuggest/${id}`)
       .then((res)=> {
-        console.log(res);
+        // console.log(res);
         setAlramSuggest(res.data.resDto);
       }).catch(err=>console.error(err));
   }, [])
@@ -19,7 +19,7 @@ function AlramSuggest({formatDateTime}) {
   function alramRead(targetAtt) {
     jaxios.post(`/api/alram/myPostSuggest/${targetAtt}`)
       .then((res)=> {
-        console.log(res);
+        // console.log(res);
       }).catch(err=>console.error(err));
   };
 

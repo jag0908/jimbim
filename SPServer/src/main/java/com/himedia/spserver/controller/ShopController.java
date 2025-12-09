@@ -3,6 +3,7 @@ package com.himedia.spserver.controller;
 import com.himedia.spserver.dto.*;
 import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SHOP.*;
+import com.himedia.spserver.repository.MemberRepository;
 import com.himedia.spserver.service.ShopService;
 import com.himedia.spserver.service.ShopSuggestService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ public class ShopController {
     private final ShopService shopService;
     private final ShopSuggestService shopSuggestService;
 //    private final ShopSellService sss; // 합쳐진 SellService
+
+    private final MemberRepository mr;
 
     // =================== 상품 관련 ===================
 
@@ -43,12 +46,6 @@ public class ShopController {
         return shopService.createProduct(dto, seller);
     }
 
-    @GetMapping("/product/{productId}")
-    public ShopProductDTO getProduct(@PathVariable Long productId) {
-        SHOP_Product product = shopService.getProductById(productId);
-        return ShopProductDTO.fromEntity(product);
-    }
-
     @GetMapping("/products/search")
     public List<ShopProductDTO> searchProducts(
             @RequestParam("keyword") String keyword,
@@ -56,6 +53,7 @@ public class ShopController {
     ) {
         return shopService.searchProducts(keyword, categoryId);
     }
+
 
     // =================== 판매 관련 ===================
     @PostMapping("/sell") // 단일 POST 매핑 유지
@@ -76,6 +74,7 @@ public class ShopController {
         SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
         return ShopBuyOrderDTO.fromEntity(order);
     }
+
 
     // =================== 찜 관련 ===================
     @PostMapping("/zzim/{productId}")
@@ -157,6 +156,7 @@ public class ShopController {
         return ResponseEntity.ok("삭제 완료");
     }
 
+
     @GetMapping("/sell")
     public List<ShopSellListDTO> getSellList(
             @RequestParam Long productId,
@@ -164,4 +164,23 @@ public class ShopController {
     ) {
         return shopService.getSellList(productId, optionId);
     }
+
+    @GetMapping("/post/{postId}")
+    public ShopPostDTO getPost(@PathVariable Integer postId) {
+        SHOP_post post = shopService.getPostById(postId); // 엔티티로 받기
+        return ShopPostDTO.fromEntity(post); // DTO로 변환
+    }
+
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
+    }
+
+    @PostMapping("/sell")
+    public ResponseEntity<SHOP_SellList> createSell(@RequestBody ShopSellRequestDTO dto) {
+        SHOP_SellList sell = shopService.createSell(dto);
+        return ResponseEntity.ok(sell);
+    }
+  
 }

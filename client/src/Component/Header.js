@@ -30,7 +30,7 @@ function Header() {
     function runMyFunction() {
         jaxios.get(`/api/alram/allAlramCount/${loginUser.member_id}`)
             .then((res)=> {
-                console.log(res);
+                // console.log(res);
                 setAllAlramCount(res.data.alram);
             }).catch(err=>console.error(err));
     }

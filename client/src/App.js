@@ -46,7 +46,7 @@ import Shop from './Component/Shop/Shop';
 import ShopSuggest from './Component/Shop/ShopSuggest';
 import Suggest from './Component/mypage/Suggest';
 import SuggestDetail from './Component/mypage/SuggestDetail';
-
+import Selling from './Component/mypage/Selling';
 import ShopProductDetail from './Component/Shop/ShopProductDetail';
 
 
@@ -114,6 +114,7 @@ function App() {
 				<Route path="/shop/product/:productId" element={<ShopProductDetail />} />
 				<Route path="/mypage/suggest" element={<Suggest />} />
 				<Route path="/mypage/suggestDetail/:suggestId" element={<SuggestDetail />} />
+				<Route path="/mypage/selling" element={<Selling />} />
 
 
 			</Routes>

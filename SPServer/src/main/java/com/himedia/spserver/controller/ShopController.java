@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/shop")
@@ -65,11 +66,15 @@ public class ShopController {
     }
 
     @PostMapping("/buy/{sellId}")
-    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId) {
+    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId, @RequestBody Map<String, Integer> body) {
+
+        int memberId = body.get("memberId"); // 프론트에서 보낸 memberId 사용
+
         Member buyer = new Member();
-        buyer.setMember_id(1); // 테스트용
+        buyer.setMember_id(memberId);
+
         SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
-        return ShopBuyOrderDTO.fromEntity(order); // 클라이언트에게 주문 정보 반환
+        return ShopBuyOrderDTO.fromEntity(order);
     }
 
     // =================== 찜 관련 ===================
@@ -150,5 +155,13 @@ public class ShopController {
     public ResponseEntity<String> deleteSuggest(@PathVariable Integer id) {
         shopSuggestService.deleteSuggest(id);
         return ResponseEntity.ok("삭제 완료");
+    }
+
+    @GetMapping("/sell")
+    public List<ShopSellListDTO> getSellList(
+            @RequestParam Long productId,
+            @RequestParam Long optionId
+    ) {
+        return shopService.getSellList(productId, optionId);
     }
 }

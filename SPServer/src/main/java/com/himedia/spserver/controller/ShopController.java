@@ -146,12 +146,11 @@ public class ShopController {
     }
 
     @PostMapping("/sell")
-    public ResponseEntity<SHOP_Sell> createSell(@RequestBody ShopSellRequestDTO dto) {
-        Member seller = new Member();
-        seller.setMember_id(dto.getSellerId());
-        SHOP_Sell sell = shopService.createSell(dto, seller);
+    public ResponseEntity<SHOP_SellList> createSell(@RequestBody ShopSellRequestDTO dto) {
+        SHOP_SellList sell = shopService.createSell(dto);
         return ResponseEntity.ok(sell);
     }
+
 
 
 

@@ -18,7 +18,7 @@ function MypageSideMenu() {
             title: "쇼핑 정보",
             items: [
                 { name: "구매 내역", path: "/mypage/purchase" },
-                { name: "판매 내역", path: "/mypage/sales" },
+                { name: "판매 내역", path: "/mypage/selling" },
                 { name: "요청 내역", path: "/mypage/suggest" },
             ],
         },

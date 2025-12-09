@@ -13,7 +13,7 @@ function ShopProductDetail() {
 
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false); 
   const [currentImage, setCurrentImage] = useState(0);
   const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
@@ -36,6 +36,7 @@ function ShopProductDetail() {
     }
   };
 
+  // 이미지 슬라이더
   const handlePrev = () => {
     if (!product?.imageUrls || product.imageUrls.length === 0) return;
     setCurrentImage(prev => prev === 0 ? product.imageUrls.length - 1 : prev - 1);
@@ -48,6 +49,7 @@ function ShopProductDetail() {
 
   const handleIndicatorClick = (index) => setCurrentImage(index);
 
+  // 판매하기 버튼 클릭 → 옵션 선택 모달 열기
   const handleClickSell = () => {
     if (!product?.options || product.options.length === 0) {
       alert("옵션이 없습니다.");
@@ -58,12 +60,14 @@ function ShopProductDetail() {
     setIsOptionModalOpen(true);
   };
 
+  // 옵션 선택 → 가격 입력 모달 열기
   const handleSelectOption = (option) => {
     setSelectedOption(option);
     setIsOptionModalOpen(false);
     setIsPriceModalOpen(true);
   };
 
+  // 가격 입력 후 판매 등록
   const handleSellConfirm = async () => {
     if (!selectedOption) return alert("옵션을 선택해주세요.");
     if (!selectedPrice || selectedPrice <= 0) return alert("가격을 입력해주세요.");
@@ -80,7 +84,7 @@ function ShopProductDetail() {
       setIsPriceModalOpen(false);
       setSelectedOption(null);
       setSelectedPrice("");
-      fetchProduct(); // 최저가 업데이트
+      fetchProduct(); // 등록 후 최저가 포함 상품 정보 갱신
     } catch (err) {
       console.error(err);
       alert("판매 등록 중 오류가 발생했습니다.");
@@ -92,6 +96,7 @@ function ShopProductDetail() {
 
   return (
     <div className="shop-product-detail">
+
       {/* 이미지 슬라이더 */}
       <div className="product-images">
         {product.imageUrls?.length > 0 ? (
@@ -115,11 +120,16 @@ function ShopProductDetail() {
       {/* 상품 정보 */}
       <div className="product-info">
         <h1>{product.title}</h1>
+
         {/* 정가 */}
         <p className="product-price">정가: {product.price?.toLocaleString()} 원</p>
-        {/* 전체 최저가 */}
-        {/* <p className="product-price">{product.optionPrices ? Math.min(...Object.values(product.optionPrices)).toLocaleString() : "-"} 원</p> */}
 
+        {/* 전체 최저가 */}
+        <p className="product-price">
+          {product.minPrice != null ? product.minPrice.toLocaleString() : "-"} 원
+        </p>
+
+        {/* 판매/구매 버튼 */}
         <div className="product-buttons">
           <button className="btn-sell" onClick={handleClickSell}>판매하기</button>
           <button className="btn-buy" onClick={() => setIsBuyModalOpen(true)}>구매하기</button>
@@ -177,7 +187,13 @@ function ShopProductDetail() {
             />
             <div className="modal-buttons" style={{ marginTop: '20px' }}>
               <button className="btn-confirm" onClick={handleSellConfirm} style={{ flex: 1, marginRight: '8px' }}>판매하기</button>
-              <button className="btn-cancel" onClick={() => { setIsPriceModalOpen(false); setIsOptionModalOpen(true); }} style={{ flex: 1 }}>이전</button>
+              <button
+                className="btn-cancel"
+                onClick={() => { setIsPriceModalOpen(false); setIsOptionModalOpen(true); }}
+                style={{ flex: 1 }}
+              >
+                이전
+              </button>
             </div>
           </div>
         </div>

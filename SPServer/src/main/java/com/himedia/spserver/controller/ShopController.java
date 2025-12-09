@@ -171,19 +171,16 @@ public class ShopController {
         return ShopPostDTO.fromEntity(post); // DTO로 변환
     }
 
-//    @GetMapping("/product/{productId}")
-//    public ResponseEntity<ShopProductResponseDTO> getProductDetail(@PathVariable Long productId) {
-//        return ResponseEntity.ok(shopService.getProductDetail(productId));
-//    }
-
-    @PostMapping("/sell")
-    public ResponseEntity<SHOP_Sell> createSell(@RequestBody ShopSellRequestDTO dto) {
-        Member seller = new Member();
-        seller.setMember_id(dto.getSellerId());
-        SHOP_Sell sell = shopService.createSell(dto, seller);
-        return ResponseEntity.ok(sell);
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
     }
 
-
-
+    @PostMapping("/sell")
+    public ResponseEntity<SHOP_SellList> createSell(@RequestBody ShopSellRequestDTO dto) {
+        SHOP_SellList sell = shopService.createSell(dto);
+        return ResponseEntity.ok(sell);
+    }
+  
 }

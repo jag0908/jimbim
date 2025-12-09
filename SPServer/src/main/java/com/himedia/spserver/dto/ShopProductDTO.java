@@ -20,6 +20,7 @@ public class ShopProductDTO {
     private String firstImage;
     private Long categoryId;
     private String indate;
+    private Integer price;
 
     // 🔹 여러 이미지 리스트 추가
     private List<String> imageUrls;
@@ -35,6 +36,7 @@ public class ShopProductDTO {
         dto.setProductId(product.getProductId());
         dto.setTitle(product.getTitle());
         dto.setContent(product.getContent());
+        dto.setPrice(product.getPrice());
 
         // 이미지 처리
         if (product.getImages() != null && !product.getImages().isEmpty()) {

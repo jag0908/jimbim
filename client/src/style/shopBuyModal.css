@@ -1,0 +1,157 @@
+.buy-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.buy-modal {
+  width: 520px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px;
+  position: relative;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.modal-title {
+  margin-top: 10px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.modal-sub {
+  color: #777;
+  font-size: 13px;
+}
+
+.product-summary {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.product-thumb {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* 옵션 전체 그리드 */
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* 옵션 카드 */
+.option-card {
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  background: white;
+  transition: 0.15s;
+}
+
+/* 선택했을 때 */
+.option-card.active {
+  border: 2px solid #ff4e4e;
+  background: #fff7f7;
+}
+
+/* 옵션 이름 (사이즈) */
+.option-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* 가격 */
+.option-price {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ff5c5c;
+}
+
+
+.option-btn {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.option-btn.active {
+  border: 2px solid #ff5454;
+  background: #fff8f8;
+}
+
+.opt-name {
+  display: block;
+  font-size: 14px;
+}
+
+.opt-price {
+  color: #dd0000;
+  font-weight: bold;
+}
+
+.sell-list-box {
+  margin-top: 15px;
+}
+
+.sell-list {
+  list-style: none;
+  padding: 0;
+}
+
+.sell-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.bottom-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.btn-cart {
+  flex: 1;
+  padding: 14px;
+  background: #222;
+  color: white;
+  border-radius: 10px;
+}
+
+.btn-buy {
+  flex: 1;
+  padding: 14px;
+  background: #ff6b6b;
+  color: white;
+  border-radius: 10px;
+}

@@ -22,12 +22,7 @@ public class ShopController {
 //    private final ShopSellService sss; // 합쳐진 SellService
 
     // =================== 상품 관련 ===================
-    @PostMapping("/product")
-    public SHOP_Product createProduct(@ModelAttribute ShopProductCreateDTO dto) {
-        Member seller = new Member();
-        seller.setMember_id(1); // 테스트용
-        return shopService.createProduct(dto, seller);
-    }
+
 
     @GetMapping("/products")
     public List<ShopProductDTO> getAllProducts() {
@@ -37,6 +32,14 @@ public class ShopController {
     @GetMapping("/products/category/{categoryId}")
     public List<ShopProductDTO> getProductsByCategory(@PathVariable Long categoryId) {
         return shopService.getProductsByCategory(categoryId);
+    }
+
+    @PostMapping("/product")
+    public SHOP_Product createProduct(@ModelAttribute ShopProductCreateDTO dto) {
+        // 로그인 유저 Member 객체 필요
+        Member seller = new Member();
+        seller.setMember_id(1); // 테스트용
+        return shopService.createProduct(dto, seller);
     }
 
     @GetMapping("/product/{productId}")
@@ -61,22 +64,12 @@ public class ShopController {
         return shopService.createSell(dto, seller);
     }
 
-//    @PostMapping("/sell/register") // 옵션별 최소가 등록용
-//    public ResponseEntity<SHOP_SellList> registerSell(
-//            @RequestParam Long productId,
-//            @RequestParam Long optionId,
-//            @RequestParam Long sellerId,
-//            @RequestParam Integer price
-//    ) {
-//        SHOP_SellList sell = sss.registerSell(productId, optionId, sellerId, price);
-//        return ResponseEntity.ok(sell);
-//    }
-
     @PostMapping("/buy/{sellId}")
-    public SHOP_BuyOrder buyProduct(@PathVariable Long sellId) {
+    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId) {
         Member buyer = new Member();
         buyer.setMember_id(1); // 테스트용
-        return shopService.createBuy(sellId, buyer);
+        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
+        return ShopBuyOrderDTO.fromEntity(order); // 클라이언트에게 주문 정보 반환
     }
 
     // =================== 찜 관련 ===================
@@ -124,6 +117,20 @@ public class ShopController {
         SHOP_Product product = shopSuggestService.approveSuggest(suggestId);
         return ResponseEntity.ok(product);
     }
+
+//    @GetMapping("/products/search")
+//    public List<ShopProductDTO> searchProducts(
+//            @RequestParam("keyword") String keyword,
+//            @RequestParam(value = "categoryId", required = false) Long categoryId
+//    ) {
+//        return shopService.searchProducts(keyword, categoryId);
+//    }
+//
+//    @GetMapping("/product/{productId}")
+//    public ShopProductDTO getProduct(@PathVariable Long productId) {
+//        SHOP_Product product = shopService.getProductById(productId);
+//        return ShopProductDTO.fromEntity(product);
+//    }
 
     @GetMapping("/getSuggestList/{page}")
     public ResponseEntity<?> getSuggestList(

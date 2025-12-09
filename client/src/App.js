@@ -21,6 +21,7 @@ import StyleDetail from './Component/StyleFeed/StyleDetail'
 import StyleWrite from './Component/StyleFeed/StyleWrite'
 import StyleUser from './Component/StyleFeed/StyleUser'
 import StyleEdit from './Component/StyleFeed/StyleEdit'
+import Buying from './Component/mypage/Buying';
 
 
 import ShMain from './Component/sh-page/ShMain'
@@ -47,6 +48,7 @@ import Suggest from './Component/mypage/Suggest';
 import SuggestDetail from './Component/mypage/SuggestDetail';
 
 import ShopProductDetail from './Component/Shop/ShopProductDetail';
+
 
 
 
@@ -84,6 +86,7 @@ function App() {
 				<Route path="/stylewrite" element={<StyleWrite />} />
 				<Route path="/styleUser/:userid" element={<StyleUser />} />
 				<Route path="/style/edit/:id" element={<StyleEdit />} />
+				<Route path="/mypage/purchase" element={<Buying />} />
 
 
 

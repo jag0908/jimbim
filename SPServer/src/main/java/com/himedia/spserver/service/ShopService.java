@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,4 +126,29 @@ public class ShopService {
     public SHOP_Product getProductById(Long productId) {
         return productRepo.findById(productId).orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
     }
+
+    public ShopProductDTO getProductDetail(Long productId) {
+        SHOP_Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("상품 없음"));
+
+        // fromEntity 사용 (재귀 없이 안전)
+        return ShopProductDTO.fromEntity(product);
+    }
+
+    public List<ShopSellListDTO> getSellList(Long productId, Long optionId) {
+        return sellRepo.findByProduct_ProductIdAndOption_OptionIdAndStatus(productId, optionId, "selling")
+                .stream()
+                .map(sell -> {
+                    ShopSellListDTO dto = new ShopSellListDTO();
+                    dto.setSellId(sell.getSellId());
+                    dto.setProductId(sell.getProduct().getProductId());
+                    dto.setOptionId(sell.getOption().getOptionId());
+                    dto.setPrice(sell.getPrice());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
 }

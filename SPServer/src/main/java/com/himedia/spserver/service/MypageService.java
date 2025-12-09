@@ -6,9 +6,11 @@ import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.Mypage.SHOP_Order;
 import com.himedia.spserver.entity.Mypage.SHOP_Orderdetail;
 import com.himedia.spserver.entity.Mypage.SH_Orderdetail;
+import com.himedia.spserver.entity.SH.SH_Category;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.SH.SH_zzim;
 import com.himedia.spserver.entity.SHOP.SHOP_BuyOrder;
+import com.himedia.spserver.entity.SHOP.SHOP_SellList;
 import com.himedia.spserver.entity.SHOP.SHOP_post;
 import com.himedia.spserver.entity.SHOP.SHOP_zzim;
 import com.himedia.spserver.repository.*;
@@ -37,6 +39,8 @@ public class MypageService {
     private final SH_zzimRepository shzr;
     private final SHOP_zzimRepository shopzr;
     private final ShopBuyOrderRepository buyOrderRepository; //이삭 수정
+    private final ShopSellListRepository shopslr;
+    private final ShCategoryRepository shcr;
 
     public void insertAddress(Address address) {
         ar.save(address);
@@ -89,14 +93,18 @@ public class MypageService {
         return buyOrderRepository.findAllByBuyer(member);
     }
 
+    public List<SH_Category> getShCategoryList() {
+        return shcr.findAll();
+    }
+
     public List<SH_post> getShSellingList(String memberId) {
         Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shpr.findAllByMember(member);
     }
 
-    public List<SHOP_post> getShopSellingList(String memberId) {
+    public List<SHOP_SellList> getShopSellingList(String memberId) {
         Member member = mr.findById(Integer.parseInt(memberId)).get();
-        return shoppr.findAllByMember(member);
+        return shopslr.findAllBySeller(member);
     }
 
     public List<SH_zzim> getShZzimList(String memberId) {
@@ -107,5 +115,9 @@ public class MypageService {
     public List<SHOP_zzim> getShopZzimList(String memberId) {
         Member member = mr.findById(Integer.parseInt(memberId)).get();
         return shopzr.findAllByMember(member);
+    }
+
+    public void deleteShopSelling(Long sellId) {
+        shopslr.deleteById(sellId);
     }
 }

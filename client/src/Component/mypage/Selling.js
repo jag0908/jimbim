@@ -10,7 +10,10 @@ function Selling() {
   const navigate = useNavigate();
 
   const [shSellingList, setShSellingList] = useState([]);
+  const [shCategoryList, setShCategoryList] = useState([]);
   const [shopSellingList, setShopSellingList] = useState([]);
+
+  const shSellEx = ["판매중", "예약중", "판매완료"]
 
   useEffect(() => {
     if (!loginUser.member_id) {
@@ -22,6 +25,7 @@ function Selling() {
     jaxios.get('/api/mypage/getSellingList', { params: { member_id: loginUser.member_id } })
       .then(result => {
         setShSellingList(result.data.shSellingList);
+        setShCategoryList(result.data.shCategoryList);
         setShopSellingList(result.data.shopSellingList);
         console.log(result.data);
       })
@@ -34,40 +38,81 @@ function Selling() {
     if (status === 'Y') return '거래 완료';
     return status;
   };
+  async function deleteSell(sellId){
+    if(window.confirm('상품을 삭제하시겠습니까?')){
+      await jaxios.delete('/api/mypage/deleteShopSelling', { params: { sellId } })
+      .then(result => {
+        alert('삭제되었습니다.')
+      })
+      .catch(err => console.error(err));
+      await jaxios.get('/api/mypage/getSellingList', { params: { member_id: loginUser.member_id } })
+      .then(result => {
+        setShSellingList(result.data.shSellingList);
+        setShCategoryList(result.data.shCategoryList);
+        setShopSellingList(result.data.shopSellingList);
+        console.log(result.data);
+      })
+      .catch(err => console.error(err));
+    }
+  }
 
   return (
-    <article style={{ height: '100%' }}>
       <div className='mypagebody'>
         <SideMenu />
         <div className='mypage'>
-          <div className='formtitle'>판매 내역</div>
+          <div className='formtitle'>SHOP 판매 내역</div>
 
           {/* 중고마을 판매 내역 */}
-          <div className='shoparea'>
+          {/* <div className='shoparea'>
             <h3>중고마을</h3>
+            <div className='sellingRow' >
+              <div className='sellingCol sellingColTitle'>상품명</div>
+              <div className='sellingCol sellingColTitle'>카테고리</div>
+              <div className='sellingCol sellingColTitle'>가격</div>
+              <div className='sellingCol sellingColTitle'>상태</div>
+              <div className='sellingCol sellingColTitle'>게시일</div>
+            </div>
             {shSellingList.length ? (
               shSellingList.map((shSelling, idx) => (
-                <div key={idx} className='sellingRow'>
+                <div key={idx} className='sellingRow' onClick={() => navigate(`/sh-page/sh-view/${shSelling.postId}`)} style={{ cursor: 'pointer' }}>
                   <div className='sellingCol'>{shSelling.title}</div>
+                  <div className='sellingCol'> {(shCategoryList[0])?(shCategoryList[shSelling.categoryId].category_name):(<></>)}</div>
                   <div className='sellingCol'>{shSelling.price?.toLocaleString()} 원</div>
+                  <div className='sellingCol'>{shSellEx[shSelling.sellEx]}</div>
+                  <div className='sellingCol'>{shSelling.indate?.substring(0, 10) || '-'}</div>
                 </div>
               ))
             ) : (
               <div>아직 판매 내역이 없습니다</div>
             )}
-          </div>
+          </div> */}
 
           {/* SHOP 판매 내역 */}
           <div className='shoparea'>
-            <h3>SHOP</h3>
+            {/* <h3>SHOP</h3> */}
+            <div className='sellingRow' >
+              <div className='sellingCol sellingColTitle'>상품명</div>
+              <div className='sellingCol sellingColTitle'>사이즈</div>
+              <div className='sellingCol sellingColTitle'>카테고리</div>
+              <div className='sellingCol sellingColTitle'>가격</div>
+              <div className='sellingCol sellingColTitle'>상태</div>
+              <div className='sellingCol sellingColTitle'>게시일</div>
+              <div className='sellingCol sellingColTitle'>삭제하기</div>
+            </div>
             {shopSellingList.length ? (
               shopSellingList.map((sell, idx) => (
-                <div key={idx} className='sellingRow' onClick={() => navigate(`/ShopDetail/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>
-                  <div className='sellingCol'>{sell.product?.title || '-'}</div>
-                  <div className='sellingCol'>{sell.option?.optionName || '-'}</div>
-                  <div className='sellingCol'>{sell.price?.toLocaleString()} 원</div>
-                  <div className='sellingCol'>{formatStatus(sell.status)}</div>
-                  <div className='sellingCol'>{sell.indate?.substring(0, 10) || '-'}</div>
+                <div key={idx} className='sellingRow'>
+                  <div className='sellingCol' onClick={() => navigate(`/shop/product/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>{sell.product?.title || '-'}</div>
+                  <div className='sellingCol' onClick={() => navigate(`/shop/product/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>{sell.option?.optionName || '-'}</div>
+                  <div className='sellingCol' onClick={() => navigate(`/shop/product/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>{sell.product?.category.category_name || '-'}</div>
+                  <div className='sellingCol' onClick={() => navigate(`/shop/product/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>{sell.price?.toLocaleString()} 원</div>
+                  <div className='sellingCol' onClick={() => navigate(`/shop/product/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>{formatStatus(sell.status)}</div>
+                  <div className='sellingCol' onClick={() => navigate(`/shop/product/${sell.product?.productId}`)} style={{ cursor: 'pointer' }}>{sell.indate?.substring(0, 10) || '-'}</div>
+                  <div className='sellingCol'>
+                    <div className='formBtns' style={{width:'100%'}}>
+                      <button style={{width:'auto', background:'red'}} onClick={()=>{deleteSell(sell.sellId)}}>삭제</button>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
@@ -77,7 +122,6 @@ function Selling() {
 
         </div>
       </div>
-    </article>
   );
 }
 

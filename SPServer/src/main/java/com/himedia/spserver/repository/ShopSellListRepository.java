@@ -1,6 +1,8 @@
 package com.himedia.spserver.repository;
 
+import com.himedia.spserver.entity.Member;
 import com.himedia.spserver.entity.SHOP.SHOP_SellList;
+import com.himedia.spserver.entity.SHOP.SHOP_post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,5 +36,7 @@ public interface ShopSellListRepository extends JpaRepository<SHOP_SellList, Lon
     List<SHOP_SellList> findByProduct_ProductIdAndOption_OptionIdAndStatus(Long productId, Long optionId, String status);
 
 
+    void deleteByProduct_ProductId(Long productId);
 
+    List<SHOP_SellList> findAllBySeller(Member member);
 }

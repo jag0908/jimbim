@@ -291,6 +291,7 @@ function ShopDetail() {
                                     })
                                 }
                             </select>
+                            <span className='italic' style={{fontSize:'70%'}}>&nbsp;카테고리 변경시 등록된 매물이 삭제될 수 있습니다!</span>
                         </div>
                     </div>
                     <div className='writeProductRow'>

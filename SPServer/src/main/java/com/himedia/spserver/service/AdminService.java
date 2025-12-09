@@ -411,6 +411,7 @@ public class AdminService {
         Long oldCategoryId = product.getCategory().getCategoryId();
         ///  옵션 추가 부분 ///////////
         if((1 <= categoryId && categoryId <= 4) && (oldCategoryId > 4)){
+            shopslr.deleteByProduct_ProductId(productId);
             shopor.deleteByProduct_ProductId(productId);
             String[] sizeList = {"S", "M", "L", "XL"};
             for (String size : sizeList){               // DB 에 "S" 한줄, "M" 한줄, "L" 한줄, "XL" 한줄
@@ -421,6 +422,7 @@ public class AdminService {
             }
         }
         else if((5 <= categoryId && categoryId <= 7) && (5 > oldCategoryId || oldCategoryId > 7 )) {
+            shopslr.deleteByProduct_ProductId(productId);
             shopor.deleteByProduct_ProductId(productId);
             for (int size = 220; size <= 300; size += 5) {  // DB에 220 부터 300까지 5단위 간격으로 한줄씩
                 SHOP_ProductOption option = new SHOP_ProductOption();
@@ -429,6 +431,7 @@ public class AdminService {
                 shopor.save(option);
             }
         }else if((7 < categoryId) && (7 >= oldCategoryId)){
+            shopslr.deleteByProduct_ProductId(productId);
             shopor.deleteByProduct_ProductId(productId);
             SHOP_ProductOption option = new SHOP_ProductOption();
             option.setOptionName("ONE SIZE");

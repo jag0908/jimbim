@@ -1,0 +1,19 @@
+
+.sellingRow{
+    display: flex;
+}
+.sellingRow .sellingCol{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+    border: 1px solid #000;
+}
+.sellingRow:hover{
+    background: #f8f8f8;
+}
+.sellingColTitle{
+    background: #f0f0f0;
+    font-weight: bold;
+}

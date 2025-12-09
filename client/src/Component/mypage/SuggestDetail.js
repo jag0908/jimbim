@@ -20,7 +20,7 @@ function SuggestDetail() {
   }, [suggestId]);
 
   const fetchSuggestDetail = () => {
-    axios.get(`${baseURL}/customer/getSuggestDetail/${suggestId}`)
+    axios.get(`${baseURL}/shop/getSuggestDetail/${suggestId}`)
       .then(res => {
         console.log(res.data); // 서버에서 받은 DTO 확인
         setSuggest(res.data);
@@ -70,13 +70,18 @@ function SuggestDetail() {
             </div>
           </div>
 
+          <div className='suggestListHeader' style={{marginTop:'20px'}}>
+            <div className='suggestField title'>내용</div>
+          </div>
           <div className='suggest-content'>
             {suggest.content}
           </div>
 
+          <div className='suggestListHeader' style={{marginTop:'20px'}}>
+            <div className='suggestField title'>첨부파일</div>
+          </div>
           {suggest.fileUrls && suggest.fileUrls.length > 0 && (
             <div className="suggest-files">
-              <h4>첨부파일</h4>
               <ul>
                 {suggest.fileUrls.map((url, idx) => {
                   const isImage = /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(url);
@@ -101,6 +106,9 @@ function SuggestDetail() {
               <button onClick={handleDelete}>삭제</button>
             </div>
           )}
+          <div className='actions'>
+            <button style={{background:'#ff3c3c'}} onClick={() => navigate('/mypage/suggest')}>뒤로</button>
+          </div>
         </div>
       </div>
     </div>

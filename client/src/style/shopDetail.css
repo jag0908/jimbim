@@ -16,7 +16,6 @@
   position: relative;
 }
 
-/* --- 클래스 충돌 피하기 위해 이름 변경됨 --- */
 .shop-slider {
   position: relative;
   width: 100%;
@@ -44,7 +43,7 @@
   width: 28px;
   height: 28px;
   object-fit: contain;
-  opacity: 0.45; /* 버튼 이미지 투명도 70% */
+  opacity: 0.45;
 }
 
 .shop-slider-btn.prev {
@@ -89,12 +88,12 @@
 }
 
 .product-price {
-  font-size: 28px;
+  font-size: 15px;
   font-weight: 600;
-  color: #ff3c3c;
-  margin-bottom: 20px;
+  color: #9e9e9e;
 }
 
+/* 설명 */
 .product-description {
   font-size: 18px;
   line-height: 1.6;
@@ -102,29 +101,56 @@
   color: #555;
 }
 
-/* 버튼 */
+/* 버튼 영역 */
 .product-buttons {
   display: flex;
-  gap: 20px;
+  gap: 12px;
+  margin-top: 20px;
 }
 
+/* 공통 버튼 스타일 */
 .btn-sell,
-.btn-buy {
-  font-size: 18px;
+.btn-buy,
+.back-btn {
+  flex: 1;
+  padding: 14px 0;
+  font-size: 17px;
   font-weight: 600;
-  padding: 15px 30px;
-  border-radius: 10px;
   border: none;
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
+/* 뒤로가기 버튼 */
+.back-btn {
+  background: #f5f5f5;
+  color: #444;
+  flex: 0.6;
+}
+
+.back-btn:hover {
+  background: #e9e9e9;
+}
+
+/* 판매 버튼 (연한 회색) */
 .btn-sell {
   background-color: #f0f0f0;
+  color: #222;
 }
 
+.btn-sell:hover {
+  background-color: #e8e8e8;
+}
+
+/* 구매 버튼 (강조된 검정) */
 .btn-buy {
   background-color: #000;
   color: #fff;
+}
+
+.btn-buy:hover {
+  background-color: #222;
 }
 
 /* 메시지 */
@@ -156,18 +182,18 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* 다른 요소 위에 표시 */
+  z-index: 1000;
 }
 
 /* 모달 박스 */
 .sell-modal-content {
   background: #fff;
   border-radius: 12px;
-  padding: 30px 20px 20px 20px; /* 아래 패딩 약간 줄임 */
+  padding: 30px 20px 20px 20px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -178,11 +204,12 @@
   flex-direction: column;
 }
 
-/* 모달 X 버튼 */
+/* 모달 X 버튼 오른쪽으로 이동 */
 .modal-close-btn {
   position: absolute;
-  top: 30px;  /* 아래 라인과 맞추기 위해 조정 */
-  left: 20px;
+  top: 20px;   /* 상단 위치 */
+  right: 20px; /* 왼쪽에서 오른쪽으로 변경 */
+  left: auto;  /* 기존 left 제거 */
   background: none;
   border: none;
   font-size: 22px;
@@ -191,7 +218,8 @@
   z-index: 10;
 }
 
-/* 옵션 리스트 - 한 줄에 옵션 이름과 가격 같이 */
+
+/* 옵션 리스트 */
 .option-list {
   display: flex;
   flex-wrap: wrap;
@@ -200,9 +228,8 @@
   margin: 20px 0;
 }
 
-/* 옵션 아이템 하나씩을 가로로 정렬 */
 .option-list > div {
-  flex: 1 1 120px; /* 너비 유연하게 조절 */
+  flex: 1 1 120px;
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #f7f7f7;
@@ -218,31 +245,32 @@
   background: #eee;
 }
 
+/* 옵션명 */
 .option-list > div button {
   background: none;
   border: none;
   font-size: 14px;
   font-weight: 600;
-  color: #000; /* 검은색으로 변경 */
+  color: #000;
   cursor: pointer;
   margin-bottom: 6px;
   padding: 0;
   width: 100%;
 }
 
-
+/* 가격 */
 .option-list > div span {
   font-size: 13px;
   font-weight: 500;
 }
 
-/* 가격 표시가 없으면 '판매입찰'은 진한 회색 */
+/* 판매 입찰 */
 .option-list > div span.no-price {
   color: #666;
   font-weight: 600;
 }
 
-/* 확인/취소 버튼 */
+/* 모달 버튼 */
 .modal-buttons {
   display: flex;
   justify-content: space-between;
@@ -279,7 +307,7 @@
   background: #c82333;
 }
 
-/* 모달 나타나는 애니메이션 */
+/* 모달 애니메이션 */
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }

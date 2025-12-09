@@ -4,13 +4,14 @@ import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
 import ShopBuyModal from './ShopBuyModal';
 import '../../style/shopDetail.css';
+import { useNavigate } from 'react-router-dom';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 function ShopProductDetail() {
   const loginUser = useSelector(state => state.user);
   const { productId } = useParams();
-
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false); 
@@ -122,15 +123,18 @@ function ShopProductDetail() {
         <h1>{product.title}</h1>
 
         {/* 정가 */}
-        <p className="product-price">정가: {product.price?.toLocaleString()} 원</p>
+        <p className="product-price">정가: {product.price?.toLocaleString()}원</p>
 
         {/* 전체 최저가 */}
-        <p className="product-price">
-          {product.minPrice != null ? product.minPrice.toLocaleString() : "-"} 원
+        <p className="product-price" style={{ color: "#000", fontSize:"20px" }}>
+          {product.minPrice != null ? product.minPrice.toLocaleString() : "-"}원
         </p>
+
 
         {/* 판매/구매 버튼 */}
         <div className="product-buttons">
+          <button className="back-btn" onClick={() => navigate(-1)}>이전</button>
+
           <button className="btn-sell" onClick={handleClickSell}>판매하기</button>
           <button className="btn-buy" onClick={() => setIsBuyModalOpen(true)}>구매하기</button>
         </div>
@@ -140,7 +144,7 @@ function ShopProductDetail() {
       {isOptionModalOpen && (
         <div className="sell-modal" onClick={() => setIsOptionModalOpen(false)}>
           <div className="sell-modal-content" onClick={e => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setIsOptionModalOpen(false)}>×</button>
+            <button className="modal-close-btn" onClick={() => setIsOptionModalOpen(false)}>✕</button>
             <h2>옵션 선택</h2>
             <div className="option-list">
               {product.options.map(opt => {
@@ -157,13 +161,19 @@ function ShopProductDetail() {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       cursor: 'pointer',
-                      background: selectedOption?.optionId === opt.optionId ? '#007bff' : '#f7f7f7',
                       color: selectedOption?.optionId === opt.optionId ? '#fff' : '#000'
                     }}
                     onClick={() => handleSelectOption(opt)}
                   >
                     <span>{opt.optionName}</span>
-                    <span>{minPrice != null ? `${minPrice.toLocaleString()} 원` : "판매 입찰"}</span>
+                    <span
+                      style={{
+                        color: minPrice != null ? "red" : "#5a5a5aff" // 금액: 빨간색 / 판매 입찰: 연한 회색
+                      }}
+                    >
+                      {minPrice != null ? `${minPrice.toLocaleString()}원` : "판매 입찰"}
+                    </span>
+
                   </div>
                 );
               })}
@@ -176,8 +186,8 @@ function ShopProductDetail() {
       {isPriceModalOpen && (
         <div className="sell-modal" onClick={() => setIsPriceModalOpen(false)}>
           <div className="sell-modal-content" onClick={e => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setIsPriceModalOpen(false)}>×</button>
-            <h2>가격 입력</h2>
+            <button className="modal-close-btn" onClick={() => setIsPriceModalOpen(false)}>✕</button>
+            <h2 style={{ marginBottom: '23px' }}>가격 입력</h2>
             <input
               type="number"
               placeholder="가격을 입력하세요"

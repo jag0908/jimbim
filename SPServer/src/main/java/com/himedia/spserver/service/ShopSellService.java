@@ -2,22 +2,20 @@
 //
 //import com.himedia.spserver.entity.SHOP.SHOP_SellList;
 //import com.himedia.spserver.repository.ShopSellListRepository;
+//import jakarta.transaction.Transactional;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
 //
-//import java.util.Collections;
-//import java.util.List;
 //
+//@Service
+//@Transactional
 //public class ShopSellService {
-//    private final ShopSellListRepository shopSellListRepository;
 //
-//    public ShopSellService(ShopSellListRepository shopSellRepository) {
-//        this.shopSellListRepository = shopSellRepository;
-//    }
+//    @Autowired
+//    private ShopSellListRepository ssr;
 //
-//    public List<SHOP_SellList> findMinPriceSellsByOptionId(Long optionId) {
-//        Integer minPrice = shopSellListRepository.findMinPriceByOptionId(optionId);
-//        if (minPrice == null) {
-//            return Collections.emptyList();
-//        }
-//        return shopSellListRepository.findAllByOptionIdAndPrice(optionId, minPrice);
+//
+//    public SHOP_SellList registerSell(Long productId, Long optionId, Long sellerId, Integer price) {
 //    }
 //}

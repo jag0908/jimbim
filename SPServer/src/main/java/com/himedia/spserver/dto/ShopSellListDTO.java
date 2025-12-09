@@ -10,7 +10,6 @@ public class ShopSellListDTO {
     private Long optionId;
     private Integer price;
     private Long sellerId;
-    private String status; // selling / soldout
 
     public static ShopSellListDTO fromEntity(SHOP_SellList sell) {
         ShopSellListDTO dto = new ShopSellListDTO();
@@ -19,7 +18,6 @@ public class ShopSellListDTO {
         dto.setOptionId(sell.getOption().getOptionId());
         dto.setPrice(sell.getPrice());
         dto.setSellerId(sell.getSeller().getMember_id().longValue());
-        dto.setStatus(sell.getStatus());
         return dto;
     }
 }

@@ -32,5 +32,6 @@ public class SHOP_SellList {
     private Timestamp indate;
 
     @ColumnDefault("'N'")
-    private String status; // selling, soldout
+    private String status = "N";
+
 }

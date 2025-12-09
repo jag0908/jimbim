@@ -19,36 +19,9 @@ public class ShopController {
 
     private final ShopService shopService;
     private final ShopSuggestService shopSuggestService;
+//    private final ShopSellService sss; // 합쳐진 SellService
 
-    @PostMapping("/suggest")
-    public ResponseEntity<?> createSuggest(
-            @RequestParam("title") String title,
-            @RequestParam("content") String content,
-            @RequestParam("price") int price,
-            @RequestParam("memberId") int memberId,
-            @RequestParam("categoryId") Long categoryId,
-            @RequestParam(value = "files", required = false) MultipartFile[] files
-    ) {
-
-        ShopSuggestDto dto = new ShopSuggestDto();
-        dto.setTitle(title);
-        dto.setContent(content);
-        dto.setPrice(price);
-        dto.setMemberId(memberId);
-        dto.setCategoryId(categoryId);
-
-        //반드시 넣어줘야 파일 업로드 됨
-        if (files != null && files.length > 0) {
-            dto.setFiles(List.of(files));
-        }
-
-        ShopSuggestDto savedDto = shopSuggestService.createSuggest(dto);
-
-        //응답에서 MultipartFile 제거해서 NetworkError 방지
-        savedDto.setFiles(null);
-
-        return ResponseEntity.ok(savedDto);
-    }
+    // =================== 상품 관련 ===================
 
 
     @GetMapping("/products")
@@ -69,7 +42,22 @@ public class ShopController {
         return shopService.createProduct(dto, seller);
     }
 
-    @PostMapping("/sell")
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
+    }
+
+    @GetMapping("/products/search")
+    public List<ShopProductDTO> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "categoryId", required = false) Long categoryId
+    ) {
+        return shopService.searchProducts(keyword, categoryId);
+    }
+
+    // =================== 판매 관련 ===================
+    @PostMapping("/sell") // 단일 POST 매핑 유지
     public SHOP_SellList createSell(@RequestBody ShopSellCreateDTO dto) {
         Member seller = new Member();
         seller.setMember_id(dto.getSellerId());
@@ -84,6 +72,7 @@ public class ShopController {
         return ShopBuyOrderDTO.fromEntity(order); // 클라이언트에게 주문 정보 반환
     }
 
+    // =================== 찜 관련 ===================
     @PostMapping("/zzim/{productId}")
     public SHOP_zzim zzim(@PathVariable Long productId) {
         Member member = new Member();
@@ -91,9 +80,36 @@ public class ShopController {
         return shopService.createZzim(productId, member);
     }
 
+    // =================== 카테고리 ===================
     @GetMapping("/categories")
     public List<SHOP_Category> getCategories() {
         return shopService.getCategories();
+    }
+
+    // =================== 제안 관련 ===================
+    @PostMapping("/suggest")
+    public ResponseEntity<?> createSuggest(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("price") int price,
+            @RequestParam("memberId") int memberId,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam(value = "files", required = false) MultipartFile[] files
+    ) {
+        ShopSuggestDto dto = new ShopSuggestDto();
+        dto.setTitle(title);
+        dto.setContent(content);
+        dto.setPrice(price);
+        dto.setMemberId(memberId);
+        dto.setCategoryId(categoryId);
+
+        if (files != null && files.length > 0) {
+            dto.setFiles(List.of(files));
+        }
+
+        ShopSuggestDto savedDto = shopSuggestService.createSuggest(dto);
+        savedDto.setFiles(null); // NetworkError 방지
+        return ResponseEntity.ok(savedDto);
     }
 
     @PostMapping("/suggest/approve/{suggestId}")
@@ -102,19 +118,19 @@ public class ShopController {
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping("/products/search")
-    public List<ShopProductDTO> searchProducts(
-            @RequestParam("keyword") String keyword,
-            @RequestParam(value = "categoryId", required = false) Long categoryId
-    ) {
-        return shopService.searchProducts(keyword, categoryId);
-    }
-
-    @GetMapping("/product/{productId}")
-    public ShopProductDTO getProduct(@PathVariable Long productId) {
-        SHOP_Product product = shopService.getProductById(productId);
-        return ShopProductDTO.fromEntity(product);
-    }
+//    @GetMapping("/products/search")
+//    public List<ShopProductDTO> searchProducts(
+//            @RequestParam("keyword") String keyword,
+//            @RequestParam(value = "categoryId", required = false) Long categoryId
+//    ) {
+//        return shopService.searchProducts(keyword, categoryId);
+//    }
+//
+//    @GetMapping("/product/{productId}")
+//    public ShopProductDTO getProduct(@PathVariable Long productId) {
+//        SHOP_Product product = shopService.getProductById(productId);
+//        return ShopProductDTO.fromEntity(product);
+//    }
 
     @GetMapping("/getSuggestList/{page}")
     public ResponseEntity<?> getSuggestList(
@@ -135,17 +151,4 @@ public class ShopController {
         shopSuggestService.deleteSuggest(id);
         return ResponseEntity.ok("삭제 완료");
     }
-
-    @GetMapping("/sell")
-    public List<ShopSellListDTO> getSellList(@RequestParam Long productId, @RequestParam Long optionId) {
-        return shopService.getSellList(productId, optionId);
-    }
-
-
-    @GetMapping("/product/{productId}/detail")
-    public ShopProductDTO getProductDetail(@PathVariable Long productId) {
-        return shopService.getProductDetail(productId);
-    }
-
-
 }

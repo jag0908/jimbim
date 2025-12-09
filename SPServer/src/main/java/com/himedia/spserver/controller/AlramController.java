@@ -83,9 +83,9 @@ public class AlramController {
         List<AlramShSuggestResDto> suggest_resdto = alramService.getMyPostSuggest(id);
         for(AlramShSuggestResDto suggest :suggest_resdto) {allList.add(new UnifiedAlramDto("SUGGEST", suggest.getId(), suggest.getStartUserId() + "님이 '" + suggest.getPostTitle() + "' 게시물에" + suggest.getPrice() + "원으로 가격제안" + (suggest.getApproved() == 1 ? "을 승낙" : "") + "하셨습니다.", suggest.getStartUserProfileImg(), suggest.getEndUserId(), suggest.getIsRead(), suggest.getIndate(), "/sh-page/sh-view/" + suggest.getPostId()));}
         List<ChatRoomUnreadDto> chat_resdto = alramService.getUnreadMessages(id);
-        for(ChatRoomUnreadDto chat :chat_resdto) {allList.add(new UnifiedAlramDto("CHAT", null, chat.getBuyerName(), chat.getBuyerProfileImg(), chat.getSellerId(), chat.getUnreadCount() > 0 ? false : true, chat.getLastTime(), "/sh-page/sh-view/" + chat.getPostId()));}
+        for(ChatRoomUnreadDto chat :chat_resdto) {if(chat.getUnreadCount() > 0) allList.add(new UnifiedAlramDto("CHAT", null, chat.getBuyerName(), chat.getBuyerProfileImg(), chat.getSellerId(), chat.getUnreadCount() > 0 ? false : true, chat.getLastTime(), "/sh-page/sh-view/" + chat.getPostId()));}
         List<ChatRoomUnreadDto> mychat_resdto = alramService.getUnreadMyMessages(id);
-        for(ChatRoomUnreadDto mychat :mychat_resdto) {allList.add(new UnifiedAlramDto("MYCHAT", null, mychat.getSellerName(), mychat.getSellerProfileImg(), mychat.getBuyerId(), mychat.getUnreadCount() > 0 ? false : true, mychat.getLastTime(), "/sh-page/sh-view/" + mychat.getPostId()));}
+        for(ChatRoomUnreadDto mychat :mychat_resdto) {if(mychat.getUnreadCount() > 0) allList.add(new UnifiedAlramDto("MYCHAT", null, mychat.getSellerName(), mychat.getSellerProfileImg(), mychat.getBuyerId(), mychat.getUnreadCount() > 0 ? false : true, mychat.getLastTime(), "/sh-page/sh-view/" + mychat.getPostId()));}
         List<NotificationDTO> noti_resdto = notificationService.getNotifications(id);
         for(NotificationDTO noti :noti_resdto) {allList.add(new UnifiedAlramDto("NOTI", noti.getId(), noti.getMessage(), noti.getSenderProfileImg(), id, noti.isRead(), Timestamp.valueOf(noti.getTime()), noti.getLinkUrl()));}
 

@@ -21,6 +21,7 @@ public class ShopProductDTO {
     private Long categoryId;
     private String indate;
 
+    // 🔹 여러 이미지 리스트 추가
     private List<String> imageUrls;
 
     // 옵션 목록 (순수 옵션)
@@ -30,7 +31,6 @@ public class ShopProductDTO {
     private Map<Long, Integer> optionPrices;
 
     public static ShopProductDTO fromEntity(SHOP_Product product) {
-
         ShopProductDTO dto = new ShopProductDTO();
         dto.setProductId(product.getProductId());
         dto.setTitle(product.getTitle());

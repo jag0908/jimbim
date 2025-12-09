@@ -44,7 +44,7 @@ function ShWrite() {
 
             const getPost = await jaxios.get(`/api/sh-page/sh-view/${id}`);
             let res = getPost.data.post;
-            console.log(getPost.data)
+            // console.log(getPost.data)
             setTitle(res.title);
             setCategoryId(res.categoryId);
             setContent(res.content);
@@ -84,7 +84,7 @@ function ShWrite() {
 
         // 기존 파일과 합치기
         const allFiles = [...fileArr, ...newfiles];
-        console.log("@@@@ 파일 정보 @@@@" + allFiles)
+        // console.log("@@@@ 파일 정보 @@@@" + allFiles)
 
         if ((allFiles.length + oldFiles.length) > 10) {
             alert("최대 10개까지 선택 가능합니다.");
@@ -131,7 +131,7 @@ function ShWrite() {
         if(window.confirm("정말로 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다.")) {
             jaxios.post("/api/sh-page/delete-post", null, {params: {postId: id}})  
                 .then((result)=> {
-                    console.log(result.data.msg);
+                    // console.log(result.data.msg);
                     if(result.data.msg == "notOk") {
                         alert("잘못된 접근입니다. 삭제하실 수 없습니다.");
                         return navigate("/sh-page/sh-view/" + id);
@@ -176,8 +176,8 @@ function ShWrite() {
             formData.append("deliveryPrice", Number(deliveryPrice));
         };
 
-        const formDataObj = Object.fromEntries(formData.entries());
-        console.log(formDataObj);
+        // const formDataObj = Object.fromEntries(formData.entries());
+        // console.log(formDataObj);
 
 
         try {

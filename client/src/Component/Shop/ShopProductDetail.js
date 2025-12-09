@@ -13,12 +13,10 @@ function ShopProductDetail() {
 
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false); //이삭 수정
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
-
   const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
-
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState("");
 
@@ -38,7 +36,6 @@ function ShopProductDetail() {
     }
   };
 
-  // 이미지 슬라이더
   const handlePrev = () => {
     if (!product?.imageUrls || product.imageUrls.length === 0) return;
     setCurrentImage(prev => prev === 0 ? product.imageUrls.length - 1 : prev - 1);
@@ -51,25 +48,22 @@ function ShopProductDetail() {
 
   const handleIndicatorClick = (index) => setCurrentImage(index);
 
-  // 판매하기 버튼 클릭 → 옵션 선택 모달 열기
   const handleClickSell = () => {
     if (!product?.options || product.options.length === 0) {
       alert("옵션이 없습니다.");
       return;
     }
-    setSelectedOption(null);  // 초기화
+    setSelectedOption(null);
     setSelectedPrice("");
     setIsOptionModalOpen(true);
   };
 
-  // 옵션 선택 시 바로 가격 입력 모달로 전환
   const handleSelectOption = (option) => {
     setSelectedOption(option);
     setIsOptionModalOpen(false);
     setIsPriceModalOpen(true);
   };
 
-  // 가격 입력 후 판매 등록
   const handleSellConfirm = async () => {
     if (!selectedOption) return alert("옵션을 선택해주세요.");
     if (!selectedPrice || selectedPrice <= 0) return alert("가격을 입력해주세요.");
@@ -81,7 +75,8 @@ function ShopProductDetail() {
         price: selectedPrice,
         sellerId: loginUser.member_id
       });
-      alert("판매 등록 완료!");
+
+      alert("판매 등록이 완료되었습니다.");
       setIsPriceModalOpen(false);
       setSelectedOption(null);
       setSelectedPrice("");
@@ -97,8 +92,7 @@ function ShopProductDetail() {
 
   return (
     <div className="shop-product-detail">
-
-      {/* 이미지 */}
+      {/* 이미지 슬라이더 */}
       <div className="product-images">
         {product.imageUrls?.length > 0 ? (
           <div className="shop-slider">
@@ -121,142 +115,88 @@ function ShopProductDetail() {
       {/* 상품 정보 */}
       <div className="product-info">
         <h1>{product.title}</h1>
-        <p className="product-price">최저가는 판매하기 버튼 클릭 후 확인</p>
+        {/* 정가 */}
+        <p className="product-price">정가: {product.price?.toLocaleString()} 원</p>
+        {/* 전체 최저가 */}
+        {/* <p className="product-price">{product.optionPrices ? Math.min(...Object.values(product.optionPrices)).toLocaleString() : "-"} 원</p> */}
+
         <div className="product-buttons">
           <button className="btn-sell" onClick={handleClickSell}>판매하기</button>
-          <button className="btn-buy" onClick={() => setIsBuyModalOpen(true)}>
-            구매하기
-          </button>
+          <button className="btn-buy" onClick={() => setIsBuyModalOpen(true)}>구매하기</button>
         </div>
       </div>
 
       {/* 옵션 선택 모달 */}
       {isOptionModalOpen && (
-          <div className="sell-modal" onClick={() => setIsOptionModalOpen(false)}>
-            <div className="sell-modal-content" onClick={e => e.stopPropagation()}>
-
-              {/* 왼쪽 위 X 버튼 */}
-              <button
-                  className="modal-close-btn"
-                  onClick={() => setIsOptionModalOpen(false)}
-                  aria-label="닫기"
-                  style={{
-                    position: 'absolute',
-                    top: '12px',
-                    background: 'transparent',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    zIndex: 10,
-                  }}
-              >
-                ×
-              </button>
-
-              <h2>옵션 선택</h2>
-              <div className="option-list">
-                {product.options.map(opt => {
-                  // 옵션별 최저가 계산
-                  const prices = product.sellLists?.filter(s => s.option.optionId === opt.optionId).map(s => s.price) || [];
-                  const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-
-                  return (
-                      <div
-                          key={opt.optionId}
-                          style={{
-                            marginBottom: '10px',
-                            border: '1px solid #ddd',
-                            borderRadius: '6px',
-                            padding: '8px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            background: selectedOption?.optionId === opt.optionId ? '#007bff' : '#f7f7f7',
-                            color: selectedOption?.optionId === opt.optionId ? '#fff' : '#000'
-                          }}
-                          onClick={() => handleSelectOption(opt)} // 클릭시 바로 가격 입력 모달로 이동
-                      >
-                        <span>{opt.optionName}</span>
-                        <span>{minPrice != null ? `${minPrice.toLocaleString()} 원` : "판매 입찰"}</span>
-                      </div>
-                  );
-                })}
-              </div>
-
+        <div className="sell-modal" onClick={() => setIsOptionModalOpen(false)}>
+          <div className="sell-modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setIsOptionModalOpen(false)}>×</button>
+            <h2>옵션 선택</h2>
+            <div className="option-list">
+              {product.options.map(opt => {
+                const minPrice = product.optionPrices?.[opt.optionId];
+                return (
+                  <div
+                    key={opt.optionId}
+                    style={{
+                      marginBottom: '10px',
+                      border: '1px solid #ddd',
+                      borderRadius: '6px',
+                      padding: '8px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      background: selectedOption?.optionId === opt.optionId ? '#007bff' : '#f7f7f7',
+                      color: selectedOption?.optionId === opt.optionId ? '#fff' : '#000'
+                    }}
+                    onClick={() => handleSelectOption(opt)}
+                  >
+                    <span>{opt.optionName}</span>
+                    <span>{minPrice != null ? `${minPrice.toLocaleString()} 원` : "판매 입찰"}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
+        </div>
       )}
 
       {/* 가격 입력 모달 */}
       {isPriceModalOpen && (
-          <div className="sell-modal" onClick={() => setIsPriceModalOpen(false)}>
-            <div className="sell-modal-content" onClick={e => e.stopPropagation()}>
-
-              {/* 왼쪽 위 X 버튼 */}
-              <button
-                  className="modal-close-btn"
-                  onClick={() => setIsPriceModalOpen(false)}
-                  aria-label="닫기"
-                  style={{
-                    position: 'absolute',
-                    top: '12px',
-                    background: 'transparent',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    zIndex: 10,
-                  }}
-              >
-                ×
-              </button>
-
-              <h2>가격 입력</h2>
-              <input
-                  type="number"
-                  placeholder="가격을 입력하세요"
-                  value={selectedPrice}
-                  onChange={(e) => setSelectedPrice(Number(e.target.value))}
-                  style={{ width: '100%', padding: '10px', fontSize: '16px', boxSizing: 'border-box' }}
-              />
-
-              <div className="modal-buttons" style={{ marginTop: '20px' }}>
-                <button className="btn-confirm" onClick={handleSellConfirm} style={{ flex: 1, marginRight: '8px' }}>
-                  판매하기
-                </button>
-                <button
-                    className="btn-cancel"
-                    onClick={() => {
-                      setIsPriceModalOpen(false);
-                      setIsOptionModalOpen(true);
-                    }}
-                    style={{ flex: 1 }}
-                >
-                  이전
-                </button>
-              </div>
+        <div className="sell-modal" onClick={() => setIsPriceModalOpen(false)}>
+          <div className="sell-modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setIsPriceModalOpen(false)}>×</button>
+            <h2>가격 입력</h2>
+            <input
+              type="number"
+              placeholder="가격을 입력하세요"
+              value={selectedPrice}
+              onChange={(e) => setSelectedPrice(Number(e.target.value))}
+              style={{ width: '100%', padding: '10px', fontSize: '16px', boxSizing: 'border-box' }}
+            />
+            <div className="modal-buttons" style={{ marginTop: '20px' }}>
+              <button className="btn-confirm" onClick={handleSellConfirm} style={{ flex: 1, marginRight: '8px' }}>판매하기</button>
+              <button className="btn-cancel" onClick={() => { setIsPriceModalOpen(false); setIsOptionModalOpen(true); }} style={{ flex: 1 }}>이전</button>
             </div>
           </div>
+        </div>
       )}
 
-    {/* 구매하기 모달 */}
-      {isBuyModalOpen &&(
-          <ShopBuyModal
-              initialProduct={{
-                productId: product.productId,
-                ...product,                        // 기존 product 정보 유지
-                imageUrls: product.firstImage ? [product.firstImage] : [], // 배열로 변환
-                options: product.options || [],    // 옵션 초기값
-                optionPrices: product.optionPrices || {}, // 가격 초기값
-                title: product.title || "",
-                description: product.description || "",
-              }}
-              onClose={() => setIsBuyModalOpen(false)}
-          />
+      {/* 구매 모달 */}
+      {isBuyModalOpen && (
+        <ShopBuyModal
+          initialProduct={{
+            productId: product.productId,
+            ...product,
+            imageUrls: product.firstImage ? [product.firstImage] : [],
+            options: product.options || [],
+            optionPrices: product.optionPrices || {},
+            title: product.title || "",
+            description: product.description || "",
+          }}
+          onClose={() => setIsBuyModalOpen(false)}
+        />
       )}
     </div>
   );

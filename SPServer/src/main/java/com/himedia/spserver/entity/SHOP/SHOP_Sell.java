@@ -1,6 +1,5 @@
 package com.himedia.spserver.entity.SHOP;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,10 +10,10 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
-public class SHOP_SellList {
+public class SHOP_Sell {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long sellId;
 
     @ManyToOne
@@ -32,7 +31,6 @@ public class SHOP_SellList {
     @Column( columnDefinition="DATETIME default now()" )
     private Timestamp indate;
 
-    @ColumnDefault("'N'")
     private String status = "N";
 
 }

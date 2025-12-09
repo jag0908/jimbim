@@ -22,5 +22,6 @@ public class SHOP_ProductOption {
     private SHOP_Product product;
 
     @OneToMany(mappedBy = "option")
+    @JsonIgnore
     private List<SHOP_SellList> sellList;
 }

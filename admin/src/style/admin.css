@@ -160,6 +160,9 @@ a{
     border:1px dotted #8a2be2;
     margin: 1px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .detailTitle{
     background-color: rgb(182, 142, 219);

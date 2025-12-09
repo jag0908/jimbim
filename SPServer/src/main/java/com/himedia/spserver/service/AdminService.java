@@ -50,6 +50,7 @@ public class AdminService {
     private final ShopProductRepository shoppr;
     private final ShopProductImageRepository shopir;
     private final ShopProductOptionRepository shopor;
+    private final ShopSellListRepository shopslr;
 
     @Autowired
     private S3UploadService sus;
@@ -192,11 +193,47 @@ public class AdminService {
         shopor.deleteByProduct_ProductId(productId);
         shoppr.deleteById(productId);
     }
-    public HashMap<String, Object> getOptionList(int page, Long productId) {
+    public HashMap<String, Object> getOptionList(Long productId) {
         // 검색없앰
         HashMap<String, Object> result = new HashMap<>();
         result.put("optionList", shopor.findByProduct_ProductId(productId));
         return result;
+    }
+
+    public SHOP_ProductOption getOption(Long optionId) {
+        return shopor.findById(optionId).get();
+    }
+
+    public HashMap<String, Object> getSellList(int page, String key, Long productId, Long optionId) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = shopslr.findByProduct_ProductIdAndOption_OptionId(productId, optionId).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            Pageable pageable = PageRequest.of(page-1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "sellId"));
+            Page<SHOP_SellList> list = shopslr.findByProduct_ProductIdAndOption_OptionId(productId, optionId, pageable );
+
+            result.put("sellList", list.getContent());
+        }else{
+            int count = shopslr.findByProduct_ProductIdAndOption_OptionIdAndSeller_UseridContaining(productId, optionId, key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "sellId"));
+            Page<SHOP_SellList> list = shopslr.findByProduct_ProductIdAndOption_OptionIdAndSeller_UseridContaining( productId, optionId, key, pageable );
+            result.put("sellList", list.getContent());
+        }
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
+    }
+
+    public void deleteSellList(Long sellId) {
+        shopslr.deleteById(sellId);
     }
 
     /// ////////// 커뮤니티 관련 /////////////////
@@ -359,7 +396,7 @@ public class AdminService {
             }
         }else{
             SHOP_ProductOption option = new SHOP_ProductOption();
-            option.setOptionName("one size");
+            option.setOptionName("ONE SIZE");
             option.setProduct(product);
             shopor.save(option);
         }

@@ -22,7 +22,7 @@ function OptionList() {
                 navigate('/')
             }
             
-            jaxios.get('/api/admin/getOptionList', {params:{page:1, productId}})
+            jaxios.get('/api/admin/getOptionList', {params:{productId}})
             .then((result)=>{ 
                 console.log(result)
                 setOptionList(result.data.optionList) 
@@ -51,7 +51,7 @@ function OptionList() {
                     (optionList[0])?(
                         optionList.map((option, idx)=>{
                             return (
-                                <div className='optionListCol' style={(optionList.length-1==idx)?({width:'100%'}):({})}>{option.optionName}</div>
+                                <div className='optionListCol' onClick={()=>{navigate(`/ShopDetail/${productId}/optionList/${option.optionId}`)}} style={(optionList.length-1==idx && idx%2==0)?({width:'100%'}):({})}>{option.optionName}</div>
                             )
                         })
                     ):(<></>)

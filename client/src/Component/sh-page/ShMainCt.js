@@ -19,7 +19,7 @@ function ShMain() {
     const isLoadingRef = useRef(false); // 동기적으로 로딩 상태 추적
 
     useEffect(()=> {
-      console.log("아이디변경")
+      // console.log("아이디변경")
       setPage(1);
       selSearchVal("");
       startApi();

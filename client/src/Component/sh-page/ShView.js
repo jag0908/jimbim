@@ -50,7 +50,7 @@ function ShView() {
         try {
             const res = await jaxios.get(`/api/sh-page/sh-view/${id}`);
             if(res.data.error) {alert("잘못된 게시글이거나, 이미 지워진 게시글 입니다.");  navigate("/sh-page");}
-            console.log(res.data);
+            // console.log(res.data);
             setPostDetail(res.data.post);
             setCategoryArr(res.data.categoryArr);
         } catch (err) {
@@ -59,7 +59,7 @@ function ShView() {
         // 3. 제안 데이터 가져오가
         try {
             const res = await jaxios.get(`/api/sh-page/suggest`, {params :{postId:id}});
-            console.log(res.data);
+            // console.log(res.data);
             if(res.data.msg == "ok") {
                 setSuggestInfo([...res.data.resDto]);
             } else {
@@ -72,7 +72,7 @@ function ShView() {
         // 4. 찜 개수
         try {
             const res = await jaxios.get(`/api/sh-page/zzimCount`, {params :{postId:id}});
-                console.log(res.data);
+                // console.log(res.data);
                 setZzimCount(res.data.zzimCount);
         } catch (err) {
             console.error(err);
@@ -80,7 +80,7 @@ function ShView() {
         // 5. 개인 찜 되어있는지 확인
         try {
             const res = await jaxios.get(`/api/sh-page/zzim`, {params :{postId:id, memberId:loginUser.member_id}});
-                console.log(res.data);
+                // console.log(res.data);
                 setIsZzim(res.data.msg);
         } catch (err) {
             console.error(err);
@@ -88,7 +88,7 @@ function ShView() {
         // 6. 내게 온 채팅 수 
         try {
             const res = await jaxios.get(`/api/chat/chatCount`, {params :{postId:id}});
-            console.log(res.data);
+            // console.log(res.data);
             setChatRoomCount(res.data.chatRoomCount);
         } catch (err) {
             console.error(err);
@@ -164,7 +164,7 @@ function ShView() {
 
             await jaxios.post("/api/sh-page/appSuggest", null, {params:{sid}})
                 .then((result)=> {
-                    console.log(result);
+                    // console.log(result);
                     jaxios.get(`/api/sh-page/suggest`, {params :{postId:id}})
                         .then((res)=> {
                             console.log(res.data);
@@ -241,7 +241,7 @@ function ShView() {
         }
         setDisplayYN({display: "flex"});
         jaxios.get("/api/chat/chatRoomList").then((result)=> {
-            console.log(result);
+            // console.log(result);
             if(result.data.msg == "ok") {
                 setOpenChatState("chatRoomList");
                 setChatListData(result.data.resDto);
@@ -269,7 +269,7 @@ function ShView() {
         if( isZzim ? window.confirm("찜을 해지하시겠습니까?") : window.confirm("찜 하시겠습니까?")) {
             jaxios.post("/api/sh-page/zzim", {postId:id, memberId: loginUser.member_id})
                 .then((res)=> {
-                    console.log(res);
+                    // console.log(res);
                     if(res.data.msg) {
                         setZzimCount(pev => pev = pev + 1);
 
@@ -343,16 +343,28 @@ function ShView() {
                             </div>
                         </div>
 
-                        {/* <div className='userState'>
-                            매너단계: 
-                            <span>
+                        <div className='userState'>
+                            {/* 매너단계:  */}
+                            
                                 {
-                                    postDetail?
-                                    postDetail.member.blacklist:
+                                    postDetail &&
+                                    postDetail?.member?.blacklist == 0 ? 
+                                        <span style={{fontSize: "16px", fontWeight: "700", color: "#dfb748ff", textShadow: "0 0 8px rgba(241, 200, 63, 0.9)"}}>👳🏻‍♂️장인</span> :
+                                    postDetail?.member?.blacklist == 1 ?
+                                        <span style={{fontSize: "16px", fontWeight: "700", color: "#1F3A8A", textShadow: "0 0 6px rgba(37, 122, 248, 0.8)"}}>😎프로</span> :
+                                    postDetail?.member?.blacklist == 2 ?
+                                        <span style={{fontSize: "16px", fontWeight: "700", color: "#7B7D7D", textShadow: "0 0 6px rgba(128, 233, 193, 0.6)"}}>🙂평민</span> : 
+                                    postDetail?.member?.blacklist == 3 ?
+                                        <span style={{fontSize: "16px", fontWeight: "700", color: "#8E6B23"}}>😈말썽쟁이</span> :
+                                    postDetail?.member?.blacklist == 4 ?
+                                        <span style={{fontSize: "16px", fontWeight: "700", color: "#7B1E23", textShadow: "0 0 6px rgba(123, 30, 35, 0.8)"}}>💣지뢰</span> :
+                                    postDetail?.member?.blacklist == 5 ?
+                                       <span style={{fontSize: "16px", fontWeight: "700", color: "#2C0537", textShadow: "0 0 8px rgba(0, 0, 0, 0.9)"}}>💩불가촉천민</span> :
+
                                     <Lodding/>
                                 }
-                            </span>
-                        </div> */}
+                            
+                        </div>
                     </div>
                     <div className='suggestWrap'>
                         {
@@ -766,7 +778,7 @@ function ChatRoomCP({chatRoomData, loginUser, openChatState}) {
         }
         jaxios.get(`/api/chat/detailChatRoom/${chatRoomData.chatRoomId}`)
             .then((result)=> {
-                console.log(result);
+                // console.log(result);
                 if(result.data.msg == "ok") {
                     setIsOpen(true);
                     setChatRoomInfo(result.data.resDto);
@@ -866,7 +878,7 @@ function SuggestCP({setSModal, suggestPrice, setSuggestPrice, formatPrice, postD
             postId: postDetail.postId, 
             suggest_price: suggestPrice
         }).then((res)=> {
-            console.log(res.data);
+            // console.log(res.data);
             if(res.data.msg == "ok") {
                 setSuggestInfo(prev => [...prev, res.data.resDto]);
                 alert("가격을 제안했습니다.");

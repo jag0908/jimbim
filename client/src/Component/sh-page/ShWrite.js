@@ -99,20 +99,20 @@ function ShWrite() {
             formData.append("deliveryPrice", deliveryPrice);
         }
 
-        const formDataObj = Object.fromEntries(formData.entries());
-        console.log(formDataObj);
+        // const formDataObj = Object.fromEntries(formData.entries());
+        // console.log(formDataObj);
 
         jaxios.post("/api/sh-page/sh-write", formData)
             .then((result)=> {
                 alert("작성 완료되었습니다!");
-                console.log(result.data);
+                // console.log(result.data);
                 navigate("/sh-page");
             }).catch(err=>console.error(err));
     }
 
     useEffect(()=> {
      
-        console.log(fileArr)
+        // console.log(fileArr)
     
     }, [fileArr]);
 

@@ -1,5 +1,6 @@
 package com.himedia.spserver.entity.SHOP;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.himedia.spserver.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
 public class SHOP_SellList {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sellId;
 
     @ManyToOne

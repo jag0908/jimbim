@@ -269,6 +269,23 @@ public class AdminController {
         result.put("postId", post.getProductId());
         return result;
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/updateShopProduct")
+    public HashMap<String,Object> updateShopProduct(@RequestParam("title") String title, @RequestParam("price") int price, @RequestParam("categoryId") Long categoryId,
+                                                    @RequestParam("productId") Long productId){
+        HashMap<String, Object> result = new HashMap<>();
+        SHOP_Product post = as.updateShopProduct(title, price, categoryId, productId);
+        result.put("postId", post.getProductId());
+        return result;
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/deleteOldImageInProduct")
+    public HashMap<String,Object> deleteOldImageInProduct(@RequestParam("oldRemoveArr[]") List<Long> oldRemoveArr){
+        HashMap<String, Object> result = new HashMap<>();
+        as.deleteOldImageInProduct(oldRemoveArr);
+        result.put("msg", "ok");
+        return result;
+    }
     @PostMapping("/uploadOldFile")
     public HashMap<String,Object> uploadOldFile(@RequestParam("idList[]") List<Integer> idList, @RequestParam("postId") Long postId){
         HashMap<String, Object> result = new HashMap<>();

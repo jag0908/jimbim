@@ -42,7 +42,6 @@ function SuggestDetail() {
             overflow: "hidden",
         },
     };
-    let i =0 ;
     useEffect(
         ()=>{
             if( !loginUser.userid ||  !loginUser.roleNames.includes('ADMIN') ){ 
@@ -290,8 +289,8 @@ function SuggestDetail() {
                             (suggest.isAccept):
                             (<>
                                 <div className='detailPageBtns'>
-                                    <button onClick={()=>{openModal()}} >상품 추가하기</button>
-                                    <button className='redbtn' onClick={()=>{setStatus('N')}} >거절</button>
+                                    <button style={{width:'auto'}} onClick={()=>{openModal()}} >상품 추가하기</button>
+                                    <button style={{width:'auto'}} className='redbtn' onClick={()=>{setStatus('N')}} >거절</button>
                                 </div>
                             
                             </>)

@@ -12,6 +12,9 @@
 .italic{
     font-style: italic;
 }
+input[type=checkbox]{
+    flex: 0;
+}
 img{
     max-width: 400px;
 }
@@ -237,7 +240,7 @@ a{
 .inputWrap.file {
     flex-direction: row;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
     border: none;
 }
 .inputWrap {
@@ -273,6 +276,9 @@ a{
     display: flex;
     align-items: center;
     gap: 12px;
+}
+.inputWrap.file .previewContainer .twoline:last-child {
+    margin-top: 5px;
 }
 .inputWrap.file .previewContainer .twoline .imgBox {
     position: relative;
@@ -313,9 +319,10 @@ a{
 .optionListRow{
     display: flex;
     flex-wrap:wrap;
+    justify-content: space-around;
 }
 .optionListCol{
-    width:calc(50% - 4px);
+    width:calc(50% - 6px);
     padding: 20px 0;
     text-align: center;
     border: 1px dotted #8a2be2;

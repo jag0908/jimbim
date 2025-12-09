@@ -102,6 +102,7 @@ function ShopSuggest() {
 
       {/* 이미지 업로드 */}
       <div className="inputWrap file">
+        <label htmlFor="fileUpload">+ <span>{fileArr.length}/10</span></label>
         <div className="previewContainer">
           {previewUrls.map((url, i) => (
             <div className="imgBox" key={i}>
@@ -110,7 +111,6 @@ function ShopSuggest() {
             </div>
           ))}
         </div>
-        <label htmlFor="fileUpload">+ <span>{fileArr.length}/10</span></label>
         <input
           id="fileUpload"
           type="file"

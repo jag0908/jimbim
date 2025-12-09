@@ -190,7 +190,7 @@ public class AdminService {
         return shoppr.findById( productId ).get();
     }
     public void deleteShopProduct(Long productId) {
-        shopor.deleteByProduct_ProductId(productId);
+        shopor.deleteByProduct_ProductId(productId);    // 옵션 삭제
         shoppr.deleteById(productId);
     }
     public HashMap<String, Object> getOptionList(Long productId) {
@@ -403,7 +403,44 @@ public class AdminService {
         /// ////////
         return shoppr.save(product);
     }
+    public SHOP_Product updateShopProduct(String title, int price, Long categoryId, Long productId) {
+        SHOP_Product product = shoppr.findById(productId).get();
+        product.setTitle(title);
+        product.setPrice(price);
 
+        Long oldCategoryId = product.getCategory().getCategoryId();
+        ///  옵션 추가 부분 ///////////
+        if((1 <= categoryId && categoryId <= 4) && (oldCategoryId > 4)){
+            shopor.deleteByProduct_ProductId(productId);
+            String[] sizeList = {"S", "M", "L", "XL"};
+            for (String size : sizeList){               // DB 에 "S" 한줄, "M" 한줄, "L" 한줄, "XL" 한줄
+                SHOP_ProductOption option = new SHOP_ProductOption();
+                option.setOptionName(size);
+                option.setProduct(product);
+                shopor.save(option);
+            }
+        }
+        else if((5 <= categoryId && categoryId <= 7) && (5 > oldCategoryId || oldCategoryId > 7 )) {
+            shopor.deleteByProduct_ProductId(productId);
+            for (int size = 220; size <= 300; size += 5) {  // DB에 220 부터 300까지 5단위 간격으로 한줄씩
+                SHOP_ProductOption option = new SHOP_ProductOption();
+                option.setOptionName(String.valueOf(size));
+                option.setProduct(product);
+                shopor.save(option);
+            }
+        }else if((7 < categoryId) && (7 >= oldCategoryId)){
+            shopor.deleteByProduct_ProductId(productId);
+            SHOP_ProductOption option = new SHOP_ProductOption();
+            option.setOptionName("ONE SIZE");
+            option.setProduct(product);
+            shopor.save(option);
+        }
+        /// ////////
+
+        SHOP_Category category =  shopcr.findById(categoryId).get();
+        product.setCategory(category);
+        return product;
+    }
     public void fileUpload(List<MultipartFile> images, Long postId) throws IOException {
         SHOP_Product post = shoppr.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글 없음"));
@@ -443,6 +480,11 @@ public class AdminService {
             if (post.getImages() != null) {
                 post.getImages().add(shoppi);
             }
+        }
+    }
+    public void deleteOldImageInProduct(List<Long> idList) {
+        for (Long id : idList) {
+            shopir.deleteById(id);
         }
     }
 }

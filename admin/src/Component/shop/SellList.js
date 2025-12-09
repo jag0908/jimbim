@@ -140,7 +140,7 @@ function ShopList() {
                     (sellList[0])?(
                         sellList.map((sell, idx)=>{
                             return (
-                                <div className='row' onClick={()=>{navigate(`/ShopDetail/${productId}/optionList/${optionId}`)}}>
+                                <div className='row' style={{cursor:'auto'}} onClick={()=>{navigate(`/ShopDetail/${productId}/optionList/${optionId}`)}}>
                                     <div className='col'>{
                                         (sell.seller)?
                                         (((sell.seller.provider)?(sell.seller.userid+' ('+sell.seller.provider+')'):(sell.seller.userid))):

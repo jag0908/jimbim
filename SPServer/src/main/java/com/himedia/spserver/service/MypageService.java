@@ -8,6 +8,7 @@ import com.himedia.spserver.entity.Mypage.SHOP_Orderdetail;
 import com.himedia.spserver.entity.Mypage.SH_Orderdetail;
 import com.himedia.spserver.entity.SH.SH_post;
 import com.himedia.spserver.entity.SH.SH_zzim;
+import com.himedia.spserver.entity.SHOP.SHOP_BuyOrder;
 import com.himedia.spserver.entity.SHOP.SHOP_post;
 import com.himedia.spserver.entity.SHOP.SHOP_zzim;
 import com.himedia.spserver.repository.*;
@@ -35,6 +36,7 @@ public class MypageService {
     private final SHOP_postRepository shoppr;
     private final SH_zzimRepository shzr;
     private final SHOP_zzimRepository shopzr;
+    private final ShopBuyOrderRepository buyOrderRepository; //이삭 수정
 
     public void insertAddress(Address address) {
         ar.save(address);
@@ -81,9 +83,10 @@ public class MypageService {
         return shodr.findAllByMemberId(member);
     }
 
-    public List<SHOP_Order> getShopBuyingList(String memberId) {
+    //이삭 수정
+    public List<SHOP_BuyOrder> getShopBuyingList(String memberId) {
         Member member = mr.findById(Integer.parseInt(memberId)).get();
-        return shopor.findAllByMemberId(member);
+        return buyOrderRepository.findAllByBuyer(member);
     }
 
     public List<SH_post> getShSellingList(String memberId) {

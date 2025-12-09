@@ -1,12 +1,18 @@
 package com.himedia.spserver.controller;
 
+import com.himedia.spserver.dto.ShopBuyOrderDTO;
 import com.himedia.spserver.entity.Address;
 import com.himedia.spserver.entity.Member;
+import com.himedia.spserver.entity.Mypage.SHOP_Order;
+import com.himedia.spserver.entity.SHOP.SHOP_BuyOrder;
+import com.himedia.spserver.repository.ShopBuyOrderRepository;
 import com.himedia.spserver.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/mypage")
@@ -14,6 +20,9 @@ public class MypageController {
 
     @Autowired
     MypageService mys;
+
+    @Autowired
+    ShopBuyOrderRepository shopBuyOrderRepository;
 
     @PostMapping("/insertAddress")
     public HashMap<String, Object> insertAddress(@RequestBody Address address) {
@@ -48,13 +57,24 @@ public class MypageController {
         return result;
     }
 
-    @GetMapping("/getBuyingList")
-    public HashMap<String, Object> getBuyingList(@RequestParam("member_id") String member_id) {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("shBuyingList", mys.getShBuyingList( member_id ));
-        result.put("shopBuyingList", mys.getShopBuyingList( member_id ));
-        return result;
+//    @GetMapping("/getBuyingList")
+//    public HashMap<String, Object> getBuyingList(@RequestParam("member_id") String member_id) {
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put("shBuyingList", mys.getShBuyingList( member_id ));
+//        result.put("shopBuyingList", mys.getShopBuyingList( member_id ));
+//        return result;
+//    }
+
+    //이삭 수정
+    @GetMapping("/getShopBuyingList")
+    public List<ShopBuyOrderDTO> getShopBuyingList(@RequestParam("member_id") Integer member_id) {
+        List<SHOP_BuyOrder> orders = shopBuyOrderRepository.findBuyOrdersByMemberId(member_id);
+        return orders.stream()
+                .map(ShopBuyOrderDTO::fromEntity)
+                .collect(Collectors.toList());
     }
+
+
 
     @GetMapping("/getSellingList")
     public HashMap<String, Object> getSellingList(@RequestParam("member_id") String member_id) {

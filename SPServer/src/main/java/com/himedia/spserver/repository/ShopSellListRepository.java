@@ -28,4 +28,9 @@ public interface ShopSellListRepository extends JpaRepository<SHOP_SellList, Lon
 //    Integer findMinPriceByOptionId(@Param("optionId") Long optionId);
 //
 //    List<SHOP_SellList> findAllByOptionIdAndPrice(Long optionId, Integer minPrice);
+    @Query("SELECT MIN(s.price) FROM SHOP_SellList s WHERE s.product.productId = :productId AND s.option.optionId = :optionId")
+    Integer findMinPrice(@Param("productId") Long productId, @Param("optionId") Long optionId);
+
+    List<SHOP_SellList> findByProduct_ProductIdAndOption_OptionIdAndStatus(Long productId, Long optionId, String status);
+
 }

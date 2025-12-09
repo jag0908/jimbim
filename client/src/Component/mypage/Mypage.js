@@ -228,7 +228,7 @@ function Mypage() {
                         <>
                             <input type="text" className='inputrrn1' maxLength="6" value={form.rrn1} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn1: e.target.value })} />
                             <span className='memberformdash'>&nbsp;-&nbsp;</span>
-                            <input type="text" className='inputrrn2' maxLength="1" value={form.rrn2} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn2: e.target.value })} /> ******
+                            <input type="text" id='inputrrn2' maxLength="1" value={form.rrn2} onInput={getNumberOnly} onChange={e => setForm({ ...form, rrn2: e.target.value })} /> ******
                             <div className="formBtns">
                                 <button onClick={handleSubmit}>수정</button>
                                 <button onClick={() => editField('')}>취소</button>

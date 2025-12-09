@@ -55,6 +55,7 @@ public class ShPostMapper {
         mdto.setTerms_agree(post.get().getMember().getTerms_agree());
         mdto.setPersonal_agree(post.get().getMember().getPersonal_agree());
         mdto.setProfileImg(post.get().getMember().getProfileImg());
+        mdto.setProfileMsg(post.get().getMember().getProfileMsg());
 
         resDto.setMember(mdto);
 

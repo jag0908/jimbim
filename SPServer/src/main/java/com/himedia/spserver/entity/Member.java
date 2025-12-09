@@ -56,9 +56,9 @@ public class Member {
     private Timestamp indate;
 
     //@Column(nullable = false)
-    @ColumnDefault("'0'")
+    @ColumnDefault("'2'")
     private Integer blacklist;
-    // 4: red, 3: orange 2: yellow, 1: green, 0: gray
+    // 5:불가촉천민, 4:지뢰, 3:말썽쟁이, 2:평민, 1:프로, 0:장인
 
     @Column(length = 50)
     private String provider;

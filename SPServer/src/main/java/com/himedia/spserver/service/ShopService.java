@@ -133,4 +133,32 @@ public class ShopService {
     }
 
 
+    public List<ShopSellListDTO> getSellList(Long productId, Long optionId) {
+        return sellRepo.findByProduct_ProductIdAndOption_OptionIdAndStatus(productId, optionId, "N")
+                .stream()
+                .map(sell -> {
+                    ShopSellListDTO dto = new ShopSellListDTO();
+                    dto.setSellId(sell.getSellId());
+                    dto.setProductId(sell.getProduct().getProductId());
+                    dto.setOptionId(sell.getOption().getOptionId());
+                    dto.setPrice(sell.getPrice());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // 구매 등록
+    public SHOP_BuyOrder createBuy(Long sellId, Member buyer) {
+        SHOP_SellList sell = sellRepo.findById(sellId).orElseThrow();
+        SHOP_BuyOrder order = new SHOP_BuyOrder();
+        order.setSellList(sell);
+        order.setBuyer(buyer);
+        order.setPurchasePrice(sell.getPrice());
+        sell.setStatus("soldout");
+        sellRepo.save(sell);
+        return buyRepo.save(order);
+    }
+
+
+
 }

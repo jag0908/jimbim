@@ -46,34 +46,23 @@ public class ShopController {
         return shopService.createProduct(dto, seller);
     }
 
-    @GetMapping("/products/search")
-    public List<ShopProductDTO> searchProducts(
-            @RequestParam("keyword") String keyword,
-            @RequestParam(value = "categoryId", required = false) Long categoryId
-    ) {
-        return shopService.searchProducts(keyword, categoryId);
-    }
+
 
 
     // =================== 판매 관련 ===================
-//    @PostMapping("/sell") // 단일 POST 매핑 유지
-//    public SHOP_SellList createSell(@RequestBody ShopSellCreateDTO dto) {
-//        Member seller = new Member();
-//        seller.setMember_id(dto.getSellerId());
-//        return shopService.createSell(dto, seller);
-//    }
 
-//    @PostMapping("/buy/{sellId}")
-//    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId, @RequestBody Map<String, Integer> body) {
-//
-//        int memberId = body.get("memberId"); // 프론트에서 보낸 memberId 사용
-//
-//        Member buyer = new Member();
-//        buyer.setMember_id(memberId);
-//
-//        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
-//        return ShopBuyOrderDTO.fromEntity(order);
-//    }
+
+    @PostMapping("/buy/{sellId}")
+    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId, @RequestBody Map<String, Integer> body) {
+
+        int memberId = body.get("memberId"); // 프론트에서 보낸 memberId 사용
+
+        Member buyer = new Member();
+        buyer.setMember_id(memberId);
+
+        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
+        return ShopBuyOrderDTO.fromEntity(order);
+    }
 
 
     // =================== 찜 관련 ===================
@@ -122,19 +111,21 @@ public class ShopController {
         return ResponseEntity.ok(product);
     }
 
-//    @GetMapping("/products/search")
-//    public List<ShopProductDTO> searchProducts(
-//            @RequestParam("keyword") String keyword,
-//            @RequestParam(value = "categoryId", required = false) Long categoryId
-//    ) {
-//        return shopService.searchProducts(keyword, categoryId);
-//    }
-//
-//    @GetMapping("/product/{productId}")
-//    public ShopProductDTO getProduct(@PathVariable Long productId) {
-//        SHOP_Product product = shopService.getProductById(productId);
-//        return ShopProductDTO.fromEntity(product);
-//    }
+    @GetMapping("/products/search")
+    public List<ShopProductDTO> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "categoryId", required = false) Long categoryId
+    ) {
+        return shopService.searchProducts(keyword, categoryId);
+    }
+
+    @GetMapping("/product/{productId}")
+    public ShopProductDTO getProduct(@PathVariable Long productId) {
+        SHOP_Product product = shopService.getProductById(productId);
+        return ShopProductDTO.fromEntity(product);
+    }
+
+
 
     @GetMapping("/getSuggestList/{page}")
     public ResponseEntity<?> getSuggestList(
@@ -157,13 +148,7 @@ public class ShopController {
     }
 
 
-//    @GetMapping("/sell")
-//    public List<ShopSellListDTO> getSellList(
-//            @RequestParam Long productId,
-//            @RequestParam Long optionId
-//    ) {
-//        return shopService.getSellList(productId, optionId);
-//    }
+
 
     @GetMapping("/post/{postId}")
     public ShopPostDTO getPost(@PathVariable Integer postId) {
@@ -171,16 +156,27 @@ public class ShopController {
         return ShopPostDTO.fromEntity(post); // DTO로 변환
     }
 
-    @GetMapping("/product/{productId}")
-    public ShopProductDTO getProduct(@PathVariable Long productId) {
-        SHOP_Product product = shopService.getProductById(productId);
-        return ShopProductDTO.fromEntity(product);
-    }
+
 
     @PostMapping("/sell")
     public ResponseEntity<SHOP_SellList> createSell(@RequestBody ShopSellRequestDTO dto) {
         SHOP_SellList sell = shopService.createSell(dto);
         return ResponseEntity.ok(sell);
     }
-  
+
+//    @PostMapping("/sell") // 단일 POST 매핑 유지
+//    public SHOP_SellList createSell(@RequestBody ShopSellCreateDTO dto) {
+//        Member seller = new Member();
+//        seller.setMember_id(dto.getSellerId());
+//        return shopService.createSell(dto, seller);
+//    }
+
+    @GetMapping("/sell")
+    public List<ShopSellListDTO> getSellList(
+            @RequestParam Long productId,
+            @RequestParam Long optionId
+    ) {
+        return shopService.getSellList(productId, optionId);
+    }
+
 }

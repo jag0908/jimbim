@@ -14,6 +14,22 @@ services:
       retries: 10
 
 
+  my-postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres      # IntelliJ 환경변수 DB_USER 등과 연결 가능
+      POSTGRES_PASSWORD: postgres    # IntelliJ 환경변수 DB_PASSWORD 등과 연결 가능
+      POSTGRES_DB: postgres
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+
   my-client:
     image: 996704094876.dkr.ecr.ap-northeast-2.amazonaws.com/jimbim_client
     ports:

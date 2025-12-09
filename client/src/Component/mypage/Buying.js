@@ -3,6 +3,7 @@ import SideMenu from './MypageSideMenu';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/jwtutil';
+import '../../style/mypage.css';
 
 function Buying() {
   const loginUser = useSelector(state => state.user);
@@ -50,34 +51,47 @@ function Buying() {
     return items;
   };
 
+  const totalPrice = shopBuyingList.reduce((sum, item) => {
+    return sum + (item.purchasePrice || 0);
+  }, 0);
+
+
   return (
-    <article style={{ height: '100%' }}>
-      <div className='mypagebody'>
-        <SideMenu />
-        <div className='mypage'>
-          <div className='formtitle'>SHOP 구매 내역</div>
-
-          <div className='shoparea'>
-            <h3>SHOP</h3>
-
-            {shopBuyingList.length > 0 ? (
-  shopBuyingList.map((order, idx) => (
-    <div key={idx} className="buying-item" style={{ marginBottom: 20 }}>
-      <div>상품명: {order.productTitle}</div>
-      <div>사이즈: {order.optionName}</div>
-      <div>가격: {order.purchasePrice?.toLocaleString() || '0'}원</div>
-      {/* 이미지나 카테고리 필드가 있으면 추가 */}
-    </div>
-  ))
-) : (
-  <div>아직 구매 내역이 없습니다</div>
-)}
-
-
-          </div>
+    <div className="mypageBuyingContainer">
+    <SideMenu />
+    <div className="buyingBody">
+        <div className="buyingTitle">SHOP 구매 내역
+        <h3>(상품 불량 문제로 인한 반품이나 환불 시 고객센터로 답변주시길 바랍니다)</h3>
         </div>
-      </div>
-    </article>
+
+        {shopBuyingList.length > 0 ? (
+            <div className="buyingListContainer">
+                <div className="buyingHeader">
+                    <div className="buyField title">상품명</div>
+                    <div className="buyField option">옵션</div>
+                    <div className="buyField price">가격</div>
+                </div>
+
+                {shopBuyingList.map((order, idx) => (
+                    <div className="buyingRow" key={idx}>
+                        <div className="buyField title">{order.productTitle}</div>
+                        <div className="buyField option">{order.optionName}</div>
+                        <div className="buyField price">
+                            {order.purchasePrice?.toLocaleString()}원
+                        </div>
+                        
+                    </div>
+                    
+                ))}
+                <div className="buyingTotal">
+                          총 구매 금액: <span>{totalPrice.toLocaleString()}원</span>
+                        </div>
+            </div>
+        ) : (
+            <div className="noBuyingData">구매 내역이 없습니다.</div>
+        )}
+    </div>
+</div>
   );
 }
 

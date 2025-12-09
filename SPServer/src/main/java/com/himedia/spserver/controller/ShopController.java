@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/shop")
@@ -52,6 +53,28 @@ public class ShopController {
     ) {
         return shopService.searchProducts(keyword, categoryId);
     }
+
+
+    // =================== 판매 관련 ===================
+    @PostMapping("/sell") // 단일 POST 매핑 유지
+    public SHOP_SellList createSell(@RequestBody ShopSellCreateDTO dto) {
+        Member seller = new Member();
+        seller.setMember_id(dto.getSellerId());
+        return shopService.createSell(dto, seller);
+    }
+
+    @PostMapping("/buy/{sellId}")
+    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId, @RequestBody Map<String, Integer> body) {
+
+        int memberId = body.get("memberId"); // 프론트에서 보낸 memberId 사용
+
+        Member buyer = new Member();
+        buyer.setMember_id(memberId);
+
+        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
+        return ShopBuyOrderDTO.fromEntity(order);
+    }
+
 
     // =================== 찜 관련 ===================
     @PostMapping("/zzim/{productId}")
@@ -133,6 +156,15 @@ public class ShopController {
         return ResponseEntity.ok("삭제 완료");
     }
 
+
+    @GetMapping("/sell")
+    public List<ShopSellListDTO> getSellList(
+            @RequestParam Long productId,
+            @RequestParam Long optionId
+    ) {
+        return shopService.getSellList(productId, optionId);
+    }
+
     @GetMapping("/post/{postId}")
     public ShopPostDTO getPost(@PathVariable Integer postId) {
         SHOP_post post = shopService.getPostById(postId); // 엔티티로 받기
@@ -150,9 +182,5 @@ public class ShopController {
         SHOP_SellList sell = shopService.createSell(dto);
         return ResponseEntity.ok(sell);
     }
-
-
-
-
-
+  
 }

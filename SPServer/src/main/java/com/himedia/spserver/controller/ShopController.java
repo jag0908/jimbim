@@ -56,24 +56,24 @@ public class ShopController {
 
 
     // =================== 판매 관련 ===================
-    @PostMapping("/sell") // 단일 POST 매핑 유지
-    public SHOP_SellList createSell(@RequestBody ShopSellCreateDTO dto) {
-        Member seller = new Member();
-        seller.setMember_id(dto.getSellerId());
-        return shopService.createSell(dto, seller);
-    }
+//    @PostMapping("/sell") // 단일 POST 매핑 유지
+//    public SHOP_SellList createSell(@RequestBody ShopSellCreateDTO dto) {
+//        Member seller = new Member();
+//        seller.setMember_id(dto.getSellerId());
+//        return shopService.createSell(dto, seller);
+//    }
 
-    @PostMapping("/buy/{sellId}")
-    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId, @RequestBody Map<String, Integer> body) {
-
-        int memberId = body.get("memberId"); // 프론트에서 보낸 memberId 사용
-
-        Member buyer = new Member();
-        buyer.setMember_id(memberId);
-
-        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
-        return ShopBuyOrderDTO.fromEntity(order);
-    }
+//    @PostMapping("/buy/{sellId}")
+//    public ShopBuyOrderDTO buyProduct(@PathVariable Long sellId, @RequestBody Map<String, Integer> body) {
+//
+//        int memberId = body.get("memberId"); // 프론트에서 보낸 memberId 사용
+//
+//        Member buyer = new Member();
+//        buyer.setMember_id(memberId);
+//
+//        SHOP_BuyOrder order = shopService.createBuy(sellId, buyer);
+//        return ShopBuyOrderDTO.fromEntity(order);
+//    }
 
 
     // =================== 찜 관련 ===================
@@ -157,13 +157,13 @@ public class ShopController {
     }
 
 
-    @GetMapping("/sell")
-    public List<ShopSellListDTO> getSellList(
-            @RequestParam Long productId,
-            @RequestParam Long optionId
-    ) {
-        return shopService.getSellList(productId, optionId);
-    }
+//    @GetMapping("/sell")
+//    public List<ShopSellListDTO> getSellList(
+//            @RequestParam Long productId,
+//            @RequestParam Long optionId
+//    ) {
+//        return shopService.getSellList(productId, optionId);
+//    }
 
     @GetMapping("/post/{postId}")
     public ShopPostDTO getPost(@PathVariable Integer postId) {

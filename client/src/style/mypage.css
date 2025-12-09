@@ -319,6 +319,99 @@ body {
 }
 
 /* ==========================================
+   Buying(구매내역) 페이지 스타일
+========================================== */
+
+/* 메인 컨테이너 */
+.mypageBuyingContainer {
+    display: flex;
+    width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+.buyingTitle h3{
+    color: red;
+}
+
+/* 본문 */
+.buyingBody {
+    flex: 1;
+    padding: 20px;
+}
+
+.buyingTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* ---------- 리스트 영역 ---------- */
+.buyingListContainer {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* 헤더 */
+.buyingHeader,
+.buyingRow {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.buyingHeader {
+    background-color: #fafafa;
+    font-weight: bold;
+}
+
+/* 각 열 */
+.buyField {
+    padding: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.buyField.title {
+    flex: 2;
+}
+
+.buyField.option {
+    flex: 1;
+}
+
+.buyField.price {
+    flex: 1;
+}
+
+/* 리스트 hover */
+.buyingRow:hover {
+    background-color: #f9f9f9;
+}
+
+/* ---------- 빈 데이터 ---------- */
+.noBuyingData {
+    margin-top: 50px;
+    text-align: center;
+    color: #888;
+}
+
+.buyingTotal {
+    margin-top: 15px;
+    padding-right: 100px;
+    text-align: right;   /* 🔥 오른쪽 정렬 */
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.buyingTotal span {
+    color: #1890ff;
+}
+
+
+/* ==========================================
    반응형 (모바일)
 ========================================== */
 @media (max-width: 768px) {
